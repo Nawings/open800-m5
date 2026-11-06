@@ -1,0 +1,889 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta charset="utf-8">
+<title>Open 800 в 3D</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500&family=Onest:wght@400;500;600&family=JetBrains+Mono:wght@400;600;700&display=swap">
+<style>
+/* Верстак-превью как у «Неваляшки в 3D»: модель на всю ширину, пульт сбоку, на телефоне — под моделью. Палитра — морская карта: холодная бумага, глубокая бирюза */
+:root{
+  --bg:#edf1f3; --surface:#ffffff; --ink:#14202b; --muted:#536373; --line:#d3dbe1; --accent:#0d6b78; --accent-bg:#e0eff1;
+  --water:#5a8ea6; --hdr:#b07d00; --lift:#b8352a; --ok:#2f7d4f;
+  --f-display:"Unbounded","Arial Black",system-ui,sans-serif; --f-body:"Onest",system-ui,-apple-system,"Segoe UI",sans-serif; --f-mono:"JetBrains Mono",ui-monospace,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--bg:#0e151b;--surface:#162029;--ink:#e2e9ee;--muted:#93a3b0;--line:#27343f;--accent:#4db6c2;--accent-bg:#123238;--water:#2f6a85;--hdr:#e0b13a;--lift:#ec6a5c;--ok:#6cc08d;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0e151b;--surface:#162029;--ink:#e2e9ee;--muted:#93a3b0;--line:#27343f;--accent:#4db6c2;--accent-bg:#123238;--water:#2f6a85;--hdr:#e0b13a;--lift:#ec6a5c;--ok:#6cc08d;color-scheme:dark}
+html,body{height:100%}
+body{background:var(--bg);color:var(--ink);font:15px/1.5 var(--f-body);margin:0}
+.app{height:100vh;display:grid;grid-template-columns:minmax(0,1fr) 380px}
+@media (max-width:860px){.app{height:auto;grid-template-columns:minmax(0,1fr)}}
+.stage{position:relative;min-width:0;overflow:hidden;height:100vh}
+@media (max-width:860px){.stage{height:72vh;min-height:420px}}
+#view{position:absolute;inset:0;width:100%;height:100%;display:block;touch-action:none}
+.badge{position:absolute;left:max(16px,env(safe-area-inset-left,0px));top:14px;display:grid;gap:2px;pointer-events:none;max-width:calc(100% - 32px)}
+.badge h1{font:500 20px/1.2 var(--f-display);margin:0}
+.badge span{font:12px var(--f-mono);color:var(--muted)}
+.views{position:absolute;left:max(16px,env(safe-area-inset-left,0px));top:76px;display:flex;flex-wrap:wrap;gap:6px;max-width:calc(100% - 32px)}
+.hint{position:absolute;left:max(16px,env(safe-area-inset-left,0px));right:16px;bottom:12px;font:12px var(--f-mono);color:var(--muted);pointer-events:none}
+.tip{position:absolute;pointer-events:none;background:var(--surface);color:var(--ink);border:1px solid var(--accent);padding:5px 9px;font:13px/1.4 var(--f-body);border-radius:4px;max-width:300px;box-shadow:0 4px 14px rgba(0,0,0,.25)}
+.err{position:absolute;inset:0;display:grid;place-items:center;text-align:center;padding:24px;color:var(--muted)}
+.panel{background:var(--surface);border-left:1px solid var(--line);overflow-y:auto;padding-block:18px 28px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:grid;gap:14px;align-content:start}
+@media (max-width:860px){.panel{border-left:0;border-top:1px solid var(--line);overflow:visible}}
+.panel h2{font:600 12px var(--f-mono);text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin:8px 0 0}
+.ctl{display:grid;gap:4px}
+.ctl label{display:flex;justify-content:space-between;gap:8px;font-size:14px}
+.ctl output{font:600 13px var(--f-mono);color:var(--accent);white-space:nowrap}
+input[type=range]{width:100%;accent-color:var(--accent)}
+.toggles{display:grid;gap:6px;font-size:14px}
+.toggles label{display:flex;gap:8px;align-items:center;cursor:pointer}
+.toggles select{font:14px var(--f-body);color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:4px;padding:4px 6px;margin-left:auto}
+.btns{display:flex;flex-wrap:wrap;gap:8px}
+button{font:600 13px var(--f-body);background:var(--accent-bg);color:var(--ink);border:1px solid var(--accent);padding:7px 12px;border-radius:4px;cursor:pointer}
+button[aria-pressed="false"]{background:var(--surface);border-color:var(--line)}
+.views button[aria-pressed="false"]{background:color-mix(in srgb,var(--surface) 82%,transparent)}
+button:focus-visible,input:focus-visible,a:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.read{display:grid;gap:4px;font-size:13px;background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:10px 12px}
+.read div{display:flex;justify-content:space-between;gap:10px}
+.read b{font:600 13px var(--f-mono);white-space:nowrap;font-variant-numeric:tabular-nums}
+.read .sig{font:600 13px var(--f-mono)}
+.sig.hdr{color:var(--hdr)} .sig.lift{color:var(--lift)}
+.note{font-size:13px;color:var(--muted);margin:0}
+.facts{margin:0;padding:0;list-style:none;display:grid;gap:7px;font-size:13px}
+.facts li{display:grid;grid-template-columns:5.6em 1fr;gap:10px}
+.facts b{font:600 13px var(--f-mono);color:var(--accent);font-variant-numeric:tabular-nums}
+.change{margin:0;padding-left:18px;display:grid;gap:5px;font-size:13px}
+.change .open{color:var(--lift);font-weight:600}
+.tbl{overflow-x:auto}
+.parts{width:100%;border-collapse:collapse;font-size:12.5px}
+.parts td{border-top:1px solid var(--line);padding:5px 4px;vertical-align:top}
+.parts td:first-child{padding-left:0}
+.parts tr.sub td{font:600 11px var(--f-mono);text-transform:uppercase;letter-spacing:.05em;color:var(--muted);padding-top:10px}
+.st{display:inline-block;font:600 11px var(--f-mono);padding:1px 6px;border-radius:3px;white-space:nowrap;border:1px solid currentColor}
+.st.y{color:var(--ok)} .st.w{color:var(--hdr)} .st.n{color:var(--lift)}
+.pin td:first-child{font-family:var(--f-mono);white-space:nowrap}
+.parts .g{font-family:var(--f-mono);font-size:12px;white-space:nowrap}
+.parts tr.mod td{font-weight:600;padding-top:8px}
+.parts .nc{color:var(--muted);font-size:12px}
+.sw{display:inline-block;width:10px;height:10px;border-radius:2px;border:1px solid var(--line);margin-right:6px;vertical-align:-1px}
+.legend{display:grid;gap:4px;font-size:13px}
+.legend div{display:flex;gap:8px;align-items:center}
+.legend i{width:12px;height:12px;border-radius:2px;flex:none;border:1px solid var(--line)}
+.legend i.w{height:4px;border-radius:2px}
+.asm{display:grid;gap:8px;background:var(--accent-bg);border:1px solid var(--accent);border-radius:6px;padding:12px}
+.asmnav{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.asmnav output{font:600 13px var(--f-mono);color:var(--accent)}
+.asm h3{font:600 16px/1.3 var(--f-body);margin:0;text-wrap:balance}
+.asm p{margin:0;font-size:14px}
+.asm .hw{font-size:13px;color:var(--muted)}
+.asm .hw:empty{display:none}
+.asm #asmExit{justify-self:start;background:transparent;border-color:var(--line)}
+.unk{margin:0;padding-left:18px;display:grid;gap:4px;font-size:13px}
+code{font-family:var(--f-mono);font-size:12px}
+[hidden]{display:none!important}
+</style>
+
+<div class="app">
+  <div class="stage" id="stage">
+    <canvas id="view" aria-label="3D-модель яхты Open 800 с парусным прибором: блок на топе мачты, кабель и блок в кокпите"></canvas>
+    <div class="badge"><h1>Open 800 «М5»</h1><span>RUS 4223 · 8,0 × 2,57 м · мачта 11,2 м над рубкой · прибор: топ + кабель + кокпит</span></div>
+    <div class="views" role="group" aria-label="Куда смотреть">
+      <button type="button" data-view="boat" aria-pressed="true">Лодка</button>
+      <button type="button" data-view="top" aria-pressed="false">Топ мачты</button>
+      <button type="button" data-view="cockpit" aria-pressed="false">Кокпит</button>
+      <button type="button" data-view="cable" aria-pressed="false">Кабель</button>
+    </div>
+    <div class="tip" id="tip" hidden></div>
+    <div class="hint">вращать — мышью или пальцем · колесо — ближе · наведите на деталь — что это</div>
+    <div class="err" id="err" hidden>Не удалось загрузить 3D-библиотеку. Проверьте интернет и обновите страницу.</div>
+  </div>
+
+  <div class="panel">
+    <h2>Найти деталь</h2>
+    <div class="btns" id="finds"></div>
+    <p class="note" id="findNote">Нажмите на название — камера подлетит к детали, и она замигает оранжевым.</p>
+    <h2>Сборка по шагам</h2>
+    <div class="btns" id="asmStart"><button id="asmGo" type="button">Собрать по шагам</button></div>
+    <div class="asm" id="asmBox" hidden>
+      <div class="asmnav"><button id="asmPrev" type="button" aria-label="Предыдущий шаг">◀ Назад</button><output id="asmN">1 / 13</output><button id="asmNext" type="button" aria-label="Следующий шаг">Дальше ▶</button></div>
+      <h3 id="asmT"></h3>
+      <p id="asmText"></p>
+      <p class="hw" id="asmHw"></p>
+      <button id="asmExit" type="button">Выйти из сборки</button>
+    </div>
+
+    <h2>Ветер и качка</h2>
+    <div class="ctl"><label for="awa">Вымпельный ветер, угол от носа <output id="awaO"></output></label><input id="awa" type="range" min="-180" max="180" step="1" value="-32"></div>
+    <div class="ctl"><label for="aws">Вымпельный ветер, скорость <output id="awsO"></output></label><input id="aws" type="range" min="0" max="25" step="0.5" value="12"></div>
+    <div class="ctl"><label for="heel">Крен <output id="heelO"></output></label><input id="heel" type="range" min="-30" max="30" step="0.5" value="12"></div>
+    <div class="ctl"><label for="pitch">Дифферент <output id="pitchO"></output></label><input id="pitch" type="range" min="-6" max="6" step="0.5" value="0"></div>
+    <div class="btns"><button id="demo" type="button" aria-pressed="false">Качать на волне</button><button id="reset" type="button">Сбросить</button></div>
+    <div class="read" aria-live="polite">
+      <div><span>Флюгер на топе видит</span><b id="rRaw">—</b></div>
+      <div><span>Прибор показывает</span><b id="rFix">—</b></div>
+      <div><span>Топ движется поперёк</span><b id="rTop">—</b></div>
+      <div><span>Стрелки</span><span class="sig" id="rSig">ветер ровный</span></div>
+    </div>
+    <p class="note">На волне топ мачты мотает из стороны в сторону, и флюгер видит этот «ветер от качки». Прибор вычитает его по гироскопу на топе. Заход и отход в модели считаются упрощённо: по изменению угла к ветру за 8 секунд.</p>
+
+    <h2>Вид</h2>
+    <div class="toggles">
+      <label><input id="clear" type="checkbox" checked> Прозрачные корпуса и мачта</label>
+      <label><input id="wires" type="checkbox" checked> Провода и кабель</label>
+      <label><input id="route" type="checkbox" checked> Трасса кабеля поверх всего</label>
+      <label><input id="sails" type="checkbox"> Грот и стаксель</label>
+      <label><input id="spin" type="checkbox"> Спинакер (стаксель убирается)</label>
+      <label for="livery">Окраска корпуса <select id="livery"><option value="m5" selected>как у М5</option><option value="white">белый</option><option value="green">зелёный, как EMERALD</option></select></label>
+    </div>
+    <div class="ctl"><label for="explode">Разобрать блоки на детали <output id="exO">собрано</output></label><input id="explode" type="range" min="0" max="100" value="0"></div>
+
+    <h2>Верхний блок: капсула, флюгер, вынос</h2>
+    <p class="note">На топе — печатная капсула из ASA: те же детали, что идут в печать. Флюгер с пером 60 × 175 мм сверху, три конические чашки снизу. Подробности — на странице <a href="../vane/">«Флюгер Open 800»</a>, разбор на детали — на странице <a href="../capsule/">«Капсула флюгера»</a>.</p>
+    <ul class="change">
+      <li>AS5600 висит на 4 стойках крышки, MT6701 лежит в колыбели на дне, обе на винтах в термовставках.</li>
+      <li>SuperMini, MAX3485 и защита запаяны на плату-носитель, GY-50 стоит на стойках этажерки. Скотча, стяжек и саморезов нет.</li>
+      <li>Трубка выноса входит в круглые гнёзда корпуса и кронштейна, по 2 болта М5 в каждом, без клея и хомутов. Капсула снимается.</li>
+      <li>Кабель идёт внутри трубки, через короб кронштейна в мачту.</li>
+      <li><span class="open">Не проверено:</span> ничего ещё не напечатано. Шаг отверстий плат и размер MT6701 надо снять с настоящих плат, плиту кронштейна — подогнать под крышку мачты.</li>
+    </ul>
+
+    <h2>Цифры модели</h2>
+    <ul class="facts">
+      <li><b>8,0×2,57 м</b><span>длина и ширина: из обмерного свидетельства ORC другой лодки класса (Kvartet)</span></li>
+      <li><b>по чертежу</b><span>обводы в плане и профиле, кокпит ≈ 3 м (1,64 → 2,2 м шириной), рубка 2,05 → 1,2 м шириной, от 2,0 до 4,5 м от форштевня, мачта в 3,06 м от форштевня, вантпутенсы в ≈ 3,65 м — позади мачты, под стреловидные краспицы, киль ≈ 3,95 м, баллер руля в 0,78 м от транца</span></li>
+      <li><b>0,72–0,95 м</b><span>надводный борт: ватерлиния взята по низу транца и пятке форштевня, так борт сходится с фото М5 рядом с экипажем. Корпус сидит в воде на ≈ 0,2 м</span></li>
+      <li><b>11,2 м</b><span>мачта над рубкой по чертежу парусности, топ на 12,35 м над водой. Штаг на 9,9 м, краспицы на 3,9 и 6,9 м, гик 4,0 м, бушприт 1,66 м за форштевнем. Глубина киля и перо руля — примерные: на чертежах их нет</span></li>
+      <li><b>Ø76 мм</b><span>капсула на топе, высота с крышкой 76 мм, внутри ≈ 71 мм. Плата AS5600 42 × 42 мм входит: её диагональ 59 мм</span></li>
+      <li><b>1,1 мм</b><span>зазор от магнита до AS5600 и до MT6701 в модели. Нужно от 0,5 до 3 мм, подстройка шайбами</span></li>
+      <li><b>≈ 1,5 м</b><span>удочка с топа назад: с её конца ахтерштаг идёт на корму и не цепляет прямой топ грота</span></li>
+      <li><b>0,7 м</b><span>вынос от устья гнезда на мачте до оси капсулы: карбоновая трубка 25 × 23 мм длиной 0,73 м, на 20° вверх, без подкоса. Частота ≈ 19 Гц, резонанс с чашками — около 28 м/с</span></li>
+      <li><b>100 /с</b><span>пакетов с топа вниз по RS-485, 460 800 бод; задержка в кабеле до 10 мс</span></li>
+      <li><b>0,2–0,5 с</b><span>от поворота флюгера до стрелки «заход / отход»; до цифр на экране 0,5–1,5 с. Это расчёт, замера ещё не было</span></li>
+      <li><b>≈ 40 ч</b><span>работы от LiPo 6000 мА·ч: прибор берёт ≈ 150 мА, из них топ 40–50 мА</span></li>
+    </ul>
+
+    <h2>Кабель и разъём M12</h2>
+    <div class="tbl"><table class="parts pin"><tbody>
+      <tr><td>1</td><td><span class="legend"><span><i style="background:#8a5a2b;display:inline-block;vertical-align:-1px"></i> коричневый</span></span></td><td>+5 В, питание топа</td></tr>
+      <tr><td>2</td><td><span class="legend"><span><i style="background:#f4f4f4;display:inline-block;vertical-align:-1px"></i> белый</span></span></td><td>A, данные (витая пара)</td></tr>
+      <tr><td>3</td><td><span class="legend"><span><i style="background:#2f6fd6;display:inline-block;vertical-align:-1px"></i> синий</span></span></td><td>земля</td></tr>
+      <tr><td>4</td><td><span class="legend"><span><i style="background:#1a1a1a;display:inline-block;vertical-align:-1px"></i> чёрный</span></span></td><td>B, данные (витая пара)</td></tr>
+      <tr><td>оплётка</td><td></td><td>на GND только в кокпите, с одного конца</td></tr>
+    </tbody></table></div>
+    <p class="note">RVSP, 4 жилы, 24AWG, ≈ 15–20 м. Защита на обоих концах: SM712 на A и B, SMBJ5.0A на +5 В. Трасса: внутри мачты вниз, через пятку мачты в каюту, разъём M12 под подволоком у мачты, по подволоку к переборке и снизу в блок. На палубу кабель не выходит (решение от 05.11). Гермовводы PG7 — на капсуле и на блоке в кокпите; проход под мачтой — уплотнить.</p>
+
+    <h2>Детали и что с ними</h2>
+    <div class="tbl"><table class="parts"><tbody>
+      <tr class="sub"><td colspan="2">Топ мачты</td></tr>
+      <tr><td>ESP32-C3 SuperMini</td><td><span class="st y">куплено 2</span></td></tr>
+      <tr><td>AS5600 с магнитом — флюгер</td><td><span class="st y">пришла 30.10</span></td></tr>
+      <tr><td>MT6701 — чашки</td><td><span class="st y">куплено 2</span></td></tr>
+      <tr><td>Гироскоп GY-50 (L3G4200D)</td><td><span class="st w">заказан 30.10, срок 9–12.11</span></td></tr>
+      <tr><td>MAX3485 (один на топ, второй в кокпит)</td><td><span class="st y">куплено 2</span></td></tr>
+      <tr><td>Флюгер и чашки: печать ASA, пруток, карбон</td><td><span class="st n">не напечатано</span></td></tr>
+      <tr><td>Корпус, крышка, этажерка, кронштейн: печать ASA</td><td><span class="st n">не напечатано</span></td></tr>
+      <tr><td>Карбоновая трубка 25 × 23 мм, 0,75 м</td><td><span class="st w">отложено</span></td></tr>
+      <tr class="sub"><td colspan="2">Кабель и защита</td></tr>
+      <tr><td>Кабель RVSP 4 жилы, 24AWG, 20 м</td><td><span class="st w">купить последним</span></td></tr>
+      <tr><td>Разъёмы M12, 4 контакта, обе половинки</td><td><span class="st y">куплено</span></td></tr>
+      <tr><td>SMBJ5.0A, PPTC 0,2 А, переходники SOT23-SIP3, PG7</td><td><span class="st y">куплено</span></td></tr>
+      <tr><td>SM712</td><td><span class="st n">в заказах не найден</span></td></tr>
+      <tr class="sub"><td colspan="2">Кокпит</td></tr>
+      <tr><td>ESP32-S3-DevKitC-1 N16R8</td><td><span class="st y">куплено</span></td></tr>
+      <tr><td>BNO085</td><td><span class="st y">куплено</span></td></tr>
+      <tr><td>Экран 4,2″ e-paper WeAct, ч/б</td><td><span class="st y">куплено</span></td></tr>
+      <tr><td>GPS QUESCAN AN181 (u-blox M10)</td><td><span class="st y">куплено</span></td></tr>
+      <tr><td>TP4056, TPS63020, MT3608</td><td><span class="st y">куплено</span></td></tr>
+      <tr><td>LiPo 906090, 6000 мА·ч</td><td><span class="st y">куплено 2</span></td></tr>
+      <tr><td>Резисторы и светодиоды (набор)</td><td><span class="st y">куплено</span></td></tr>
+      <tr><td>Коробка IP67 ≥ 160 × 120 × 70, прозрачная крышка</td><td><span class="st n">в заказах не найдена</span></td></tr>
+      <tr><td>Тумблер IP67 с колпачком</td><td><span class="st w">отложено</span></td></tr>
+    </tbody></table></div>
+    <p class="note">Статусы взяты из хранилища: «Заказ — что куплено» от 30.10. Из 41 покупки опознаны 24.</p>
+
+    <h2>Нужно снять с лодки</h2>
+    <ul class="unk">
+      <li>Высота мачты: топ над палубой и над блоком в кокпите. Без неё вычитание качки работает по примерной высоте.</li>
+      <li>Фото рубки и кокпита, куда смотрит вход в каюту. От этого зависит место блока на переборке.</li>
+      <li>Как провести кабель под палубой от мачты к кокпиту.</li>
+      <li>Как устроен топ: чертёж или фото крышки мачты под плиту кронштейна, есть ли в мачте место под кабель.</li>
+      <li>Правила класса O-800: разрешены ли такие приборы на гонках.</li>
+    </ul>
+
+    <h2>Все провода, вывод к выводу</h2>
+    <p class="note">Каждый провод в модели идёт от своего вывода к своему, по таблицам проводов из хранилища. Наведите на провод — появится, откуда и куда он идёт. Порядок выводов на гребёнках у клонов плат бывает другим: при пайке сверяйте по надписям на плате.</p>
+    <div class="tbl" id="wireTable"></div>
+    <h2>Цвета проводов</h2>
+    <div class="legend" id="wireLegend"></div>
+    <h2>Цвета деталей</h2>
+    <div class="legend" id="legend"></div>
+    <p class="note">Источник — хранилище проекта, разделы «Устройство», «Лодка» и «Закупки» (проверены 30.10.2026), и схема v3 от 13.10.</p>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js" integrity="sha384-CI3ELBVUz9XQO+97x6nwMDPosPR5XvsxW2ua7N1Xeygeh1IxtgqtCkGfQY9WWdHu" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js" integrity="sha384-wagZhIFgY4hD+7awjQjR4e2E294y6J2HSnd8eTNc15ZubTeQeVRZwhQJ+W6hnBsf" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/STLLoader.js" integrity="sha384-QF8EmP6pyNE+i7WmcltzC4ddzFVKDxfn5WD5gXyKTSE4SCw0R25TI+q0LUlnf7tq" crossorigin="anonymous"></script>
+<script>
+(function(){
+'use strict';
+const $=id=>document.getElementById(id);
+if(!window.THREE||!THREE.OrbitControls){$('err').hidden=false;return;}
+const V=(x,y,z)=>new THREE.Vector3(x,y,z);
+const rad=d=>d*Math.PI/180, deg=r=>r*180/Math.PI;
+const f1=v=>v.toFixed(1).replace('.',',');
+const canvas=$('view'), stage=$('stage');
+
+const renderer=new THREE.WebGLRenderer({canvas,antialias:true,logarithmicDepthBuffer:true});
+renderer.setPixelRatio(Math.min(2,window.devicePixelRatio||1));
+const scene=new THREE.Scene();
+const camera=new THREE.PerspectiveCamera(38,1,0.005,900);
+camera.position.set(13.5,7.5,15.5);
+const controls=new THREE.OrbitControls(camera,canvas);
+controls.target.set(0.3,4.6,0);controls.enableDamping=true;controls.minDistance=0.1;controls.maxDistance=70;controls.update();
+function css(v){return getComputedStyle(document.documentElement).getPropertyValue(v).trim();}
+scene.add(new THREE.HemisphereLight(0xffffff,0x6f8494,0.8));
+const sun=new THREE.DirectionalLight(0xffffff,0.85);sun.position.set(8,20,10);scene.add(sun);
+const back=new THREE.DirectionalLight(0xffffff,0.35);back.position.set(-10,8,-12);scene.add(back);
+const waterMat=new THREE.MeshStandardMaterial({color:0x5a8ea6,transparent:true,opacity:0.34,roughness:0.9,depthWrite:false,side:THREE.DoubleSide});
+const water=new THREE.Mesh(new THREE.CircleGeometry(40,72),waterMat);water.rotation.x=-Math.PI/2;scene.add(water);
+function applyTheme(){renderer.setClearColor(new THREE.Color(css('--bg')||'#edf1f3'));waterMat.color.set(css('--water')||'#5a8ea6');}
+applyTheme();
+try{matchMedia('(prefers-color-scheme: dark)').addEventListener('change',applyTheme);}catch(e){}
+new MutationObserver(applyTheme).observe(document.documentElement,{attributes:true,attributeFilter:['data-theme']});
+
+function M(c,o){return new THREE.MeshStandardMaterial(Object.assign({color:c,roughness:0.6,metalness:0},o||{}));}
+function box(w,h,d,m){return new THREE.Mesh(new THREE.BoxGeometry(w,h,d),m);}
+function rod(a,b,r,m,seg){const d=new THREE.Vector3().subVectors(b,a),len=d.length();const mesh=new THREE.Mesh(new THREE.CylinderGeometry(r,r,len,seg||12),m);mesh.position.copy(a).addScaledVector(d,0.5);mesh.quaternion.setFromUnitVectors(V(0,1,0),d.normalize());return mesh;}
+function tube(pts,r,m){const c=new THREE.CatmullRomCurve3(pts.map(p=>p.isVector3?p:V(p[0],p[1],p[2])));return new THREE.Mesh(new THREE.TubeGeometry(c,Math.max(24,pts.length*14),r,6),m);}
+function lab(o,l){o.userData.label=l;return o;}
+
+// ---------- реестр деталей: шаг сборки, разлёт, оболочки ----------
+const PARTS=[], SHELLS=[];
+const ledH=M(0x6b5a1a,{roughness:0.3}), ledL=M(0x5c2420,{roughness:0.3});
+function reg(obj,parent,o){if(o.p)obj.position.set(o.p[0],o.p[1],o.p[2]);obj.traverse(m=>{if(m.material&&m.material!==ledH&&m.material!==ledL&&m.material.isMeshStandardMaterial)m.material=m.material.clone();});parent.add(obj);const u=obj.userData;if(o.l)u.label=o.l;u.step=o.s||0;u.e=o.e?V(o.e[0],o.e[1],o.e[2]):V(0,0,0);u.base=obj.position.clone();u.wire=!!o.w;u.route=!!o.route;if(o.shell){u.shell=true;u.op=o.op||0.2;SHELLS.push(obj);}PARTS.push(obj);return obj;}
+
+const boat=new THREE.Group();scene.add(boat);
+
+// ---------- корпус по чертежу набора (gp26_набор): промеры в плане и профиле, длина 7,89 м приведена к 8,0, ширина — к 2,57 м по ORC ----------
+const L=8.0,HB=1.284,X0=-4,N=80,MS=10,C=2*MS+1;
+// полуширина по палубе (t: 0 — транец, 1 — форштевень): широкая корма, почти без сужения до середины
+const HBT=[[0,1.19],[0.17,1.245],[0.315,1.25],[0.39,1.237],[0.47,1.16],[0.555,1.047],[0.612,0.948],[0.651,0.857],[0.744,0.622],[0.843,0.379],[0.909,0.212],[0.958,0.099],[1,0]];
+// линия киля ниже ватерлинии: транец в воде, вертикальный форштевень с глубоким подзором
+// ватерлиния — по низу транца и пятке форштевня (сверено с фото М5: борт рядом с экипажем ≈ 0,8–0,9 м)
+const DPT=[[0,-0.05],[0.17,0.11],[0.315,0.18],[0.39,0.19],[0.47,0.20],[0.612,0.20],[0.744,0.17],[0.909,0.10],[0.958,0.05],[1,0.0]];
+function interp(T,t){t=Math.max(0,Math.min(1,t));let i=0;while(i<T.length-2&&t>T[i+1][0])i++;
+  const p0=T[Math.max(0,i-1)],p1=T[i],p2=T[i+1],p3=T[Math.min(T.length-1,i+2)],h=p2[0]-p1[0],u=(t-p1[0])/h;
+  const m1=(p2[1]-p0[1])/((p2[0]-p0[0])||1)*h,m2=(p3[1]-p1[1])/((p3[0]-p1[0])||1)*h,u2=u*u,u3=u2*u;
+  return (2*u3-3*u2+1)*p1[1]+(u3-2*u2+u)*m1+(-2*u3+3*u2)*p2[1]+(u3-u2)*m2;}
+function hb(t){return Math.max(0,interp(HBT,t))*HB/1.25;}
+function dep(t){return interp(DPT,t);}
+function sh(t){return 0.72+0.10*t+0.13*t*t;}   // надводный борт: 0,72 м у транца, 0,80 м на миделе, 0,95 м у форштевня
+let hullGeo=null;const tt=x=>(x-X0)/L;
+// кокпит от транца до рубки; рубка по чертежу: от 4,9 до 2,0 м от форштевня
+const CAB_AFT=-0.48,CAB0=CAB_AFT+0.03,CY=0.77,CABH=0.30;   // задний край рубки — по чертежу парусности, 4,5 м от форштевня
+const CWT=[[-4.0,0.82],[-3.41,0.91],[-2.64,1.01],[-2.07,1.05],[-1.49,1.08],[-0.89,1.10],[-0.48,1.10]];
+function cockW(x){if(x<=CWT[0][0])return CWT[0][1];for(let i=1;i<CWT.length;i++)if(x<=CWT[i][0]){const a=CWT[i-1],b=CWT[i];return a[1]+(b[1]-a[1])*(x-a[0])/(b[0]-a[0]);}return CWT[CWT.length-1][1];}
+function cabHalf(x){const xl=x-CAB0;return xl<0.63?1.0:Math.max(0.6,1.0-0.4*(xl-0.63)/1.85);}
+// окраска борта — картинкой на развёртке: левая половина холста — правый борт (нос справа), правая — левый борт (нос слева)
+const hullTexC=document.createElement('canvas');hullTexC.width=4096;hullTexC.height=512;const hullTex=new THREE.CanvasTexture(hullTexC);hullTex.anisotropy=8;
+const YMIN=-0.6,YMAX=1.2,PXM=2048/L,PYM=512/(YMAX-YMIN);
+const hullMat=M(0xffffff,{map:hullTex,side:THREE.DoubleSide,roughness:0.42}),transomMat=M(0xf3f5f6,{side:THREE.DoubleSide,roughness:0.42});
+(function(){
+  [1,-1].forEach(side=>{const pos=[],uv=[],idx=[],C2=MS+1;
+    for(let i=0;i<=N;i++){const t=i/N,x=X0+L*t,b=hb(t),d=dep(t),s=sh(t);
+      for(let k=0;k<=MS;k++){const ph=k/MS*Math.PI/2,z=side*b*Math.pow(Math.sin(ph),0.55),y=-d+(d+s)*(1-Math.cos(ph));pos.push(x,y,z);
+        uv.push(side>0?t*0.5:0.5+(1-t)*0.5,(y-YMIN)/(YMAX-YMIN));}}
+    for(let i=0;i<N;i++)for(let k=0;k<MS;k++){const a=i*C2+k,b=a+1,c=a+C2,d=c+1;idx.push(a,c,b,b,c,d);}
+    const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.Float32BufferAttribute(pos,3));g.setAttribute('uv',new THREE.Float32BufferAttribute(uv,2));g.setIndex(idx);g.computeVertexNormals();
+    boat.add(lab(new THREE.Mesh(g,hullMat),'корпус Open 800 «М5» по чертежу набора: широкая корма, открытый транец, вертикальный форштевень. 8,0 × 2,57 м'));});
+  // транец: ниже пола кокпита и по углам; над полом кокпит открыт в корму
+  const d0=dep(0),s0=sh(0),b0=hb(0),cw0=Math.min(cockW(X0),b0-0.05),sp=new THREE.Shape();
+  for(let k=-MS;k<=MS;k++){const ph=Math.abs(k)/MS*Math.PI/2,z=Math.sign(k)*b0*Math.pow(Math.sin(ph),0.55),y=-d0+(d0+s0)*(1-Math.cos(ph));if(k===-MS)sp.moveTo(-z,y);else sp.lineTo(-z,y);}
+  sp.lineTo(-cw0,s0);sp.lineTo(-cw0,0.30);sp.lineTo(cw0,0.30);sp.lineTo(cw0,s0);sp.lineTo(b0,s0);
+  const tm=new THREE.Mesh(new THREE.ShapeGeometry(sp,4),transomMat);tm.rotation.y=Math.PI/2;tm.position.x=X0;boat.add(lab(tm,'транец: над полом кокпита открыт'));
+  // палуба с вырезом кокпита: кокпит открыт в транец и расширяется к рубке
+  const NZ=17,dp=[],di=[];
+  for(let i=0;i<=N;i++){const t=i/N,x=X0+L*t,b=Math.max(0.001,hb(t)*0.998),s=sh(t),cw=x<=CAB_AFT+1e-6?Math.min(cockW(x),b-0.05):b/2;
+    for(let j=0;j<NZ;j++){const u=j/(NZ-1)*2-1,au=Math.abs(u),z=Math.sign(u)*(au<=0.5?cw*au/0.5:cw+(b-cw)*(au-0.5)/0.5);dp.push(x,s+0.025*(1-(z/b)*(z/b)),z);}}
+  for(let i=0;i<N;i++){const xc=X0+L*(i+0.5)/N;for(let j=0;j<NZ-1;j++){const u0=j/(NZ-1)*2-1,u1=(j+1)/(NZ-1)*2-1;if(xc<CAB_AFT&&u0>=-0.5-1e-9&&u1<=0.5+1e-9)continue;const a=i*NZ+j,b=a+1,c=a+NZ,d=c+1;di.push(a,b,c,b,d,c);}}
+  const dg=new THREE.BufferGeometry();dg.setAttribute('position',new THREE.Float32BufferAttribute(dp,3));dg.setIndex(di);dg.computeVertexNormals();
+  boat.add(lab(new THREE.Mesh(dg,M(0xdfe4e6,{side:THREE.DoubleSide,roughness:0.9})),'палуба'));
+})();
+// кокпит
+const cockMat=M(0xc9d0d5,{side:THREE.DoubleSide,roughness:0.95});
+(function(){
+  const xs=[];for(let x=X0;x<CAB_AFT-1e-6;x+=0.1)xs.push(x);xs.push(CAB_AFT);
+  const fp=[],fi=[],wp=[],wi=[];
+  xs.forEach((x,i)=>{const t=tt(x),b=hb(t),cw=Math.min(cockW(x),b-0.05),yt=sh(t)+0.025*(1-(cw/b)*(cw/b));
+    fp.push(x,0.30,-cw,x,0.30,cw);wp.push(x,0.30,-cw,x,yt,-cw,x,0.30,cw,x,yt,cw);
+    if(i){const a=(i-1)*2;fi.push(a,a+1,a+2,a+1,a+3,a+2);const w=(i-1)*4;wi.push(w,w+4,w+1,w+1,w+4,w+5,w+2,w+3,w+6,w+3,w+7,w+6);}});
+  const mk=(p,ix)=>{const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.Float32BufferAttribute(p,3));g.setIndex(ix);g.computeVertexNormals();return g;};
+  boat.add(lab(new THREE.Mesh(mk(fp,fi),cockMat),'кокпит: по чертежу ≈ 3 м, открыт в транец, шириной от 1,64 м у транца до 2,2 м у рубки'));
+  boat.add(lab(new THREE.Mesh(mk(wp,wi),cockMat),'борт кокпита'));
+  const cwA=cockW(CAB_AFT),yA=sh(tt(CAB_AFT));
+  const bh=new THREE.Mesh(new THREE.PlaneGeometry(2*cwA,yA-0.30),cockMat);bh.rotation.y=Math.PI/2;bh.position.set(CAB_AFT,(yA+0.30)/2,0);boat.add(lab(bh,'кормовая переборка рубки'));
+})();
+// рубка: по чертежу 2,05 м шириной сзади, сужается к носу до 1,2 м; высота на чертеже не видна — примерная
+(function(){
+  const s=new THREE.Shape();s.moveTo(0,0);s.lineTo(0,CABH);s.lineTo(1.6,CABH-0.02);s.quadraticCurveTo(2.25,CABH-0.04,2.48,0);s.lineTo(0,0);
+  const g=new THREE.ExtrudeGeometry(s,{depth:2.0,bevelEnabled:true,bevelSize:0.03,bevelThickness:0.03,bevelSegments:2});g.translate(0,0,-1.0);
+  const p=g.attributes.position;for(let i=0;i<p.count;i++)p.setZ(i,p.getZ(i)*cabHalf(CAB0+p.getX(i)));g.computeVertexNormals();
+  const m=new THREE.Mesh(g,M(0xe8ecef,{roughness:0.5}));m.position.set(CAB0,CY,0);boat.add(lab(m,'рубка: план по чертежу, высота примерная'));m.userData.shell=true;m.userData.op=0.4;SHELLS.push(m);
+  const door=box(0.02,0.60,0.55,M(0x26313b,{roughness:0.8}));door.position.set(CAB_AFT-0.005,0.68,0);door.scale.y=0.76/0.60;boat.add(lab(door,'вход в каюту: где он на самом деле, неизвестно — от этого зависит место блока'));
+})();
+function roofY(x){return CY+0.03+CABH-0.02*Math.max(0,Math.min(1,(x-CAB0)/1.6));}
+function cabinTop(x){const xl=x-CAB0;return xl<=1.6?roofY(x):CY+0.03+(CABH-0.02)*(1-Math.pow(Math.min(1,(xl-1.6)/0.88),2));}
+// киль, руль, румпель
+const lead=M(0x3d4148,{roughness:0.5,metalness:0.3});
+(function(){
+  const fin=box(0.5,1.6,0.045,lead);fin.position.set(0.0,-0.95,0);boat.add(lab(fin,'киль: место по чертежу (≈ 3,95 м от форштевня), глубина примерная'));
+  const bulb=new THREE.Mesh(new THREE.SphereGeometry(0.17,28,16),lead);bulb.scale.set(3.6,1,1.15);bulb.position.set(-0.1,-1.80,0);boat.add(lab(bulb,'бульб киля (примерно)'));
+  const rud=box(0.30,1.0,0.035,M(0xf0f1f2));rud.position.set(-3.21,-0.50,0);boat.add(lab(rud,'перо руля: баллер по чертежу в 0,78 м от транца, размеры пера примерные'));
+  boat.add(lab(rod(V(-3.21,0.0,0),V(-3.21,0.80,0),0.02,M(0x9aa0a6,{metalness:0.6})),'баллер руля: 0,78 м от транца по чертежу'));
+  boat.add(lab(rod(V(-3.21,0.80,0),V(-2.30,0.88,0),0.018,M(0x8a5a2b)),'румпель'));
+})();
+// мачта и такелаж
+const MX=0.94,MB=roofY(MX),MT=MB+11.2,BY=1.99,HND=9.9;   // мачта в 3,06 м от форштевня (уточнил владелец); по чертежу парусности 11,2 м над рубкой; гик на 1,99 м, штаг на 9,9 м над водой
+const mastMat=M(0x23262a,{metalness:0.3,roughness:0.35});   // мачта и гик тёмные, как на фото
+const mast=new THREE.Mesh(new THREE.CylinderGeometry(0.042,0.055,MT-MB,18),mastMat);mast.scale.z=0.72;mast.position.set(MX,(MB+MT)/2,0);
+reg(lab(mast,'мачта: 11,2 м над рубкой по чертежу парусности, топ на 12,35 м над водой. Кабель идёт внутри'),boat,{shell:true,op:0.28});
+const rig=M(0x50575e,{metalness:0.6,roughness:0.4});
+const STEM=V(3.95,sh(1)+0.02,0);
+boat.add(lab(rod(V(MX,HND,0),STEM,0.004,rig),'штаг: на 9,9 м над водой'));
+const CPX=0.35,CPZ=hb(tt(CPX))-0.04,CPY=sh(tt(CPX));   // вантпутенсы по чертежу парусности ≈ 3,65 м от форштевня — позади мачты
+const SP1=3.86,SP2=6.94;   // две пары стреловидных краспиц по чертежу парусности, отведены назад на ≈ 0,5 м
+[-1,1].forEach(sd=>{
+  const t1=V(MX-0.50,SP1,0.85*sd),t2=V(MX-0.45,SP2,0.62*sd);
+  boat.add(lab(rod(V(MX,SP1,0),t1,0.012,mastMat),'нижняя краспица: стреловидная, отведена назад'));
+  boat.add(lab(rod(V(MX,SP2,0),t2,0.011,mastMat),'верхняя краспица: стреловидная'));
+  boat.add(lab(rod(V(MX,HND,0),t2,0.004,rig),'топ-ванта'));
+  boat.add(lab(rod(t2,t1,0.004,rig),'топ-ванта'));
+  boat.add(lab(rod(t1,V(CPX,CPY,CPZ*sd),0.004,rig),'ванта'));
+  boat.add(lab(rod(V(MX,SP2-0.05,0),t1,0.0035,rig),'промежуточная ванта'));
+  boat.add(lab(rod(V(MX,SP1-0.05,0),V(CPX,CPY,CPZ*sd),0.0035,rig),'нижняя ванта'));
+  boat.add(lab(rod(V(CPX,CPY-0.02,CPZ*sd),V(CPX,CPY+0.10,CPZ*sd),0.012,M(0x9aa0a6,{metalness:0.7,roughness:0.3}),10),'вантпутенс: по чертежу в 3,35 м от форштевня'));
+});
+// удочка на топе (≈ 1,5 м назад и вниз, как на фото Open 800) и ахтерштаг с её конца на корму
+const UD=[V(MX-0.03,MT-0.03,0),V(MX-0.30,MT+0.06,0),V(MX-0.62,MT+0.02,0),V(MX-0.88,MT-0.19,0)];   // по чертежу парусности: ≈ 0,9 м назад
+const UDtip=UD[UD.length-1];
+boat.add(lab(tube(UD,0.008,M(0x17191c,{roughness:0.35,metalness:0.2})),'удочка: гибкий прут ≈ 1,5 м с топа мачты назад. Отводит ахтерштаг за верх грота'));
+const tang=new THREE.Mesh(new THREE.SphereGeometry(0.012,12,8),M(0x9aa0a6,{metalness:0.6}));tang.position.copy(UDtip);boat.add(lab(tang,'конец удочки: сюда крепится ахтерштаг'));
+boat.add(lab(rod(UDtip,V(-3.97,sh(0)+0.02,0),0.004,rig),'ахтерштаг: с конца удочки на корму'));
+boat.add(lab(rod(V(-3.97,sh(0)-0.02,0),V(-3.97,sh(0)+0.06,0),0.02,M(0x9aa0a6,{metalness:0.6,roughness:0.35}),12),'крепление ахтерштага на корме'));
+// ---------- гик, грот, стаксель, бушприт, спинакер: паруса уходят под ветер ----------
+const sm=M(0xf7f7f2,{transparent:true,opacity:0.55,side:THREE.DoubleSide,depthWrite:false,roughness:0.9});
+const boomG=new THREE.Group();boomG.position.set(MX,BY,0);boat.add(boomG);
+boomG.add(lab(rod(V(-0.03,0,0),V(-3.95,0,0),0.04,mastMat),'гик: уходит под ветер вслед за ползунком угла ветра'));
+boomG.add(lab(box(0.09,0.06,0.06,M(0x50575e,{metalness:0.6})),'шарнир гика'));
+boomG.add(lab(rod(V(-0.75,-0.03,0),V(-0.02,MB+0.08-BY,0),0.012,M(0x17191c,{metalness:0.3})),'оттяжка гика: держит гик внизу на полных курсах'));
+const boomPt=new THREE.Object3D();boomPt.position.set(-2.9,-0.03,0);boomG.add(boomPt);
+// грот с прямым топом: широкая головная доска почти поперёк мачты, серп по задней шкаторине; ахтерштаг с удочки проходит за ним
+// грот по чертежу парусности: узкая головная доска, задняя шкаторина почти прямая
+const MHD=[-0.40,MT-0.18-BY],MCT=[(MHD[0]-3.95)/2-0.3,(MHD[1]+0.05)/2];
+const mShape=new THREE.Shape();mShape.moveTo(-0.05,0.05);mShape.lineTo(-0.05,MT-0.10-BY);mShape.lineTo(MHD[0],MHD[1]);mShape.quadraticCurveTo(MCT[0],MCT[1],-3.95,0.05);mShape.lineTo(-0.05,0.05);
+const mainMesh=new THREE.Mesh(new THREE.ShapeGeometry(mShape,28),sm);mainMesh.visible=false;boomG.add(lab(mainMesh,'грот по чертежу парусности: узкая головная доска, две верхние латы во всю ширину, три нижние ≈ 1,4 м. У самого топа он искажает поток, поэтому флюгер вынесен вперёд'));
+// стаксель дробного вооружения: фал ниже топа, шкотовый угол перед мачтой — мачту не перекрывает
+const TACK=V(3.85,sh(1)+0.05,0),JHEAD=V(MX+0.35/(HND-STEM.y)*(STEM.x-MX),HND-0.35,0),JCL=V(MX+0.35,cabinTop(MX+0.35)+0.22,0);
+const jibG=new THREE.Group();jibG.position.copy(TACK);boat.add(jibG);
+const jShape=new THREE.Shape();jShape.moveTo(0,0);jShape.lineTo(JHEAD.x-TACK.x,JHEAD.y-TACK.y);jShape.quadraticCurveTo(MX+0.11-TACK.x,5.3-TACK.y,JCL.x-TACK.x,JCL.y-TACK.y);jShape.lineTo(0,0);
+const jibMesh=new THREE.Mesh(new THREE.ShapeGeometry(jShape,24),sm);jibMesh.visible=false;jibG.add(lab(jibMesh,'стаксель: поворачивается вокруг штага'));
+const jibClew=new THREE.Object3D();jibClew.position.set(JCL.x-TACK.x,JCL.y-TACK.y,0);jibG.add(jibClew);
+// детали парусов М5: латы на гроте, синие полосы на стакселе, номер RUS 4223
+function bezAtY(p0,p1,p2,y){let a=0,b=1;const yy=t=>(1-t)*(1-t)*p0[1]+2*t*(1-t)*p1[1]+t*t*p2[1];const s=yy(0)>yy(1);for(let i=0;i<40;i++){const m=(a+b)/2;if((yy(m)>y)===s)a=m;else b=m;}const t=(a+b)/2;return (1-t)*(1-t)*p0[0]+2*t*(1-t)*p1[0]+t*t*p2[0];}
+(function(){
+  const bm=M(0x2b2f36,{roughness:0.5}),HEAD=MHD,CTRL=MCT,CLEW=[-3.95,0.05];
+  [0.185,0.37,0.555,0.74,0.87].forEach((f,i)=>{const y=0.05+f*(HEAD[1]-0.05),x=bezAtY(HEAD,CTRL,CLEW,y),x0=i>=3?-0.08:Math.min(-0.08,x+1.4);
+    mainMesh.add(lab(rod(V(x0,y,0),V(x+0.04,y,0),0.006,bm,6),i>=3?'лата грота во всю ширину':'лата грота, ≈ 1,4 м от задней шкаторины'));});
+  const nc=document.createElement('canvas');nc.width=512;nc.height=420;const g=nc.getContext('2d');g.fillStyle='#16181c';g.textAlign='center';g.font='700 170px Onest, Arial, sans-serif';g.fillText('RUS',256,170);g.fillText('4223',256,370);
+  const nt=new THREE.CanvasTexture(nc),nm=new THREE.MeshBasicMaterial({map:nt,transparent:true,depthWrite:false});
+  [1,-1].forEach(sd=>{const p=new THREE.Mesh(new THREE.PlaneGeometry(1.2,0.98),nm);p.position.set(-1.15,6.1,0.006*sd);if(sd<0)p.rotation.y=Math.PI;mainMesh.add(lab(p,'номер на гроте: RUS 4223'));});
+  const jb=M(0x2f5fd0,{roughness:0.5}),JH=[JHEAD.x-TACK.x,JHEAD.y-TACK.y],JC=[MX+0.11-TACK.x,5.3-TACK.y],JL=[JCL.x-TACK.x,JCL.y-TACK.y];
+  [0.36,0.66].forEach(f=>{const lx=JH[0]*f,ly=JH[1]*f,x=bezAtY(JH,JC,JL,ly);jibMesh.add(lab(rod(V(lx,ly,0),V(x,ly,0),0.008,jb,6),'синяя полоса на стакселе'));});
+})();
+const stayAx=new THREE.Vector3().subVectors(JHEAD,TACK).normalize();
+const JS=jibClew.position.clone().applyQuaternion(new THREE.Quaternion().setFromAxisAngle(stayAx,0.3)).z>0?1:-1;
+const BSP1=V(5.66,sh(1)+0.08,0);   // бушприт по чертежу парусности: 1,66 м за форштевнем
+boat.add(lab(rod(V(3.3,sh(1)+0.03,0),BSP1,0.03,M(0xc3c8cd,{roughness:0.3,metalness:0.75}),16),'бушприт (на фото М5 — светлый): сюда крепится галсовый угол асимметричного спинакера'));
+boat.add(lab(rod(V(3.97,sh(1)-0.01,0),V(3.97,sh(1)+0.07,0),0.045,M(0x9aa0a6,{metalness:0.6,roughness:0.35}),16),'вывод бушприта в форштевне'));
+const spinG=new THREE.Group();boat.add(spinG);spinG.visible=false;
+const SCL=V(-1.0,2.0,2.4);
+(function(){
+  const Hd=V(MX+0.08,MT-0.35,0),T=BSP1.clone(),NS=18,NT=14,p=[],ix=[];
+  for(let i=0;i<=NS;i++){const s=i/NS;for(let j=0;j<=NT;j++){const t=j/NT;
+    const a=new THREE.Vector3().subVectors(T,Hd).multiplyScalar(1-t).add(new THREE.Vector3().subVectors(SCL,Hd).multiplyScalar(t)).multiplyScalar(s).add(Hd);
+    const b=4*t*(1-t)*Math.sin(Math.PI*Math.pow(s,0.85));a.x+=1.3*b;a.z+=1.5*b;a.y+=0.2*b;p.push(a.x,a.y,a.z);}}
+  for(let i=0;i<NS;i++)for(let j=0;j<NT;j++){const a=i*(NT+1)+j,b=a+1,c=a+NT+1,d=c+1;ix.push(a,c,b,b,c,d);}
+  const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.Float32BufferAttribute(p,3));g.setIndex(ix);g.computeVertexNormals();
+  spinG.add(lab(new THREE.Mesh(g,M(0xf4f2ec,{transparent:true,opacity:0.7,side:THREE.DoubleSide,depthWrite:false,roughness:0.9})),'асимметричный спинакер: галс на конце бушприта, фал на топе'));
+})();
+const spinClew=new THREE.Object3D();spinClew.position.copy(SCL);spinG.add(spinClew);
+function mkLine(c){const g=new THREE.BufferGeometry().setFromPoints([V(0,0,0),V(0,0.001,0)]);const ln=new THREE.Line(g,new THREE.LineBasicMaterial({color:c}));ln.userData.noPick=true;ln.frustumCulled=false;return ln;}
+function setLine(ln,a,b){const p=ln.geometry.attributes.position;p.setXYZ(0,a.x,a.y,a.z);p.setXYZ(1,b.x,b.y,b.z);p.needsUpdate=true;}
+const mainSheet=mkLine(0x2b2f36),jibSheet=mkLine(0xb8352a),spinSheet=mkLine(0x2f6fd6);
+boat.add(mainSheet,jibSheet,spinSheet);jibSheet.visible=false;spinSheet.visible=false;
+let boomA=0,jibA=0;
+
+// ---------- палубное железо ----------
+const steel=M(0xc3c8cd,{metalness:0.8,roughness:0.25}),dark=M(0x2b2f36,{roughness:0.5});
+function winch(x,y,z,l){const g=new THREE.Group();
+  const b=new THREE.Mesh(new THREE.CylinderGeometry(0.055,0.062,0.03,24),steel);b.position.y=0.015;g.add(b);
+  const d=new THREE.Mesh(new THREE.CylinderGeometry(0.044,0.05,0.08,24),steel);d.position.y=0.07;g.add(d);
+  const t=new THREE.Mesh(new THREE.CylinderGeometry(0.05,0.045,0.03,24),dark);t.position.y=0.125;g.add(t);
+  g.position.set(x,y,z);boat.add(lab(g,l));}
+const TRX=MX-2.9;
+const trav=box(0.05,0.03,1.6,steel);trav.position.set(TRX,0.315,0);boat.add(lab(trav,'погон гротового шкота поперёк кокпита'));
+const car=box(0.07,0.04,0.08,dark);car.position.set(TRX,0.35,0);boat.add(lab(car,'каретка погона: ездит вслед за гиком'));
+const hatch=box(0.62,0.04,0.62,M(0xd5dade,{roughness:0.4}));hatch.position.set(CAB0+0.31,roofY(CAB0+0.31)+0.02,0);boat.add(lab(hatch,'сдвижной люк входа в каюту'));
+const garage=box(0.45,0.06,0.7,M(0xe8ecef,{roughness:0.5}));garage.position.set(CAB0+0.85,roofY(CAB0+0.85)+0.03,0);boat.add(lab(garage,'гараж сдвижного люка'));
+const fh=box(0.45,0.035,0.45,M(0xd5dade,{roughness:0.4}));fh.position.set(2.45,sh(tt(2.45))+0.04,0);boat.add(lab(fh,'носовой люк: через него ставят и убирают спинакер'));
+boat.add(lab(rod(V(-2.30,0.88,0),V(-1.85,1.02,0.32),0.012,M(0x17191c)),'удлинитель румпеля'));
+[-1,1].forEach(sd=>{
+  const wx=-1.05;winch(wx,sh(tt(wx))+0.012,sd*(hb(tt(wx))-0.12),'лебёдка шкотов стакселя и спинакера');
+  winch(CAB0+0.2,roofY(CAB0+0.2),sd*0.72,'лебёдка фалов на крыше рубки');
+  for(let k=0;k<3;k++){const c=box(0.09,0.035,0.045,dark);c.position.set(CAB0+0.45,roofY(CAB0+0.45)+0.017,sd*(0.40+k*0.08));boat.add(lab(c,'стопоры фалов и оттяжек'));}
+  const hl=mkLine(0x2f6fd6);setLine(hl,V(CAB0+0.5,roofY(CAB0+0.5)+0.025,sd*0.48),V(MX-0.06,MB+0.05,sd*0.03));boat.add(hl);
+  const tr=box(0.5,0.012,0.025,steel);tr.position.set(MX+0.42,cabinTop(MX+0.42)+0.006,sd*0.6);boat.add(lab(tr,'погон шкота стакселя: перед мачтой, стаксель её не перекрывает'));
+  [CAB0+0.55,CAB0+1.55].forEach(px=>{const w=box(0.55,0.09,0.012,M(0x1b2530,{roughness:0.1,metalness:0.3}));w.position.set(px,CY+0.15,sd*(cabHalf(px)+0.034));boat.add(lab(w,'иллюминатор рубки'));});
+  const cl=box(0.13,0.025,0.03,steel);cl.position.set(-3.75,sh(tt(-3.75))+0.035,sd*(hb(tt(-3.75))-0.12));boat.add(lab(cl,'кормовая швартовная утка'));
+  const bc=box(0.13,0.025,0.03,steel);bc.position.set(3.0,sh(tt(3.0))+0.035,sd*(hb(tt(3.0))-0.12));boat.add(lab(bc,'носовая швартовная утка'));
+});
+// леерное ограждение, релинги, ходовые огни
+(function(){
+  const XS=[-3.55,-2.75,-1.95,-1.15,-0.35,0.45,1.25,2.05,2.8],wire=M(0x50575e,{metalness:0.5});
+  const bx=3.35,by=sh(tt(bx)),bzz=hb(tt(bx))-0.05,py=sh(0);
+  [-1,1].forEach(sd=>{
+    const tops=[],mids=[];
+    XS.forEach(x=>{const t=tt(x),z=sd*(hb(t)-0.05),y=sh(t);boat.add(lab(rod(V(x,y,z),V(x,y+0.6,z),0.011,steel,10),'леерная стойка'));tops.push(V(x,y+0.6,z));mids.push(V(x,y+0.32,z));});
+    const pz=sd*(hb(tt(-3.95))-0.08),pt=V(-3.95,py+0.6,pz);
+    boat.add(lab(tube([V(-3.95,py,pz),pt,V(-3.55,sh(tt(-3.55))+0.6,sd*(hb(tt(-3.55))-0.05))],0.012,steel),'кормовой релинг'));
+    boat.add(lab(rod(V(bx,by,sd*bzz),V(bx,by+0.6,sd*bzz),0.012,steel,10),'носовой релинг'));
+    boat.add(lab(rod(V(3.68,sh(tt(3.68)),sd*0.26),V(3.68,by+0.6,sd*0.28),0.012,steel,10),'носовой релинг'));
+    [[tops,0.6],[mids,0.32]].forEach(a=>{const pts=[V(-3.95,py+a[1],pz)].concat(a[0]);pts.push(V(bx,by+a[1],sd*bzz));boat.add(lab(tube(pts,0.003,wire),'леер'));});
+    const nl=new THREE.Mesh(new THREE.SphereGeometry(0.025,12,8),M(sd>0?0x2fa84f:0xd62828,{emissive:sd>0?0x0b3a1a:0x3a0b0b}));nl.position.set(3.62,by+0.64,sd*0.3);
+    boat.add(lab(nl,sd>0?'ходовой огонь правого борта, зелёный':'ходовой огонь левого борта, красный'));
+  });
+  boat.add(lab(tube([V(bx,by+0.6,-bzz),V(3.68,by+0.6,-0.28),V(3.86,by+0.56,0),V(3.68,by+0.6,0.28),V(bx,by+0.6,bzz)],0.012,steel),'носовой релинг'));
+})();
+// планширь по борту
+[-1,1].forEach(sd=>{const pts=[];for(let x=-3.98;x<3.9;x+=0.25){const t=tt(x);pts.push(V(x,sh(t)+0.012,sd*(hb(t)-0.01)));}pts.push(V(3.95,sh(1)+0.012,0));
+  boat.add(lab(tube(pts,0.012,M(0x9aa0a6,{metalness:0.4,roughness:0.5})),'планширь'));});
+// окраска корпуса: М5 — белый борт, на корме зелёный блок и три косые полосы, на носу косая полоса и зелёная панель с белой «5», посередине надпись клуба
+function drawHull(mode){const c=hullTexC.getContext('2d'),W=4096,H=512;
+  const X=(x,side)=>side>0?(x-X0)*PXM:2048+(L-(x-X0))*PXM,Y=y=>(YMAX-y)*PYM;
+  const G=mode==='green'?'#1d5a3f':'#1f7a52';
+  c.fillStyle=mode==='green'?G:'#f3f5f6';c.fillRect(0,0,W,H);
+  c.fillStyle='#8c979f';c.fillRect(0,Y(0.0),W,H-Y(0.0));
+  if(mode==='m5')[1,-1].forEach(side=>{
+    const poly=pts=>{c.beginPath();pts.forEach((p,i)=>{const px=X(p[0],side),py=Y(p[1]);if(i)c.lineTo(px,py);else c.moveTo(px,py);});c.closePath();c.fill();};
+    c.fillStyle=G;
+    poly([[-4.05,1.2],[-3.05,1.2],[-3.30,0.0],[-4.05,0.0]]);
+    for(let s=0;s<3;s++){const x0=-2.90+s*0.17;poly([[x0,1.2],[x0+0.08,1.2],[x0-0.17,0.0],[x0-0.25,0.0]]);}
+    poly([[1.56,1.2],[1.64,1.2],[1.38,0.06],[1.30,0.06]]);
+    poly([[1.80,1.2],[3.15,1.2],[3.15,0.10],[1.54,0.10]]);
+    const txt=(s,x,y,font,col)=>{c.save();c.fillStyle=col;c.translate(X(x,side),Y(y));c.scale(PXM/PYM,1);c.textAlign='center';c.textBaseline='middle';c.font=font;c.fillText(s,0,0);c.restore();};
+    txt('5',2.45,0.52,'700 '+Math.round(0.62*PYM)+'px Onest, Arial, sans-serif','#ffffff');
+    txt('МИСТРАЛЬ',-1.45,0.62,'600 '+Math.round(0.14*PYM)+'px "Times New Roman", Georgia, serif','#3a4148');
+    txt('парусно-гоночный клуб',-1.45,0.50,Math.round(0.055*PYM)+'px Onest, Arial, sans-serif','#3a4148');});
+  hullTex.needsUpdate=true;transomMat.color.set(mode==='green'?0x1d5a3f:mode==='m5'?0x1f7a52:0xf3f5f6);}
+
+// ---------- блок на топе: те же детали, что идут в печать ----------
+// координаты топа совпадают с flyuger.scad: x = x, y = z, z = −y, в метрах. Дно капсулы на y = 0, ось выноса пересекает ось капсулы на 62 мм
+const R=0.038,H=0.076,ANG=rad(20),cA=Math.cos(ANG),sA=Math.sin(ANG);
+const BD=V(-cA,-sA,0),CAX=V(0,0.062,0),along=(p,k)=>p.clone().addScaledVector(BD,k);
+const Jc=along(CAX,0.088), Fc=along(CAX,0.70);     // устье гнезда капсулы и устье гнезда кронштейна
+const Bo=V(Fc.x-0.02578,Fc.y-0.05494,0);           // начало координат кронштейна: середина плиты, низ
+const topG=new THREE.Group();topG.position.set(MX-Bo.x,MT-Bo.y,0);boat.add(topG);
+const topCenter=new THREE.Object3D();topCenter.position.set(-0.03,0.05,0);topG.add(topCenter);
+// STL из базы печати: геометрия приезжает позже, материал и прозрачность уже настроены
+const stlL=THREE.STLLoader?new THREE.STLLoader():null;
+function stl(name,mat){const m=new THREE.Mesh(new THREE.BufferGeometry(),mat);if(stlL)fetch('stl/'+name+'.txt').then(r=>{if(!r.ok)throw r.status;return r.text();}).then(t=>{const b=atob(t.replace(/\s+/g,'')),u=new Uint8Array(b.length);for(let i=0;i<b.length;i++)u[i]=b.charCodeAt(i);const g=stlL.parse(u.buffer);g.computeVertexNormals();m.geometry=g;}).catch(()=>{});return m;}
+function mmG(){const g=new THREE.Group();g.scale.setScalar(0.001);g.rotation.x=-Math.PI/2;return g;}
+function face(o,X,Y){o.quaternion.setFromRotationMatrix(new THREE.Matrix4().makeBasis(X,Y,X.clone().cross(Y)));return o;}
+const black=M(0x22252a,{roughness:0.55}), carbon=M(0x17191c,{roughness:0.35,metalness:0.2}), chrome=M(0xd7dbe0,{metalness:0.9,roughness:0.2});
+const pcbG=0x1d6a3a,pcbB=0x1f4f91,pcbK=0x1c1d22,chipC=0x101114;
+function board(w,d,c,chips,label){const g=new THREE.Group();const b=box(w,0.0016,d,M(c,{roughness:0.5}));g.add(b);(chips||[]).forEach(ch=>{const m=box(ch[2],ch[4]||0.0012,ch[3],M(ch[5]||chipC,{roughness:0.4,metalness:ch[5]?0.6:0}));m.position.set(ch[0],(ch[6]===-1?-1:1)*(0.0008+(ch[4]||0.0012)/2),ch[1]);g.add(m);});g.userData.label=label;return g;}
+// гребёнки выводов и точки подключения: провода строятся от вывода к выводу
+const PIN={},pinMat=M(0xd4af37,{metalness:0.8,roughness:0.3}),P254=0.00254;
+function header(g,key,names,x0,z0,dx,dz,side,own){PIN[key]=PIN[key]||{};names.forEach((n,i)=>{const x=x0+i*dx,z=z0+i*dz;
+  const p=box(0.0007,0.0036,0.0007,pinMat);p.position.set(x,side*0.0026,z);g.add(p);
+  const a=new THREE.Object3D();a.position.set(x,side*0.0044,z);g.add(a);const b=new THREE.Object3D();b.position.set(x,side*0.0094,z);g.add(b);
+  PIN[key][n]={a,b,own:own||g};});}
+function marker(g,key,n,pos,nrm,own){PIN[key]=PIN[key]||{};const a=new THREE.Object3D();a.position.set(pos[0],pos[1],pos[2]);g.add(a);
+  const b=new THREE.Object3D();b.position.set(pos[0]+nrm[0]*0.005,pos[1]+nrm[1]*0.005,pos[2]+nrm[2]*0.005);g.add(b);PIN[key][n]={a,b,own:own||g};}
+// корпус-капсула и крышка
+(function(){
+  const g=new THREE.Group(),s=mmG();g.add(s);
+  s.add(stl('capsule_bottom_d',M(0x2a2d33,{roughness:0.5,side:THREE.DoubleSide})));
+  [['5V',0.0012,-0.0012],['A',0.0012,0.0012],['GND',-0.0012,-0.0012],['B',-0.0012,0.0012]].forEach(c=>marker(g,'CT',c[0],[-0.0325,0.0483+c[1],c[2]],[1,0,0]));
+  reg(lab(g,'корпус капсулы: ASA, Ø76 × 72 мм, гнездо трубки Ø33 глубиной 45 мм заодно с корпусом, внутри колыбель MT6701'),topG,{s:1,shell:true,op:0.18});
+})();
+// этажерка и платы на своих местах
+const mt=board(0.01722,0.01508,pcbK,[[0,0,0.004,0.005,0.0012,null,-1]],'MT6701, плата 17,22 × 15,08 мм — угол оси чашек → скорость ветра. Лежит в колыбели, микросхемой вниз, к магниту оси');
+header(mt,'MT',['VCC','GND','SDA','SCL','OUT'],0.0076,-0.0051,0,P254,1);reg(mt,topG,{s:2,e:[0,-0.01,0.07],p:[0,0.022,0]});
+(function(){const s=mmG();const c=stl('mt_clamp',M(0x4a505a,{roughness:0.6}));c.position.z=22.8;s.add(c);reg(lab(s,'планка MT6701: 2 винта М2,5 в термовставки стоек колыбели'),topG,{s:2,e:[0,0.03,0.07]});})();
+(function(){const s=mmG();const c=stl('rack',M(0x556070,{roughness:0.6}));c.position.set(0,11.3,24);c.rotation.set(Math.PI/2,0,Math.PI,'ZYX');s.add(c);reg(lab(s,'этажерка плат: ASA, 2 винта М2,5 × 10 снизу через дно'),topG,{s:3,e:[0.09,0.02,0]});})();
+const gy=board(0.024,0.0236,pcbB,[[0,0,0.004,0.004]],'гироскоп L3G4200D на плате GY-50, 24 × 23,6 мм: на 4 стойках этажерки, винты М2,5. Адрес 0x68');
+header(gy,'GY',['VCC','GND','SCL','SDA','SDO','CS','DR','INT'],-0.0098,-0.0089,0,P254,1);face(gy,V(1,0,0),V(0,0,-1));reg(gy,topG,{s:3,e:[0.09,0.02,-0.05],p:[0,0.0315,-0.0166]});
+const cr=board(0.062,0.0184,0x7a6a3a,[],'плата-носитель 62 × 18,4 мм: макетная плата, на ней запаяны SuperMini, MAX3485 и защита; 4 винта М2,5 через распорки');
+face(cr,V(1,0,0),V(0,0,1));reg(cr,topG,{s:4,e:[0.09,0.02,0.05],p:[0,0.0342,-0.0085]});
+const mxt=board(0.0209,0.015,pcbB,[[0.002,0.001,0.005,0.004]],'MAX3485 — передатчик RS-485 в кабель, 460 800 бод. Запаян на штырях, размер примерный');
+header(mxt,'MXT',['RO','RE','DE','DI','VCC','GND'],-0.004,-0.005,P254,0,-1);header(mxt,'MXT',['A','B'],-0.0095,0.001,0,P254,-1);face(mxt,V(1,0,0),V(0,0,1));reg(mxt,topG,{s:4,e:[0.09,0.02,0.09],p:[0.01345,0.034,-0.0044]});
+const tvt=board(0.0056,0.0104,pcbG,[[0,-0.002,0.002,0.003],[0,0.002,0.002,0.003,0.002]],'защита у ввода кабеля: SM712 на линиях A и B, SMBJ5.0A на +5 В');
+header(tvt,'TVSt',['5V','A','GND','B'],-0.0021,-0.0038,0,P254,-1);header(tvt,'TVSto',['5V','A','GND','B'],0.0021,-0.0038,0,P254,-1);face(tvt,V(1,0,0),V(0,0,1));reg(tvt,topG,{s:4,e:[0.09,0.02,0.09],p:[0.0272,0.034,-0.0044]});
+const c3=board(0.01785,0.0241,pcbK,[[0,0.002,0.005,0.005,0.0008],[0,-0.0105,0.009,0.007,0.0032,0xb8bcc2]],'ESP32-C3 SuperMini, 24,1 × 17,85 мм с выносом USB: опрашивает датчики 200 раз/с, шлёт пакеты вниз 100 раз/с. Запаян на штырях');
+header(c3,'C3',['5V','GND','3V3','IO4','IO3','IO2','IO1','IO0'],-0.0076,-0.0089,0,P254,-1);header(c3,'C3',['IO5','IO6','IO7','IO8','IO9','IO10','IO20','IO21'],0.0076,-0.0089,0,P254,-1);face(c3,V(0,-1,0),V(0,0,1));reg(c3,topG,{s:4,e:[0.09,0.02,0.09],p:[-0.01195,0.0342,-0.0044]});
+const as=board(0.042,0.042,pcbG,[[0,0,0.005,0.005]],'AS5600 — угол флюгера, шаг 0,09°. Плата 42 × 42 мм на 4 стойках крышки; зазор до магнита 1,1 мм');
+header(as,'AS',['VCC','GND','SCL','SDA','OUT'],-0.0051,-0.018,P254,0,-1);reg(as,topG,{s:5,e:[0,0.06,0],p:[0,0.0459,0]});
+(function(){const g=new THREE.Group(),s=mmG();g.add(s);const c=stl('capsule_lid',M(0x3a3e45,{roughness:0.5,side:THREE.DoubleSide}));c.position.z=72;s.add(c);
+  [[0.054,0.057],[0.081,0.084]].forEach(b=>{g.add(lab(rod(V(0,b[0],0),V(0,b[1],0),0.0035,chrome,20),'подшипник 683 оси флюгера'));});
+  reg(lab(g,'крышка капсулы: ASA, воротник и башенка под 2 подшипника оси флюгера, 4 стойки AS5600; 4 винта М3 в термовставки'),topG,{s:5,e:[0,0.11,0],shell:true,op:0.22});})();
+// флюгер: ступица, плечо, перо 60 × 175, носик-противовес
+const vaneG=new THREE.Group();
+(function(){
+  const AY=0.1028,s=mmG();vaneG.add(s);const hub=stl('vane_hub',M(0x444a52,{roughness:0.55}));hub.position.z=84.8;s.add(lab(hub,'ступица флюгера: ASA, на оси держится установочным винтом М3 в лыску'));
+  vaneG.add(lab(rod(V(-0.010,AY,0),V(-0.325,AY,0),0.002,carbon,10),'плечо: карбоновая трубка 4 × 3 мм, 280 мм до ¼ хорды пера'));
+  vaneG.add(lab(rod(V(0.010,AY,0),V(0.033,AY,0),0.002,carbon,10),'короткое плечо противовеса'));
+  const nb=stl('nose_body',M(0x3a3e45,{roughness:0.5}));nb.position.set(38,0,102.8);nb.rotation.y=Math.PI/2;s.add(lab(nb,'носик-противовес Ø20 × 48: цилиндр и конус к острию, внутри свинцовая дробь на эпоксидке; смотрит туда, откуда дует'));
+  const nc=stl('nose_cap',M(0x3a3e45,{roughness:0.5}));nc.position.set(38,0,102.8);nc.rotation.y=-Math.PI/2;s.add(lab(nc,'крышка носика с гнездом трубки противовеса: вклеивается после засыпки дроби'));
+  const x0=-0.265,x1=-0.325,y0=AY-0.0875,y1=AY+0.0875,fm=M(0x2a2d33,{roughness:0.5});
+  [[[x0,y0],[x0,y1]],[[x0,y1],[x1,y1]],[[x1,y1],[x1,y0]],[[x1,y0],[x0,y0]],[[x0,y1],[x1,y0]]].forEach(e=>vaneG.add(lab(rod(V(e[0][0],e[0][1],0),V(e[1][0],e[1][1],0),0.0012,fm,8),'рамка пера: ASA, кромка 2 × 1,2 мм')));
+  const sh=new THREE.Shape();sh.moveTo(x0,y0);sh.lineTo(x0,y1);sh.lineTo(x1,y1);sh.lineTo(x1,y0);sh.closePath();
+  vaneG.add(lab(new THREE.Mesh(new THREE.ShapeGeometry(sh),M(0xe9eef0,{transparent:true,opacity:0.5,side:THREE.DoubleSide,depthWrite:false,roughness:0.2})),'перо 60 × 175 мм: рамка ASA и плёнка 25 мкм, удлинение 3'));
+  vaneG.add(lab(rod(V(0,0.0519,0),V(0,0.100,0),0.0015,M(0xc9a227,{metalness:0.8,roughness:0.3}),12),'ось флюгера Ø3, латунь: немагнитная'));
+  vaneG.add(lab(rod(V(0,0.0490,0),V(0,0.0535,0),0.0045,M(0xc9a227,{metalness:0.6,roughness:0.4}),18),'стаканчик магнита на нижнем конце оси'));
+  vaneG.add(lab(rod(V(0,0.0486,0),V(0,0.0511,0),0.003,M(0x9b2335,{metalness:0.5}),18),'магнит оси флюгера: над AS5600 на 1,1 мм'));
+})();
+reg(lab(vaneG,'флюгер'),topG,{s:6,e:[0,0.16,0]});
+// чашки: конус Ø50, радиус 60
+const cupG=new THREE.Group();
+(function(){
+  const s=mmG();cupG.add(s);const hub=stl('cup_hub',M(0x2a2d33,{roughness:0.55}));hub.position.z=-38;s.add(lab(hub,'ступица чашек: ASA, на оси держится установочным винтом М3 в лыску'));
+  cupG.add(lab(rod(V(0,-0.035,0),V(0,0.016,0),0.0015,M(0xc9a227,{metalness:0.8,roughness:0.3}),12),'ось чашек Ø3, латунь: немагнитная'));
+  [[0,0.003],[0.011,0.014]].forEach(b=>cupG.add(lab(rod(V(0,b[0],0),V(0,b[1],0),0.0035,chrome,20),'подшипник 683 оси чашек')));
+  cupG.add(lab(rod(V(0,0.0144,0),V(0,0.0189,0),0.0045,M(0xc9a227,{metalness:0.6,roughness:0.4}),18),'стаканчик магнита на верхнем конце оси'));
+  cupG.add(lab(rod(V(0,0.0164,0),V(0,0.0193,0),0.003,M(0x9b2335,{metalness:0.5}),18),'магнит оси чашек: под MT6701 на 1,1 мм'));
+  for(let i=0;i<3;i++){const h=new THREE.Group();h.rotation.y=i*2*Math.PI/3;
+    h.add(lab(rod(V(0.004,-0.032,0),V(0.0429,-0.032,0),0.0015,carbon,10),'спица Ø3: карбоновый пруток'));
+    const c=mmG();const m=stl('cup',M(0x2a2d33,{side:THREE.DoubleSide,roughness:0.5}));m.position.set(60,-9,-32);m.rotation.x=-Math.PI/2;c.add(lab(m,'чашка: конус 90°, Ø50, радиус 60 мм'));h.add(c);
+    cupG.add(h);}
+})();
+reg(lab(cupG,'чашки'),topG,{s:6,e:[0,-0.12,0]});
+// вынос: трубка в гнёздах корпуса и кронштейна, по 2 болта
+(function(){
+  const g=new THREE.Group();
+  const boom=rod(along(CAX,0.043),along(Fc,0.07),0.0125,carbon,20);lab(boom,'вынос: карбоновая трубка 25 × 23 мм, 0,73 м, 20° вверх, вылет от устья 0,7 м; частота ≈ 19 Гц, без подкоса; кабель внутри, съёмная');
+  boom.userData.shell=true;boom.userData.op=0.3;SHELLS.push(boom);g.add(boom);
+  const bolt=(p,half,l)=>{g.add(lab(rod(p.clone().setZ(-half-0.005),p.clone().setZ(half+0.005),0.0025,chrome,10),l));[-1,1].forEach(sd=>g.add(lab(rod(p.clone().setZ(sd*half),p.clone().setZ(sd*(half+0.0012)),0.0075,chrome,18),'широкая шайба М5 × 15')));};
+  [0.058,0.078].forEach(k=>bolt(along(CAX,k),0.0155,'болт М5 × 45 с распоркой внутри трубки: гнездо капсулы'));
+  [0.030,0.060].forEach(k=>bolt(along(Fc,k),0.0165,'болт М5 × 45 с распоркой внутри трубки: гнездо кронштейна'));
+  const s=mmG();s.position.copy(Bo);g.add(s);s.add(lab(stl('mast_bracket_d',M(0x2a2d33,{roughness:0.55})),'кронштейн мачты: ASA, плита 8 мм, полый короб со стенками 4 мм, гнездо Ø35 глубиной 70 мм; 4 болта М5 в заклёпки-гайки'));
+  [[-0.052,-0.025],[-0.052,0.025],[0.052,-0.025],[0.052,0.025]].forEach(p=>{const b=new THREE.Mesh(new THREE.CylinderGeometry(0.0045,0.0045,0.003,6),chrome);b.position.set(Bo.x+p[0],Bo.y+0.0095,p[1]);g.add(lab(b,'болт М5 × 16 в заклёпку-гайку на крышке мачты'));});
+  reg(g,topG,{s:7});
+})();
+
+// ---------- блок в кокпите ----------
+const cpG=new THREE.Group();cpG.position.set(CAB_AFT-0.035,0.92,0.52);cpG.rotation.y=-Math.PI/2;boat.add(cpG);
+function cpToBoat(u,v,w){return V(cpG.position.x-w,cpG.position.y+v,cpG.position.z+u);}
+const dc=document.createElement('canvas');dc.width=400;dc.height=300;const dctx=dc.getContext('2d');const dtex=new THREE.CanvasTexture(dc);
+(function(){
+  const base=box(0.16,0.12,0.062,M(0xd9dcd6,{roughness:0.6,side:THREE.DoubleSide}));base.position.set(0,0,-0.004);
+  reg(lab(base,'коробка IP67, не меньше 160 × 120 × 70 мм, светлая. Все отверстия снизу'),cpG,{s:8,shell:true,op:0.16});
+  const gl=new THREE.Mesh(new THREE.CylinderGeometry(0.0065,0.0075,0.016,20),black);gl.position.set(0,-0.068,-0.004);reg(lab(gl,'гермоввод PG7: сюда входит кабель с мачты'),cpG,{s:8});
+  const tg=new THREE.Group();const tb=new THREE.Mesh(new THREE.CylinderGeometry(0.006,0.006,0.012,20),chrome);tb.position.y=-0.066;tg.add(tb);tg.add(rod(V(0,-0.07,0),V(0,-0.082,0.004),0.0015,chrome));tg.position.x=-0.045;tg.position.z=-0.004;reg(lab(tg,'тумблер IP67 с колпачком: выключает всё, кроме зарядки'),cpG,{s:8});
+  const usb=box(0.014,0.008,0.01,M(0x3a3f45,{roughness:0.9}));usb.position.set(0.045,-0.064,-0.004);reg(lab(usb,'USB-C с резиновым колпачком: зарядка и прошивка'),cpG,{s:8});
+  [['5V',-0.0015,-0.0015],['A',0.0015,-0.0015],['GND',-0.0015,0.0015],['B',0.0015,0.0015],['SH',0,0]].forEach(c=>marker(gl,'CC',c[0],[c[1],0.0085,c[2]],[0,1,0]));
+  marker(tg,'SW','IN',[-0.0025,-0.0595,0],[0,1,0]);marker(tg,'SW','OUT',[0.0025,-0.0595,0],[0,1,0]);
+  // питание
+  const lipo=box(0.06,0.09,0.009,M(0xc7cad0,{metalness:0.5,roughness:0.35}));lipo.position.set(-0.035,-0.006,-0.026);
+  marker(lipo,'BAT','+',[0.004,-0.045,0],[0,-1,0]);marker(lipo,'BAT','-',[-0.004,-0.045,0],[0,-1,0]);
+  reg(lab(lipo,'LiPo 906090, 6000 мА·ч: ≈ 40 часов работы'),cpG,{s:9,e:[-0.08,0,-0.02]});
+  const vb=(w,h,c,ch,l,pos,s,e,hdr)=>{const b=board(w,h,c,ch,l);if(hdr)hdr(b);b.rotation.x=Math.PI/2;b.position.set(pos[0],pos[1],pos[2]);return reg(b,cpG,{s,e});};
+  vb(0.028,0.017,pcbB,[[0,0,0.006,0.005],[0.011,0,0.006,0.008,0.003,0xb8bcc2]],'TP4056 Type-C: зарядка с защитой',[-0.035,-0.044,-0.012],9,[-0.04,-0.05,0.03],
+    b=>{header(b,'TP',['B+','B-'],-0.012,-0.002,0,0.004,1);header(b,'TP',['OUT+','OUT-'],-0.012,-0.0068,0,0.0136,1);});
+  vb(0.020,0.015,pcbB,[[0,0,0.004,0.004],[0.006,0,0.004,0.004,0.002]],'TPS63020: ровные 3,3 В всем модулям',[0,-0.044,-0.012],9,[0,-0.06,0.03],
+    b=>header(b,'TPS',['VIN','GND','VOUT'],-0.0025,0.005,P254,0,1));
+  vb(0.036,0.017,pcbB,[[-0.008,0,0.004,0.003],[0.006,0,0.006,0.006,0.004,0x5a4a3a]],'MT3608: 5,0 В на мачту. Выставить мультиметром до подключения кабеля',[0.045,-0.044,-0.012],9,[0.05,-0.05,0.03],
+    b=>{header(b,'MT3',['VIN+','VIN-'],-0.016,-0.0025,0,0.005,1);header(b,'MT3',['VOUT+','VOUT-'],0.016,-0.0025,0,0.005,1);});
+  const tvs=box(0.014,0.008,0.004,M(pcbG));tvs.position.set(0,-0.053,0.006);
+  ['5V','A','GND','B'].forEach((n,i)=>{marker(tvs,'TVSc',n,[-0.0045+i*0.003,-0.004,0],[0,-1,0]);marker(tvs,'TVSco',n,[-0.0045+i*0.003,0.004,0],[0,1,0]);});
+  reg(lab(tvs,'защита ввода кабеля: SM712 на A и B, SMBJ5.0A на +5 В'),cpG,{s:9,e:[0,-0.06,0.06]});
+  const pp=new THREE.Mesh(new THREE.CylinderGeometry(0.003,0.003,0.0015,16),M(0xe8c21a,{roughness:0.5}));pp.position.set(0.032,-0.056,0.006);
+  marker(pp,'PP','in',[0.0032,0,0],[1,0,0]);marker(pp,'PP','out',[-0.0032,0,0],[-1,0,0]);
+  reg(lab(pp,'предохранитель PPTC 0,2 А: самовосстанавливающийся, на +5 В к мачте'),cpG,{s:9,e:[0.03,-0.06,0.06]});
+  vb(0.012,0.008,pcbB,[[-0.002,0.0005,0.0018,0.005,0.0018,0xd8c79a],[0.002,0.0005,0.0018,0.005,0.0018,0xd8c79a]],'делитель 100 кОм / 100 кОм: по нему ESP32-S3 меряет заряд аккумулятора (IO2)',[-0.022,-0.033,0.003],9,[-0.02,-0.05,0.05],
+    b=>header(b,'DIV',['TOP','MID','BOT'],-0.0025,-0.003,P254,0,1));
+  // мозг и приёмник: у DevKitC-1 две гребёнки по 22 вывода, порядок — как на плате
+  const J1=['3V3','3V3b','RST','IO4','IO5','IO6','IO7','IO15','IO16','IO17','IO18','IO8','IO3','IO46','IO9','IO10','IO11','IO12','IO13','IO14','5V','GND1'];
+  const J3=['GND2','TX','RX','IO1','IO2','IO42','IO41','IO40','IO39','IO38','IO37','IO36','IO35','IO0','IO45','IO48','IO47','IO21','IO20','IO19','GND3','GND4'];
+  vb(0.069,0.026,0x1e3a6e,[[0.022,0,0.018,0.018,0.003,0xb8bcc2],[-0.03,0,0.008,0.006,0.003,0xb8bcc2]],'ESP32-S3-DevKitC-1 N16R8 — главный: вычитает качку, считает истинный ветер и заходы, рисует экран',[0.008,-0.012,-0.012],10,[0,0,0.045],
+    b=>{header(b,'S3',J1,0.0267,-0.0115,-P254,0,1);header(b,'S3',J3,0.0267,0.0115,-P254,0,1);});
+  vb(0.022,0.014,pcbB,[[0.002,0,0.005,0.004]],'MAX3485 — приёмник данных с топа',[0.055,0.012,-0.014],10,[0.07,0,0.02],
+    b=>{header(b,'MXR',['RO','RE','DE','DI','VCC','GND'],-0.004,-0.005,P254,0,1);header(b,'MXR',['A','B'],-0.0095,0.001,0,P254,1);});
+  // датчики
+  const bno=board(0.025,0.020,0x5a2a82,[[0,0,0.005,0.005]],'BNO085 — крен, дифферент, курс. В коробке в кокпите, вверху справа, в глубине за стрелками. Лежит горизонтально, ось X (красная стрелка) — к носу');
+  const ar=new THREE.Mesh(new THREE.ConeGeometry(0.0022,0.006,12),M(0xd62828));ar.rotation.x=-Math.PI/2;ar.position.set(0,0.002,-0.006);bno.add(ar);
+  header(bno,'BNO',['VIN','GND','P0','P1','SCL','DI','SDA','CS','INT','RST'],-0.0114,0.0082,P254,0,1);
+  bno.position.set(0.05,0.045,-0.012);reg(bno,cpG,{s:11,e:[0.06,0.05,0.02]});
+  const gps=board(0.025,0.025,pcbB,[[0,0,0.018,0.018,0.004,0xc9b48a]],'GPS u-blox M10 (QUESCAN AN181): скорость и курс 10 раз/с. Антенной вверх');
+  header(gps,'GPS',['VCC','GND','TX','RX'],-0.0038,0.0105,P254,0,1);
+  gps.position.set(0.005,0.047,-0.012);reg(gps,cpG,{s:11,e:[0,0.06,0.02]});
+  // экран, стрелки, «ноль», крышка
+  const disp=box(0.103,0.078,0.0012,M(0x1c1c1c,{roughness:0.6}));disp.position.set(-0.022,0.012,0.0235);
+  const scr=new THREE.Mesh(new THREE.PlaneGeometry(0.0848,0.0636),new THREE.MeshBasicMaterial({map:dtex}));scr.position.set(0,0.002,0.0011);disp.add(lab(scr,'экран 4,2″ e-paper, 400 × 300: перерисовываются только цифры'));
+  const eh=new THREE.Group();eh.rotation.x=-Math.PI/2;eh.position.set(-0.045,0,-0.0006);disp.add(eh);
+  header(eh,'EP',['BUSY','RST','DC','CS','CLK','DIN','GND','VCC'],0,-0.0089,0,P254,1,disp);
+  reg(lab(disp,'экран 4,2″ e-paper WeAct, ч/б'),cpG,{s:12,e:[0,0,0.07]});
+  const lh=new THREE.Mesh(new THREE.SphereGeometry(0.0028,16,12),ledH);lh.position.set(0.055,0.040,0.025);
+  marker(lh,'LH','A',[0.001,0,-0.0028],[0,0,-1]);marker(lh,'LH','K',[-0.001,0,-0.0028],[0,0,-1]);
+  reg(lab(lh,'стрелка «заход»: жёлтый светодиод. Делать ли стрелки — не решено'),cpG,{s:12,e:[0.02,0,0.08]});
+  const ll=new THREE.Mesh(new THREE.SphereGeometry(0.0028,16,12),ledL);ll.position.set(0.055,0.022,0.025);
+  marker(ll,'LL','A',[0.001,0,-0.0028],[0,0,-1]);marker(ll,'LL','K',[-0.001,0,-0.0028],[0,0,-1]);
+  reg(lab(ll,'стрелка «отход»: красный светодиод. Делать ли стрелки — не решено'),cpG,{s:12,e:[0.02,0,0.08]});
+  const pad=box(0.02,0.02,0.0008,M(0xb87333,{metalness:0.7,roughness:0.3}));pad.position.set(0.055,-0.012,0.0275);
+  marker(pad,'PAD','S',[0,0,-0.0004],[0,0,-1]);
+  reg(lab(pad,'сенсор «ноль»: держать палец 3 с — крен и дифферент обнулятся. Работает через крышку'),cpG,{s:12,e:[0.02,0,0.08]});
+  const lid=box(0.16,0.12,0.006,M(0xd6ecf2,{transparent:true,opacity:0.22,roughness:0.08,depthWrite:false}));lid.position.set(0,0,0.032);reg(lab(lid,'прозрачная крышка'),cpG,{s:12,e:[0,0,0.11]});
+})();
+
+// ---------- кабель: топ → мачта → M12 → рубка → кокпит ----------
+const tp=(x,y,z)=>V(topG.position.x+x,topG.position.y+y,topG.position.z+z);
+const ROUTE=[tp(-0.0325,0.0483,0),tp(-0.041,0.0453,0),tp(Jc.x,Jc.y,0),tp(Fc.x+0.02*cA,Fc.y+0.02*sA,0),tp(Fc.x-0.05*cA,Fc.y-0.05*sA,0),tp(Bo.x-0.042,Bo.y+0.012,0),tp(Bo.x-0.042,Bo.y-0.03,0),
+  V(MX,MT-0.16,0),V(MX,MT-0.6,0),V(MX,MB+0.6,0),V(MX,MB+0.05,0),V(MX,MB-0.05,0),V(MX-0.05,MB-0.075,0.01),
+  V(MX-0.15,roofY(MX-0.15)-0.075,0.03),V(MX-0.24,roofY(MX-0.24)-0.075,0.048),V(MX-0.33,roofY(MX-0.33)-0.075,0.066),
+  V(MX-0.75,roofY(MX-0.75)-0.08,0.18),V(CAB_AFT+0.25,roofY(CAB_AFT+0.25)-0.08,0.42),
+  V(CAB_AFT+0.06,roofY(CAB_AFT+0.06)-0.09,0.52),V(CAB_AFT+0.03,0.81,0.52),V(CAB_AFT-0.04,0.81,0.52),cpToBoat(0,-0.078,-0.004)];
+const routeCurve=new THREE.CatmullRomCurve3(ROUTE,false,'centripetal');
+const cableG=new THREE.Group();
+cableG.add(lab(new THREE.Mesh(new THREE.TubeGeometry(routeCurve,900,0.0028,8),M(0x8a9099,{roughness:0.6})),'кабель RVSP: 4 жилы, витая пара в экране, ≈ 15–20 м, 24AWG. Покупать последним'));
+(function(){
+  const a=V(MX-0.15,roofY(MX-0.15)-0.075,0.03),b=V(MX-0.24,roofY(MX-0.24)-0.075,0.048),c=V(MX-0.33,roofY(MX-0.33)-0.075,0.066);
+  cableG.add(lab(rod(a,b,0.009,black,20),'разъём M12 под подволоком у мачты, половинка с мачты: отстёгивается, когда снимают мачту'));
+  cableG.add(lab(rod(b,c,0.0095,chrome,20),'разъём M12, половинка к рубке: пристёгивается при постановке мачты'));
+  const st=box(0.18,0.02,0.13,M(0x9aa0a6,{metalness:0.7,roughness:0.3}));st.position.set(MX,MB+0.01,0);cableG.add(lab(st,'степс мачты на крыше рубки: кабель уходит вниз через пятку мачты прямо в каюту. Проход под мачтой загерметизировать'));
+  const sl=new THREE.Mesh(new THREE.CylinderGeometry(0.011,0.011,0.03,20),black);sl.position.set(MX,MB-0.04,0);cableG.add(lab(sl,'уплотнение прохода кабеля под пяткой мачты, внутри каюты'));
+})();
+reg(cableG,boat,{s:13,w:true});
+const routeLine=new THREE.Line(new THREE.BufferGeometry().setFromPoints(routeCurve.getPoints(600)),new THREE.LineBasicMaterial({color:0x0d6b78,depthTest:false,transparent:true,opacity:0.95}));
+routeLine.renderOrder=999;routeLine.userData.noPick=true;reg(routeLine,boat,{s:13,w:true,route:true});
+function routeColor(){routeLine.material.color.set(css('--accent')||'#0d6b78');}
+routeColor();try{matchMedia('(prefers-color-scheme: dark)').addEventListener('change',routeColor);}catch(e){}
+new MutationObserver(routeColor).observe(document.documentElement,{attributes:true,attributeFilter:['data-theme']});
+
+// ---------- проводка: каждый провод от вывода к выводу, по таблицам проводов из хранилища ----------
+const NM={BNO:'BNO085',S3:'ESP32-S3',EP:'экран',GPS:'GPS',MXR:'MAX3485',TP:'TP4056',TPS:'TPS63020',MT3:'MT3608',PP:'PPTC 0,2 А',TVSc:'защита, вход кабеля',TVSco:'защита, выход',CC:'кабель с мачты',SW:'тумблер',BAT:'LiPo',LH:'светодиод «заход»',LL:'светодиод «отход»',PAD:'сенсор «ноль»',DIV:'делитель',C3:'ESP32-C3',AS:'AS5600',MT:'MT6701',GY:'GY-50',MXT:'MAX3485',TVSt:'защита, вход кабеля',TVSto:'защита, выход',CT:'кабель с мачты'};
+const WC={p5:['+5 В','#d62828'],p33:['3,3 В','#f28c28'],gnd:['земля (GND)','#1a1a1a'],bat:['аккумулятор → тумблер → преобразователи','#ff8a8a'],sda:['I²C SDA — данные','#2f7fe0'],scl:['I²C SCL — такт','#2fa84f'],sck:['SPI — такт','#f2d024'],mosi:['SPI — данные к модулю','#f4f4f4'],miso:['SPI — данные от модуля','#22b8c8'],cs:['SPI — выбор модуля','#e05fa0'],ctl:['служебные: INT, RST, DC, BUSY, делитель','#7a8794'],uart:['UART: GPS и данные с мачты','#b07cf0'],rs:['RS-485: A и B','#9a4fd6'],led:['стрелки и сенсор «ноль»','#ffd23f'],cb:['жила кабеля, коричневая: +5 В','#8a5a2b'],cw:['жила кабеля, белая: A','#e9e9e9'],cu:['жила кабеля, синяя: GND','#2f6fd6'],ck:['жила кабеля, чёрная: B','#111111'],sh:['оплётка кабеля','#b0b5ba']};
+const WIRES={cp:[
+ ['BNO.VIN','S3.3V3','p33','питание'],['BNO.GND','S3.GND1','gnd','земля'],['BNO.P0','S3.3V3','p33','P0 на 3,3 В — режим SPI'],['BNO.P1','S3.3V3','p33','P1 на 3,3 В — режим SPI'],
+ ['BNO.SCL','S3.IO12','sck','SCL (SCK): такт SPI'],['BNO.DI','S3.IO11','mosi','DI (MOSI): команды датчику'],['BNO.SDA','S3.IO13','miso','SDA (MISO): углы и курс'],['BNO.CS','S3.IO10','cs','CS: выбор датчика'],['BNO.INT','S3.IO9','ctl','INT: «данные готовы», обязателен'],['BNO.RST','S3.IO8','ctl','RST: сброс, обязателен'],
+ ['EP.VCC','S3.3V3b','p33','питание'],['EP.GND','S3.GND1','gnd','земля'],['EP.CLK','S3.IO18','sck','CLK: такт SPI экрана — своя шина, не как у датчика'],['EP.DIN','S3.IO17','mosi','DIN: картинка на экран'],['EP.CS','S3.IO16','cs','CS: выбор экрана'],['EP.DC','S3.IO15','ctl','DC: команда или данные'],['EP.RST','S3.IO7','ctl','RST: сброс экрана'],['EP.BUSY','S3.IO6','ctl','BUSY: экран занят перерисовкой'],
+ ['GPS.VCC','S3.3V3b','p33','питание'],['GPS.GND','S3.GND2','gnd','земля'],['GPS.TX','S3.IO5','uart','TX → ESP32: скорость и курс'],['GPS.RX','S3.IO4','uart','RX ← ESP32: настройка 10 раз/с при включении'],
+ ['MXR.VCC','S3.3V3b','p33','питание'],['MXR.GND','S3.GND2','gnd','земля'],['MXR.RO','S3.IO1','uart','RO: данные с мачты'],['MXR.DE','S3.GND2','gnd','DE на GND: передатчик выключен'],['MXR.RE','S3.GND2','gnd','RE на GND: приёмник всегда включён'],['MXR.A','TVSco.A','rs','A через SM712'],['MXR.B','TVSco.B','rs','B через SM712'],
+ ['PAD.S','S3.IO14','led','сенсор «ноль»'],['LH.A','S3.IO40','led','стрелка «заход»: через резистор 56–68 Ом (схема стрелок не решена)'],['LH.K','S3.GND3','gnd','земля светодиода'],['LL.A','S3.IO41','led','стрелка «отход»: через резистор 68 Ом (схема стрелок не решена)'],['LL.K','S3.GND3','gnd','земля светодиода'],
+ ['DIV.TOP','SW.OUT','bat','верх делителя — после тумблера'],['DIV.MID','S3.IO2','ctl','середина делителя → IO2: заряд на экране'],['DIV.BOT','S3.GND4','gnd','низ делителя'],
+ ['BAT.+','TP.B+','bat','плюс аккумулятора'],['BAT.-','TP.B-','gnd','минус аккумулятора'],['TP.OUT+','SW.IN','bat','плюс через защиту модуля → тумблер'],['SW.OUT','TPS.VIN','bat','после тумблера → TPS63020'],['SW.OUT','MT3.VIN+','bat','после тумблера → MT3608'],
+ ['TP.OUT-','TPS.GND','gnd','общая земля'],['TP.OUT-','MT3.VIN-','gnd','общая земля'],['TPS.VOUT','S3.3V3','p33','3,3 В на плату и все модули'],['TPS.GND','S3.GND3','gnd','земля платы'],
+ ['MT3.VOUT+','PP.in','p5','5,0 В → предохранитель'],['PP.out','TVSco.5V','p5','5 В → SMBJ5.0A → кабель'],['MT3.VOUT-','TVSco.GND','gnd','земля кабеля'],
+ ['CC.5V','TVSc.5V','cb','контакт 1: +5 В на топ'],['CC.A','TVSc.A','cw','контакт 2: A'],['CC.GND','TVSc.GND','cu','контакт 3: земля'],['CC.B','TVSc.B','ck','контакт 4: B'],['CC.SH','TVSc.GND','sh','оплётка на GND — только здесь, с одного конца']],
+ top:[
+ ['AS.VCC','C3.3V3','p33','питание'],['AS.GND','C3.GND','gnd','земля'],['AS.SDA','C3.IO6','sda','шина датчиков'],['AS.SCL','C3.IO7','scl','такт шины'],
+ ['MT.VCC','C3.3V3','p33','питание'],['MT.GND','C3.GND','gnd','земля'],['MT.SDA','C3.IO6','sda','плата в режиме I²C'],['MT.SCL','C3.IO7','scl','такт шины'],
+ ['GY.VCC','C3.3V3','p33','питание'],['GY.GND','C3.GND','gnd','земля'],['GY.SCL','C3.IO7','scl','такт шины'],['GY.SDA','C3.IO6','sda','шина датчиков'],['GY.CS','C3.3V3','p33','CS на 3,3 В — режим I²C'],['GY.SDO','C3.GND','gnd','SDO на GND — адрес 0x68'],
+ ['MXT.VCC','C3.3V3','p33','питание'],['MXT.GND','C3.GND','gnd','земля'],['MXT.DI','C3.IO10','uart','DI: данные о ветре, 460 800 бод'],['MXT.DE','C3.3V3','p33','DE на 3,3 В: передатчик всегда включён'],['MXT.RE','C3.3V3','p33','RE на 3,3 В: приёмник выключен'],['MXT.A','TVSto.A','rs','A через SM712'],['MXT.B','TVSto.B','rs','B через SM712'],
+ ['TVSto.5V','C3.5V','p5','5 В из кабеля через SMBJ5.0A'],['TVSto.GND','C3.GND','gnd','земля из кабеля'],
+ ['CT.5V','TVSt.5V','cb','контакт 1: +5 В'],['CT.A','TVSt.A','cw','контакт 2: A'],['CT.GND','TVSt.GND','cu','контакт 3: земля'],['CT.B','TVSt.B','ck','контакт 4: B']]};
+const NC={cp:['MAX3485: DI — не подключать'],top:['AS5600: OUT — не подключать; DIR на гребёнку не выведен — проверить ножку 8 мультиметром','MT6701: OUT (Analog/PWM) — не подключать','GY-50: DR и INT — не подключать','MAX3485: RO — не подключать','подтяжки 4,7 кОм на SDA и SCL — только если на платах датчиков своих нет']};
+const pn=n=>n==='3V3b'?'3V3':/^GND\d$/.test(n)?'GND':n;
+scene.updateMatrixWorld(true);
+function buildWires(list,grp,radial){
+  list.forEach((w,i)=>{const [ka,na]=w[0].split('.'),[kb,nb]=w[1].split('.');const pa=PIN[ka]&&PIN[ka][na],pb=PIN[kb]&&PIN[kb][nb];
+    if(!pa||!pb){console.warn('нет вывода',w[0],w[1]);return;}
+    const Lc=o=>grp.worldToLocal(worldOf(o));const A=Lc(pa.a),A2=Lc(pa.b),B=Lc(pb.a),B2=Lc(pb.b);
+    const mid=A2.clone().add(B2).multiplyScalar(0.5);
+    if(radial){if(A2.distanceTo(B2)>0.012){const r=Math.hypot(mid.x,mid.z),rr=0.030+(i%6)*0.0008;if(r>0.001){mid.x*=rr/r;mid.z*=rr/r;}else mid.x=rr;}}
+    else mid.z=Math.max(mid.z,0.004+(i%9)*0.0012);
+    const c=new THREE.CatmullRomCurve3([A,A2,mid,B2,B],false,'centripetal');
+    const m=new THREE.Mesh(new THREE.TubeGeometry(c,48,0.00042,5),M(WC[w[2]][1],{roughness:0.5}));
+    const s=Math.max(pa.own.userData.step||0,pb.own.userData.step||0);
+    reg(lab(m,'провод: '+NM[ka]+' '+pn(na)+' → '+NM[kb]+' '+pn(nb)+' — '+w[3]),grp,{s,w:true});});}
+buildWires(WIRES.top,topG,true);buildWires(WIRES.cp,cpG,false);
+(function(){let h='';[['top','Топ мачты'],['cp','Кокпит']].forEach(([k,t])=>{const by={};WIRES[k].forEach(w=>{const m=w[0].split('.')[0];(by[m]=by[m]||[]).push(w);});
+  const n=WIRES[k].length,w10=n%10,w100=n%100,word=w10===1&&w100!==11?'провод':(w10>=2&&w10<=4&&(w100<12||w100>14))?'провода':'проводов';
+  h+='<tr class="sub"><td colspan="3">'+t+' — '+n+' '+word+'</td></tr>';
+  Object.keys(by).forEach(m=>{h+='<tr class="mod"><td colspan="3">'+NM[m]+' — '+by[m].length+'</td></tr>';
+    by[m].forEach(w=>{const [kb,nb]=w[1].split('.');h+='<tr><td class="g"><i class="sw" style="background:'+WC[w[2]][1]+'"></i>'+pn(w[0].split('.')[1])+'</td><td class="g">→ '+NM[kb]+' '+pn(nb)+'</td><td>'+w[3]+'</td></tr>';});});
+  NC[k].forEach(n=>h+='<tr><td colspan="3" class="nc">'+n+'</td></tr>');});
+  $('wireTable').innerHTML='<table class="parts"><tbody>'+h+'</tbody></table>';})();
+$('wireLegend').innerHTML=Object.values(WC).map(l=>'<div><i class="w" style="background:'+l[1]+'"></i>'+l[0]+'</div>').join('');
+const CL=[['капсула, флюгер, чашки (как на фото)','#2a2d33'],['карбоновая штанга','#17191c'],['платы датчиков и связи','#1f4f91'],['платы AS5600 и защиты','#1d6a3a'],['магниты на осях','#9b2335'],['аккумулятор','#c7cad0'],['коробка в кокпите','#d9dcd6']];
+$('legend').innerHTML=CL.map(l=>'<div><i style="background:'+l[1]+'"></i>'+l[0]+'</div>').join('');
+
+// ---------- вид ----------
+let seeThrough=true, wiresOn=true, routeOn=true, ex=0, asm=-1;
+function setShells(){SHELLS.forEach(o=>o.traverse(m=>{if(m.material){m.material.transparent=true;m.material.opacity=seeThrough?(o.userData.op||0.2):1;m.material.depthWrite=!seeThrough;m.material.needsUpdate=true;}}));}
+function applyParts(){
+  const n=asm>=0?STEPS[asm].n:99;
+  PARTS.forEach(p=>{const u=p.userData;let vis=!u.step||u.step<=n;
+    if(u.wire)vis=vis&&wiresOn&&(ex<0.02||!u.step||u.step===13);
+    if(u.route)vis=vis&&routeOn;p.visible=vis;
+    p.position.copy(u.base).addScaledVector(u.e,ex);
+    const hi=asm>=0&&u.step===n;p.traverse(m=>{if(m.material&&m.material.emissive&&m!==lhMesh&&m!==llMesh)m.material.emissive.set(hi?0x0d6b78:0x000000);if(m.material&&m.material.emissiveIntensity!==undefined&&m!==lhMesh&&m!==llMesh)m.material.emissiveIntensity=hi?0.45:1;});});
+}
+let lhMesh=null,llMesh=null;cpG.traverse(m=>{if(m.material===ledH)lhMesh=m;if(m.material===ledL)llMesh=m;});
+$('clear').addEventListener('change',e=>{seeThrough=e.target.checked;setShells();});
+$('wires').addEventListener('change',e=>{wiresOn=e.target.checked;applyParts();});
+$('route').addEventListener('change',e=>{routeOn=e.target.checked;applyParts();});
+function applySails(){const s=$('sails').checked,sp=$('spin').checked;mainMesh.visible=s;jibMesh.visible=s&&!sp;jibSheet.visible=s&&!sp;spinG.visible=sp;spinSheet.visible=sp;}
+$('sails').addEventListener('change',applySails);$('spin').addEventListener('change',applySails);applySails();
+$('livery').addEventListener('change',e=>drawHull(e.target.value));drawHull('m5');
+try{document.fonts.ready.then(()=>drawHull($('livery').value));}catch(e){}
+$('explode').addEventListener('input',e=>{ex=e.target.value/100;$('exO').textContent=ex<0.01?'собрано':'на '+Math.round(ex*100)+' %';applyParts();});
+
+// ---------- камера ----------
+function worldOf(o){const v=new THREE.Vector3();o.getWorldPosition(v);return v;}
+const VIEWS={
+  boat:()=>({t:V(0.3,5.4,0),p:V(15,8.5,17.5),f:null}),
+  top:()=>{const c=worldOf(topCenter);return{t:c,p:c.clone().add(V(0.26,0.12,0.40)),f:topCenter};},
+  cockpit:()=>{const c=worldOf(cpG);return{t:c,p:c.clone().add(V(-0.46,0.13,0.22)),f:cpG};},
+  cable:()=>({t:V(-0.1,1.0,0.25),p:V(-3.4,2.7,3.7),f:null})
+};
+let tw=null,follow=null,lastF=V(0,0,0),curView='boat';
+const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+function go(name){const v=VIEWS[name]();curView=name;follow=v.f;if(follow)lastF=worldOf(follow);
+  document.querySelectorAll('[data-view]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.view===name)));
+  if(reduce){camera.position.copy(v.p);controls.target.copy(v.t);controls.update();tw=null;return;}
+  tw={p0:camera.position.clone(),t0:controls.target.clone(),p1:v.p,t1:v.t,start:performance.now(),dur:1200};}
+document.querySelectorAll('[data-view]').forEach(b=>b.addEventListener('click',()=>go(b.dataset.view)));
+
+// ---------- сборка по шагам ----------
+const STEPS=[
+ {n:1,v:'top',t:'Корпус капсулы',x:'Печатный корпус из ASA, Ø76 × 72 мм. Гнездо трубки Ø33 глубиной 45 мм напечатано заодно с ним и плавным раструбом переходит в стенку. Внутри — колыбель MT6701 и бобышки этажерки.',h:'Вплавить 4 термовставки М3. Запрессовать 2 подшипника оси чашек. Покрыть краской или эпоксидкой от воды.'},
+ {n:2,v:'top',t:'MT6701 в колыбели — скорость ветра',x:'Плата 17,22 × 15,08 мм лежит на рамке микросхемой вниз, над магнитом на конце оси чашек, 4 упора ставят её на место. Сверху прижимает планка на 2 винтах М2,5, ряды контактов остаются открытыми. Зазор 1,1 мм, подстройка шайбами.',h:'Плата с подписанными SDA и SCL. Смещение микросхемы от центра платы надо померить: магнит должен стоять над её центром.'},
+ {n:3,v:'top',t:'Этажерка и гироскоп GY-50',x:'L3G4200D ловит, как качается и гнётся мачта; это движение прибор вычитает из показаний флюгера. Плата 24 × 23,6 мм стоит на 4 стойках этажерки на винтах М2,5 × 6. Этажерка притянута снизу через дно 2 винтами М2,5 × 10.',h:'Адрес 0x68: SDO на GND. CS — на 3V3, иначе плата уйдёт в SPI. Провода припаять прямо к плате, зазор всего 2 мм. Шаг отверстий 18 × 18 померить. Под головки винтов дна — герметик.'},
+ {n:4,v:'top',t:'Плата-носитель: ESP32-C3, передатчик, защита',x:'ESP32-C3 SuperMini опрашивает датчики 200 раз в секунду и 100 раз в секунду шлёт пакет вниз через MAX3485. У ввода кабеля — SM712 на линиях A и B и SMBJ5.0A на +5 В. Всё запаяно на макетную плату 62 × 18,4 мм, она держится на 4 винтах М2,5 × 8 через распорки.',h:'SDA — IO6, SCL — IO7, данные в MAX3485 — IO10, 460 800 бод. Размер MAX3485 на модели примерный, померить. Для прошивки снять крышку.'},
+ {n:5,v:'top',t:'AS5600 и крышка — направление ветра',x:'Плата 42 × 42 мм висит на 4 стойках крышки, шаг 31 × 31 мм, винты М2,5 × 8 в термовставки. Магнит оси флюгера стоит над микросхемой с зазором 1,1 мм. Шаг 0,09°, без контакта. Крышка держится на 4 винтах М3, под ней прокладка EPDM.',h:'DIR не должен висеть: проверить мультиметром ножку 8. Если датчик сбоит на 3,3 В — капля припоя между ножками 1 и 2, после этого 5 В не подавать.'},
+ {n:6,v:'top',t:'Флюгер и чашки',x:'Перо 60 × 175 мм из рамки ASA и плёнки 25 мкм на карбоновом плече 280 мм, напротив — носик с дробью. Снизу три конические чашки Ø50 на радиусе 60 мм. Ступицы держатся на осях установочными винтами М3 в лыску, поэтому снимаются.',h:'Флюгер уравновесить дробью при горизонтальной оси. Чашки взвесить и подобрать одинаковые. Подшипники открытые, на капле лёгкого масла.'},
+ {n:7,v:'top',t:'Вынос и кронштейн мачты',x:'Карбоновая трубка 25 × 23 мм, 0,73 м, уходит на 0,7 м вперёд от устья и на 20° вверх. В каждом гнезде по 2 болта М5 × 45 с распорками, без клея. Кронштейн — плита 8 мм с полым коробом, 4 болта М5 в заклёпки-гайки на крышке мачты. Кабель идёт внутри трубки и короба.',h:'Кромку устья кронштейна промазать герметиком: она смотрит вверх. Плиту подогнать под настоящую крышку мачты. Частота штанги ≈ 19 Гц.'},
+ {n:8,v:'cockpit',t:'Коробка в кокпите',x:'Коробка IP67 с прозрачной крышкой, не меньше 160 × 120 × 70 мм, светлая. Стоит на кормовой переборке рубки экраном к рулевому, на 4 винтах через резиновые шайбы. Все отверстия снизу: гермоввод кабеля, тумблер, USB-C с колпачком.',h:'Коробка в заказах 30.10 не найдена. Место на переборке в модели примерное: куда смотрит вход в каюту, пока неизвестно.'},
+ {n:9,v:'cockpit',t:'Питание',x:'LiPo 6000 мА·ч → TP4056 (зарядка по USB-C) → тумблер → TPS63020 даёт 3,3 В всем модулям, MT3608 — 5 В на мачту через предохранитель PPTC 0,2 А и SMBJ5.0A. Хватает примерно на 40 часов.',h:'MT3608 до подключения кабеля выставить на 5,0 В мультиметром и залить винт лаком. Тумблер отключает всё, кроме зарядки.'},
+ {n:10,v:'cockpit',t:'ESP32-S3 и приёмник',x:'ESP32-S3 — главный: вычитает качку, считает истинный ветер и заходы, рисует экран. MAX3485 принимает данные с топа.',h:'Прошивать только при выключенном тумблере. Оплётку кабеля — на GND только здесь, с одного конца.'},
+ {n:11,v:'cockpit',t:'BNO085 и GPS',x:'BNO085 даёт крен, дифферент и курс. Лежит горизонтально, ось X — к носу, подальше от аккумулятора и преобразователей: их катушки сбивают компас. GPS u-blox M10 лежит горизонтально, антенной вверх, и выдаёт скорость 10 раз в секунду.',h:'У датчика и экрана разные шины SPI, чтобы перерисовка экрана не задерживала чтение датчика. Компас калибровать уже на месте: два полных круга на ходу.'},
+ {n:12,v:'cockpit',t:'Экран, стрелки, «ноль», крышка',x:'Экран 4,2″ e-paper, ч/б, 400 × 300: перерисовываются только цифры. Справа — стрелки «заход» (жёлтая) и «отход» (красная) и сенсор «ноль». Сверху прозрачная крышка.',h:'Стрелки не решены: прямо от выводов через 56–68 Ом или через AO3400. Экран работает примерно от 0 до +50 °C.'},
+ {n:13,v:'cable',t:'Кабель с топа до кокпита',x:'RVSP, 4 жилы, витая пара в экране, ≈ 15–20 м. С топа по штанге — внутрь мачты, вниз через пятку мачты прямо в каюту. Разъём M12 — под подволоком у мачты, дальше кабель идёт по подволоку 2–3 м к переборке и снизу входит в блок. На палубу кабель не выходит.',h:'Так решено 05.11: кабель снаружи на палубе опасен — за него цепляются. M12 у мачты нужен, чтобы отстегнуть кабель, когда снимают мачту. Покупать последним, когда будут известны высота мачты и трасса по подволоку.'}
+];
+function showStep(){const s=STEPS[asm];$('asmN').textContent=(asm+1)+' / '+STEPS.length;$('asmT').textContent=s.t;$('asmText').textContent=s.x;$('asmHw').textContent=s.h||'';
+  $('asmPrev').disabled=asm===0;$('asmNext').disabled=asm===STEPS.length-1;applyParts();go(s.v);}
+$('asmGo').addEventListener('click',()=>{asm=0;$('asmBox').hidden=false;$('asmStart').hidden=true;showStep();});
+$('asmPrev').addEventListener('click',()=>{if(asm>0){asm--;showStep();}});
+$('asmNext').addEventListener('click',()=>{if(asm<STEPS.length-1){asm++;showStep();}});
+$('asmExit').addEventListener('click',()=>{asm=-1;$('asmBox').hidden=true;$('asmStart').hidden=false;applyParts();});
+
+// ---------- найти деталь ----------
+const FIND=[['BNO085','BNO085','cockpit'],['GPS','GPS u-blox','cockpit'],['ESP32-S3','ESP32-S3','cockpit'],['Экран','экран 4,2″ e-paper WeAct','cockpit'],['Аккумулятор','LiPo','cockpit'],['MAX3485 в кокпите','MAX3485 — приёмник','cockpit'],['AS5600','AS5600','top'],['MT6701','MT6701','top'],['Гироскоп GY-50','гироскоп','top'],['ESP32-C3','ESP32-C3','top']];
+let flash=null,flashUntil=0;
+$('finds').innerHTML=FIND.map((f,i)=>'<button type="button" data-find="'+i+'">'+f[0]+'</button>').join('');
+document.querySelectorAll('[data-find]').forEach(b=>b.addEventListener('click',()=>findPart(+b.dataset.find)));
+function findPart(i){const f=FIND[i];const obj=PARTS.find(p=>p.userData.label&&p.userData.label.indexOf(f[1])===0);if(!obj)return;
+  if(asm>=0)$('asmExit').click();
+  if(!seeThrough){seeThrough=true;$('clear').checked=true;setShells();}
+  if(flash){flash=null;applyParts();}
+  const w=worldOf(obj),p=w.clone().add(f[2]==='top'?V(0.09,0.06,0.13):V(-0.13,0.09,0.07));
+  curView=f[2];follow=obj;lastF=w.clone();
+  document.querySelectorAll('[data-view]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.view===f[2])));
+  if(reduce){camera.position.copy(p);controls.target.copy(w);controls.update();tw=null;}
+  else tw={p0:camera.position.clone(),t0:controls.target.clone(),p1:p,t1:w.clone(),start:performance.now(),dur:1200};
+  flash=obj;flashUntil=performance.now()+5000;$('findNote').textContent=obj.userData.label+'.';}
+
+// ---------- ветер, крен, волна ----------
+const S={awa:-32,aws:12,heel:12,pitch:0,demo:false,t0:0};
+const side=a=>Math.abs(a)<0.5?'':a<0?' слева':' справа';
+function outs(){$('awaO').textContent=Math.abs(S.awa)+'°'+side(S.awa);$('awsO').textContent=f1(S.aws)+' уз';
+  $('heelO').textContent=Math.abs(S.heel)<0.25?'0°':f1(Math.abs(S.heel))+'° на '+(S.heel>0?'правый':'левый');
+  $('pitchO').textContent=Math.abs(S.pitch)<0.25?'0°':f1(Math.abs(S.pitch))+'° на '+(S.pitch>0?'нос':'корму');}
+['awa','aws','heel','pitch'].forEach(k=>$(k).addEventListener('input',e=>{S[k]=+e.target.value;outs();}));
+$('demo').addEventListener('click',()=>{S.demo=!S.demo;S.t0=performance.now()/1000;$('demo').setAttribute('aria-pressed',String(S.demo));$('demo').textContent=S.demo?'Остановить волну':'Качать на волне';});
+$('reset').addEventListener('click',()=>{Object.assign(S,{awa:-32,aws:12,heel:12,pitch:0});['awa','aws','heel','pitch'].forEach(k=>$(k).value=S[k]);if(S.demo)$('demo').click();outs();go('boat');});
+outs();
+
+function drawDisplay(v){const c=dctx;c.fillStyle='#dcdad1';c.fillRect(0,0,400,300);c.fillStyle='#17171b';
+  const mono='"JetBrains Mono",ui-monospace,Consolas,monospace';
+  c.font='600 18px '+mono;c.fillText('КРЕН',16,30);c.fillText('ДИФФ',232,30);
+  c.font='700 84px '+mono;const hs=Math.round(Math.abs(v.heel))+'°';c.fillText(hs,10,112);
+  c.font='700 30px '+mono;c.fillText(Math.abs(v.heel)<0.5?'':(v.heel>0?'П':'Л'),12+c.measureText('0').width*0+ (hs.length*50)+4,112);
+  c.font='700 40px '+mono;const p=Math.abs(v.pitch)<0.05?'0,0°':(v.pitch>0?'+':'−')+f1(Math.abs(v.pitch))+'°';c.fillText(p,232,84);
+  c.font='600 16px '+mono;c.fillText(Math.abs(v.pitch)<0.05?'':(v.pitch>0?'на нос':'на корму'),232,112);
+  c.fillRect(0,132,400,3);
+  c.font='600 18px '+mono;c.fillText('ВЕТЕР',16,162);
+  c.font='700 46px '+mono;c.fillText(Math.round(Math.abs(v.awa))+'°'+(Math.abs(v.awa)<0.5?'':v.awa<0?'Л':'П'),14,212);c.fillText(f1(v.aws),226,212);
+  c.font='600 18px '+mono;c.fillText('уз',344,212);
+  c.fillRect(0,232,400,3);
+  c.font='700 30px '+mono;c.fillText(v.sig>0?'▲ ОТХОД '+Math.round(v.d)+'°':v.sig<0?'▼ ЗАХОД '+Math.round(v.d)+'°':'ветер ровный',14,278);
+  c.font='600 16px '+mono;c.fillText('акк 87%',318,278);
+  dtex.needsUpdate=true;}
+
+// ---------- подсказки по наведению ----------
+const ray=new THREE.Raycaster(),mouse=new THREE.Vector2(),tip=$('tip');
+function shown(o){while(o){if(!o.visible)return false;o=o.parent;}return true;}
+function inShell(o){while(o){if(o.userData.shell)return true;o=o.parent;}return false;}
+function labelOf(o){while(o){if(o.userData.label)return o.userData.label;o=o.parent;}return null;}
+let pend=null;
+function pick(ev){const r=canvas.getBoundingClientRect();mouse.set((ev.clientX-r.left)/r.width*2-1,-(ev.clientY-r.top)/r.height*2+1);ray.setFromCamera(mouse,camera);
+  const hits=ray.intersectObjects(boat.children,true);
+  for(const h of hits){const o=h.object;if(o.userData.noPick||o.isLine||!shown(o))continue;if(seeThrough&&inShell(o))continue;const l=labelOf(o);if(!l)continue;
+    tip.textContent=l;tip.hidden=false;const x=Math.min(ev.clientX-r.left+14,r.width-tip.offsetWidth-8),y=Math.min(ev.clientY-r.top+14,r.height-tip.offsetHeight-8);tip.style.left=Math.max(8,x)+'px';tip.style.top=Math.max(8,y)+'px';return;}
+  tip.hidden=true;}
+canvas.addEventListener('pointermove',ev=>{if(pend)return;pend=requestAnimationFrame(()=>{pend=null;pick(ev);});});
+canvas.addEventListener('pointerdown',ev=>{if(ev.pointerType!=='mouse')pick(ev);});
+canvas.addEventListener('pointerleave',()=>{tip.hidden=true;});
+
+// ---------- размер ----------
+function resize(){const r=stage.getBoundingClientRect();renderer.setSize(r.width,r.height,false);camera.aspect=r.width/Math.max(1,r.height);camera.updateProjectionMatrix();}
+new ResizeObserver(resize).observe(stage);resize();
+
+// ---------- цикл ----------
+setShells();applyParts();
+let last=performance.now(),prevH=S.heel,prevP=S.pitch,wr=0,wp=0,vaneA=-S.awa,hist=[],lastDraw=0,lastRead=0,sig=0,sigD=0;
+const HTOP=topG.position.y+topCenter.position.y;
+function frame(now){
+  const dt=Math.min(0.05,(now-last)/1000);last=now;const ts=now/1000;
+  let h=S.heel,p=S.pitch,shift=0;
+  if(S.demo){const d=ts-S.t0;h+=6*Math.sin(2*Math.PI*d/3.2);p+=1.5*Math.sin(2*Math.PI*d/2.1+1);shift=7*Math.sin(2*Math.PI*d/15);}
+  if(dt>0){wr+=((h-prevH)/dt-wr)*Math.min(1,dt*10);wp+=((p-prevP)/dt-wp)*Math.min(1,dt*10);}prevH=h;prevP=p;
+  boat.rotation.set(rad(h),0,-rad(p));
+  // ветер: что видит флюгер и что показывает прибор
+  const awaT=S.awa+shift,A=S.aws*0.5144;
+  const Wx=-A*Math.cos(rad(awaT)),Wz=-A*Math.sin(rad(awaT));
+  const vz=rad(wr)*HTOP,vx=rad(wp)*HTOP;
+  const Rx=Wx-vx,Rz=Wz-vz,awaM=deg(Math.atan2(-Rz,-Rx)),awsM=Math.hypot(Rx,Rz);
+  let dA=((-awaM-vaneA+540)%360)-180;vaneA+=dA*Math.min(1,dt*12);vaneG.rotation.y=rad(vaneA);
+  cupG.rotation.y-=(awsM/0.072)*0.33*dt;
+  // паруса и гик — под ветер; шкоты тянутся за ними
+  const lee=awaT<0?1:-1,aa=Math.abs(awaT);
+  const bT=lee*rad(Math.max(4,Math.min(80,(aa-18)*0.6)));boomA+=(bT-boomA)*Math.min(1,dt*2);boomG.rotation.y=boomA;
+  const jT=lee*JS*rad(Math.max(2,Math.min(30,(aa-15)*0.3)));jibA+=(jT-jibA)*Math.min(1,dt*2);jibG.quaternion.setFromAxisAngle(stayAx,jibA);
+  spinG.scale.z=lee;boat.updateMatrixWorld(true);
+  const bp=boat.worldToLocal(worldOf(boomPt));car.position.z=Math.max(-0.6,Math.min(0.6,bp.z));setLine(mainSheet,bp,V(car.position.x,0.37,car.position.z));
+  if(jibSheet.visible){const jc=boat.worldToLocal(worldOf(jibClew));const tx=Math.max(MX+0.17,Math.min(MX+0.67,jc.x));setLine(jibSheet,jc,V(tx,cabinTop(tx)+0.02,Math.sign(jc.z||lee)*0.6));}
+  if(spinSheet.visible){const sc=boat.worldToLocal(worldOf(spinClew));setLine(spinSheet,sc,V(-3.7,0.85,lee*1.1));}
+  // заход / отход: по изменению угла к ветру за 8 с
+  hist.push([ts,Math.abs(awaT)]);while(hist.length&&hist[0][0]<ts-8)hist.shift();
+  const mean=hist.reduce((s,q)=>s+q[1],0)/hist.length,delta=Math.abs(awaT)-mean;
+  sig=Math.abs(awaT)<100&&delta>2.5?1:Math.abs(awaT)<100&&delta<-2.5?-1:0;sigD=Math.abs(delta);
+  ledH.color.set(sig<0?0xffd23f:0x6b5a1a);ledH.emissive.set(sig<0?0xffc21a:0x000000);
+  ledL.color.set(sig>0?0xff5a4a:0x5c2420);ledL.emissive.set(sig>0?0xff3b2f:0x000000);
+  if(now-lastDraw>500){lastDraw=now;drawDisplay({heel:h,pitch:p,awa:awaT,aws:S.aws,sig,d:sigD});}
+  if(now-lastRead>200){lastRead=now;
+    $('rRaw').textContent=Math.round(Math.abs(awaM))+'°'+side(awaM)+' · '+f1(awsM/0.5144)+' уз';
+    $('rFix').textContent=Math.round(Math.abs(awaT))+'°'+side(awaT)+' · '+f1(S.aws)+' уз';
+    $('rTop').textContent=f1(Math.abs(vz)/0.5144)+' уз';
+    const rs=$('rSig');rs.textContent=sig>0?'▲ отход '+Math.round(sigD)+'° (красная)':sig<0?'▼ заход '+Math.round(sigD)+'° (жёлтая)':'ветер ровный';rs.className='sig'+(sig>0?' lift':sig<0?' hdr':'');}
+  if(flash){const on=now<flashUntil,k=on?0.5+0.5*Math.sin(now/120):0;flash.traverse(m=>{if(m.material&&m.material.emissive){m.material.emissive.set(0xff8a00);m.material.emissiveIntensity=k;}});if(!on){flash=null;applyParts();}}
+  // камера едет вместе с выбранным блоком
+  if(follow){const w=worldOf(follow),d=w.clone().sub(lastF);lastF=w;camera.position.add(d);controls.target.add(d);if(tw){tw.p1.add(d);tw.t1.add(d);tw.p0.add(d);tw.t0.add(d);}}
+  if(tw){const k=Math.min(1,(now-tw.start)/tw.dur),e=k<0.5?2*k*k:1-Math.pow(-2*k+2,2)/2;camera.position.lerpVectors(tw.p0,tw.p1,e);controls.target.lerpVectors(tw.t0,tw.t1,e);if(k>=1)tw=null;}
+  controls.update();renderer.render(scene,camera);requestAnimationFrame(frame);
+}
+drawDisplay({heel:S.heel,pitch:0,awa:S.awa,aws:S.aws,sig:0,d:0});
+requestAnimationFrame(frame);
+})();
+</script>

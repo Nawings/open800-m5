@@ -1,0 +1,434 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta charset="utf-8">
+<title>Капсула флюгера</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500&family=Onest:wght@400;500;600&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Тот же верстак, что у «Флюгера Open 800»: модель слева, пульт справа. Детали — те самые STL, что идут в печать */
+:root{
+  --bg:#edf1f3; --surface:#ffffff; --ink:#14202b; --muted:#536373; --line:#d3dbe1; --accent:#0d6b78; --accent-bg:#e0eff1;
+  --good:#2f7d4f; --warn:#a8740a; --bad:#b8352a;
+  --f-display:"Unbounded","Arial Black",system-ui,sans-serif; --f-body:"Onest",system-ui,-apple-system,"Segoe UI",sans-serif; --f-mono:"JetBrains Mono",ui-monospace,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--bg:#0e151b;--surface:#162029;--ink:#e2e9ee;--muted:#93a3b0;--line:#27343f;--accent:#4db6c2;--accent-bg:#123238;--good:#6cc08d;--warn:#e0b13a;--bad:#ec6a5c;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0e151b;--surface:#162029;--ink:#e2e9ee;--muted:#93a3b0;--line:#27343f;--accent:#4db6c2;--accent-bg:#123238;--good:#6cc08d;--warn:#e0b13a;--bad:#ec6a5c;color-scheme:dark}
+html,body{height:100%}
+body{background:var(--bg);color:var(--ink);font:15px/1.5 var(--f-body);margin:0}
+.app{height:100vh;display:grid;grid-template-columns:minmax(0,1fr) 440px}
+@media (max-width:900px){.app{height:auto;grid-template-columns:minmax(0,1fr)}}
+.stage{position:relative;min-width:0;overflow:hidden;height:100vh}
+@media (max-width:900px){.stage{height:66vh;min-height:400px}}
+#view{position:absolute;inset:0;width:100%;height:100%;display:block;touch-action:none}
+.badge{position:absolute;left:max(16px,env(safe-area-inset-left,0px));top:14px;display:grid;gap:2px;pointer-events:none;max-width:calc(100% - 32px)}
+.badge h1{font:500 20px/1.2 var(--f-display);margin:0}
+.badge span{font:12px var(--f-mono);color:var(--muted)}
+.tools{position:absolute;left:max(16px,env(safe-area-inset-left,0px));top:74px;display:flex;flex-wrap:wrap;gap:6px;max-width:calc(100% - 32px)}
+.load{position:absolute;right:16px;top:16px;font:12px var(--f-mono);color:var(--muted)}
+.hint{position:absolute;left:max(16px,env(safe-area-inset-left,0px));right:16px;bottom:12px;font:12px var(--f-mono);color:var(--muted);pointer-events:none}
+.tip{position:absolute;pointer-events:none;background:var(--surface);color:var(--ink);border:1px solid var(--accent);padding:5px 9px;font:13px/1.4 var(--f-body);border-radius:4px;max-width:320px;box-shadow:0 4px 14px rgba(0,0,0,.25);z-index:5}
+.co{position:absolute;pointer-events:none;font:600 12px/1.25 var(--f-body);color:var(--ink);background:color-mix(in srgb,var(--surface) 88%,transparent);border:1px solid var(--accent);border-radius:4px;padding:3px 6px;max-width:230px;white-space:normal}
+.dot{position:absolute;width:8px;height:8px;margin:-6px 0 0 -6px;border-radius:50%;background:var(--accent);border:2px solid var(--surface);pointer-events:none}
+#lines{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+#lines line{stroke:var(--accent);stroke-width:1.2}
+.co small{display:block;font:11px/1.3 var(--f-mono);color:var(--muted);font-weight:400}
+.err{position:absolute;inset:0;display:grid;place-items:center;text-align:center;padding:24px;color:var(--muted)}
+.panel{background:var(--surface);border-left:1px solid var(--line);overflow-y:auto;padding-block:18px 28px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:grid;gap:14px;align-content:start}
+@media (max-width:900px){.panel{border-left:0;border-top:1px solid var(--line);overflow:visible}}
+.panel h2{font:600 12px var(--f-mono);text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin:10px 0 0}
+.lead{font:500 15.5px/1.45 var(--f-body);margin:0}
+button{font:600 13px var(--f-body);background:var(--accent-bg);color:var(--ink);border:1px solid var(--accent);padding:7px 12px;border-radius:4px;cursor:pointer}
+button[aria-pressed="false"]{background:color-mix(in srgb,var(--surface) 88%,transparent);border-color:var(--line)}
+button:focus-visible,a:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.card{border:1px solid var(--line);border-radius:6px;padding:10px 12px;display:grid;gap:6px}
+.card h3{font:600 15px/1.3 var(--f-body);margin:0;display:flex;justify-content:space-between;gap:8px;align-items:baseline}
+.card h3 button{padding:4px 9px;font-size:12px}
+.card ul{margin:0;padding-left:18px;display:grid;gap:4px;font-size:13.5px}
+.tbl{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:12.5px}
+td,th{border-top:1px solid var(--line);padding:5px 4px;vertical-align:top;text-align:left}
+th{font:600 11px var(--f-mono);color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
+.note{font-size:13px;color:var(--muted);margin:0}
+.steps{margin:0;padding-left:20px;display:grid;gap:5px;font-size:13.5px}
+.legend{display:grid;gap:4px;font-size:13px}
+.legend div{display:flex;gap:8px;align-items:center}
+.legend i{width:12px;height:12px;border-radius:2px;flex:none;border:1px solid var(--line)}
+code{font-family:var(--f-mono);font-size:12px}
+[hidden]{display:none!important}
+</style>
+
+<div class="app">
+  <div class="stage" id="stage">
+    <canvas id="view" aria-label="Капсула флюгера в разрезе и кронштейн мачты: корпус, крышка, платы, подшипники, оси, магниты, этажерка и узел выноса. Каждую деталь можно разнести"></canvas>
+    <div class="badge"><h1>Капсула флюгера</h1><span>детали — те же STL, что идут в печать · мм</span></div>
+    <div class="tools" role="group" aria-label="Вид">
+      <button type="button" id="bCut" aria-pressed="true">Разрез</button>
+      <button type="button" id="bExp" aria-pressed="false">Разнести</button>
+      <button type="button" id="bLab" aria-pressed="true">Подписи</button>
+      <button type="button" id="bAll" aria-pressed="false">Вся капсула</button>
+    </div>
+    <div id="cos"><svg id="lines"></svg></div>
+    <div class="load" id="load">загрузка деталей…</div>
+    <div class="tip" id="tip" hidden></div>
+    <div class="hint">вращать — мышью или пальцем · колесо — ближе · наведите на деталь — что это и чем держится</div>
+    <div class="err" id="err" hidden>Не удалось загрузить 3D-библиотеку. Проверьте интернет и обновите страницу.</div>
+  </div>
+
+  <div class="panel">
+    <p class="lead">Платы датчиков держатся на винтах в латунных термовставках и снимаются сколько угодно раз. Трубка выноса входит в круглые гнёзда, напечатанные заодно с корпусом и кронштейном, и держится болтами, без клея. Саморезов в устройстве нет. Кнопка «Разнести» разводит все детали по отдельности, при наведении видно, что это за деталь.</p>
+
+    <h2>1. На чём держатся датчики</h2>
+    <div class="card">
+      <h3>AS5600 — направление ветра <button type="button" data-go="as">Показать</button></h3>
+      <ul>
+        <li>Плата 42 × 42 мм висит на <b>4 стойках Ø7</b>, отлитых заодно с крышкой, по шагу <b>31 × 31 мм</b> (как отверстия NEMA17 на плате).</li>
+        <li>Крепится <b>4 винтами М2,5 × 8</b> снизу, через плату в <b>латунные термовставки</b> стоек. Плату можно снимать сколько угодно раз.</li>
+        <li>Длина стоек 25,3 мм задаёт зазор микросхема — магнит <b>≈ 1,1 мм</b>; подстройка — шайбы 0,5 мм между платой и стойками.</li>
+        <li>Над платой — ось флюгера в двух подшипниках той же крышки, разнесённых на 27 мм. Плата и опоры оси — одна деталь, поэтому соосность держится сама.</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>MT6701 — скорость ветра <button type="button" data-go="mt">Показать</button></h3>
+      <ul>
+        <li>Отверстий у платы может не быть, поэтому она лежит в <b>колыбели</b>: рамка держит её только по длинным краям, а ряды контактов на концах остаются свободными. <b>4 угловых упора</b> ставят плату 17,22 × 15,08 мм на место.</li>
+        <li>Сверху плату прижимает <b>планка</b> (отдельная деталь <code>mt_clamp</code>) на <b>2 винтах М2,5</b> в термовставки двух стоек Ø7 по бокам платы. Планка давит только на длинные края и не закрывает контакты.</li>
+        <li>Зазор микросхема — магнит оси чашек <b>≈ 1,1 мм</b>; подстройка — шайбы под плату.</li>
+        <li>Под колыбелью — бобышка дна с двумя подшипниками оси чашек.</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>Остальная электроника <button type="button" data-go="rack">Показать</button></h3>
+      <ul>
+        <li><b>Этажерка</b> стоит на двух бобышках дна. Держат её 2 винта М2,5 × 10: они идут снизу через дно в термовставки ножек, головки утоплены и закрыты каплей герметика. Чтобы рассмотреть платы по отдельности, нажмите «Разнести», затем «Показать».</li>
+        <li>С одной стороны <b>плата-носитель</b>: на неё запаяны на штырях SuperMini, MAX3485 и защита, сама она держится на 4 винтах М2,5 × 8 через распорки. С другой — <b>GY-50</b> на 4 стойках и винтах М2,5 × 6. Скотча и стяжек нет.</li>
+        <li>Крышка к корпусу — <b>4 винта М3</b> в латунные термовставки, между ними прокладка EPDM.</li>
+      </ul>
+    </div>
+
+    <h2>Флюгер: носик, плечо, перо</h2>
+    <div class="card">
+      <h3>Перо 60 × 175 мм на плече 280 мм <button type="button" data-go="vane">Показать</button></h3>
+      <ul>
+        <li><b>Перо (хвост):</b> печатная рамка ASA с кромкой 2,4 мм, диагональю и лонжероном, обтянута плёнкой 25 мкм. Удлинение 3.</li>
+        <li><b>Плечо:</b> карбоновая трубка 4 × 3 мм, 280 мм от оси до ¼ хорды. Проходит через лонжерон пера по середине высоты и вклеена в ступицу.</li>
+        <li><b>Носик-противовес:</b> Ø20 × 48 мм, цилиндр и конус к острию, на коротком плече из той же трубки. Внутри дробь на эпоксидке, крышка вклеивается после засыпки.</li>
+        <li><b>Баланс:</b> флюгер должен стоять в любом положении при горизонтальной оси. Массу дроби задаёт именно балансировка.</li>
+      </ul>
+    </div>
+
+    <h2>2. Крепление выноса к капсуле</h2>
+    <div class="card">
+      <h3>Гнездо заодно с корпусом <button type="button" data-go="pad">Показать</button></h3>
+      <ul>
+        <li>Трубка входит в круглое гнездо Ø33 глубиной <b>45 мм</b>, напечатанное одной деталью с корпусом.</li>
+        <li>Держится <b>2 сквозными болтами М5</b> с распорками, без клея: капсулу можно снять. Затяжка выбирает боковой люфт, второй болт не даёт качаться.</li>
+        <li>Гнездо переходит в стенку плавным раструбом. Внутрь капсулы оно не заходит: там AS5600 и этажерка.</li>
+        <li>Стенка вокруг утолщена до 4 мм, к бобышке подшипников идут 2 ребра.</li>
+      </ul>
+    </div>
+    <p class="note">Нагрузка у капсулы: качка 5g — 0,7 Н·м, ветер 40 м/с — 0,9 Н·м, случайный удар 50 Н — 4 Н·м. Постоянно действует только вес, 0,13 Н·м. Опасна не прочность, а податливость: ошибка нуля при ветре 15 м/с по оценке 0,02–0,04°, проверить на образце. Масса капсулы 0,3 кг в расчёте — оценка.</p>
+
+    <h2>3. Кронштейн мачты</h2>
+    <div class="card">
+      <h3>Круглое гнездо <button type="button" data-go="br">Показать</button></h3>
+      <ul>
+        <li>Вылет от устья до оси капсулы — 0,7 м. Нагрузка: удар 50 Н — 35 Н·м, ветер 40 м/с — 18 Н·м, качка 5g — 12 Н·м. Расчётная — 40 Н·м.</li>
+        <li>Гнездо Ø35 глубиной 70 мм, давление на пластик 1,5 МПа, стенка у устья 13 МПа при худшем ударе.</li>
+        <li>Под гнездом полый короб со стенками 4 мм: 3 МПа на изгиб, 2 МПа на кручение. Внутри короба идёт кабель в мачту.</li>
+        <li>Трубка держится 2 болтами М5 в 30 и 60 мм от устья: у самого устья изгиб самый большой, и отверстий там нет.</li>
+        <li>Устье смотрит вверх, поэтому кромку надо промазать нейтральным герметиком, иначе вода пойдёт в мачту. Трубка при этом остаётся съёмной.</li>
+      </ul>
+    </div>
+
+    <h2>4. Чем заказывать</h2>
+    <p class="note">Рекомендую ASA обычной FDM-печатью: нагрузки малы, и дорогой порошок не нужен. ASA рассчитан на улицу и солнце, а платить надо за граммы, то есть рёбра и пустоты экономят сразу.</p>
+    <div class="tbl"><table>
+      <tr><th>Способ</th><th>Цена</th><th>Корпус с крышкой</th><th>Весь комплект</th><th>Годится ли</th></tr>
+      <tr><td><b>ASA, FDM на заказ</b></td><td>13–26 ₽/г</td><td>1,5–3 тыс. ₽</td><td>3–6 тыс. ₽</td><td>да, основной способ. Корпус покрыть краской или эпоксидкой от воды</td></tr>
+      <tr><td><b>ASA на своём принтере</b></td><td>21–40 €/кг</td><td>2,5–5 € материала</td><td>5–10 € материала</td><td>да, тот же материал; цена катушки — европейская, российскую не нашёл</td></tr>
+      <tr><td><b>PA12 MJF из Китая (JLC3DP)</b></td><td>$0,275/г</td><td>≈ $30</td><td>≈ $69</td><td>да, если нужна точность порошка; доставка и пошлина не считаны, доставку в Россию не проверял</td></tr>
+      <tr><td><b>УФ-смола</b></td><td>40–90 ₽/см³</td><td>4,4–10 тыс. ₽</td><td>10–22 тыс. ₽</td><td>снаружи нет: на солнце становится хрупкой. Дороже ASA</td></tr>
+      <tr><td><b>PA12 SLS в России</b></td><td>65–130 ₽/см³</td><td>7–14 тыс. ₽</td><td>16–32 тыс. ₽</td><td>да, но дорого и при таких нагрузках не нужно</td></tr>
+    </table></div>
+    <p class="note">Весь комплект — это все печатные детали: корпус, крышка, кронштейн мачты, ступицы, чашки, перо, носик, этажерка. Корпус с крышкой — по настоящим деталям: 110 см³, в FDM ≈ 118 г. Весь комплект — 247 см³, ≈ 240 г, из них кронштейн 98 см³. Цены — опубликованные прайсы «от», перед заказом нужен расчёт исполнителя.</p>
+
+    <h2>5. Как проверить жёсткость</h2>
+    <p class="note">Проверяем, насколько капсула поворачивается относительно трубки под боковой нагрузкой: именно это сбивает ноль флюгера. Нужны лазерная указка, кусок трубки 0,3 м, тиски и бутылка на 3 л воды.</p>
+    <ol class="steps">
+      <li>Вставить трубку в капсулу, затянуть 2 болта. Зажать трубку в тиски в 30 мм от гнезда, горизонтально, так чтобы <b>ось капсулы тоже легла горизонтально</b>. Тогда боковая нагрузка будет направлена вниз.</li>
+      <li>Приклеить указку к корпусу скотчем, луч — на стену в 3 м. Отметить точку.</li>
+      <li>Надеть на корпус петлю напротив оси и подвесить бутылку: 3 кг на плече 40 мм дают 1,2 Н·м, в 9 раз больше, чем ветер 15 м/с.</li>
+      <li>Отметить новую точку и снять бутылку. Измерить смещение и возврат.</li>
+      <li>Повторить с другой стороны, потом после часа на солнце: чёрный корпус нагреется и станет мягче.</li>
+    </ol>
+    <div class="tbl"><table>
+      <tr><th>Что смотреть</th><th>Ждём</th><th>Норма</th><th>Если хуже</th></tr>
+      <tr><td>Смещение точки на стене под бутылкой</td><td>9–19 мм</td><td>до 45 мм</td><td>толще стенка и рёбра</td></tr>
+      <tr><td>Точка не вернулась после снятия</td><td>0–1 мм</td><td>до 3 мм</td><td>люфт: подтянуть болты, взять меньший зазор в гнезде</td></tr>
+    </table></div>
+    <p class="note">Смещение в мм разделить на 470 — получится ошибка в градусах при ветре 15 м/с. 45 мм соответствуют 0,1°.</p>
+
+    <h2>Цвета</h2>
+    <div class="legend">
+      <div><i style="background:#2a2d33"></i>печать ASA: корпус, крышка, этажерка, ступицы</div>
+      <div><i style="background:#17191c"></i>карбон: трубка выноса, спицы чашек</div>
+      <div><i style="background:#b9c0c6"></i>алюминий: распорки в трубке</div>
+      <div><i style="background:#d7dbe0"></i>нержавеющий крепёж A4</div>
+      <div><i style="background:#c9a227"></i>латунь: оси, термовставки</div>
+      <div><i style="background:#9b2335"></i>магниты</div>
+      <div><i style="background:#1d6a3a"></i>AS5600 · <span style="display:inline-block;width:12px;height:12px;background:#1f4f91;border-radius:2px;vertical-align:-1px"></span> MT6701 и другие платы</div>
+    </div>
+    <p class="note">Корпус, крышка, кронштейн, этажерка, планка, ступицы, чашки, рамка пера, носик и стаканчики магнитов загружены из тех же STL, что лежат в папке проекта. Подшипники, оси, магниты, платы и крепёж нарисованы по их размерам. Расчёт пера и чашек — на странице <a href="../vane/">«Флюгер Open 800»</a>.</p>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js" integrity="sha384-CI3ELBVUz9XQO+97x6nwMDPosPR5XvsxW2ua7N1Xeygeh1IxtgqtCkGfQY9WWdHu" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js" integrity="sha384-wagZhIFgY4hD+7awjQjR4e2E294y6J2HSnd8eTNc15ZubTeQeVRZwhQJ+W6hnBsf" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/STLLoader.js" integrity="sha384-QF8EmP6pyNE+i7WmcltzC4ddzFVKDxfn5WD5gXyKTSE4SCw0R25TI+q0LUlnf7tq" crossorigin="anonymous"></script>
+<script>
+(function(){
+'use strict';
+const $=id=>document.getElementById(id);
+if(!window.THREE||!THREE.OrbitControls||!THREE.STLLoader){$('err').hidden=false;return;}
+const V=(x,y,z)=>new THREE.Vector3(x,y,z),D=Math.PI/180;
+function css(v){return getComputedStyle(document.documentElement).getPropertyValue(v).trim();}
+const canvas=$('view'),stage=$('stage');
+const renderer=new THREE.WebGLRenderer({canvas,antialias:true});renderer.setPixelRatio(Math.min(2,devicePixelRatio||1));renderer.localClippingEnabled=true;
+const scene=new THREE.Scene(),camera=new THREE.PerspectiveCamera(32,1,1,5000);
+const controls=new THREE.OrbitControls(camera,canvas);controls.enableDamping=true;
+scene.add(new THREE.HemisphereLight(0xffffff,0x6f8494,0.8));const s1=new THREE.DirectionalLight(0xffffff,0.8);s1.position.set(200,400,300);scene.add(s1);const s2=new THREE.DirectionalLight(0xffffff,0.35);s2.position.set(-300,100,-250);scene.add(s2);
+function applyTheme(){renderer.setClearColor(new THREE.Color(css('--bg')||'#edf1f3'));}
+applyTheme();try{matchMedia('(prefers-color-scheme: dark)').addEventListener('change',applyTheme);}catch(e){}
+new MutationObserver(applyTheme).observe(document.documentElement,{attributes:true,attributeFilter:['data-theme']});
+const grid=new THREE.GridHelper(400,40,0x888888,0x888888);grid.material.transparent=true;grid.material.opacity=0.12;grid.position.y=-80;scene.add(grid);
+
+// координаты — как в flyuger.scad: z вверх, мм. root поворачивает их в систему three (y вверх)
+const root=new THREE.Group();root.rotation.x=-Math.PI/2;scene.add(root);
+const M=(c,o)=>new THREE.MeshStandardMaterial(Object.assign({color:c,roughness:0.55},o||{}));
+const cutPlane=new THREE.Plane(V(0,0,-1),0);   // в системе three SCAD y → −z мира: срез по плоскости SCAD y = 0, ближняя к зрителю половина (SCAD y < 0) убрана
+const parts=[];    // {obj, base, ex}
+const brRoot=new THREE.Group();brRoot.rotation.x=-Math.PI/2;brRoot.visible=false;scene.add(brRoot);const brG=new THREE.Group();brRoot.add(brG);
+function add(obj,parent,ex,label,clip){obj.userData.label=label;obj.userData.base=obj.position.clone();obj.userData.ex=ex||V(0,0,0);parent.add(obj);parts.push(obj);
+  if(clip)obj.traverse(m=>{if(m.material){m.material.clippingPlanes=[cutPlane];m.material.clipShadows=true;m.material.side=THREE.DoubleSide;}});return obj;}
+function rod(a,b,r,m,seg){const d=new THREE.Vector3().subVectors(b,a),len=d.length();const o=new THREE.Mesh(new THREE.CylinderGeometry(r,r,len,seg||20),m);o.position.copy(a).addScaledVector(d,0.5);o.quaternion.setFromUnitVectors(V(0,1,0),d.normalize());return o;}
+function cylZ(r,z0,z1,m,seg){const o=new THREE.Mesh(new THREE.CylinderGeometry(r,r,z1-z0,seg||28),m);o.rotation.x=Math.PI/2;o.position.z=(z0+z1)/2;return o;}
+function box(x0,y0,z0,x1,y1,z1,m){const o=new THREE.Mesh(new THREE.BoxGeometry(x1-x0,y1-y0,z1-z0),m);o.position.set((x0+x1)/2,(y0+y1)/2,(z0+z1)/2);return o;}
+function grp(pos,rot){const g=new THREE.Group();if(pos)g.position.set(pos[0],pos[1],pos[2]);if(rot)g.rotation.set(rot[0]*D,rot[1]*D,rot[2]*D,'ZYX');return g;}
+
+// ---------- материалы ----------
+const steel=M(0xd7dbe0,{metalness:0.9,roughness:0.25}),brass=M(0xc9a227,{metalness:0.8,roughness:0.3}),magM=M(0x9b2335,{metalness:0.5}),alu=M(0xb9c0c6,{metalness:0.7,roughness:0.35}),carbon=M(0x17191c,{roughness:0.35,metalness:0.2}),chipM=M(0x101114);
+const mats=[];   // мелкие детали режутся разрезом только в собранном виде; в разносе видны целиком
+function cl(m){const c=m.clone();c.clippingPlanes=[cutPlane];c.side=THREE.DoubleSide;mats.push(c);return c;}
+function lab(o,l){o.userData.label=l;return o;}
+function at(o,x,y){o.position.x=x;o.position.y=y;return o;}
+function G(){const g=new THREE.Group();for(const c of arguments)g.add(c);return g;}
+const ROOT=()=>root;
+
+// ---------- печатные детали из STL ----------
+const AS='#2a2d33';
+const at_pad=()=>{const a=20*D,d=[-Math.cos(a),0,-Math.sin(a)];return grp([40*d[0],0,62+40*d[2]],[0,-110,0]);};
+const STLS=[
+ ['capsule_bottom_d',grp(),AS,V(0,0,0),'корпус капсулы: ASA, гнездо трубки Ø33 глубиной 45 мм, раструб в стенку, утолщение стенки до 4 мм, 2 ребра к бобышке подшипников, колыбель MT6701',true],
+ ['mast_bracket_d',brG,'#6d7c89',V(0,0,0),'кронштейн мачты: ASA, плита 8 мм, полый короб со стенками 4 мм, гнездо Ø35 глубиной 70 мм',true],
+ ['capsule_lid',grp([0,0,72]),'#3a3e45',V(0,0,100),'крышка капсулы: ASA, воротник и башенка под 2 подшипника оси флюгера, 4 стойки AS5600',true],
+ ['rack',grp([0,11.3,24],[90,0,180]),'#556070',V(100,0,10),'этажерка плат: ASA, стоит на 2 бобышках дна; в ножках и 4 стойках GY-50 — термовставки М2,5'],
+ ['mt_clamp',grp([0,0,22.8]),'#4a505a',V(0,0,18),'прижимная планка MT6701: ASA, 2 винта М2,5 в термовставки стоек по бокам платы'],
+ ['magnet_holder',grp([0,0,49]),'#c9a227',V(0,0,66),'стаканчик магнита на нижнем конце оси флюгера: магнит смотрит вниз, на AS5600'],
+ ['magnet_holder',grp([0,0,18.9],[180,0,0]),'#c9a227',V(0,0,-46),'стаканчик магнита на верхнем конце оси чашек: магнит смотрит вверх, на MT6701'],
+ ['vane_hub',grp([0,0,84.8]),'#444a52',V(0,0,125),'ступица флюгера: ASA, на оси держится установочным винтом М3 в лыску, съёмная; юбка над воротником крышки — лабиринт от воды'],
+ ['fin_frame',grp([-265,-3,15.3],[90,0,180]),'#3a3e45',V(-90,0,125),'рамка пера: ASA, кромка 2,4 мм, диагональ и лонжерон с каналом Ø4 под плечо'],
+ ['nose_body',grp([38,0,102.8],[0,90,0]),'#3a3e45',V(92,0,125),'носик-противовес Ø20 × 48: цилиндр 32 мм и конус к острию; смотрит туда, откуда дует'],
+ ['nose_cap',grp([38,0,102.8],[0,-90,0]),'#4a505a',V(42,0,125),'крышка носика с гнездом трубки: вклеивается после засыпки дроби'],
+ ['cup_hub',grp([0,0,-38]),AS,V(0,0,-110),'ступица чашек: ASA, на оси держится установочным винтом М3 в лыску, съёмная; 3 гнезда спиц Ø3'],
+];
+for(let a=0;a<3;a++){const g=grp([0,0,0],[0,0,a*120]);root.add(g);const g2=grp([60,-9,-32],[-90,0,0]);g.add(g2);
+  STLS.push(['cup',g2,AS,V(32*Math.cos(a*120*D),32*Math.sin(a*120*D),-110),'чашка '+(a+1)+' из 3: ASA, конус 90°, Ø50, стенка 0,8; спица Ø3 вклеена в прилив']);}
+const b64=s=>{const bin=atob(s.replace(/\s+/g,'')),u=new Uint8Array(bin.length);for(let i=0;i<bin.length;i++)u[i]=bin.charCodeAt(i);return u.buffer;};
+const loader=new THREE.STLLoader();let loaded=0;
+STLS.forEach(([name,g,col,ex,label,clip])=>{
+  if(!g.parent)root.add(g);
+  fetch('stl/'+name+'.txt').then(r=>{if(!r.ok)throw r.status;return r.text();}).then(t=>{
+    const geo=loader.parse(b64(t));geo.computeVertexNormals();
+    const m=new THREE.Mesh(geo,M(col,{metalness:col==='#c9a227'?0.6:0.05,roughness:0.6}));
+    const q=new THREE.Quaternion(),q0=new THREE.Quaternion();root.updateMatrixWorld(true);g.getWorldQuaternion(q);root.getWorldQuaternion(q0);
+    add(m,g,ex.clone().applyQuaternion(q.premultiply(q0.invert()).invert()),label,clip);
+    loaded++;$('load').textContent=loaded<STLS.length?('загружено '+loaded+' из '+STLS.length):'';applyAll();
+  }).catch(()=>{loaded++;$('load').textContent='не загрузилось: '+name;});
+});
+
+// ---------- подшипники, оси, магниты ----------
+[[0,3,-8,'подшипник 683 оси чашек, нижний: в дне корпуса'],[11,14,-25,'подшипник 683 оси чашек, верхний: в бобышке дна'],[54,57,78,'подшипник 683 оси флюгера, нижний: в башенке крышки'],[81,84,112,'подшипник 683 оси флюгера, верхний: в воротнике крышки']].forEach(b=>{
+  add(G(cylZ(3.5,b[0],b[1],steel),cylZ(1.6,b[0]-0.05,b[1]+0.05,M(0x30343a))),root,V(0,0,b[2]),b[3]);});
+add(cylZ(1.5,51.9,100,brass),root,V(60,0,110),'ось флюгера Ø3, латунь: держится двумя подшипниками крышки; лыска под установочный винт ступицы');
+add(cylZ(1.5,-35,16,brass),root,V(0,0,-75),'ось чашек Ø3, латунь: держится двумя подшипниками дна; лыска под установочный винт ступицы');
+add(cylZ(3,49,51.5,magM),root,V(0,0,56),'магнит 6 × 2,5 оси флюгера: в 1,1 мм над микросхемой AS5600');
+add(cylZ(3,16.4,18.9,magM),root,V(0,0,-38),'магнит 6 × 2,5 оси чашек: в 1,1 мм под микросхемой MT6701');
+
+// ---------- AS5600 ----------
+add(G(box(-21,-21,45.1,21,21,46.7,M(0x1d6a3a)),box(-2.5,-2.5,46.7,2.5,2.5,47.9,chipM)),root,V(0,0,40),'плата AS5600 42 × 42: датчик направления ветра, микросхема точно под магнитом');
+[[-15.5,-15.5],[15.5,-15.5],[-15.5,15.5],[15.5,15.5]].forEach((p,i)=>{
+  add(at(G(cylZ(2.3,43.5,45.1,steel,6),cylZ(1.25,45.1,53,steel,10)),p[0],p[1]),root,V(0,0,22),'винт М2,5 × 8 платы AS5600, '+(i+1)+' из 4');
+  add(at(cylZ(1.75,46.7,50.7,brass,12),p[0],p[1]),root,V(0,0,52),'термовставка М2,5 в стойке крышки, '+(i+1)+' из 4');});
+
+// ---------- MT6701 ----------
+add(G(box(-8.61,-7.54,21.2,8.61,7.54,22.8,M(0x1c1d22)),box(-2,-2.5,20,2,2.5,21.2,chipM)),root,V(0,0,8),'плата MT6701 17,22 × 15,08: датчик скорости ветра, лежит в колыбели; положение микросхемы на плате ещё надо померить');
+[[12.7,0],[-12.7,0]].forEach((p,i)=>{
+  add(at(G(cylZ(2.3,24.8,26.4,steel,6),cylZ(1.25,16.8,24.8,steel,10)),p[0],p[1]),root,V(0,0,30),'винт М2,5 × 8 планки MT6701, '+(i+1)+' из 2');
+  add(at(cylZ(1.75,18.8,22.8,brass,12),p[0],p[1]),root,V(0,0,8),'термовставка М2,5 в стойке колыбели, '+(i+1)+' из 2');});
+
+// ---------- платы этажерки: каждая отдельно ----------
+// плата-носитель и всё, что на ней запаяно
+add(box(-31,7.7,25,31,9.3,43.4,M(0x7a6a3a,{roughness:0.7})),root,V(100,-24,10),'плата-носитель: макетная плата 62 × 18,4; на ней запаяны SuperMini, MAX3485 и защита');
+add(G(box(-24,3.6,25.3,-1.5,5.2,43.15,M(0x1c1d22)),box(-16,3.1,31.7,-11,3.6,36.7,chipM),box(-6.9,0.4,29.7,0.1,3.6,38.7,M(0xb8bcc2,{metalness:0.7})),box(-22.5,5.2,25.9,-2.5,7.7,27.3,chipM),box(-22.5,5.2,41.1,-2.5,7.7,42.5,chipM)),root,V(100,-44,10),'ESP32-C3 SuperMini, 24,1 × 17,85 с выносом USB: контроллер, запаян на штырях в плату-носитель');
+add(G(box(3,3.6,26.5,23.9,5.2,41.5,M(0x2f6fb0)),box(11,3.1,31.5,16,3.6,36.5,chipM),box(4,5.2,27,22,7.7,28.4,chipM)),root,V(100,-44,10),'MAX3485: передатчик линии RS-485, запаян на штырях. Размер на модели примерный, нужен замер');
+add(box(24.7,4.7,31,28.3,7.7,36.4,M(0x1d6a3a)),root,V(100,-44,10),'защита линий: SM712 на переходнике и SMBJ5.0A, запаяны на плату-носитель у ввода кабеля. Схема');
+add(G(box(-12,15.8,19.7,12,17.4,43.3,M(0x1f4f91)),box(-2,17.4,29.5,2,18.3,33.5,chipM)),root,V(100,34,50),'гироскоп GY-50, плата 24 × 23,6: на 4 стойках и винтах М2,5, снимается');
+[[-9,22.5],[9,22.5],[-9,40.5],[9,40.5]].forEach((p,i)=>{const n=(i+1)+' из 4';
+  add(G(rod(V(p[0],11.8,p[1]),V(p[0],17.4,p[1]),1.25,steel,10),rod(V(p[0],17.4,p[1]),V(p[0],19,p[1]),2.3,steel,6)),root,V(100,70,80),'винт М2,5 × 6 платы GY-50, '+n);
+  add(rod(V(p[0],11.8,p[1]),V(p[0],15.8,p[1]),1.75,brass,12),root,V(100,20,30),'термовставка М2,5 в стойке GY-50, '+n);});
+[[-26.5,28],[26.5,28],[-26.5,40],[26.5,40]].forEach((p,i)=>{const n=(i+1)+' из 4';
+  add(G(rod(V(p[0],6.1,p[1]),V(p[0],7.7,p[1]),2.3,steel,6),rod(V(p[0],7.7,p[1]),V(p[0],15.7,p[1]),1.25,steel,10)),root,V(100,-62,10),'винт М2,5 × 8 платы-носителя, '+n);
+  add(rod(V(p[0],9.3,p[1]),V(p[0],11.3,p[1]),3,M(0xd9dde0,{roughness:0.7}),16),root,V(100,-12,10),'распорка 2 мм платы-носителя, '+n);
+  add(rod(V(p[0],11.6,p[1]),V(p[0],15.6,p[1]),1.75,brass,12),root,V(100,20,30),'термовставка М2,5 в бобышке этажерки, '+n);});
+[-20,20].forEach((x,i)=>{const n=(i+1)+' из 2';
+  add(at(G(cylZ(2.4,0.05,1.5,steel,6),cylZ(1.25,1.5,11.5,steel,10)),x,15.05),root,V(0,0,-60),'винт М2,5 × 10 этажерки: снизу через дно, '+n);
+  add(at(cylZ(1.75,7,11,brass,12),x,15.05),root,V(100,0,2),'термовставка М2,5 в ножке этажерки, '+n);});
+
+// ---------- крышка: винты, термовставки, прокладка ----------
+[45,135,225,315].forEach((a,i)=>{const x=32*Math.cos(a*D),y=32*Math.sin(a*D),st=cl(steel),br=cl(brass);
+  add(at(G(cylZ(2.8,74.2,76,st,6),cylZ(1.5,64,74.2,st,10)),x,y),root,V(0,0,120),'винт М3 × 10 крышки, '+(i+1)+' из 4');
+  add(at(cylZ(2,67,72,br,12),x,y),root,V(0,0,10),'термовставка М3 в бобышке корпуса, '+(i+1)+' из 4');});
+(function(){const sh=new THREE.Shape();sh.absarc(0,0,38,0,Math.PI*2,false);const h=new THREE.Path();h.absarc(0,0,33,0,Math.PI*2,true);sh.holes.push(h);
+  const m=new THREE.Mesh(new THREE.ExtrudeGeometry(sh,{depth:0.4,bevelEnabled:false,curveSegments:48}),cl(M(0x101114)));m.position.z=71.8;add(m,root,V(0,0,30),'прокладка EPDM 1 мм между крышкой и корпусом');})();
+
+// ---------- перо и плечи ----------
+add(rod(V(-301,0,102.8),V(-10,0,102.8),2,carbon,12),root,V(-40,0,125),'плечо: карбоновая трубка 4 × 3 мм, 280 мм от оси до ¼ хорды пера; проходит через лонжерон пера и вклеена в ступицу');
+add(rod(V(10,0,102.8),V(35,0,102.8),2,carbon,12),root,V(22,0,125),'короткое плечо противовеса: карбоновая трубка 4 × 3 мм');
+add(box(-323,-0.05,17.7,-267,0.05,187.9,M(0xe9eef0,{transparent:true,opacity:0.45,side:THREE.DoubleSide,depthWrite:false,roughness:0.2})),root,V(-90,-16,125),'плёнка пера: лавсан 25 мкм, перо 60 × 175 мм');
+add(rod(V(52.6,0,102.8),V(65,0,102.8),8.4,M(0x6f7780,{metalness:0.6,roughness:0.5}),24),root,V(66,0,125),'свинцовая дробь на эпоксидке: масса подбирается балансировкой');
+
+// ---------- установочные винты ступиц и спицы ----------
+add(rod(V(0,1.5,102.8),V(0,9.5,102.8),1.5,steel,10),root,V(0,30,125),'установочный винт М3 × 8 ступицы флюгера: упирается в лыску оси');
+add(rod(V(0,5,102.8),V(0,10,102.8),2,brass,12),root,V(0,16,125),'термовставка М3 ступицы флюгера');
+add(rod(V(-1.5,0,-30),V(-11.5,0,-30),1.5,steel,10),root,V(-32,0,-110),'установочный винт М3 × 10 ступицы чашек: упирается в лыску оси');
+add(rod(V(-7,0,-30),V(-12,0,-30),2,brass,12),root,V(-18,0,-110),'термовставка М3 ступицы чашек');
+[0,120,240].forEach((a,i)=>{const c=Math.cos(a*D),n=Math.sin(a*D);add(rod(V(4*c,4*n,-32),V(42.9*c,42.9*n,-32),1.5,carbon,10),root,V(16*c,16*n,-110),'спица Ø3 чашки, карбон, '+(i+1)+' из 3');});
+
+// ---------- узел трубки: одинаковый у капсулы и у мачты ----------
+function tubeJoint(parent,zs,flat,tubeZ0,tubeZ1,tubeEx,spacerEx,tubeLabel){
+  add(cylZ(12.5,tubeZ0,tubeZ1,cl(carbon),32),parent,V(0,0,tubeEx),tubeLabel);
+  zs.forEach((z,i)=>{const n=(i+1)+' из 2',st=cl(steel),al=cl(alu);
+    add(G(rod(V(0,-flat-1.2,z),V(0,flat+6.2,z),2.5,st,16),rod(V(0,-flat-4.7,z),V(0,-flat-1.2,z),4.2,st,6)),parent,V(0,-70,0),'болт М5 × 45, '+n);
+    add(rod(V(0,-flat-1.2,z),V(0,-flat,z),7.5,st,24),parent,V(0,-42,0),'широкая шайба М5 × 15 под головку, '+n);
+    add(rod(V(0,flat,z),V(0,flat+1.2,z),7.5,st,24),parent,V(0,42,0),'широкая шайба М5 × 15 под гайку, '+n);
+    add(rod(V(0,flat+1.2,z),V(0,flat+5.2,z),4.2,st,6),parent,V(0,62,0),'самоконтрящаяся гайка М5, '+n);
+    add(rod(V(0,-11.4,z),V(0,11.4,z),4,al,20),parent,V(0,0,spacerEx),'распорка внутри трубки: не даёт смять трубку при затяжке, '+n);});
+}
+const padG=at_pad();root.add(padG);
+tubeJoint(padG,[18,38],15.5,3,150,135,70,'карбоновая трубка выноса 25 × 23: входит в гнездо на 45 мм, съёмная');
+
+// ---------- кронштейн мачты ----------
+(function(){
+  const f=new THREE.Group();f.position.set(-40,0,31);f.rotation.y=70*D;brRoot.add(f);
+  tubeJoint(f,[10,40],16.5,0,135,120,75,'карбоновая трубка выноса 25 × 23: входит в гнездо на 70 мм, съёмная');
+  add(box(-72,-40,-6,72,40,-0.3,cl(M(0x3d4750,{roughness:0.6}))),brRoot,V(0,0,-34),'крышка топа мачты (схема)');
+  [[-52,-25],[-52,25],[52,-25],[52,25]].forEach((p,i)=>{const n=(i+1)+' из 4';
+    add(at(G(cylZ(2.5,-6,8,steel,12),cylZ(4.5,8,11,steel,6)),p[0],p[1]),brRoot,V(0,0,40),'болт М5 × 16 кронштейна, '+n);
+    add(at(cylZ(3.5,-6,-0.3,brass,12),p[0],p[1]),brRoot,V(0,0,-16),'заклёпка-гайка М5 в крышке мачты, '+n);});
+  const cab=M(0xc4453a,{roughness:0.6});
+  add(G(rod(V(10,0,49),V(-46,0,29),2.2,cab,12),rod(V(-46,0,29),V(-42,0,12),2.2,cab,12),rod(V(-42,0,12),V(-42,0,-40),2.2,cab,12)),brRoot,V(0,0,0),'кабель: внутри трубки, через короб и отверстие Ø14 в мачту');
+})();
+
+// ---------- разрез, разнос, подписи ----------
+let cut=true,exp=0,expT=0,labOn=true,smallClip=true;
+function applyAll(){renderer.localClippingEnabled=cut;parts.forEach(p=>{p.position.copy(p.userData.base).addScaledVector(p.userData.ex,exp);});
+  grid.position.y=-80-100*exp;const on=exp<0.02;if(on!==smallClip){smallClip=on;mats.forEach(m=>{m.clippingPlanes=on?[cutPlane]:[];m.needsUpdate=true;});}}
+$('bCut').addEventListener('click',()=>{cut=!cut;$('bCut').setAttribute('aria-pressed',String(cut));applyAll();});
+function setExp(v){expT=v;$('bExp').setAttribute('aria-pressed',String(!!v));}
+$('bExp').addEventListener('click',()=>{setExp(expT?0:1);const br=focus==='br'||focus==='brx',ov=focus==='all'||focus==='ex';go(br?(expT?'brx':'br'):ov?(expT?'ex':'all'):focus);});
+$('bLab').addEventListener('click',()=>{labOn=!labOn;$('bLab').setAttribute('aria-pressed',String(labOn));$('cos').hidden=!labOn;});
+$('bAll').addEventListener('click',()=>go(expT?'ex':'all'));
+
+// выноски: точки в координатах SCAD
+const CO=[
+ {p:[0,-21,46],t:'AS5600',e:[0,0,40],s:'4 винта М2,5 в термовставки',v:'as',m:1},
+ {p:[15.5,15.5,56],t:'стойки AS5600 Ø7',e:[0,0,100],s:'отлиты с крышкой, шаг 31 × 31',v:'as'},
+ {p:[0,0,50],t:'магнит оси флюгера',e:[0,0,56],s:'зазор до AS5600 ≈ 1,1 мм',v:'as',x:1},
+ {p:[0,-7.5,22],t:'MT6701 в колыбели',e:[0,0,8],s:'планка на 2 винтах М2,5',v:'mt',m:1},
+ {p:[12.7,0,20],t:'стойка Ø7 с термовставкой',s:'2 шт. по бокам платы',v:'mt'},
+ {p:[0,0,17.5],t:'магнит оси чашек',e:[0,0,-38],s:'зазор до MT6701 ≈ 1,1 мм',v:'mt',x:1},
+ {p:[0,-4,12.5],t:'подшипники оси чашек',e:[0,0,-25],s:'2 × 683 в дне, разнос 11 мм',v:'mt'},
+ {p:[0,-4,82.5],t:'подшипники оси флюгера',e:[0,0,112],s:'2 × 683 в крышке, разнос 27 мм',v:'as'},
+ {p:[-12,3.6,34],t:'ESP32-C3 SuperMini',e:[100,-44,10],s:'запаяна на штырях',v:'rack',m:1},
+ {p:[0,17.4,32],t:'гироскоп GY-50',e:[100,34,50],s:'на 4 стойках, винты М2,5',v:'rackx',x:1},
+ {p:[13,3.6,34],t:'MAX3485',e:[100,-44,10],s:'запаяна на штырях',v:'rack',x:1},
+ {p:[26.5,4.7,34],t:'защита SM712 + SMBJ5.0A',e:[100,-44,10],s:'у ввода кабеля',v:'rack',x:1},
+ {p:[-28,7.7,34],t:'плата-носитель',e:[100,-24,10],s:'4 винта М2,5 через распорки',v:'rack',x:1},
+ {p:[25,11.3,34],t:'этажерка',e:[100,0,10],s:'2 винта снизу через дно',v:'rack',x:1},
+ {p:[-38,0,78],t:'крышка',e:[0,0,100],s:'4 винта М3 в термовставки',v:'none',x:1},
+ {p:[10,0,97],t:'ступица флюгера',e:[0,0,125],s:'установочный винт в лыску оси',v:'none',x:1},
+ {p:[12,0,-32],t:'ступица чашек',e:[0,0,-110],s:'3 спицы, 3 чашки',v:'none',x:1},
+ {p:[-295,0,150],e:[-90,0,125],t:'перо 60 × 175',s:'рамка ASA и плёнка 25 мкм',v:'vane',m:1,x:1},
+ {p:[-150,0,102.8],e:[-40,0,125],t:'плечо',s:'карбон 4 × 3, 280 мм',v:'vane',m:1,x:1},
+ {p:[60,0,112.8],e:[92,0,125],t:'носик-противовес',s:'Ø20 × 48, дробь внутри',v:'vane',m:1,x:1},
+ {p:[-66.7,0,55.3],t:'гнездо трубки Ø33',s:'глубина 45 мм, заодно с корпусом',v:'pad',m:1},
+ {p:[-54.5,0,42],t:'2 сквозных болта М5',s:'с распорками, трубка съёмная',v:'pad'},
+ {p:[-20,4,12],t:'рёбра',s:'от гнезда к бобышке подшипников',v:'pad'},
+ {p:[-35,0,60],t:'утолщение стенки до 4 мм',s:'держит ноль флюгера',v:'pad'},
+ {p:[10.4,0,68],t:'гнездо Ø35',s:'глубина 70 мм, заодно с коробом',v:'br'},
+ {p:[-16.5,0,39.6],t:'2 болта М5',s:'30 и 60 мм от устья, с распорками',v:'br'},
+ {p:[-5,0,12],t:'полый короб',s:'стенки 4 мм, внутри кабель',v:'br'},
+ {p:[-42,0,2],t:'кабель в мачту',s:'отверстие Ø14',v:'br'},
+ {p:[52,-25,10],e:[0,0,40],t:'4 × М5 в крышку мачты',s:'заклёпки-гайки',v:'br'},
+ {p:[62,0,66],e:[112.8,0,41],t:'трубка 25 × 23',s:'съёмная, длина 0,73 м',v:'br'}
+];
+const NS='http://www.w3.org/2000/svg',svg=$('lines');
+const coEls=CO.map(c=>{const d=document.createElement('div');d.className='co';d.innerHTML=c.t+'<small>'+c.s+'</small>';$('cos').appendChild(d);
+  const dot=document.createElement('div');dot.className='dot';$('cos').appendChild(dot);const ln=document.createElementNS(NS,'line');svg.appendChild(ln);return {d,dot,ln};});
+const tmp=new THREE.Vector3();
+function placeCO(){if(!labOn)return;const r=stage.getBoundingClientRect();root.updateMatrixWorld();
+  const act=[];
+  CO.forEach((c,i)=>{const sh=c.e||[0,0,0];tmp.set(c.p[0]+sh[0]*exp,c.p[1]+sh[1]*exp,c.p[2]+sh[2]*exp);root.localToWorld(tmp);tmp.project(camera);const e=coEls[i];
+    const vis=tmp.z<1&&(focus==='ex'?!!(c.m||c.x):focus==='all'?!!c.m:(c.v===focus||(focus==='brx'&&c.v==='br')||(focus==='rack'&&c.v==='rackx'&&expT)));
+    [e.d,e.dot].forEach(x=>x.hidden=!vis);e.ln.style.display=vis?'':'none';
+    if(vis)act.push({e,x:(tmp.x+1)/2*r.width,y:(1-tmp.y)/2*r.height});});
+  // подписи — в колонку справа или слева от модели, без наложений
+  const cx=r.width/2,L=act.filter(a=>a.x<cx-40),R=act.filter(a=>a.x>=cx-40);
+  [[R,1],[L,-1]].forEach(([arr,side])=>{arr.sort((p,q)=>p.y-q.y);const xs=side>0?Math.max(...arr.map(a=>a.x))+60:Math.min(...arr.map(a=>a.x))-60;let last=-1e9;
+    arr.forEach(a=>{const h=a.e.d.offsetHeight||34,w=a.e.d.offsetWidth||180;let y=Math.max(a.y-h/2,last+6,110);last=y+h;
+      let lx=side>0?Math.min(xs,r.width-w-8):Math.max(8,xs-w);
+      a.e.d.style.left=lx+'px';a.e.d.style.top=y+'px';a.e.dot.style.left=a.x+'px';a.e.dot.style.top=a.y+'px';
+      const ex=side>0?lx:lx+w;a.e.ln.setAttribute('x1',a.x);a.e.ln.setAttribute('y1',a.y);a.e.ln.setAttribute('x2',ex);a.e.ln.setAttribute('y2',y+h/2);});});}
+
+// камера: виды
+const XV={vane:{t:[-150,0,225],p:[-60,-900,380]},rack:{t:[100,0,42],p:[175,-235,105]},as:{t:[0,0,100],p:[135,-265,155]},mt:{t:[0,0,34],p:[85,-175,95]},pad:{t:[-85,0,35],p:[-180,-330,135]}};
+const VIEWS={vane:{t:[-115,0,100],p:[-40,-720,240]},br:{t:[8,0,30],p:[70,-250,105]},brx:{t:[50,0,35],p:[190,-470,210]},all:{t:[-90,0,55],p:[230,-640,250]},ex:{t:[-40,0,70],p:[440,-900,360]},as:{t:[0,0,50],p:[110,-150,80]},mt:{t:[0,0,20],p:[75,-115,85]},rack:{t:[0,10,32],p:[60,-170,70]},pad:{t:[-30,0,45],p:[-120,-200,110]}};
+let focus='all',tw=null;
+function toWorld(a){const v=V(a[0],a[1],a[2]);root.updateMatrixWorld();return root.localToWorld(v);}
+function go(k){focus=k;const br=k==='br'||k==='brx';root.visible=!br;brRoot.visible=br;const v=(expT&&XV[k])||VIEWS[k];tw={p0:camera.position.clone(),t0:controls.target.clone(),p1:toWorld(v.p),t1:toWorld(v.t),st:performance.now()};
+  document.querySelectorAll('[data-go]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.go===k)));$('bAll').setAttribute('aria-pressed',String(k==='all'||k==='ex'));}
+document.querySelectorAll('[data-go]').forEach(b=>b.addEventListener('click',()=>{const k=b.dataset.go;go(k==='br'&&expT?'brx':k);}));
+camera.position.copy(toWorld(VIEWS.all.p));controls.target.copy(toWorld(VIEWS.all.t));controls.update();
+
+// подсказки
+const ray=new THREE.Raycaster(),mouse=new THREE.Vector2(),tip=$('tip');
+function labelOf(o){while(o){if(o.userData&&o.userData.label)return o.userData.label;o=o.parent;}return null;}
+function shown(o){while(o){if(!o.visible)return false;o=o.parent;}return true;}
+canvas.addEventListener('pointermove',ev=>{const r=canvas.getBoundingClientRect();mouse.set((ev.clientX-r.left)/r.width*2-1,-(ev.clientY-r.top)/r.height*2+1);ray.setFromCamera(mouse,camera);
+  const hits=ray.intersectObjects([root,brRoot],true).filter(h=>shown(h.object)&&labelOf(h.object));
+  const hit=hits.find(h=>{if(!cut)return true;tmp.copy(h.point);return cutPlane.distanceToPoint(tmp)>=-0.01||!(h.object.material&&h.object.material.clippingPlanes&&h.object.material.clippingPlanes.length);});
+  if(hit){tip.textContent=labelOf(hit.object);tip.hidden=false;tip.style.left=Math.min(ev.clientX-r.left+14,r.width-tip.offsetWidth-8)+'px';tip.style.top=Math.min(ev.clientY-r.top+14,r.height-tip.offsetHeight-8)+'px';}else tip.hidden=true;});
+canvas.addEventListener('pointerleave',()=>{tip.hidden=true;});
+
+function resize(){const r=stage.getBoundingClientRect();renderer.setSize(r.width,r.height,false);camera.aspect=r.width/Math.max(1,r.height);camera.updateProjectionMatrix();}
+new ResizeObserver(resize).observe(stage);resize();
+applyAll();
+const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+function frame(now){
+  if(exp!==expT){exp+=Math.sign(expT-exp)*Math.min(Math.abs(expT-exp),reduce?1:0.04);applyAll();}
+  if(tw){const k=reduce?1:Math.min(1,(now-tw.st)/900),e=k<0.5?2*k*k:1-Math.pow(-2*k+2,2)/2;camera.position.lerpVectors(tw.p0,tw.p1,e);controls.target.lerpVectors(tw.t0,tw.t1,e);if(k>=1)tw=null;}
+  controls.update();renderer.render(scene,camera);placeCO();requestAnimationFrame(frame);}
+requestAnimationFrame(frame);
+})();
+</script>
