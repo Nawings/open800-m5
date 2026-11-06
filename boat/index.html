@@ -81,10 +81,14 @@ button:focus-visible,input:focus-visible,a:focus-visible{outline:2px solid var(-
 .unk{margin:0;padding-left:18px;display:grid;gap:4px;font-size:13px}
 code{font-family:var(--f-mono);font-size:12px}
 [hidden]{display:none!important}
+.home{position:absolute;top:14px;right:16px;z-index:6;padding:8px 12px;border-radius:4px;border:1px solid var(--accent);background:var(--surface);color:var(--ink);font:600 13px var(--f-body);text-decoration:none}
+.home:hover,.home:focus-visible{background:var(--accent);color:var(--surface);outline:none}
+@media (max-width:900px){.home{top:10px;left:16px;right:auto}.badge{top:54px}.tools{top:114px}.views{top:116px}}
 </style>
 
 <div class="app">
   <div class="stage" id="stage">
+    <a class="home" href="../">← Главное меню</a>
     <canvas id="view" aria-label="3D-модель яхты Open 800 с парусным прибором: блок на топе мачты, кабель и блок в кокпите"></canvas>
     <div class="badge"><h1>Open 800 «М5»</h1><span>RUS 4223 · 8,0 × 2,57 м · мачта 11,2 м над рубкой · прибор: топ + кабель + кокпит</span></div>
     <div class="views" role="group" aria-label="Куда смотреть">
