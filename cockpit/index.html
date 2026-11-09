@@ -286,7 +286,7 @@ code{font-family:var(--f-mono);font-size:12px}
       <tr><td>Светодиоды красные 3 мм ×10, резисторы 150 Ом ×10, 2N7002 на переходнике</td><td>подсветка экрана</td></tr>
       <tr><td>Кабель к разъёму GPS: вилка 4 контакта, шаг 1 мм</td><td>обычно идёт с модулем; другой конец — в разъём с защёлкой на плате связи</td></tr>
       <tr><td>Модуль micro-SD на 3,3 В без стабилизатора и карта 32 ГБ; 2 стойки М2,5 × 3</td><td>данные гонок; конденсатор 100 мкФ у модуля</td></tr>
-      <tr><td>Макетные платы 50 × 70, 50 × 90, 20 × 40 и 20 × 48; цанговые панели 2,54 (1 × 22 ×2 и полоски под модули); разъёмы типа XH 2,5 мм с защёлкой на 2–10 контактов; стойки М2,5 × 11,5 ×2 и планка ESP32</td><td>плата питания и плата связи</td></tr>
+      <tr><td>Макетные платы 50 × 70, 50 × 90, 20 × 44 и 20 × 48; цанговые панели 2,54 (1 × 22 ×2 и полоски под модули); разъёмы типа XH 2,5 мм с защёлкой на 2–10 контактов; стойки М2,5 × 11,5 ×2 и планка ESP32</td><td>плата питания и плата связи</td></tr>
       <tr><td>Предохранитель 2 А в держателе на провод</td><td>ставится у аккумулятора лодки</td></tr>
       <tr><td>Термовставки М3 ×18, М2,5 ×6; винты М3 ×14, М2,5 ×10, М2,5 × 14 мм ×2, М4 ×4 с резиновыми шайбами</td><td>сборка</td></tr>
       <tr><td>Печать ASA: плита 90 см³, рамка 38 см³, прижимы 4 см³</td><td>≈ 135 г</td></tr>
@@ -856,6 +856,7 @@ function pptc(g,key,x,y,z,c,l){g.add(bx(x-2,y-0.8,z,x+2,y+0.8,z+6,M(c,{roughness
 function tvs(g,key,x,y,z,l){g.add(bx(x-2.25,y-1.8,z,x+2.25,y+1.8,z+2.3,blk,l));g.add(bx(x-2.6,y-1.2,z,x-2.2,y+1.2,z+0.5,tin));g.add(bx(x+2.2,y-1.2,z,x+2.6,y+1.2,z+0.5,tin));onCar(key,'A',x-2.4,y);onCar(key,'K',x+2.4,y);}
 // разъёмы жгутов: гнездо на плате и вилка, провод входит в вилку сверху, в линию с контактом
 const CN={};
+function jstBlockV(g,x,y0,n,z,label){const w=n*2.5+2.4;g.add(bx(x-2.9,y0-1.2,z,x+2.9,y0-1.2+w,z+3.2,M(0xf2efe6,{roughness:0.5}),'гнездо разъёма на плате: '+label));g.add(bx(x-2.4,y0-0.7,z+3.2,x+2.4,y0-1.7+w,z+8,M(0xfbf8ee,{roughness:0.55}),'вилка с защёлкой: '+label));}
 function jstBlock(g,x0,y,n,z,label){const w=n*2.5+2.4;g.add(bx(x0-1.2,y-2.9,z,x0-1.2+w,y+2.9,z+3.2,M(0xf2efe6,{roughness:0.5}),'гнездо разъёма на плате: '+label));
   g.add(bx(x0-0.7,y-2.2,z+3.2,x0-1.7+w,y+2.2,z+8.2,M(0xfbf8ee,{roughness:0.55}),'вилка жгута с защёлкой: '+label));}
 
@@ -941,9 +942,9 @@ STLS.forEach(([name,pos,how,col,ex,label])=>{
   add(g,V(0,0,60),'плата зарядки');CAR=null;})();
 
 // ---------- плата порта: второй MT3608 ----------
-(function(){const g=new THREE.Group();g.position.set(70,0,10.8);CAR={g,key:"port"};
-  g.add(perf(40,20,'плата порта: макетная 20 × 40 на 2 винтах М3'));
-  const b=PCBLIB.mt3608('MT3608 №2, 37,2 × 16,55 × 1,15 мм: 5,0 В в порт');b.position.set(0,0,3.8);g.add(b);
+(function(){const g=new THREE.Group();g.position.set(72,0,10.8);CAR={g,key:"port"};
+  g.add(perf(44,20,'плата порта: макетная 20 × 44 на 2 винтах М3'));
+  const b=PCBLIB.mt3608('MT3608 №2, 37,2 × 16,55 × 1,15 мм: 5,0 В в порт');b.position.set(-3,0,3.8);g.add(b);
   pads(b,'M2',[['IN+',-16.1,-3.3],['IN-',-16.1,3.6],['OUT+',15.4,-2.8],['OUT-',15.4,3.8]],0.6);
   add(g,V(0,0,14),'плата порта');CAR=null;})();
 
@@ -1074,11 +1075,11 @@ const NMW={SP:'SP13',DR:'диод переполюсовки',S24:'SMBJ24A',S5:'
 // какие провода реально видны: внутри платы — разводка снизу, между узлами — жгут через разъёмы
 const GM={LH:'FR',LL:'FR',BT:'FR',LB1:'FR',LB2:'FR',BK1:'BK',BK2:'BK',BK3:'BK',BK4:'BK',SP:'SP',SW:'SW',USB:'USB',PK1:'PK',PK2:'PK',PK3:'PK',TH:'TH',CC:'CC',PORT:'PORT',LM:'LM',BNO:'BNO',EP:'EP',SD:'SD',GPS:'GPS'};
 const groupOf=(car,other)=>{const c2=PN[other].car;return c2?[car,c2].sort().join('_'):(GM[other.split('.')[0]]||other.split('.')[0]);};
-const STRIP={mast:{top:{x:-9,y:21.2,g:['SW','mast_pow','mast_port']}},chg:{top:{x:-18,y:27,g:['PK','chg_pow']}},main:{top:{x:-43,y:23.2,g:['BNO','EP','SD','GPS']},bot:{x:-38,y:-23,g:['FR','TH','BK','main_pow']}},pow:{top:{x:-33,y:23.2,g:['SP','SW','USB','chg_pow','mast_pow','CC','LM']},bot:{x:-33,y:-23,g:['PORT','port_pow','main_pow']}},port:{bot:{x:-17,y:13,g:['port_pow','mast_port']}}};
+const STRIP={mast:{top:{x:-9,y:21.2,g:['SW','mast_pow','mast_port']}},chg:{top:{x:-18,y:27,g:['PK','chg_pow']}},main:{top:{x:-43,y:23.2,g:['BNO','EP','SD','GPS']},bot:{x:-38,y:-23,g:['FR','TH','BK','main_pow']}},pow:{top:{x:-33,y:23.2,g:['SP','SW','USB','chg_pow','mast_pow','CC','LM']},bot:{x:-33,y:-23,g:['PORT','port_pow','main_pow']}},port:{r:{x:19,y:-8,v:1,g:['port_pow','mast_port']}}};
 const CARG={main:null,pow:null,port:null,chg:null,mast:null};CARG.chg=PN['CH.BAT'].o.parent;CARG.mast=PN['M1.IN+'].o.parent;PN['S3.3V3'].o.parent&&(CARG.main=PN['S3.3V3'].o.parent);CARG.pow=PN['GP.1'].o.parent;CARG.port=PN['M2.IN+'].o.parent;
 const count={};WS.forEach(w=>{const A=PN[w[0]],B=PN[w[1]];if(!A||!B){console.warn('нет контакта',w[0],w[1]);return;}if(A.car&&A.car===B.car)return;if(A.term||B.term)return;[[A,w[1]],[B,w[0]]].forEach(([P,o])=>{if(!P.car)return;const k=P.car+'/'+groupOf(P.car,o);count[k]=(count[k]||0)+1;});});
-const slot={};Object.entries(STRIP).forEach(([car,st])=>Object.values(st).forEach(r=>{let x=r.x;r.g.forEach(gr=>{const n=count[car+'/'+gr];if(!n)return;slot[car+'/'+gr]={x,y:r.y,n,i:0};jstBlock(CARG[car],x,r.y,n,0.8,gr);x+=n*2.5+3.4;});}));
-function contact(P,other){const k=P.car+'/'+groupOf(P.car,other),sl=slot[k];if(!sl){console.warn('нет места для разъёма',k);return null;}const nm='J'+k.replace('/','_')+'.'+sl.i,x=sl.x+sl.i*2.5;sl.i++;reg('J'+k.replace('/','_'),String(sl.i-1),CARG[P.car],x,sl.y,9,[0,0,1]);return nm;}
+const slot={};Object.entries(STRIP).forEach(([car,st])=>Object.values(st).forEach(r=>{let x=r.x,y=r.y;r.g.forEach(gr=>{const n=count[car+'/'+gr];if(!n)return;if(r.v){slot[car+'/'+gr]={x:r.x,y,n,i:0,v:1};jstBlockV(CARG[car],r.x,y,n,0.8,gr);y+=n*2.5+3.4;}else{slot[car+'/'+gr]={x,y:r.y,n,i:0};jstBlock(CARG[car],x,r.y,n,0.8,gr);x+=n*2.5+3.4;}});}));
+function contact(P,other){const k=P.car+'/'+groupOf(P.car,other),sl=slot[k];if(!sl){console.warn('нет места для разъёма',k);return null;}const nm='J'+k.replace('/','_')+'.'+sl.i,x=sl.v?sl.x:sl.x+sl.i*2.5,py=sl.v?sl.y+sl.i*2.5:sl.y;sl.i++;reg('J'+k.replace('/','_'),String(sl.i-1),CARG[P.car],x,py,9,[0,0,1]);return nm;}
 const WT=[];WS.forEach(w=>{const A=PN[w[0]],B=PN[w[1]];if(!A||!B)return;
   if(A.car&&A.car===B.car&&!A.term&&!B.term){w.kind='разводка платы';return;}
   if(A.car&&A.car===B.car){w.kind='разводка платы';return;}
