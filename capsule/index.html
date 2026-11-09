@@ -502,6 +502,29 @@ function an181(){const w=18.25,h=18,t=0.8,M='#121317',S='#e8e9ea',G='#c8a14a',IN
   g.userData.pins={};[['GND',1.5],['TX',0.5],['RX',-0.5],['VCC',-1.5]].forEach(a=>{g.userData.pins[a[0]]=[12.7,a[1],-1.39];g.add(bx(12.5,a[1],-1.39,0.4,0.5,0.5,gold,'провод '+a[0]));});
   return g;}
 
+// TP4056 TZT с защитой: 18 × 14 × 4,36 мм, с USB-C 19,53 мм — замер; раскладка снята с фото. −x — край с USB-C, +x — контакты аккумулятора и нагрузки
+function tp4056(){const w=18,h=14,t=1.1,M='#101114',S='#e9eaec',TIN='#cfd2d5',TI=[['N+',-6.25,6],['N-',-6.25,-6]],OU=[['+',8,5.7],['+',8,3.3],['B-',8,-3.6],['OUT-',8,-5.9]];
+  const s=rrect(w,h,[0.3,0.3,0.3,0.3]);TI.concat(OU).forEach(p=>hole(s,p[1],p[2],1));
+  const backP=(g,k,cx,cy2)=>g.setTransform(0,k,-k,0,cx,cy2);   // как на фото снизу: USB-C вверху; (вправо, вверх) → x = −вверх, y = −вправо
+  const f=sheet(w,h,768,M,front),b=sheet(w,h,768,M,backP);
+  TI.forEach(p=>{f.disc(p[1],p[2],1.05,TIN);b.disc(-p[2],-p[1],1.05,TIN);});OU.forEach(p=>{f.rect(p[1]-0.95,p[2]-0.95,p[1]+0.95,p[2]+0.95,TIN);b.rect(-p[2]-0.95,-p[1]-0.95,-p[2]+0.95,-p[1]+0.95,TIN);});
+  f.text('N+',-3.3,6.15,1.5,S,0,'700 ');f.text('N−',-3.75,-6.2,1.5,S,0,'700 ');f.text('+',6.1,5.9,1.5,S,0,'700 ');f.text('B−',6,-3.9,1.3,S,0,'700 ');f.text('OUT−',5.2,-6.3,1.25,S,0,'700 ');f.text('51021G',1.4,-5.6,0.72,S,0,'600 ');f.line([[4.75,-3],[4.75,-4.8]],S,0.1);
+  for(let i=0;i<8;i++)f.rect(-3.9,4.2-i*1.05-0.3,-3,4.2-i*1.05+0.3,TIN);
+  [-1,1].forEach(q=>[-1.905,-0.635,0.635,1.905].forEach(u=>f.rect(1.95+u-0.3,q*2.6-0.55,1.95+u+0.3,q*2.6+0.55,TIN)));
+  b.text('V1008',-3,-1.4,1.25,S,0,'700 ');b.text('Voltage: 4.2V',0.7,-3.7,1.2,S,0,'600 ');b.text('Current: 1A',-0.2,-5.4,1.2,S,0,'600 ');
+  [-1,1].forEach(q=>{b.g.fillStyle=TIN;b.g.beginPath();b.g.ellipse(q*4.45,4.3,0.7,1.25,0,0,7);b.g.fill();});
+  const g=base({w,h,t,shape:s,mask:0x101114,edge:0x24252a,top:f,bot:b,label:'TP4056 TZT с защитой: 14 × 18 × 4,36 мм, с USB-C 19,53 мм; на плате напечатано 4,2 В, 1 А'});
+  const dark=std(0x17181b,{roughness:0.5});
+  g.add(bx(1.95,0,t+0.75,4.7,3.9,1.5,dark,'TP4056: линейная зарядка, ток задаёт один резистор'));
+  [-1,1].forEach(q=>[-1.905,-0.635,0.635,1.905].forEach(u=>g.add(bx(1.95+u,q*2.45,t+0.2,0.42,0.8,0.3,tin))));
+  g.add(bx(6.9,0.8,t+0.5,1.6,2.9,1,dark,'микросхема защиты аккумулятора'));[-1,1].forEach(q=>[-0.95,0,0.95].forEach(u=>g.add(bx(6.9+q*1.05,0.8+u,t+0.15,0.5,0.4,0.25,tin))));
+  smd(g,5.7,3.6,t,1,false,'c','конденсатор');smd(g,-2.2,1.4,t,1,true,'c','конденсатор');[[-0.25,4.7,true],[-2,5.2,false],[-2,3.9,false],[-2.4,-1.2,true],[-2.4,-2.9,true]].forEach(a=>smd(g,a[0],a[1],t,1,a[2],'r','резистор'));
+  led(g,1.4,4.7,t,1,true,'светодиод зарядки');led(g,3.1,4.7,t,1,true,'светодиод «заряжено»');
+  const shell=std(0xb9bcbf,{metalness:0.75,roughness:0.32});const us=mesh(new T.ExtrudeGeometry(rrect(8.94,3.26,[1.6,1.6,1.6,1.6]),{depth:6.58,bevelEnabled:false,curveSegments:12}),shell,'USB-C модуля: в блоке не используется, питание зарядки приходит на N+ и N−');
+  us.quaternion.setFromRotationMatrix(new T.Matrix4().makeBasis(new T.Vector3(0,1,0),new T.Vector3(0,0,1),new T.Vector3(1,0,0)));us.position.set(-10.53,0,t+1.63);g.add(us);
+  g.add(bx(-10.54,0,t+1.63,0.02,8.1,2.5,std(0x0c0d10)));g.add(bx(-10.55,0,t+1.63,0.02,6.6,0.7,std(0x2a2c30)));g.add(bx(-5,0.5,4.365,1.6,4.2,0.02,std(0x74777b)));
+  return g;}
+
 function epd42(){const w=92,h=89.7,t=1.6,M='#141518',S='#e8e9ea',TIN='#c9cdd0';const s=rrect(w,h,[1.2,1.2,1.2,1.2]);
   const hs=[[-43.6,42.55],[43.6,42.55],[-43.6,-42.55],[43.6,-42.55]];hs.forEach(p=>hole(s,p[0],p[1],3.2));
   const hx=[-4.33,-1.79,0.75,3.29],hy=[43.75,41.21];hx.forEach(x=>hy.forEach(y=>hole(s,x,y,0.95)));
@@ -575,7 +598,7 @@ function drawScreen(c,v){const INK='#17171b',PAP='#dcdad1',F='Arial, sans-serif'
     T('КРЕН',8,221,10.5);T(heelS,126,223,19,700,'right');stern(66,262,1);T('ДИФФ',141,221,10.5);T(pitchS,259,223,19,700,'right');prof(199,265,1);T('нос →',259,296,9,600,'right');
     T('СДВИГ ВЕТРА',274,221,10.5);shift(274,221);}
   c.restore();}
-return {as5600,mt6701,gy50,bno08x,esp32s3,sd3v3,epd42,an181,wires,drawScreen};
+return {as5600,mt6701,gy50,bno08x,esp32s3,sd3v3,epd42,an181,tp4056,wires,drawScreen};
 })();
 </script><!--/pcblib-->
 <script>
