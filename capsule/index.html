@@ -525,6 +525,51 @@ function tp4056(){const w=18,h=14,t=1.1,M='#101114',S='#e9eaec',TIN='#cfd2d5',TI
   g.add(bx(-10.54,0,t+1.63,0.02,8.1,2.5,std(0x0c0d10)));g.add(bx(-10.55,0,t+1.63,0.02,6.6,0.7,std(0x2a2c30)));g.add(bx(-5,0.5,4.365,1.6,4.2,0.02,std(0x74777b)));
   return g;}
 
+// TPS63020: плата 33,47 × 24,3 × 1,5 мм по замеру, катушка выступает за край на 1,65 мм; раскладка снята с фото. +y — край с VIN и VOUT, −y — край с катушкой и GND, +x — EN, PS, PG
+function tps63020(){const w=33.47,h=24.3,t=1.5,M='#101114',S='#e9eaec',TIN='#cfd2d5',V_='#34363c';const s=rrect(w,h,[0.5,0.5,0.5,0.5]);
+  const TH=[[-9.5,10.8,1],[-6.9,10.8,0],[5.9,10.8,1],[8.76,10.8,0],[-9.5,-10.7,1],[-6.9,-10.7,0],[6.7,-10.7,1],[9.2,-10.7,0],[15.7,5.4,0],[15.7,8,0],[15.7,10.8,1]];TH.forEach(p=>hole(s,p[0],p[1],1));
+  const f=sheet(w,h,1024,M,front),b=sheet(w,h,1024,M,backM);
+  [f,b].forEach((d,i)=>{const q=i?-1:1;TH.forEach(p=>{if(p[2])d.rect(q*p[0]-0.95,p[1]-0.95,q*p[0]+0.95,p[1]+0.95,TIN);else d.disc(q*p[0],p[1],0.98,TIN);});
+    [[-15.7,-11.2,-11.5,-1.5],[11.5,-11.2,15.8,-1.5]].forEach(r=>{for(let x=r[0];x<=r[2];x+=0.9)for(let y=r[1];y<=r[3];y+=0.9)d.disc(q*x,y,0.15,V_);});});
+  [[-15.7,8],[15.4,-8.9]].forEach(p=>f.disc(p[0],p[1],0.75,TIN));
+  [['GND',-8.2,-8.2],['GND',8.4,-8.3]].forEach(a=>f.text(a[0],a[1],a[2],1.7,S,0,'700 '));f.text('VIN',3.5,10.8,1.7,S,180,'700 ');f.text('VOUT',-3.9,10.8,1.7,S,180,'700 ');
+  [['P2',-12,-11.2],['P1',11.8,-11.6],['P3',15.7,3.3],['P4',12.8,10.8],['U1',2.7,0.6],['C2',-14.8,10.8],['C1',13.4,6],['C3',-4.3,-5],['C8',-9.2,-5.2],['C7',9.2,-5.2],['C4',4.3,-5],['T1',-7.8,2.6],['T2',-7.6,7],['T3',6.6,2.1],['R3',-3.8,5.3],['R4',-0.2,7.1],['R5',-3.8,3.5],['R6',-0.2,9]].forEach(a=>f.text(a[0],a[1],a[2],0.9,S,0,'600 '));
+  for(let i=0;i<3;i++)f.line([[3.3-0.9+i*0.9,5.2],[3.3+i*0.9,6.1]],S,0.32);
+  [[15,5.4],[15,8],[15,10.8]].forEach((p,i)=>b.line([[-p[0],p[1]],[-11,p[1]-i*0.2],[-3.4+i*0.6,-0.6+i*0.7]],V_,0.16));
+  [['EN',5.4],['PS',8],['PG',10.8]].forEach(a=>b.text(a[0],-13,a[1],1.45,S,90,'700 '));
+  const g=base({w,h,t,shape:s,mask:0x101114,edge:0x24252a,top:f,bot:b,label:'TPS63020: 33,47 × 24,3 × 1,5 мм, даёт 3,3 В и когда аккумулятор выше 3,3 В, и когда ниже'});
+  const tanL=sheet(5.6,4,256,'#e2a02c',front);tanL.text('▲107C',0.4,0.75,1.1,'#5a3a10',0,'700 ').text('813B2',0.4,-0.8,1.0,'#5a3a10',0,'600 ');
+  [[-11.5,2.6],[-11.1,7.1],[10.2,2.1]].forEach(c=>{g.add(bx(c[0],c[1],t+1.3,5.9,4.3,2.6,std(0xe2a02c,{roughness:0.42}),'танталовый конденсатор 100 мкФ, код 107C'));[-1,1].forEach(q=>g.add(bx(c[0]+q*3,c[1],t+0.1,0.5,2.8,0.2,tin)));g.add(bx(c[0]-2.55,c[1],t+1.3,0.42,4.32,2.62,std(0x8d5a19,{roughness:0.4}),'полоса: плюс'));const m=mesh(new T.ShapeGeometry(rrect(5.6,4,[0.3,0.3,0.3,0.3]),4),std(0xffffff,{map:tex(tanL.c,5.6,4),roughness:0.45,side:T.DoubleSide}),'танталовый конденсатор 100 мкФ, код 107C');m.position.set(c[0],c[1],t+2.606);g.add(m);});
+  const ind=std(0x6e7072,{metalness:0.35,roughness:0.5});g.add(bx(-0.1,-9.5,t+1.5,6.8,8.5,3,ind,'катушка 2,2 мкГн, код 2R2: выступает за край платы на 1,65 мм'));const il=sheet(6.8,8.5,512,'#6e7072',front);il.text('2R2',0,0,3,'#1c1c1e',0,'700 ');const im=mesh(new T.ShapeGeometry(rrect(6.8,8.5,[0.3,0.3,0.3,0.3]),4),std(0xffffff,{map:tex(il.c,6.8,8.5),roughness:0.5,side:T.DoubleSide}),'катушка 2,2 мкГн, код 2R2');im.position.set(-0.1,-9.5,t+3.006);g.add(im);
+  const dark=std(0x17181b,{roughness:0.5});g.add(bx(-0.4,-2.4,t+0.4,3.3,4.5,0.8,dark,'TPS63020: повышающе-понижающий преобразователь'));
+  const tanC=std(0xa58a63,{roughness:0.55});[[-6.4,-1.9,1],[-7.9,-4,1],[6.4,-1.9,-1],[7.9,-4,-1]].forEach((c,i)=>{const n=new T.Group();n.position.set(c[0],c[1],t);n.rotation.z=c[2]*Math.PI/4;const big=i%2===0;n.add(bx(0,0,big?0.8:0.45,big?3.2:2,big?2.5:1.25,big?1.6:0.9,tanC,'керамический конденсатор'));[-1,1].forEach(q=>n.add(bx(q*(big?1.6:1),0,big?0.8:0.45,0.3,big?2.5:1.25,big?1.62:0.92,tin)));g.add(n);});
+  smd(g,-12.9,10.8,t,1,true,'c','конденсатор');smd(g,11.8,7.1,t,1,true,'c','конденсатор');[3.5,5.3,7.1,9].forEach(y=>smd(g,-1.7,y,t,1,true,'r','резистор'));[7.1,8.4].forEach(y=>smd(g,-4.8,y,t,1,false,'r','резистор'));
+  return g;}
+
+// MT3608: плата 37,2 × 16,55 × 1,15 мм по замеру, раскладка снята с фото. −x — вход, +x — выход
+function mt3608(label){const w=37.2,h=16.55,t=1.15,M='#16306e',S='#e9eaec',TIN='#cfd2d5',INK='#17171b';const s=rrect(w,h,[0.5,0.5,0.5,0.5]);
+  const P=[[-15.4,3.6,-16.1],[-15.6,-3.3,-16.1],[15.5,3.8,15.4],[15.7,-2.8,15.4]],TR=[4.5,6.9,9.2];P.forEach(p=>hole(s,p[2],p[1],1.2));TR.forEach(x=>hole(s,x,-2.1,0.8));
+  const backF=(g,k,cx,cy2)=>g.setTransform(k,0,0,k,cx,cy2);   // как на фото снизу: (вправо, вверх) → x = вправо, y = −вверх
+  const f=sheet(w,h,1024,M,front),b=sheet(w,h,1024,M,backF);
+  P.forEach(p=>{f.rect(p[0]-2.7,p[1]-1.5,p[0]+2.7,p[1]+1.5,TIN);b.rect(p[0]-2.7,-p[1]-1.5,p[0]+2.7,-p[1]+1.5,TIN);});TR.forEach(x=>b.disc(x,2.1,0.8,TIN));
+  [['VN−',-15.7,6.4],['VN+',-16.2,-6],['VOUT−',15.2,6.5],['VOUT+',15.5,-5.9]].forEach(a=>f.text(a[0],a[1],a[2],1.5,S,180,'700 '));
+  f.frame(-11,-7.4,-0.4,2.6,S,0.14);f.frame(1.8,-7,11.2,-4.1,S,0.14);f.frame(-9.2,3.4,-4.2,8,S,0.14);
+  [[-12.4,0],[-11.9,0.8],[12.6,0],[13.2,0.8]].forEach(p=>f.disc(p[0],p[1],0.17,'#2a4b96'));
+  b.text('ICSA004A',-14.4,5.6,1.1,S,0,'700 ');b.text('MT3608',5.6,-2.1,2.6,S,0,'600 ');b.text('Y7412',5.8,-5.1,2.2,S,0,'600 ');
+  const G=b.g;G.fillStyle=S;for(let i=0;i<8;i++){const a=i*Math.PI/4;G.save();G.translate(-5+Math.cos(a)*3.9,2.7+Math.sin(a)*3.9);G.rotate(a);G.fillRect(-0.6,-0.6,1.2,1.2);G.restore();}b.ring(-5,2.7,3.3,S,1.0);b.text('IS',-5,2.7,2.6,S,0,'800 ');
+  const g=base({w,h,t,shape:s,mask:0x16306e,edge:0x24252a,top:f,bot:b,label:label||'MT3608, 37,2 × 16,55 × 1,15 мм'});
+  const dark=std(0x17181b,{roughness:0.5}),lbl=label||'MT3608';
+  g.add(bx(-5.7,-2.4,t+2,9.6,9.7,4,dark,'катушка 22 мкГн, код 220'));[-1,1].forEach(q=>g.add(bx(-5.7+q*4.95,-2.4,t+0.9,1,3.4,1.8,tin)));
+  const il=sheet(9.6,9.7,512,'#121216',front);il.ring(0,0,4.2,'#2a2b2f',0.5);il.text('220',0,0,2.8,'#b9bcc0',180,'700 ');const im=mesh(new T.ShapeGeometry(rrect(9.6,9.7,[2.6,2.6,2.6,2.6]),10),std(0xffffff,{map:tex(il.c,9.6,9.7),roughness:0.6,side:T.DoubleSide}),'катушка 22 мкГн, код 220');im.position.set(-5.7,-2.4,t+4.006);g.add(im);
+  g.add(bx(6.5,3.8,t+2.4,9.6,9.5,4.8,std(0x2f6fb0,{roughness:0.45}),'подстроечник 3296: выставить 5,0 В мультиметром до установки и залить лаком'));
+  const tl=sheet(9.2,9.2,512,'#2f6fb0',front);tl.text('BAOTER',0,2.6,1.5,'#123',0,'800 ').text('3296',0,0.3,1.9,'#123',0,'800 ').text('103',0,-2,1.4,'#123',0,'700 ');const tm=mesh(new T.ShapeGeometry(rrect(9.2,9.2,[0.2,0.2,0.2,0.2]),2),std(0xffffff,{map:tex(tl.c,9.2,9.2),roughness:0.5,side:T.DoubleSide}),'подстроечник 3296');tm.position.set(6.5,3.8,t+4.806);g.add(tm);
+  const scr=mesh(new T.CylinderGeometry(1,1,1.7,12),gold,'винт подстроечника');scr.position.set(8.7,9.3,t+3.5);g.add(scr);
+  TR.forEach(x=>{g.add(bx(x,-1.5,t+0.6,0.5,2,0.5,tin));dome(g,x,-2.1,t,1,0.45);});
+  g.add(bx(-7.1,5.9,t+0.5,2.9,1.6,1,dark,'микросхема MT3608'));[-1,1].forEach(q=>[-0.95,0,0.95].forEach(u=>g.add(bx(-7.1+u,5.9+q*1.05,t+0.15,0.4,0.5,0.25,tin))));
+  smd(g,-10.6,5.4,t,1,true,'c','конденсатор');smd(g,-1.8,5.4,t,1,true,'c','конденсатор');smd(g,12,-5.1,t,1,true,'r','резистор');
+  g.add(bx(6.6,-5.6,t+1,4.3,2.6,2,dark,'диод Шоттки'));g.add(bx(8.4,-5.6,t+1,0.5,2.62,2.02,std(0x8f9296)));[-1,1].forEach(q=>g.add(bx(6.6+q*2.5,-5.6,t+0.2,0.9,1.5,0.3,tin)));
+  return g;}
+
 function epd42(){const w=92,h=89.7,t=1.6,M='#141518',S='#e8e9ea',TIN='#c9cdd0';const s=rrect(w,h,[1.2,1.2,1.2,1.2]);
   const hs=[[-43.6,42.55],[43.6,42.55],[-43.6,-42.55],[43.6,-42.55]];hs.forEach(p=>hole(s,p[0],p[1],3.2));
   const hx=[-4.33,-1.79,0.75,3.29],hy=[43.75,41.21];hx.forEach(x=>hy.forEach(y=>hole(s,x,y,0.95)));
@@ -598,7 +643,7 @@ function drawScreen(c,v){const INK='#17171b',PAP='#dcdad1',F='Arial, sans-serif'
     T('КРЕН',8,221,10.5);T(heelS,126,223,19,700,'right');stern(66,262,1);T('ДИФФ',141,221,10.5);T(pitchS,259,223,19,700,'right');prof(199,265,1);T('нос →',259,296,9,600,'right');
     T('СДВИГ ВЕТРА',274,221,10.5);shift(274,221);}
   c.restore();}
-return {as5600,mt6701,gy50,bno08x,esp32s3,sd3v3,epd42,an181,tp4056,wires,drawScreen};
+return {as5600,mt6701,gy50,bno08x,esp32s3,sd3v3,epd42,an181,tp4056,tps63020,mt3608,wires,drawScreen};
 })();
 </script><!--/pcblib-->
 <script>
