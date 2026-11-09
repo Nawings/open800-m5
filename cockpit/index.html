@@ -100,8 +100,20 @@ code{font-family:var(--f-mono);font-size:12px}
       <h3>Экран и рамка <button type="button" data-go="dsp">Показать</button></h3>
       <ul>
         <li><b>Экран WeAct 4,2″ e-paper</b>, 400 × 300, плата 92 × 89,7 × 2,84 мм, лежит стеклом на печатной <b>рамке</b> за прозрачной крышкой. Плата держится 4 винтами М2,5 по углам, отверстия Ø3,2 с шагом 87,2 × 85,1 мм. Провода идут в его штатный разъём на 8 контактов и снимаются.</li>
-        <li>Справа на рамке — <b>стрелки «заход» и «отход»</b> (светодиоды 5 мм) и <b>сенсор «ноль»</b>: медная площадка на пружинящей прокладке прижата к крышке изнутри, поэтому палец чувствуется сквозь крышку.</li>
+        <li>Справа на рамке — <b>стрелки «заход» и «отход»</b> (светодиоды 5 мм) и выше и ниже экрана — две планки <b>подсветки</b>.</li>
         <li>Рамка стоит на 4 колоннах монтажной плиты, на винтах М3 в потай. Снимается отвёрткой, без паяльника: жгуты экрана, стрелок и карты идут на плату связи и отключаются разъёмами с защёлкой.</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>Что показывает экран <button type="button" data-go="dsp">Показать</button></h3>
+      <canvas id="epv" width="800" height="600" role="img" aria-label="Макет экрана: ветер, курс, скорости, крен и дифферент" style="width:100%;height:auto;aspect-ratio:4/3;border:1px solid var(--line);border-radius:4px;display:block"></canvas>
+      <div style="display:flex;flex-wrap:wrap;gap:6px"><button type="button" id="kMode">РЕЖИМ</button><button type="button" id="kMenu">МЕНЮ</button><button type="button" id="kUp">▲</button><button type="button" id="kDn">▼</button></div>
+      <ul>
+        <li><b>Понажимайте кнопки выше:</b> РЕЖИМ листает 4 вида — основной, ветер, тактика, лодка. МЕНЮ открывает настройки, ▲ и ▼ выбирают пункт, МЕНЮ меняет значение.</li>
+        <li><b>Роза ветра</b> с лодкой сверху, нос вверх: чёрная стрелка В — вымпельный ветер, светлая стрелка И — истинный, буква С — север.</li>
+        <li><b>Цифры:</b> истинный ветер, его направление, вымпельный ветер, курс по компасу и по GPS, скорость, VMG.</li>
+        <li><b>Внизу:</b> лодка с кормы показывает крен, лодка сбоку — дифферент (наклон нарисован в 3 раза сильнее), справа сдвиг ветра.</li>
+        <li>Числа на макете — пример, не измерения. Макет в размере настоящего экрана: 400 × 300 точек, чёрно-белый.</li>
       </ul>
     </div>
     <div class="card">
@@ -117,7 +129,7 @@ code{font-family:var(--f-mono);font-size:12px}
       <ul>
         <li>Коробка стоит на вертикальной переборке, а датчикам нужно лежать горизонтально. Поэтому у плиты две <b>полки</b>, отпечатанные с ней заодно.</li>
         <li><b>BNO085 на плате GY-BNO08X</b>, 25,65 × 15,55 × 1,6 мм: справа, ось X к носу (в переборку). Держат её 2 винта М2,5 в 20,7 мм друг от друга. Край с 10 контактами свисает с полки, поэтому гребёнка смотрит вниз и не упирается. До катушек преобразователей больше 60 мм, иначе они сбивают компас.</li>
-        <li><b>GPS</b> — слева вверху, антенной вверх, под верхней стенкой коробки. ABS сигнал пропускает. Держат его 2 планки по краям платы: антенну они не закрывают.</li>
+        <li><b>GPS QUESCAN AN181</b>, 18 × 18,25 × 6,78 мм: слева вверху, керамической антенной вверх, под верхней стенкой коробки. ABS сигнал пропускает. Отверстий у модуля нет, поэтому он лежит в печатном гнезде, а крышка гнезда закрывает только углы антенны. Гнездо и крышка держатся на 2 винтах М2,5 в полке. Провода идут через штатный разъём модуля: 4 контакта с шагом 1 мм, снимается без паяльника.</li>
       </ul>
     </div>
     <div class="card">
@@ -131,7 +143,7 @@ code{font-family:var(--f-mono);font-size:12px}
     <div class="card">
       <h3>Разъёмы — все снизу <button type="button" data-go="conn">Показать</button></h3>
       <ul>
-        <li>Слева направо: <b>SP13</b> на 2 контакта — питание лодки, <b>тумблер</b> с колпачком, <b>USB-C</b> с колпачком — зарядка с берега и прошивка, <b>гермоввод PG7</b> — кабель с мачты, <b>M12</b> на 8 контактов — порт внешнего модуля.</li>
+        <li>Слева направо: <b>SP13</b> на 2 контакта — питание лодки, <b>тумблер</b> с колпачком, <b>USB-C</b> с колпачком — зарядка с берега, <b>кнопка IP67</b> «ноль» и подсветка, <b>гермоввод PG7</b> — кабель с мачты, <b>M12</b> на 8 контактов — порт внешнего модуля.</li>
         <li>Разъёмы разные нарочно: 12 В нельзя по ошибке вставить в гнездо мачты, где только 5 В.</li>
         <li>Блок крепится к переборке 4 винтами М4 сквозь плиту и заднюю стенку коробки, с резиновыми шайбами и герметиком.</li>
       </ul>
@@ -143,6 +155,16 @@ code{font-family:var(--f-mono);font-size:12px}
         <li><b>Модуль micro-SD на 3,3 В</b> стоит на лицевой стороне рамки справа: карта вынимается сверху при снятой крышке, рамку снимать не нужно.</li>
         <li>Пишутся ветер, курс, крен, скорость и место 10 раз в секунду, каждая гонка отдельным файлом: около 20 МБ за день, карты 32 ГБ хватит на годы.</li>
         <li>Запись сбрасывается раз в секунду, поэтому при пропаже питания теряется не больше секунды. Файлы можно скачать и по Wi-Fi. Модуль добавляет до 20 мА, на время работы почти не влияет.</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h3>Подсветка экрана и кнопка <button type="button" data-go="dsp">Показать</button></h3>
+      <ul>
+        <li>У экрана e-paper нет своей подсветки: он только отражает свет. Поэтому над и под экраном стоят 2 печатные планки по 5 красных светодиодов 3 мм, они светят на стекло под углом 20°. Красный не слепит ночью.</li>
+        <li>Яркость задаёт ESP32 через ключ 2N7002, ножка IO19. На полную подсветка берёт 80 мА, это около 0,3 Вт.</li>
+        <li><b>Кнопка IP67</b> в нижней стенке, отдельно от 4 кнопок на крышке: короткое нажатие включает и выключает подсветку, 3 секунды — обнуляет крен и дифферент. Мокрые руки ей не мешают.</li>
+        <li>Равномерность света проверить на столе: это видно только на настоящем экране.</li>
       </ul>
     </div>
 
@@ -161,7 +183,7 @@ code{font-family:var(--f-mono);font-size:12px}
       <rect x="150" y="314" width="118" height="40" rx="4"/><text x="158" y="330">VSYS → тумблер</text><text class="m" x="158" y="344">3,0–4,65 В, 470 мкФ</text>
       <rect x="6" y="378" width="128" height="44" rx="4"/><text x="14" y="394">TPS63020: 3,3 В</text><text class="m" x="14" y="408">ESP32-S3, датчики</text>
       <rect x="146" y="378" width="128" height="44" rx="4"/><text x="154" y="394">MT3608: 5,0 В</text><text class="m" x="154" y="408">PPTC 0,2 А → мачта</text>
-      <rect x="286" y="378" width="128" height="44" rx="4"/><text x="294" y="394">MT3608: 5,0 В</text><text class="m" x="294" y="408">ключ IO7 → порт</text>
+      <rect x="286" y="378" width="128" height="44" rx="4"/><text x="294" y="394">MT3608: 5,0 В</text><text class="m" x="294" y="408">ключ IO20 → порт</text>
       <rect x="296" y="314" width="118" height="40" rx="4"/><text x="304" y="330">порт: +12 В</text><text class="m" x="304" y="344">PPTC 1,5 А, IO6</text>
       <path class="b12" d="M65 48 V64 M65 108 V122 M65 176 V192"/>
       <path class="b12" d="M124 165 H136 V306 H286 V334 H296"/>
@@ -191,6 +213,7 @@ code{font-family:var(--f-mono);font-size:12px}
       <tr><td>Без Wi-Fi</td><td>0,83 Вт</td><td>12 ч</td><td>81 мА, 0,8 А·ч за 10 часов</td></tr>
       <tr><td>С Wi-Fi</td><td>1,18 Вт</td><td>8,4 ч</td><td>115 мА, 1,2 А·ч за 10 часов</td></tr>
       <tr><td>Wi-Fi и модуль по проводу</td><td>1,25 Вт</td><td>8 ч</td><td>121 мА</td></tr>
+      <tr><td>Ночью, подсветка на полную, без Wi-Fi</td><td>1,12 Вт</td><td>8,8 ч</td><td>110 мА</td></tr>
     </table></div>
     <p class="note">Расход — оценка по типовым токам деталей, он ещё не измерен. В нём учтена запись на карту, до 20 мА. Энергия аккумулятора: 3 А·ч × 3,6 В × 0,92 = 9,9 Вт·ч. Из 0,83 Вт топ мачты берёт 0,37 Вт: 65 мА при 5 В, из них 17 мА уходит в нагрузку линии RS-485. Зарядка пустого аккумулятора от лодки длится около 7 часов и берёт ещё ≈ 0,2 А. Ток TP4056 снижен с 1 до 0,5 А резистором 2,4 кОм: при 1 А в закрытой коробке модуль греется на 1,25 Вт. Ёмкость взята по этикетке, 3000 мА·ч; подделки 30Q встречаются, поэтому её стоит проверить разрядом.</p>
 
@@ -202,7 +225,7 @@ code{font-family:var(--f-mono);font-size:12px}
       <tr><td>2</td><td>коричневый</td><td>TX− (B)</td></tr>
       <tr><td>3</td><td>зелёный</td><td>RX+ (A): данные в блок</td></tr>
       <tr><td>4</td><td>жёлтый</td><td>RX− (B), на плате связи резистор 120 Ом</td></tr>
-      <tr><td>5</td><td>серый</td><td>+5 В до 0,5 А, включает прошивка (IO7)</td></tr>
+      <tr><td>5</td><td>серый</td><td>+5 В до 0,5 А, включает прошивка (IO20)</td></tr>
       <tr><td>6</td><td>розовый</td><td>земля</td></tr>
       <tr><td>7</td><td>синий</td><td>+12 В лодки до 1,5 А: только когда подключена лодка</td></tr>
       <tr><td>8</td><td>красный</td><td>земля</td></tr>
@@ -226,10 +249,12 @@ code{font-family:var(--f-mono);font-size:12px}
       <tr><td>IO1</td><td>данные с мачты (RX)</td><td>IO12, 11, 13, 10</td><td>BNO085: SCK, MOSI, MISO, CS</td></tr>
       <tr><td>IO2</td><td>напряжение аккумулятора, делитель 100/100 кОм</td><td>IO9, IO8</td><td>BNO085: INT, RST</td></tr>
       <tr><td>IO3</td><td>NTC аккумулятора, делитель 10 кОм</td><td>IO18, 17, 16, 15</td><td>экран: CLK, DIN, CS, DC</td></tr>
-      <tr><td>IO4, IO5</td><td>GPS: RX, TX</td><td>IO21, IO47</td><td>экран: BUSY, RST <span class="wr">(было IO6, IO7)</span></td></tr>
+      <tr><td>IO4, IO5</td><td>GPS: RX, TX</td><td>IO21, IO47</td><td>экран: BUSY, RST <span class="wr">(было IO6, IO20)</span></td></tr>
       <tr><td>IO6</td><td>напряжение лодки, делитель 100/8,2 кОм</td><td>IO39, IO42</td><td>порт: TX, RX</td></tr>
-      <tr><td>IO7</td><td>включить +5 В порта</td><td>IO40, IO41</td><td>стрелки «заход», «отход»</td></tr>
-      <tr><td>IO45</td><td>разрешить зарядку</td><td>IO14</td><td>сенсор «ноль»</td></tr>
+      <tr><td>IO20</td><td>включить +5 В порта</td><td>IO40, IO41</td><td>стрелки «заход», «отход»</td></tr>
+      <tr><td>IO45</td><td>разрешить зарядку</td><td>IO14</td><td>кнопка</td></tr>
+      <tr><td>IO7</td><td>4 кнопки: одна ножка, делитель из резисторов</td><td></td><td></td></tr>
+      <tr><td>IO19</td><td>яркость подсветки</td><td>IO38, IO48</td><td>карта: MISO, CS</td></tr>
     </table></div>
     <p class="note">Заняты картой памяти: IO38 — MISO, IO48 — CS; одна из них идёт и на цветной светодиод, при записи он может мигать, а снаружи его не видно. Такт и данные к карте общие с экраном: IO18, IO17. Не занимать: IO35–37 (память на модуле N16R8), IO0, IO46. Делитель лодки 100/8,2 кОм даёт 3,0 В даже при выбросе 40 В, поэтому ножка не сгорит. IO3 — настроечная ножка, но вход через делитель её режимов не меняет.</p>
 
@@ -250,11 +275,15 @@ code{font-family:var(--f-mono);font-size:12px}
       <tr><td>AO3401 ×3 и 2N7002 ×2 на переходниках, 1N5819 ×3, SMBJ24A, 470 мкФ 10 В, NTC 10 кОм, PPTC 0,5 А и 1,5 А, резисторы 100 кОм ×5, 10 кОм, 8,2 кОм, 68 Ом ×2</td><td>выбор источника, ключи, защита</td></tr>
       <tr><td>Разъём SP13 на 2 контакта, пара</td><td>питание лодки</td></tr>
       <tr><td>M12 на 8 контактов A-кодированный: гнездо на панель и вилка с кабелем</td><td>порт внешнего модуля</td></tr>
-      <tr><td>USB-C на панель с колпачком</td><td>1 — зарядка с берега, прошивка</td></tr>
+      <tr><td>USB-C на панель с колпачком</td><td>1 — зарядка с берега</td></tr>
+      <tr><td>Кнопка IP67 без фиксации, Ø12 мм</td><td>5: «ноль» и подсветка в нижней стенке; РЕЖИМ, МЕНЮ, ▲, ▼ на крышке</td></tr>
+      <tr><td>Резисторы 10 кОм ×2, 4,7 кОм, 2,2 кОм</td><td>4 кнопки на одной ножке IO7</td></tr>
+      <tr><td>Светодиоды красные 3 мм ×10, резисторы 150 Ом ×10, 2N7002 на переходнике</td><td>подсветка экрана</td></tr>
+      <tr><td>Кабель к разъёму GPS: вилка 4 контакта, шаг 1 мм</td><td>обычно идёт с модулем; другой конец — в разъём с защёлкой на плате связи</td></tr>
       <tr><td>Модуль micro-SD на 3,3 В без стабилизатора и карта 32 ГБ; 2 стойки М2,5 × 3</td><td>данные гонок; конденсатор 100 мкФ у модуля</td></tr>
       <tr><td>Макетные платы 50 × 70, 50 × 90 и 20 × 40; цанговые панели 2,54 (1 × 22 ×2 и полоски под модули); разъёмы типа XH 2,5 мм с защёлкой на 2–10 контактов; стойки М2,5 × 11,5 ×2 и планка ESP32</td><td>плата питания и плата связи</td></tr>
       <tr><td>Предохранитель 2 А в держателе на провод</td><td>ставится у аккумулятора лодки</td></tr>
-      <tr><td>Термовставки М3 ×18, М2,5 ×8; винты М3 ×14, М2,5 ×12, М4 ×4 с резиновыми шайбами</td><td>сборка</td></tr>
+      <tr><td>Термовставки М3 ×18, М2,5 ×6; винты М3 ×14, М2,5 ×10, М2,5 × 14 мм ×2, М4 ×4 с резиновыми шайбами</td><td>сборка</td></tr>
       <tr><td>Печать ASA: плита 90 см³, рамка 38 см³, прижимы 4 см³</td><td>≈ 135 г</td></tr>
     </table></div>
     <p class="note">LiPo 906090 из прошлой схемы больше не нужен: 18650 в держателе меняется без паяльника и надёжнее в коробке на солнце.</p>
@@ -273,7 +302,7 @@ code{font-family:var(--f-mono);font-size:12px}
     <h2>Сверить по деталям</h2>
     <ul class="steps">
       <li>Купленную коробку: внутренний размер, высоту до крышки (у модели 70 мм), где колонны винтов крышки. От этого зависят вырезы плиты и высота колонн.</li>
-            <li>GPS QUESCAN AN181: размер платы и антенны взяты 25 × 25 и 18 × 18.</li>
+            <li>GPS QUESCAN AN181: 18 × 18,25 × 6,78 мм измерено. Высота от банки до верха антенны, 5,4 мм, и раскладка сняты с фото: сверить перед печатью гнезда.</li>
       <li>BNO085: размер измерен, положение отверстий и деталей снято с фото, точность ± 0,3 мм.</li>
       <li>Размер модулей MAX3485, TPS63020 — примерные.</li>
       <li>Держатель 18650: взят размер 77 × 21 мм. Ёмкость аккумулятора проверить разрядом: подделки 30Q встречаются.</li>
@@ -556,6 +585,31 @@ function sd3v3(){const w=24,h=20,t=1.6,M='#1a4f9e',S='#eef2f7',TIN='#c9cdd0';con
   g.userData.pins={};names.forEach((n,i)=>{g.userData.pins[n]=[pxs[i],py,-1.4];g.add(bx(pxs[i],py,-0.7,0.64,0.64,1.4,gold,'контакт '+n+': провод припаян'));dome(g,pxs[i],py,t,1,0.45);});
   return g;}
 
+// QUESCAN AN181 (u-blox M10050): 18,25 × 18 × 6,78 мм по замеру, раскладка снята с фото. z=0 — сторона банки и разъёма, антенна сверху; +x — край с разъёмом
+function an181(){const w=18.25,h=18,t=0.8,M='#121317',S='#e8e9ea',G='#c8a14a',INK='#1a1a1c';const s=rrect(w,h,[0.5,0.5,0.5,0.5]);
+  const backP=(g,k,cx,cy2)=>g.setTransform(0,k,-k,0,cx,cy2);   // как на фото: разъём внизу; (вправо, вверх) → x = −вверх, y = −вправо
+  const f=sheet(w,h,256,M,front),b=sheet(w,h,768,M,backP);
+  const oval=(x,y)=>{b.g.fillStyle=G;b.g.beginPath();b.g.ellipse(x,y,0.55,0.8,0,0,7);b.g.fill();};
+  [['T',-7.9],['R',-6.2],['P',-4.5]].forEach(a=>{b.text(a[0],a[1],-3.7,1.05,S,0,'700 ');oval(a[1],-5.1);});
+  [['G',-7.9],['V',-4.5]].forEach(a=>{b.text(a[0],a[1],-6.7,1.05,S,0,'700 ');oval(a[1],-8.2);});
+  b.frame(3.9,-4.2,9,-2.9,S,0.1);['G','T','R','V'].forEach((n,i)=>b.text(n,4.5+i*1.3,-3.55,0.95,S,0,'700 '));
+  [['Pwr',5.6],['PPS',8.2]].forEach(a=>{b.rect(a[1]-1.2,-8.2,a[1]+1.2,-7,S);b.text(a[0],a[1],-7.6,0.85,M,0,'700 ');});
+  const g=base({w,h,t,shape:s,mask:0x121317,edge:0x2a2b2e,top:f,bot:b,label:'GPS QUESCAN AN181 (u-blox M10050), 18 × 18,25 × 6,78 мм: скорость и курс 10 раз в секунду'});
+  g.add(bx(-3.1,0,-0.7,11.8,17.7,1.4,std(0xb8bbbe,{metalness:0.75,roughness:0.35}),'металлический экран приёмника под наклейкой'));
+  const l=sheet(11.2,16.6,768,'#f1efe6',backP);
+  l.text('QUESCAN',-0.2,3.7,1.9,INK,0,'italic 800 ');l.text('AN181',-2.9,0.3,2.1,INK,0,'800 ');l.text('UB-M10050',-3.1,-1.8,1.15,INK,0,'700 ');l.text('GND  TX  RX  VCC',-1.4,-3.6,1.05,INK,0,'700 ');
+  const qx=2.3,qy=-2.1,c=0.3;for(let i=0;i<13;i++)for(let j=0;j<13;j++){const fnd=(a,b)=>a>=0&&a<4&&b>=0&&b<4;const inF=fnd(i,j)||fnd(i-9,j)||fnd(i,j-9);const on=inF?(Math.max(Math.abs(((i>8?i-9:i))-1.5),Math.abs(((j>8?j-9:j))-1.5))>1||Math.max(Math.abs(((i>8?i-9:i))-1.5),Math.abs(((j>8?j-9:j))-1.5))<0.8):((i*7+j*5+i*j)%3===0);if(on)l.rect(qx+i*c,qy+j*c,qx+(i+1)*c,qy+(j+1)*c,INK);}
+  const lm=mesh(new T.ShapeGeometry(rrect(11.2,16.6,[0.4,0.4,0.4,0.4]),8),std(0xffffff,{map:tex(l.c,11.2,16.6),roughness:0.6,side:T.DoubleSide}),'наклейка модуля');lm.position.set(-3.1,0,-1.406);g.add(lm);
+  g.add(bx(-0.125,0,t+1.6,18,18,3.2,std(0x8b5233,{roughness:0.6}),'керамическая антенна 18 × 18 мм: смотрит вверх, на небо'));
+  const p=sheet(18,18,512,'#8b5233',front),e=7.85,ch=1.5;p.g.fillStyle='#e9e6dc';p.g.beginPath();[[-e+ch,e],[e,e],[e,-e+ch],[e-ch,-e],[-e,-e],[-e,e-ch]].forEach((q,i)=>i?p.g.lineTo(q[0],q[1]):p.g.moveTo(q[0],q[1]));p.g.closePath();p.g.fill();p.disc(-1.1,-1.1,1.7,'#b4b8bb').disc(-1.1,-1.1,1.0,'#dfe2e4');
+  const pm=mesh(new T.ShapeGeometry(rrect(18,18,[0.7,0.7,0.7,0.7]),8),std(0xffffff,{map:tex(p.c,18,18),roughness:0.5,side:T.DoubleSide}),'керамическая антенна 18 × 18 мм: смотрит вверх, на небо');pm.position.set(-0.125,0,t+3.206);g.add(pm);
+  dome(g,-1.225,-1.1,t+3.2,1,0.6);
+  g.add(bx(6.05,0,-1.39,5.9,6.1,2.78,std(0xece7d6,{roughness:0.55}),'штатный разъём модуля: 4 контакта с шагом 1 мм, GND, TX, RX, VCC'));
+  g.add(bx(10.6,0,-1.39,3.6,5.1,2.1,std(0xf4f1e6,{roughness:0.5}),'вилка с проводами: вставляется в разъём модуля, снимается без паяльника'));
+  led(g,6.2,-5.6,0,-1,false,'светодиод питания Pwr');led(g,6.2,-8.2,0,-1,false,'светодиод PPS: мигает, когда GPS поймал спутники');
+  g.userData.pins={};[['GND',1.5],['TX',0.5],['RX',-0.5],['VCC',-1.5]].forEach(a=>{g.userData.pins[a[0]]=[12.7,a[1],-1.39];g.add(bx(12.5,a[1],-1.39,0.4,0.5,0.5,gold,'провод '+a[0]));});
+  return g;}
+
 function epd42(){const w=92,h=89.7,t=1.6,M='#141518',S='#e8e9ea',TIN='#c9cdd0';const s=rrect(w,h,[1.2,1.2,1.2,1.2]);
   const hs=[[-43.6,42.55],[43.6,42.55],[-43.6,-42.55],[43.6,-42.55]];hs.forEach(p=>hole(s,p[0],p[1],3.2));
   const hx=[-4.33,-1.79,0.75,3.29],hy=[43.75,41.21];hx.forEach(x=>hy.forEach(y=>hole(s,x,y,0.95)));
@@ -589,7 +643,47 @@ function epd42(){const w=92,h=89.7,t=1.6,M='#141518',S='#e8e9ea',TIN='#c9cdd0';c
   const qm=mesh(new T.PlaneGeometry(8.2,8.4),std(0xffffff,{map:new T.CanvasTexture(qc),roughness:0.6}),'наклейка с номером стекла');qm.rotation.y=Math.PI;qm.position.set(-24.5,-36,-0.22);g.add(qm);
   const u=x=>0.33+4.375-x*1.25;g.userData.pins={};[['VCC'],['GND'],['DIN'],['CLK'],['CS'],['DC'],['RST'],['BUSY']].forEach((n,i)=>g.userData.pins[n[0]]=[u(i),18.1,-1.5]);
   return g;}
-return {as5600,mt6701,gy50,bno08x,esp32s3,sd3v3,epd42,wires};
+
+// экран прибора 400 × 300, чёрно-белый. v: aws, awa (+ справа), hdg, sog, heel (+ на правый), pitch (+ на нос), sig, d, boat, batt, mode 0–3, cfg, menu
+function drawScreen(c,v){const INK='#17171b',PAP='#dcdad1',F='Arial, sans-serif',D=Math.PI/180,cfg=v.cfg||{},ms=cfg.unit==='м/с',U=ms?'м/с':'уз';
+  const f1=x=>x.toFixed(1).replace('.',','),spd=x=>f1(ms?x*0.5144:x),side=a=>Math.abs(a)<0.5?'':(a<0?'Л':'П'),n360=a=>((Math.round(a)%360)+360)%360;
+  const ar=v.awa*D,wx=v.aws*Math.sin(ar),wy=v.aws*Math.cos(ar)-v.sog,tws=Math.hypot(wx,wy),twa=Math.atan2(wx,wy)/D,twd=n360(v.hdg+twa),cog=n360(v.hdg+2),vmg=v.sog*Math.cos(twa*D);
+  const T=(s,X,Y,sz,w,al)=>{c.font=(w||700)+' '+sz+'px '+F;c.textAlign=al||'left';c.textBaseline='alphabetic';c.fillText(s,X,Y);c.textAlign='left';};
+  const H=(x,y,w,t)=>c.fillRect(x,y,w,t||1.5);
+  c.save();c.fillStyle=PAP;c.fillRect(0,0,400,300);c.fillStyle=INK;c.strokeStyle=INK;c.lineJoin='round';c.lineCap='round';
+  const mode=v.mode||0,names=['ОСНОВНОЙ','ВЕТЕР','ТАКТИКА','ЛОДКА'];
+  T('М5',6,15,13);T(v.menu?'МЕНЮ':names[mode],44,15,11);T('лодка '+f1(v.boat)+' В · акк '+v.batt+' %'+(cfg.wifi==='вкл'?' · Wi-Fi':'')+(cfg.sd==='выкл'?'':' · SD'),394,14,10.5,600,'right');H(0,20,400);
+  function rose(cx,cy,R){const k=R/60;c.lineWidth=1.5;c.beginPath();c.arc(cx,cy,R,0,7);c.stroke();
+    for(let a=0;a<360;a+=30){const r=(a-90)*D,r0=R-(a%90?4:8)*Math.max(1,k*0.7);c.lineWidth=a%90?1:2;c.beginPath();c.moveTo(cx+Math.cos(r)*r0,cy+Math.sin(r)*r0);c.lineTo(cx+Math.cos(r)*R,cy+Math.sin(r)*R);c.stroke();}
+    const nr=(-v.hdg-90)*D;T('С',cx+Math.cos(nr)*(R-16*k),cy+Math.sin(nr)*(R-16*k)+4.5*k,12*k,700,'center');
+    c.save();c.translate(cx,cy);c.scale(k,k);c.lineWidth=2;c.beginPath();c.moveTo(0,-31);c.bezierCurveTo(13,-14,12,16,8,27);c.lineTo(-8,27);c.bezierCurveTo(-12,16,-13,-14,0,-31);c.closePath();c.stroke();c.beginPath();c.arc(0,-8,2.4,0,7);c.fill();c.lineWidth=1.6;const hb=(v.awa<0?-1:1)*18*D;c.save();c.translate(0,-8);c.rotate(hb+Math.PI);c.beginPath();c.moveTo(0,0);c.lineTo(0,-30);c.stroke();c.restore();c.restore();
+    const arrow=(a,fill,lb)=>{const r=(a-90)*D,ca=Math.cos(r),sa=Math.sin(r),nx=-sa,ny=ca,P=t=>[cx+ca*t,cy+sa*t];const o=P(R+1),i=P(R-27*k),b=P(R-16*k),tip=P(R-33*k);c.lineWidth=(fill?3:1.8)*Math.max(1,k*0.8);c.beginPath();c.moveTo(o[0],o[1]);c.lineTo(b[0],b[1]);c.stroke();c.beginPath();c.moveTo(tip[0],tip[1]);c.lineTo(b[0]+nx*6*k,b[1]+ny*6*k);c.lineTo(b[0]-nx*6*k,b[1]-ny*6*k);c.closePath();if(fill)c.fill();else{c.save();c.fillStyle=PAP;c.fill();c.restore();c.lineWidth=1.6;c.stroke();}const l=P(R+10*Math.min(k,1.2));T(lb,l[0],l[1]+4,10.5*Math.min(k,1.3),700,'center');};
+    arrow(twa,false,'И');arrow(v.awa,true,'В');}
+  function stern(x,y,k){c.save();c.translate(x,y);c.lineWidth=1;c.setLineDash([3,3]);c.beginPath();c.moveTo(-58*k,4*k);c.lineTo(58*k,4*k);c.stroke();c.setLineDash([]);c.rotate(v.heel*D);c.lineWidth=2.4;c.beginPath();c.moveTo(-30*k,0);c.quadraticCurveTo(0,20*k,30*k,0);c.closePath();c.stroke();c.beginPath();c.moveTo(0,-2*k);c.lineTo(0,-36*k);c.stroke();c.lineWidth=3;c.beginPath();c.moveTo(0,10*k);c.lineTo(0,31*k);c.stroke();c.restore();}
+  function prof(x,y,k){c.save();c.translate(x,y);c.lineWidth=1;c.setLineDash([3,3]);c.beginPath();c.moveTo(-58*k,3*k);c.lineTo(58*k,3*k);c.stroke();c.setLineDash([]);c.rotate(v.pitch*3*D);c.lineWidth=2.4;c.beginPath();c.moveTo(-46*k,-4*k);c.lineTo(48*k,-4*k);c.quadraticCurveTo(38*k,10*k,20*k,11*k);c.lineTo(-38*k,11*k);c.closePath();c.stroke();c.beginPath();c.moveTo(4*k,-5*k);c.lineTo(4*k,-33*k);c.stroke();c.lineWidth=3;c.beginPath();c.moveTo(0,11*k);c.lineTo(-5*k,27*k);c.stroke();c.restore();}
+  const heelS=Math.round(Math.abs(v.heel))+'° '+side(v.heel),pitchS=Math.abs(v.pitch)<0.05?'0,0°':(v.pitch>0?'+':'−')+f1(Math.abs(v.pitch))+'°';
+  function shift(X,Y){if(v.sig){const up=v.sig>0,ax=X+26,ay=Y+41;c.beginPath();if(up){c.moveTo(ax,ay-22);c.lineTo(ax+18,ay+4);c.lineTo(ax-18,ay+4);}else{c.moveTo(ax,ay+22);c.lineTo(ax+18,ay-4);c.lineTo(ax-18,ay-4);}c.closePath();c.fill();T(up?'ОТХОД':'ЗАХОД',X+52,Y+34,12.5,700);T(Math.round(v.d)+'°',X+52,Y+59,23,700);}else T('ровный',X+59,Y+44,17,700,'center');}
+  function menu(){const rows=v.menu.rows,sel=v.menu.i;rows.forEach((r,i)=>{const y=28+i*34;if(i===sel){c.fillRect(8,y,384,30);c.fillStyle=PAP;}T(r.t,20,y+21,16,700);if(r.v)T(r.v,380,y+21,16,700,'right');c.fillStyle=INK;});H(0,272);T('▲ ▼ выбрать · МЕНЮ — изменить',200,291,12,600,'center');}
+  if(v.menu){menu();}
+  else if(mode===1){rose(132,162,118);H(268,20,1.5,0);c.fillRect(268,20,1.5,280);
+    T('ИСТИННЫЙ',278,44,11);T(spd(tws),278,84,38);T(U,278,100,13);T('угол '+Math.round(Math.abs(twa))+'° '+side(twa),278,118,12,600);H(268,128,132);
+    T('ВЫМПЕЛЬНЫЙ',278,148,11);T(spd(v.aws),278,188,38);T(U,278,204,13);T('угол '+Math.round(Math.abs(v.awa))+'° '+side(v.awa),278,222,12,600);H(268,232,132);
+    T('ОТКУДА ДУЕТ',278,252,11);T(twd+'°',278,288,30);}
+  else if(mode===2){T('НАПРАВЛЕНИЕ ВЕТРА, 10 МИНУТ',10,38,11);c.lineWidth=1;c.setLineDash([3,3]);c.beginPath();c.moveTo(10,108);c.lineTo(390,108);c.stroke();c.setLineDash([]);T((twd+10)+'°',392,52,10,600,'right');T((twd-10)+'°',392,172,10,600,'right');
+    c.lineWidth=2.2;c.beginPath();for(let i=0;i<=120;i++){const x=10+i*380/120,a=6*Math.sin(i/11+0.6)+2.6*Math.sin(i/4.3),y=108-a*6;i?c.lineTo(x,y):c.moveTo(x,y);}c.stroke();H(0,184,400);c.fillRect(133,184,1.5,116);c.fillRect(266,184,1.5,116);
+    T('СДВИГ ВЕТРА',8,202,10.5);shift(8,214);T('VMG',141,202,10.5);T(spd(vmg),141,250,36);T(U,141,270,13);T('УГОЛ ЛАВИРОВКИ',274,202,10.5);T(Math.round(Math.abs(twa)*2)+'°',274,250,36);T('по истинному',274,270,11,600);}
+  else if(mode===3){c.fillRect(200,20,1.5,280);T('КРЕН',10,42,13);T(heelS,100,92,42,700,'center');stern(100,205,1.6);T('ДИФФЕРЕНТ',210,42,13);T(pitchS,300,92,42,700,'center');prof(300,205,1.45);T('нос →',390,292,10,600,'right');}
+  else{rose(70,108,60);
+    const X1=146,X2=276,tile=(X,Y,t,val,unit,sub)=>{T(t,X,Y,10.5);T(val,X,Y+31,29);if(unit){c.font='700 29px '+F;const w=c.measureText(val).width;T(unit,X+w+3,Y+31,12);}if(sub)T(sub,X,Y+45,11,600);};
+    c.fillRect(138,20,1.5,186);c.fillRect(268,20,1.5,186);
+    tile(X1,35,'ИСТИННЫЙ ВЕТЕР',spd(tws),U,'угол '+Math.round(Math.abs(twa))+'° '+side(twa));tile(X2,35,'НАПРАВЛЕНИЕ',twd+'°','','откуда дует');
+    tile(X1,96,'ВЫМПЕЛЬНЫЙ',spd(v.aws),U,'угол '+Math.round(Math.abs(v.awa))+'° '+side(v.awa));tile(X2,96,'КУРС',n360(v.hdg)+'°','','по GPS '+cog+'°');
+    tile(X1,157,'СКОРОСТЬ',spd(v.sog),U,'по GPS');tile(X2,157,'VMG',spd(vmg),U,'к ветру');
+    H(0,206,400);c.fillRect(133,206,1.5,94);c.fillRect(266,206,1.5,94);
+    T('КРЕН',8,221,10.5);T(heelS,126,223,19,700,'right');stern(66,262,1);T('ДИФФ',141,221,10.5);T(pitchS,259,223,19,700,'right');prof(199,265,1);T('нос →',259,296,9,600,'right');
+    T('СДВИГ ВЕТРА',274,221,10.5);shift(274,221);}
+  c.restore();}
+return {as5600,mt6701,gy50,bno08x,esp32s3,sd3v3,epd42,an181,wires,drawScreen};
 })();
 </script><!--/pcblib-->
 <script>
@@ -672,10 +766,12 @@ add(lab(bx(-170,-120,-25,170,120,-3,M(0xb59b74,{roughness:0.85})),'кормов�
 // ---------- печатные детали из STL ----------
 const STLS=[
  ['plate',[0,0,0],0,'#3a3e45',V(0,0,0),'монтажная плита: ASA, 3 мм; бобышки плат, 4 колонны рамки, ложемент аккумулятора и 2 полки датчиков отпечатаны заодно'],
- ['bezel',[0,0,61],1,'#4a505a',V(0,0,95),'рамка экрана: ASA; окно экрана, отверстия стрелок, окно сенсора «ноль»; знаки стрелок углублены. 4 винта М3 в потай в колонны плиты'],
+ ['bezel',[0,0,61],1,'#4a505a',V(0,0,95),'рамка экрана: ASA; окно экрана, отверстия стрелок; знаки стрелок углублены. 4 винта М3 в потай в колонны плиты'],
+ ['led_bar_t',[-36.33,38,61],0,'#4a505a',V(0,0,100),'планка подсветки над экраном: ASA, 5 красных светодиодов 3 мм под углом 20°, 2 винта М2,5 сзади сквозь рамку'],
+ ['led_bar_b',[-36.33,-31,61],3,'#4a505a',V(0,0,100),'планка подсветки под экраном: ASA, 5 красных светодиодов 3 мм'],
  ['pack_clamp',[-69,-5,24],0,'#556070',V(0,0,48),'прижимная планка аккумулятора: ASA, 2 винта М3 в бобышки ложемента; под ней датчик NTC'],
- ['gps_clamp',[-66,44,5.5],2,'#556070',V(0,22,40),'планка GPS у плиты: ASA, лапки 1,6 мм, 2 винта М2,5 в полку'],
- ['gps_clamp',[-66,44,32.5],2,'#556070',V(0,22,40),'планка GPS у крышки: ASA, лапки 1,6 мм, 2 винта М2,5 в полку']
+ ['gps_cradle',[-66,44,18],2,'#556070',V(0,22,40),'гнездо GPS: ASA, модуль лежит банкой на дне, вырез под разъём и вилку'],
+ ['gps_cap',[-66,52.3,18],2,'#6a7686',V(0,38,40),'крышка гнезда GPS: ASA, закрыты только углы антенны; 2 винта М2,5 × 14 сквозь гнездо в полку']
 ];
 const b64=s=>{const bin=atob(s.replace(/\s+/g,'')),u=new Uint8Array(bin.length);for(let i=0;i<bin.length;i++)u[i]=bin.charCodeAt(i);return u.buffer;};
 const loader=new THREE.STLLoader();let loaded=0;
@@ -684,8 +780,8 @@ STLS.forEach(([name,pos,how,col,ex,label])=>{
     const geo=loader.parse(b64(t));geo.computeVertexNormals();
     const m=new THREE.Mesh(geo,M(col,{roughness:0.6,side:THREE.DoubleSide}));m.position.set(pos[0],pos[1],pos[2]);
     if(how===1)m.scale.z=-1;            // рамка: в сборке перевёрнута лицом к крышке
-    if(how===2)m.rotation.x=-Math.PI/2; // планка GPS: лежит на полке, лапками вниз
-    add(m,ex,label,name==='bezel');loaded++;$('load').textContent=loaded<STLS.length?('загружено '+loaded+' из '+STLS.length):'';applyAll();
+    if(how===3)m.rotation.z=Math.PI;if(how===2)m.rotation.x=-Math.PI/2; // гнездо и крышка GPS: лежат на полке
+    add(m,ex,label,name==='bezel'||name.startsWith('led_bar'));loaded++;$('load').textContent=loaded<STLS.length?('загружено '+loaded+' из '+STLS.length):'';applyAll();
   }).catch(()=>{loaded++;$('load').textContent='не загрузилось: '+name;});
 });
 
@@ -717,7 +813,7 @@ STLS.forEach(([name,pos,how,col,ex,label])=>{
   dio(g,'DR',8,1,z,'1N5819: защита от переполюсовки лодки');dio(g,'D1',16,1,z,'1N5819: 5,3 В от LM2596 на шину VBUS');dio(g,'D2',24,1,z,'1N5819: шина VBUS → VSYS');
   fet(g,'QS',8,-8,z,'AO3401: выбор источника, открывается, когда пропала шина VBUS');fet(g,'QC',15,-8,z,'AO3401: ключ зарядки');fet(g,'NC',22,-8,z,'2N7002: открывает ключ зарядки по IO45');
   resi(g,'R1',8,-15,z,'100 кОм: затвор ключа выбора на землю');resi(g,'R2',15,-15,z,'100 кОм: закрывает ключ зарядки');
-  fet(g,'QP',22,-16,z,'AO3401: ключ +5 В порта');fet(g,'NP',29,-11,z,'2N7002: открывает ключ порта по IO7');resi(g,'R3',28.5,-16,z,'100 кОм: закрывает ключ порта');
+  fet(g,'QP',22,-16,z,'AO3401: ключ +5 В порта');fet(g,'NP',29,-11,z,'2N7002: открывает ключ порта по IO20');resi(g,'R3',28.5,-16,z,'100 кОм: закрывает ключ порта');
   pptc(g,'P02',9,-21.5,z,0xe8c21a,'PPTC 0,2 А: +5 В на мачту');pptc(g,'P15',15,-21.5,z,0xd4a017,'PPTC 1,5 А: +12 В в порт');pptc(g,'P05',21,-21.5,z,0xe8c21a,'PPTC 0,5 А: +5 В в порт');
   const cp=cyl(4,12,M(0x1c2a5a,{roughness:0.4}),24,'конденсатор 470 мкФ 10 В на шине VSYS: держит её при переключении источников');cp.rotation.x=Math.PI/2;cp.position.set(31,-20.5,z+6);g.add(cp);onCar('C','+',29.6,-20.5);onCar('C','-',32.4,-20.5);
   tvs(g,'S24',32,4,z,'SMBJ24A: срезает выбросы бортовой сети');tvs(g,'S5',32,-3,z,'SMBJ5.0A: защита +5 В кабеля мачты');
@@ -753,8 +849,8 @@ STLS.forEach(([name,pos,how,col,ex,label])=>{
   g.add(bx(X-2,-18.4,z+11.5,X+2,18.4,z+13,M(0x4a505a,{roughness:0.6}),'прижимная планка: ASA, 2 винта М2,5; у ESP32-S3 нет отверстий, планка не даёт ей выйти из гнёзд'));
   [['MXR','приём с мачты: RO → IO1',-13.5],['MXT','передача в порт: DI ← IO39, передатчик включён всегда',0],['MXP','приём из порта: RO → IO42, на входе 120 Ом',13.5]].forEach((m,i)=>{const b=pcb(22,14,1.2,0x1f4f91,'MAX3485 №'+(i+1)+': '+m[1],c=>txt(c,'MAX3485',-2,4,2));b.position.set(33,m[2],z+5.5);g.add(b);chip(b,-1,-1,4.9,3.9,1.6,blk,'MAX3485');b.add(bx(7,-5,0.6,11,5,8,M(0x2f6fb0),'винтовые клеммы A и B: провод зажимается винтом, пайки нет'));
     pads(b,m[0],[['RO',-9.5,-5.5],['RE',-9.5,-3],['DE',-9.5,-0.5],['DI',-9.5,2],['VCC',-9.5,4.5],['GND',-5,5.8]],0.6);reg(m[0],'A',b,11.2,-2.5,4,[1,0,0.2],{car:'main',term:1});reg(m[0],'B',b,11.2,2.5,4,[1,0,0.2],{car:'main',term:1});});
-  [['SMM',-41,-22,'SM712 на переходнике: защита пары с мачты'],['SMT',-34.5,-22,'SM712 на переходнике: защита пары «из блока»'],['SMR',-28,-22,'SM712 на переходнике: защита пары «в блок»']].forEach(a=>{const ad=new THREE.Group();ad.position.set(a[1],a[2],z+2.6);ad.add(bx(-3,-2.5,0,3,2.5,1.2,M(0x1d6a3a),a[3]));ad.add(bx(-1.5,-0.8,1.2,1.5,0.8,2.2,blk,a[3]));g.add(ad);pads(ad,a[0],[['1',-2,-1.7],['2',2,-1.7],['GND',0,1.7]],0,1.3);});
-  resi(g,'D12a',-34,-6,z,'100 кОм: верх делителя напряжения лодки');resi(g,'D12b',-27,-6,z,'8,2 кОм: низ делителя напряжения лодки');resi(g,'DBa',-20,-6,z,'100 кОм: верх делителя аккумулятора');resi(g,'DBb',-13,-6,z,'100 кОм: низ делителя аккумулятора');resi(g,'NTa',-34,6,z,'10 кОм: делитель датчика температуры');resi(g,'R68a',-27,6,z,'68 Ом: стрелка «заход»');resi(g,'R68b',-20,6,z,'68 Ом: стрелка «отход»');
+  [['SMM',-34,0,'SM712 на переходнике: защита пары с мачты'],['SMT',-27,0,'SM712 на переходнике: защита пары «из блока»'],['SMR',-20,0,'SM712 на переходнике: защита пары «в блок»']].forEach(a=>{const ad=new THREE.Group();ad.position.set(a[1],a[2],z+2.6);ad.add(bx(-3,-2.5,0,3,2.5,1.2,M(0x1d6a3a),a[3]));ad.add(bx(-1.5,-0.8,1.2,1.5,0.8,2.2,blk,a[3]));g.add(ad);pads(ad,a[0],[['1',-2,-1.7],['2',2,-1.7],['GND',0,1.7]],0,1.3);});
+  resi(g,'D12a',-34,-6,z,'100 кОм: верх делителя напряжения лодки');resi(g,'D12b',-27,-6,z,'8,2 кОм: низ делителя напряжения лодки');resi(g,'DBa',-20,-6,z,'100 кОм: верх делителя аккумулятора');resi(g,'DBb',-13,-6,z,'100 кОм: низ делителя аккумулятора');resi(g,'NTa',-34,6,z,'10 кОм: делитель датчика температуры');resi(g,'R68a',-27,6,z,'68 Ом: стрелка «заход»');fet(g,'NL',-12,6,z,'2N7002: ключ подсветки, яркость по IO19');resi(g,'RB0',-6,-6,z,'10 кОм: подтяжка кнопок к 3,3 В');resi(g,'RB1',1,-6,z,'2,2 кОм: кнопка МЕНЮ');resi(g,'RB2',8,-6,z,'4,7 кОм: кнопка ▲');resi(g,'RB3',-3,6,z,'10 кОм: кнопка ▼');resi(g,'R68b',-20,6,z,'68 Ом: стрелка «отход»');
   add(g,V(0,0,30),'плата связи');CAR=null;})();
 
 // ---------- датчики на полках ----------
@@ -765,20 +861,20 @@ STLS.forEach(([name,pos,how,col,ex,label])=>{
   [-1,1].forEach(q=>{b.add(cz(q*10.35,5.1,1.6,3.4,2.3,steel,'винт М2,5 × 8 и шайба: в термовставку полки',6));});
   const ar=new THREE.Mesh(new THREE.ConeGeometry(1.6,5,12),M(0xd62828));ar.rotation.x=-Math.PI/2;ar.position.set(58.9,32,4);
   add(G(b,lab(ar,'ось X датчика: к носу, в переборку')),V(0,30,40),'BNO085');
-  const gp=pcb(25,25,1.6,0x1f4f91,'GPS u-blox M10 (QUESCAN AN181): скорость и курс 10 раз в секунду. Антенной вверх, под верхней стенкой',c=>txt(c,'AN181',0,-10,2.2));
-  gp.rotation.x=-Math.PI/2;gp.position.set(-66,44.8,19);
-  const pat=bx(-9,-9,0.8,9,9,4.8,M(0xc9b48a,{roughness:0.7}),'керамическая антенна 18 × 18');gp.add(pat);const pt=cz(0,0,4.8,5,3,tin,'',16);gp.add(pt);
-  pads(gp,'GPS',[['VCC',-3.8,10.8],['GND',-1.27,10.8],['TX',1.27,10.8],['RX',3.81,10.8]],0.8,1.6);
+  const gp=PCBLIB.an181();gp.rotation.x=-Math.PI/2;gp.position.set(-66,48.4,18);
+  Object.entries(gp.userData.pins).forEach(([n,p])=>reg('GPS',n,gp,p[0],p[1],p[2],[1,0,0]));
   add(gp,V(0,30,40),'GPS');})();
 
 // ---------- экран, стрелки, сенсор ----------
-const dc=document.createElement('canvas');dc.width=800;dc.height=600;(function(){const c=dc.getContext('2d');c.fillStyle='#dcdad1';c.fillRect(0,0,800,600);c.fillStyle='#17171b';
-  c.font='600 34px Arial';c.fillText('ИСТИННЫЙ ВЕТЕР',40,70);c.font='700 150px Arial';c.fillText('12,4',40,230);c.font='600 40px Arial';c.fillText('уз',360,230);
-  c.font='700 110px Arial';c.fillText('215°',470,230);c.fillRect(40,270,720,4);
-  c.font='600 34px Arial';c.fillText('ЗАХОД',40,340);c.fillText('КРЕН',300,340);c.fillText('SOG',560,340);
-  c.font='700 90px Arial';c.fillText('+3°',40,450);c.fillText('14°',300,450);c.fillText('6,1',560,450);
-  c.font='500 26px Arial';c.fillText('лодка 12,7 В · аккумулятор 98 % · Wi-Fi выкл.',40,560);})();
-const dtex=new THREE.CanvasTexture(dc);
+const dc=document.createElement('canvas');dc.width=800;dc.height=600;const dctx=dc.getContext('2d');dctx.scale(2,2);const dtex=new THREE.CanvasTexture(dc);
+const SCR={aws:17.4,awa:28.5,hdg:183,sog:6.1,heel:-14,pitch:1.2,sig:1,d:3,boat:12.7,batt:98,mode:0,cfg:{unit:'узлы',wifi:'выкл',sd:'вкл'},menu:null};
+const MENU=[{t:'Подсветка',k:'light',o:['выкл','30 %','60 %','100 %'],v:0},{t:'Скорость',k:'unit',o:['узлы','м/с'],v:0},{t:'Порог сдвига',k:'shift',o:['2°','3°','5°'],v:1},{t:'Wi-Fi',k:'wifi',o:['выкл','вкл'],v:0},{t:'Запись на карту',k:'sd',o:['вкл','выкл'],v:0},{t:'Выход',k:'exit'}];
+function drawSCR(){const m=SCR.menu;PCBLIB.drawScreen(dctx,Object.assign({},SCR,{menu:m===null?null:{i:m,rows:MENU.map(r=>({t:r.t,v:r.o?r.o[r.v]:''}))}}));dtex.needsUpdate=true;const p=$('epv');if(p){const x=p.getContext('2d');x.drawImage(dc,0,0);}}
+drawSCR();
+$('kMode').addEventListener('click',()=>{if(SCR.menu===null){SCR.mode=(SCR.mode+1)%4;drawSCR();}});
+$('kMenu').addEventListener('click',()=>{if(SCR.menu===null){SCR.menu=0;}else{const r=MENU[SCR.menu];if(r.k==='exit')SCR.menu=null;else{r.v=(r.v+1)%r.o.length;SCR.cfg[r.k]=r.o[r.v];}}drawSCR();});
+$('kUp').addEventListener('click',()=>{if(SCR.menu!==null){SCR.menu=(SCR.menu+MENU.length-1)%MENU.length;drawSCR();}});
+$('kDn').addEventListener('click',()=>{if(SCR.menu!==null){SCR.menu=(SCR.menu+1)%MENU.length;drawSCR();}});
 (function(){const g=new THREE.Group();
   const epd=PCBLIB.epd42();epd.position.set(-36,0,55.16);g.add(epd);
   const scr=new THREE.Mesh(new THREE.PlaneGeometry(84.8,63.6),new THREE.MeshBasicMaterial({map:dtex}));scr.position.set(-36.33,3.9,58.02);g.add(lab(scr,'экран 4,2″ e-paper, 400 × 300: виден на солнце, тратит ток только на перерисовку'));
@@ -788,7 +884,6 @@ const dtex=new THREE.CanvasTexture(dc);
   const led=(y,c,l)=>{const o=new THREE.Group();o.add(cz(58,y,57,64,2.5,M(c,{transparent:true,opacity:0.85,roughness:0.2}),l,20));const d=new THREE.Mesh(new THREE.SphereGeometry(2.5,20,12),M(c,{transparent:true,opacity:0.85,roughness:0.2}));d.position.set(58,y,64);o.add(lab(d,l));return o;};
   add(led(24,0xffc61a,'стрелка «заход»: жёлтый светодиод 5 мм, IO40 через 68 Ом'),V(0,0,110),'',true);
   add(led(6,0xe53935,'стрелка «отход»: красный светодиод 5 мм, IO41 через 68 Ом'),V(0,0,110),'',true);
-  add(G(bx(48,-32,58,68,-12,69.4,M(0x2a2a2a,{roughness:0.9}),'пружинящая прокладка: прижимает площадку к крышке'),bx(48,-32,69.4,68,-12,69.9,M(0xb87333,{metalness:0.7,roughness:0.3}),'сенсор «ноль»: медная площадка 20 × 20 изнутри крышки, IO14. Держать палец 3 с — крен и дифферент обнулятся')),V(0,0,115),'',true);
 })();
 
 // ---------- разъёмы в нижней стенке ----------
@@ -800,6 +895,7 @@ const dtex=new THREE.CanvasTexture(dc);
   const g2=G(cyl(6,16,steel,20,'тумблер IP67 с колпачком: выключает всё, кроме зарядки'),nut(-45,8,'гайка тумблера'));g2.children[0].position.set(-45,y0+2,zc);const lev=cyl(1.5,12,steel,10,'рычаг тумблера под резиновым колпачком');lev.position.set(-45,y0-9,zc);g2.add(lev);
   const boot=cyl(5,9,M(0x22252a,{roughness:0.9}),20,'резиновый колпачок тумблера');boot.position.set(-45,y0-7,zc);g2.add(boot);add(g2,V(0,-40,0),'');
   const g3=G(bx(-27,y0-2,zc-6,-13,y0+14,zc+6,blk,'USB-C на панель с колпачком на шнурке: зарядка с берега и прошивка'),bx(-25,y0-6,zc-5,-15,y0-2,zc+5,M(0x22252a,{roughness:0.9}),'колпачок USB-C'));add(g3,V(0,-40,0),'');
+  const gb=G(cyl(6,16,steel,20,'кнопка IP67 без фиксации: короткое нажатие — подсветка, 3 с — обнулить крен и дифферент'),nut(0,8,'гайка кнопки'));gb.children[0].position.set(0,y0+4,zc);const cap=cyl(4.5,4,M(0xc9cdd0,{metalness:0.6,roughness:0.4}),20,'толкатель кнопки');cap.position.set(0,y0-5,zc);gb.add(cap);add(gb,V(0,-40,0),'');
   const g4=G(cyl(6.5,16,M(0x1c1d22),20,'гермоввод PG7: кабель с мачты, 4 жилы и оплётка'),nut(20,8,'гайка PG7'));g4.children[0].position.set(20,y0+1,zc);const cab=cyl(2.7,40,M(0x2b2f35,{roughness:0.8}),16,'кабель RVSP 4 × 24AWG с мачты');cab.position.set(20,y0-26,zc);g4.add(cab);add(g4,V(0,-40,0),'');
   const g5=G(cyl(8,24,steel,24,'M12 на 8 контактов, гнездо на панель: порт внешнего модуля — NMEA 0183 по RS-422 в обе стороны, +5 В и +12 В'),nut(55,11,'гайка M12'));g5.children[0].position.set(55,y0+6,zc);const cp=cyl(9,7,M(0x22252a,{roughness:0.9}),24,'заглушка M12: когда модуль не подключён');cp.position.set(55,y0-4,zc);g5.add(cp);add(g5,V(0,-40,0),'');
 })();
@@ -811,17 +907,23 @@ const dtex=new THREE.CanvasTexture(dc);
   [-7,7].forEach(x=>{const st=cz(83+x,-31.2,61,64,1.4,brass,'латунная стойка 3 мм: винт М2,5 сквозь рамку',10);add(st,V(0,0,120),'',true);});
   const lh=new THREE.Group();add(lh,V(0,0,110),'',true);reg('LH','A',lh,57,24,57,[0,0,-1]);reg('LH','K',lh,59,24,57,[0,0,-1]);
   const ll=new THREE.Group();add(ll,V(0,0,110),'',true);reg('LL','A',ll,57,6,57,[0,0,-1]);reg('LL','K',ll,59,6,57,[0,0,-1]);
-  const pd=new THREE.Group();add(pd,V(0,0,115),'',true);reg('PAD','S',pd,58,-22,58,[0,0,-1]);
+  [['BK1','РЕЖИМ',33,'кнопка РЕЖИМ: переключает виды экрана'],['BK2','МЕНЮ',15,'кнопка МЕНЮ: открыть меню; в меню — изменить пункт'],['BK3','▲',-3,'кнопка ▲: вверх по меню'],['BK4','▼',-21,'кнопка ▼: вниз по меню']].forEach(q=>{const g=new THREE.Group();add(g,V(0,0,140),'',true);
+    g.add(cz(36,q[2],55,73,6,steel,q[3],20),cz(36,q[2],66.5,70,8,M(0xb9c0c6,{metalness:0.7,roughness:0.35}),'гайка кнопки: изнутри крышки',6),cz(36,q[2],73,74.2,8,M(0xb9c0c6,{metalness:0.7,roughness:0.35}),q[3],24),cz(36,q[2],74.2,75.4,4.5,M(0xd7dbe0,{metalness:0.6,roughness:0.4}),q[3],20));
+    const cv=document.createElement('canvas');cv.width=256;cv.height=96;const x=cv.getContext('2d');x.fillStyle='#17171b';x.font='700 62px Arial';x.textAlign='center';x.textBaseline='middle';x.fillText(q[1],128,50);const lt=new THREE.Mesh(new THREE.PlaneGeometry(20,7.5),new THREE.MeshBasicMaterial({map:new THREE.CanvasTexture(cv),transparent:true,depthWrite:false}));lt.position.set(19,q[2],73.05);g.add(lt);
+    reg(q[0],'S',g,34.5,q[2],55,[0,0,-1]);reg(q[0],'G',g,37.5,q[2],55,[0,0,-1]);});
+  const lb=new THREE.Group();add(lb,V(0,0,100),'',true);
+  [[1,'LB1',41],[-1,'LB2',-36]].forEach(q=>{reg(q[1],'A',lb,12.2,q[2],57,[0,0,-1]);reg(q[1],'K',lb,13.8,q[2],57,[0,0,-1]);
+    const y0=q[0]>0?38:-31;[-32,-16,0,16,32].forEach(x=>{const o=cz(-36.33+x,y0+q[0]*0.2,63.6,65.2,1.5,M(0xe53935,{emissive:0x7a0d0d,roughness:0.25}),'красный светодиод подсветки, 3 мм, резистор 150 Ом',12);lb.add(o);});});
   const p=new THREE.Group();add(p,V(0,0,30));reg('PK','+',p,-72,-49,20.5,[0.2,-0.2,1]);reg('PK','-',p,-66,-49,20.5,[0.2,-0.2,1]);reg('TH','1',p,-71,-5,23.6,[0,0,1]);reg('TH','2',p,-67,-5,23.6,[0,0,1]);
   const c=new THREE.Group();add(c,V(0,-40,0));const y1=-37;
-  reg('SP','+',c,-72,y1,40,[0,1,0]);reg('SP','-',c,-68,y1,40,[0,1,0]);reg('SW','IN',c,-47,y1-7,40,[0,1,0]);reg('SW','OUT',c,-43,y1-7,40,[0,1,0]);
+  reg('SP','+',c,-72,y1,40,[0,1,0]);reg('SP','-',c,-68,y1,40,[0,1,0]);reg('BT','S',c,-1.5,-44,40,[0,1,0]);reg('BT','G',c,1.5,-44,40,[0,1,0]);reg('SW','IN',c,-47,y1-7,40,[0,1,0]);reg('SW','OUT',c,-43,y1-7,40,[0,1,0]);
   [['VBUS',-24],['D-',-21.5],['D+',-18.5],['GND',-16]].forEach(u=>reg('USB',u[0],c,u[1],-42,40,[0,1,0]));
   [['5V',18,41.5],['A',22,41.5],['GND',18,38.5],['B',22,38.5],['SH',20,40]].forEach(u=>reg('CC',u[0],c,u[1],-44,u[2],[0,1,0]));
   for(let i=1;i<=8;i++){const a=(i-1)/8*Math.PI*2,x=55+3.6*Math.cos(a),z=40+3.6*Math.sin(a);reg('PORT',String(i),c,x,-44,z,[0,1,0]);}
 })();
 
 // ---------- провода: от контакта к контакту ----------
-const WC={p12:['12 В лодки','#c0392b'],p5:['5 В и шина VBUS','#e67e22'],vs:['аккумулятор и шина VSYS','#ff8a8a'],p33:['3,3 В','#f2a33a'],gnd:['земля','#26282c'],sck:['SPI, такт','#f2d024'],mosi:['SPI к устройству','#f4f4f4'],miso:['SPI от устройства','#22b8c8'],cs:['SPI, выбор','#e05fa0'],ctl:['управление','#7a8794'],uart:['UART','#b07cf0'],rs:['RS-485 и порт','#9a4fd6'],led:['стрелки и сенсор','#ffd23f'],sh:['оплётка кабеля','#b0b5ba']};
+const WC={p12:['12 В лодки','#c0392b'],p5:['5 В и шина VBUS','#e67e22'],vs:['аккумулятор и шина VSYS','#ff8a8a'],p33:['3,3 В','#f2a33a'],gnd:['земля','#26282c'],sck:['SPI, такт','#f2d024'],mosi:['SPI к устройству','#f4f4f4'],miso:['SPI от устройства','#22b8c8'],cs:['SPI, выбор','#e05fa0'],ctl:['управление','#7a8794'],uart:['UART','#b07cf0'],rs:['RS-485 и порт','#9a4fd6'],led:['стрелки, кнопка, подсветка','#ffd23f'],sh:['оплётка кабеля','#b0b5ba']};
 const WS=[
  ['SP.+','DR.A','p12','+12 В лодки на диод от переполюсовки'],['SP.-','GP.1','gnd','минус лодки'],
  ['DR.K','S24.K','p12','выбросы срезает SMBJ24A'],['S24.A','GP.1','gnd','земля'],['DR.K','LM.IN+','p12','12 В на понижающий модуль'],['LM.IN-','GP.1','gnd','земля'],
@@ -836,7 +938,7 @@ const WS=[
  ['TPS.GND','GP.1','gnd','земля'],['M1.IN-','GP.1','gnd','земля'],['M1.OUT-','GP.1','gnd','земля'],['M2.IN-','GP.1','gnd','земля'],
  ['TPS.VOUT','S3.3V3','p33','3,3 В на ESP32-S3 и модули'],['GP.1','S3.GND1','gnd','земля платы связи'],
  ['M1.OUT+','P02.in','p5','5,0 В на предохранитель'],['P02.out','S5.K','p5','на SMBJ5.0A'],['S5.A','GP.1','gnd','земля'],['S5.K','CC.5V','p5','+5 В на мачту, коричневая жила'],['CC.GND','GP.1','gnd','земля, синяя жила'],['CC.SH','GP.1','sh','оплётка: на землю только здесь'],
- ['M2.OUT+','QP.S','p5','5,0 В на ключ порта'],['QP.D','P05.in','p5','на предохранитель'],['P05.out','PORT.5','p5','контакт 5 порта: +5 В'],['QP.S','R3.1','p5','закрывает ключ порта'],['R3.2','QP.G','ctl','затвор ключа порта'],['NP.D','QP.G','ctl','открывает ключ порта'],['NP.S','GP.1','gnd','земля'],['NP.G','S3.IO7','ctl','IO7: включить +5 В порта'],['PORT.6','GP.1','gnd','контакт 6: земля'],['PORT.8','GP.1','gnd','контакт 8: земля'],
+ ['M2.OUT+','QP.S','p5','5,0 В на ключ порта'],['QP.D','P05.in','p5','на предохранитель'],['P05.out','PORT.5','p5','контакт 5 порта: +5 В'],['QP.S','R3.1','p5','закрывает ключ порта'],['R3.2','QP.G','ctl','затвор ключа порта'],['NP.D','QP.G','ctl','открывает ключ порта'],['NP.S','GP.1','gnd','земля'],['NP.G','S3.IO20','ctl','IO20: включить +5 В порта'],['PORT.6','GP.1','gnd','контакт 6: земля'],['PORT.8','GP.1','gnd','контакт 8: земля'],
  ['MXR.VCC','S3.3V3b','p33','питание'],['MXR.GND','S3.GND2','gnd','земля'],['MXR.RO','S3.IO1','uart','данные с мачты'],['MXR.DE','S3.GND2','gnd','передатчик выключен'],['MXR.RE','S3.GND2','gnd','приёмник включён'],['MXR.A','CC.A','rs','A, белая жила: в винтовую клемму'],['MXR.B','CC.B','rs','B, чёрная жила: в винтовую клемму'],['SMM.1','MXR.A','rs','защита A'],['SMM.2','MXR.B','rs','защита B'],['SMM.GND','S3.GND2','gnd','земля защиты'],
  ['MXT.VCC','S3.3V3b','p33','питание'],['MXT.GND','S3.GND2','gnd','земля'],['MXT.DI','S3.IO39','uart','данные в порт'],['MXT.DE','S3.3V3b','p33','передатчик включён'],['MXT.RE','S3.3V3b','p33','приёмник выключен'],['MXT.A','PORT.1','rs','контакт 1: TX+, в клемму'],['MXT.B','PORT.2','rs','контакт 2: TX−, в клемму'],['SMT.1','MXT.A','rs','защита TX+'],['SMT.2','MXT.B','rs','защита TX−'],['SMT.GND','S3.GND2','gnd','земля защиты'],
  ['MXP.VCC','S3.3V3b','p33','питание'],['MXP.GND','S3.GND2','gnd','земля'],['MXP.RO','S3.IO42','uart','данные из порта'],['MXP.DE','S3.GND2','gnd','передатчик выключен'],['MXP.RE','S3.GND2','gnd','приёмник включён'],['MXP.A','PORT.3','rs','контакт 3: RX+, в клемму'],['MXP.B','PORT.4','rs','контакт 4: RX−, в клемму'],['SMR.1','MXP.A','rs','защита RX+'],['SMR.2','MXP.B','rs','защита RX−'],['SMR.GND','S3.GND2','gnd','земля защиты'],
@@ -844,13 +946,13 @@ const WS=[
  ['BNO.VCC','S3.3V3','p33','питание 3,3 В'],['BNO.GND','S3.GND1','gnd','земля'],['BNO.SCL','S3.IO12','sck','SCK: такт SPI'],['BNO.SDA','S3.IO13','miso','MISO: углы и курс'],['BNO.ADO','S3.IO11','mosi','MOSI: команды датчику'],['BNO.CS','S3.IO10','cs','CS: выбор датчика'],['BNO.INT','S3.IO9','ctl','INT: данные готовы'],['BNO.RST','S3.IO8','ctl','RST: сброс'],['BNO.PS1','S3.3V3','p33','PS1 на 3,3 В: режим SPI'],['BNO.PS0','S3.3V3','p33','PS0 на 3,3 В: режим SPI'],
  ['EP.VCC','S3.3V3b','p33','питание'],['EP.GND','S3.GND1','gnd','земля'],['EP.CLK','S3.IO18','sck','SPI экрана: такт'],['EP.DIN','S3.IO17','mosi','SPI экрана: данные'],['EP.CS','S3.IO16','cs','выбор экрана'],['EP.DC','S3.IO15','ctl','команда или данные'],['EP.RST','S3.IO47','ctl','сброс экрана'],['EP.BUSY','S3.IO21','ctl','экран занят'],
  ['GPS.VCC','S3.3V3b','p33','питание'],['GPS.GND','S3.GND2','gnd','земля'],['GPS.TX','S3.IO5','uart','TX → ESP32: скорость и курс'],['GPS.RX','S3.IO4','uart','RX ← ESP32: настройка 10 раз/с'],
- ['LH.A','R68a.1','led','стрелка «заход»'],['R68a.2','S3.IO40','led','IO40'],['LH.K','S3.GND4','gnd','земля'],['LL.A','R68b.1','led','стрелка «отход»'],['R68b.2','S3.IO41','led','IO41'],['LL.K','S3.GND4','gnd','земля'],['PAD.S','S3.IO14','led','сенсор «ноль»']
+ ['LH.A','R68a.1','led','стрелка «заход»'],['R68a.2','S3.IO40','led','IO40'],['LH.K','S3.GND4','gnd','земля'],['LL.A','R68b.1','led','стрелка «отход»'],['R68b.2','S3.IO41','led','IO41'],['LL.K','LH.K','gnd','земля стрелок одним проводом'],['BT.S','S3.IO14','led','кнопка: короткое нажатие — подсветка, 3 с — ноль'],['BT.G','S3.GND4','gnd','земля кнопки'],['LB1.A','S3.3V3b','led','подсветка, верхняя планка: +3,3 В'],['LB2.A','LB1.A','led','нижняя планка: +3,3 В от верхней'],['LB1.K','NL.D','led','верхняя планка: на ключ'],['LB2.K','LB1.K','led','нижняя планка: на ключ через верхнюю'],['NL.S','S3.GND4','gnd','земля ключа'],['RB0.1','S3.3V3b','p33','подтяжка кнопок'],['RB0.2','S3.IO7','ctl','IO7: кнопки'],['BK1.S','S3.IO7','ctl','РЕЖИМ: без резистора, 0 В'],['BK2.S','RB1.1','ctl','МЕНЮ'],['RB1.2','S3.IO7','ctl','0,6 В'],['BK3.S','RB2.1','ctl','▲'],['RB2.2','S3.IO7','ctl','1,1 В'],['BK4.S','RB3.1','ctl','▼'],['RB3.2','S3.IO7','ctl','1,65 В'],['BK1.G','S3.GND4','gnd','земля кнопок'],['BK2.G','BK1.G','gnd','земля кнопок цепочкой'],['BK3.G','BK2.G','gnd','земля кнопок цепочкой'],['BK4.G','BK3.G','gnd','земля кнопок цепочкой'],['NL.G','S3.IO19','ctl','IO19: яркость подсветки']
 ];
-const NMW={SP:'SP13',DR:'диод переполюсовки',S24:'SMBJ24A',S5:'SMBJ5.0A',LM:'LM2596',GP:'земля платы питания',VB:'шина VBUS',D1:'диод D1',D2:'диод D2',USB:'USB-C',QS:'ключ выбора',QC:'ключ зарядки',NC:'2N7002 зарядки',R1:'R 100 кОм',R2:'R 100 кОм',R3:'R 100 кОм',TP:'TP4056',PK:'аккумулятор 18650',TH:'NTC',NTa:'R 10 кОм',DBa:'R 100 кОм',DBb:'R 100 кОм',D12a:'R 100 кОм',D12b:'R 8,2 кОм',C:'470 мкФ',SW:'тумблер',TPS:'TPS63020',M1:'MT3608 мачты',M2:'MT3608 порта',P02:'PPTC 0,2 А',P05:'PPTC 0,5 А',P15:'PPTC 1,5 А',CC:'кабель мачты',QP:'ключ порта',NP:'2N7002 порта',PORT:'M12 порта',MXR:'MAX3485 мачты',MXT:'MAX3485 передачи',MXP:'MAX3485 приёма',SMM:'SM712 мачты',SMT:'SM712 передачи',SMR:'SM712 приёма',BNO:'BNO085',SD:'карта памяти',EP:'экран',GPS:'GPS',LH:'стрелка «заход»',LL:'стрелка «отход»',PAD:'сенсор',R68a:'R 68 Ом',R68b:'R 68 Ом',S3:'ESP32-S3'};
+const NMW={SP:'SP13',DR:'диод переполюсовки',S24:'SMBJ24A',S5:'SMBJ5.0A',LM:'LM2596',GP:'земля платы питания',VB:'шина VBUS',D1:'диод D1',D2:'диод D2',USB:'USB-C',QS:'ключ выбора',QC:'ключ зарядки',NC:'2N7002 зарядки',R1:'R 100 кОм',R2:'R 100 кОм',R3:'R 100 кОм',TP:'TP4056',PK:'аккумулятор 18650',TH:'NTC',NTa:'R 10 кОм',DBa:'R 100 кОм',DBb:'R 100 кОм',D12a:'R 100 кОм',D12b:'R 8,2 кОм',C:'470 мкФ',SW:'тумблер',TPS:'TPS63020',M1:'MT3608 мачты',M2:'MT3608 порта',P02:'PPTC 0,2 А',P05:'PPTC 0,5 А',P15:'PPTC 1,5 А',CC:'кабель мачты',QP:'ключ порта',NP:'2N7002 порта',PORT:'M12 порта',MXR:'MAX3485 мачты',MXT:'MAX3485 передачи',MXP:'MAX3485 приёма',SMM:'SM712 мачты',SMT:'SM712 передачи',SMR:'SM712 приёма',BNO:'BNO085',SD:'карта памяти',EP:'экран',GPS:'GPS',LH:'стрелка «заход»',LL:'стрелка «отход»',BT:'кнопка «ноль»',BK1:'кнопка РЕЖИМ',BK2:'кнопка МЕНЮ',BK3:'кнопка ▲',BK4:'кнопка ▼',RB0:'R 10 кОм',RB1:'R 2,2 кОм',RB2:'R 4,7 кОм',RB3:'R 10 кОм',LB1:'подсветка, верх',LB2:'подсветка, низ',NL:'ключ подсветки',R68a:'R 68 Ом',R68b:'R 68 Ом',S3:'ESP32-S3'};
 // какие провода реально видны: внутри платы — разводка снизу, между узлами — жгут через разъёмы
-const GM={LH:'FR',LL:'FR',PAD:'FR',SP:'SP',SW:'SW',USB:'USB',PK:'PK',TH:'TH',CC:'CC',PORT:'PORT',LM:'LM',BNO:'BNO',EP:'EP',SD:'SD',GPS:'GPS'};
+const GM={LH:'FR',LL:'FR',BT:'FR',LB1:'FR',LB2:'FR',BK1:'BK',BK2:'BK',BK3:'BK',BK4:'BK',SP:'SP',SW:'SW',USB:'USB',PK:'PK',TH:'TH',CC:'CC',PORT:'PORT',LM:'LM',BNO:'BNO',EP:'EP',SD:'SD',GPS:'GPS'};
 const groupOf=(car,other)=>{const c2=PN[other].car;return c2?[car,c2].sort().join('_'):(GM[other.split('.')[0]]||other.split('.')[0]);};
-const STRIP={main:{top:{x:-43,y:23.2,g:['BNO','EP','SD','GPS']},bot:{x:-23,y:-23,g:['FR','TH','main_pow']}},pow:{top:{x:-33,y:23.2,g:['SP','SW','USB','PK','CC','LM']},bot:{x:-33,y:-23,g:['PORT','port_pow','main_pow']}},port:{bot:{x:-17,y:13,g:['port_pow']}}};
+const STRIP={main:{top:{x:-43,y:23.2,g:['BNO','EP','SD','GPS']},bot:{x:-43,y:-23,g:['FR','TH','BK','main_pow']}},pow:{top:{x:-33,y:23.2,g:['SP','SW','USB','PK','CC','LM']},bot:{x:-33,y:-23,g:['PORT','port_pow','main_pow']}},port:{bot:{x:-17,y:13,g:['port_pow']}}};
 const CARG={main:null,pow:null,port:null};PN['S3.3V3'].o.parent&&(CARG.main=PN['S3.3V3'].o.parent);CARG.pow=PN['GP.1'].o.parent;CARG.port=PN['M2.IN+'].o.parent;
 const count={};WS.forEach(w=>{const A=PN[w[0]],B=PN[w[1]];if(!A||!B){console.warn('нет контакта',w[0],w[1]);return;}if(A.car&&A.car===B.car)return;if(A.term||B.term)return;[[A,w[1]],[B,w[0]]].forEach(([P,o])=>{if(!P.car)return;const k=P.car+'/'+groupOf(P.car,o);count[k]=(count[k]||0)+1;});});
 const slot={};Object.entries(STRIP).forEach(([car,st])=>Object.values(st).forEach(r=>{let x=r.x;r.g.forEach(gr=>{const n=count[car+'/'+gr];if(!n)return;slot[car+'/'+gr]={x,y:r.y,n,i:0};jstBlock(CARG[car],x,r.y,n,0.8,gr);x+=n*2.5+3.4;});}));
@@ -885,14 +987,16 @@ $('bLab').setAttribute('aria-pressed',String(labOn));$('cos').hidden=!labOn;
 const CO=[
  {p:[-36,20,58],e:[0,0,70],t:'экран 4,2″ e-paper',s:'400 × 300, за крышкой',v:'dsp',m:1,x:1},
  {p:[58,24,64],e:[0,0,110],t:'стрелки',s:'«заход» и «отход», 5 мм',v:'dsp',m:1},
- {p:[58,-22,69.9],e:[0,0,115],t:'сенсор «ноль»',s:'медь на прокладке к крышке',v:'dsp',x:1},
+ {p:[0,-62,40],e:[0,-40,0],t:'кнопка',s:'«ноль» и подсветка',v:'conn',x:1},
+ {p:[36,15,75],e:[0,0,140],t:'4 кнопки на крышке',s:'РЕЖИМ, МЕНЮ, ▲, ▼',v:'dsp',m:1,x:1},
+ {p:[-36,41,66],e:[0,0,100],t:'подсветка экрана',s:'красная, 2 планки по 5 светодиодов',v:'dsp',m:1,x:1},
  {p:[-88,40,58],e:[0,0,95],t:'рамка экрана',s:'4 винта М3 в колонны плиты',v:'dsp',x:1},
  {p:[-12,25,27],e:[0,0,30],t:'ESP32-S3 N16R8',s:'в цанговых гнёздах, под планкой',v:'main',x:1},
  {p:[83,-20,68],e:[0,0,120],t:'карта памяти',s:'micro-SD, данные гонок',v:'dsp',m:1,x:1},
  {p:[33,25,12],e:[0,0,30],t:'3 × MAX3485',s:'мачта, порт туда и обратно',v:'main'},
  {p:[-34,3,13],e:[0,0,30],t:'SM712',s:'защита пар порта и мачты',v:'main'},
  {p:[67,29,19],e:[0,30,40],t:'BNO085',s:'горизонтально, X к носу',v:'sens',x:1},
- {p:[-66,49.6,19],e:[0,30,40],t:'GPS M10',s:'антенной вверх',v:'sens',x:1},
+ {p:[-66,52.4,18],e:[0,30,40],t:'GPS AN181',s:'18 × 18,25 × 6,78, антенной вверх',v:'sens',x:1},
  {p:[-69,-20,22.5],e:[0,0,30],t:'аккумулятор 18650',s:'Samsung 30Q, 3000 мА·ч, под планкой',v:'pwr',x:1},
  {p:[-4,-23,13],e:[0,0,14],t:'TP4056',s:'зарядка 0,5 А',v:'pwr'},
  {p:[-11,-24,10],e:[0,0,14],t:'выбор источника',s:'1N5819 + AO3401',v:'pwr'},
