@@ -496,7 +496,41 @@ function sd3v3(){const w=24,h=20,t=1.6,M='#1a4f9e',S='#eef2f7',TIN='#c9cdd0';con
   g.add(bx(0,-0.6,t,6,1.4,1,std(0x1c2a5a),'конденсатор 100 мкФ: гасит всплески тока записи'));
   g.userData.pins={};names.forEach((n,i)=>{g.userData.pins[n]=[pxs[i],py,-1.4];g.add(bx(pxs[i],py,-0.7,0.64,0.64,1.4,gold,'контакт '+n+': провод припаян'));dome(g,pxs[i],py,t,1,0.45);});
   return g;}
-return {as5600,mt6701,gy50,bno08x,esp32s3,sd3v3,wires};
+
+function epd42(){const w=92,h=89.7,t=1.6,M='#141518',S='#e8e9ea',TIN='#c9cdd0';const s=rrect(w,h,[1.2,1.2,1.2,1.2]);
+  const hs=[[-43.6,42.55],[43.6,42.55],[-43.6,-42.55],[43.6,-42.55]];hs.forEach(p=>hole(s,p[0],p[1],3.2));
+  const hx=[-4.33,-1.79,0.75,3.29],hy=[43.75,41.21];hx.forEach(x=>hy.forEach(y=>hole(s,x,y,0.95)));
+  const f=sheet(w,h,1024,M,front),b=sheet(w,h,1024,M,backM);
+  [f,b].forEach((d,i)=>{const sx=i?-1:1;hs.forEach(p=>d.disc(sx*p[0],p[1],2.4,'#b7925a'));hx.forEach(x=>hy.forEach(y=>d.disc(sx*x,y,0.85,TIN)));});
+  b.frame(-8.4,38,7.6,32.4,S,0.16).line([[-8.4,35.2],[7.6,35.2]],S,0.14);[-4.4,-0.4,3.6].forEach(u=>b.line([[u,38],[u,32.4]],S,0.14));
+  [['GND',-6.4,36.6],['SCL',-2.4,36.6],['D/C',1.6,36.6],['BUSY',5.6,36.6],['VCC',-6.4,33.8],['SDA',-2.4,33.8],['CS',1.6,33.8],['RES',5.6,33.8]].forEach(a=>b.text(a[0],a[1],a[2],1,S,0,'700 '));
+  b.text('7',-6.8,43.8,1,S,0,'700 ');b.text('1',5.8,43.8,1,S,0,'700 ');b.text('8',-6.8,41.2,1,S,0,'700 ');b.text('2',5.8,41.2,1,S,0,'700 ');
+  b.frame(-8.9,29.8,8.1,26,S,0.16);['VCC','GND','SDA','SCL','CS','D/C','RES','BUSY'].forEach((n,i)=>{const u=-6.9+i*2.14;if(i)b.line([[u-1.07,29.8],[u-1.07,26]],S,0.12);b.text(n,u,27.9,0.92,S,90,'700 ');});
+  b.text('4.2" Epaper Module',-21.8,35,2.05,S,0,'700 ');b.frame(-38.6,33.8,-33.4,29.4,'#c9a13b',0.14);b.text('WeAct',-36,32.8,0.85,'#c9a13b',0,'700 ');b.text('Studio',-36,30.6,0.85,S,0,'700 ');
+  [['400 x 300 resolution',32.3],['Designed By WeAct Studio',30.2],['VCC: 3.3-5V (SB4+SB5)',28.2],['VCC: 3.3V Only (SB3)',26],['I/O: 3.3V',24]].forEach((a,i)=>b.text(a[0],-20.3,a[1],1,S,0,'600 '));
+  b.text('SB5 SB3',20,-2.1,0.9,S,0,'700 ');b.text('SB4',21.4,-7,0.9,S,0,'700 ');b.text('3-Lines SPI',30.9,-11.7,0.95,S,0,'700 ');b.text('4-Lines SPI',30.9,-13.1,0.95,S,0,'700 ');
+  [[36.7,31.8],[-14.6,-32.3]].forEach(p=>b.disc(p[0],p[1],0.55,TIN));
+  const g=base({w,h,t,shape:s,mask:0x141518,edge:0x2a2b2e,top:f,bot:b,label:'экран WeAct 4,2″, 92 × 89,7 × 2,84: 400 × 300 точек',gloss:0.5});
+  // стекло
+  const gl=document.createElement('canvas'),K=11;gl.width=Math.round(91.7*K);gl.height=Math.round(78.3*K);const c=gl.getContext('2d');c.fillStyle='#d7d8d2';c.fillRect(0,0,gl.width,gl.height);
+  const px=x=>(x+45.85)*K,py=y=>(39.4-y)*K;
+  c.fillStyle='#e1e2dd';c.fillRect(px(-43.7),py(36.8),86.7*K,65.7*K);c.strokeStyle='#a8aaa5';c.lineWidth=2;c.strokeRect(px(-43.7),py(36.8),86.7*K,65.7*K);
+  c.fillStyle='#ecebe6';c.fillRect(px(-38.6),py(-31),76.5*K,8*K);c.fillStyle='#8f9091';c.fillRect(px(-7.7),py(-36.1),13.6*K,1.2*K);
+  [[-43.8,-29.7],[39.7,-30.2]].forEach(p=>{c.fillStyle='#a4a6a8';c.fillRect(px(p[0]),py(p[1]),4.3*K,3.1*K);c.fillStyle='#e8e8e6';c.beginPath();c.arc(px(p[0]+2.1),py(p[1]-1.5),0.85*K,0,7);c.fill();});
+  const gt=new T.CanvasTexture(gl);gt.anisotropy=4;const gm=[std(0xd7d8d2,{roughness:0.3}),std(0xd7d8d2,{roughness:0.3}),std(0xd7d8d2,{roughness:0.3}),std(0xd7d8d2,{roughness:0.3}),std(0xffffff,{map:gt,roughness:0.35}),std(0xd7d8d2,{roughness:0.3})];
+  g.add((()=>{const o=mesh(new T.BoxGeometry(91.7,78.3,1.24),gm,'стекло экрана: активное поле 84,8 × 63,6 смещено вверх на 3,9 мм');o.position.set(0,0.25,t+0.62);return o;})());
+  // обратная сторона: u = −x, z < 0
+  const con=new T.Group();con.position.set(0.33,21.9,0);con.add(bx(0,0,-1.5,16.2,7.3,3,std(0xf0ece0,{roughness:0.5}),'штатный разъём экрана на 8 проводов: шаг 1,25 мм, провода выходят вбок и снимаются'));con.add(bx(-7.4,1.9,-1.5,1.6,3.3,3,std(0xe2ded2)));con.add(bx(7.4,1.9,-1.5,1.6,3.3,3,std(0xe2ded2)));g.add(con);
+  g.add(cy(-19,-12.4,-1,2.5,2.5,2,std(0x1b1c1e,{roughness:0.5}),'катушка 47 мкГн: преобразователь напряжения экрана',20));
+  [[-15.6,-13,2.2,1.2],[-22.4,-13,2.2,1.2],[-19,-7.5,3.2,1.5],[-15.2,-2.9,1.6,1],[-21.4,-3.2,1.6,1],[-16.9,-17.5,3,1.5],[-20.2,-18.7,1.6,0.9],[-23.1,-18.7,1.6,0.9],[-26.3,-18.7,1.6,0.9],[-30.5,-14.7,1.6,0.9]].forEach(p=>g.add(bx(p[0],p[1],-0.4,p[2],p[3],0.8,pkg)));
+  [[-11.6,-18.7],[-12.9,-18.7],[-14.2,-18.7],[-15.5,-18.7],[-22.9,-13.4],[-21.8,-11.2]].forEach(p=>g.add(bx(p[0],p[1],-0.3,0.95,0.6,0.5,tin)));
+  g.add(bx(-22.9,-25.3,-1,14.3,2.8,2,std(0x8e9193,{metalness:0.6,roughness:0.4}),'разъём шлейфа стекла'));
+  const fx=std(0xc98a2d,{roughness:0.55});g.add(bx(-22.9,-30.7,-0.1,12.8,8.2,0.2,fx,'шлейф стекла HINK-E042A07-A3'));g.add(bx(-4,-38,-0.1,37.5,6.6,0.2,fx,'шлейф стекла HINK-E042A07-A3'));
+  const qc=document.createElement('canvas');qc.width=qc.height=128;const q2=qc.getContext('2d');q2.fillStyle='#f2f2f0';q2.fillRect(0,0,128,128);q2.fillStyle='#1a1a1a';for(let i=0;i<9;i++)for(let j=0;j<9;j++)if((i*7+j*13+i*j)%3===0)q2.fillRect(14+i*11,12+j*9,10,8);
+  const qm=mesh(new T.PlaneGeometry(8.2,8.4),std(0xffffff,{map:new T.CanvasTexture(qc),roughness:0.6}),'наклейка с номером стекла');qm.rotation.y=Math.PI;qm.position.set(-24.5,-36,-0.22);g.add(qm);
+  const u=x=>0.33+4.375-x*1.25;g.userData.pins={};[['VCC'],['GND'],['DIN'],['CLK'],['CS'],['DC'],['RST'],['BUSY']].forEach((n,i)=>g.userData.pins[n[0]]=[u(i),18.1,-1.5]);
+  return g;}
+return {as5600,mt6701,gy50,bno08x,esp32s3,sd3v3,epd42,wires};
 })();
 </script><!--/pcblib-->
 <script>
@@ -907,11 +941,11 @@ const dc=document.createElement('canvas');dc.width=400;dc.height=300;const dctx=
   gps.position.set(0.005,0.047,-0.012);reg(gps,cpG,{s:11,e:[0,0.06,0.02]});
   const sdb=board(0.024,0.02,0x1a4f9e,[],'модуль карты памяти micro-SD на 3,3 В: здесь пишутся данные гонок');header(sdb,'SD',['3V3','GND','SCK','MOSI','MISO','CS'],-0.00635,0.0032,P254,0,-1);det(sdb,PCBLIB.sd3v3(),'as');sdb.rotation.x=Math.PI/2;sdb.position.set(0.078,-0.024,0.022);reg(sdb,cpG,{s:12,e:[0.06,0,0.08]});
   // экран, стрелки, «ноль», крышка
-  const disp=box(0.103,0.078,0.0012,M(0x1c1c1c,{roughness:0.6}));disp.position.set(-0.022,0.012,0.0235);
-  const scr=new THREE.Mesh(new THREE.PlaneGeometry(0.0848,0.0636),new THREE.MeshBasicMaterial({map:dtex}));scr.position.set(0,0.002,0.0011);disp.add(lab(scr,'экран 4,2″ e-paper, 400 × 300: перерисовываются только цифры'));
-  const eh=new THREE.Group();eh.rotation.x=-Math.PI/2;eh.position.set(-0.045,0,-0.0006);disp.add(eh);
-  header(eh,'EP',['BUSY','RST','DC','CS','CLK','DIN','GND','VCC'],0,-0.0089,0,P254,1,disp);
-  reg(lab(disp,'экран 4,2″ e-paper WeAct, ч/б'),cpG,{s:12,e:[0,0,0.07]});
+  const disp=box(0.092,0.0897,0.0012,M(0x1c1c1c,{roughness:0.6,transparent:true,opacity:0.01,depthWrite:false}));disp.position.set(-0.036,0,0.0235);(function(){const e=PCBLIB.epd42();e.scale.setScalar(0.001);e.position.z=-0.0028;e.traverse(m=>{if(m.material&&m.material.isMaterial&&m.material.map)m.material.color.setScalar(0.55);});disp.add(e);})();
+  const scr=new THREE.Mesh(new THREE.PlaneGeometry(0.0848,0.0636),new THREE.MeshBasicMaterial({map:dtex}));scr.position.set(-0.00033,0.0039,0.0002);disp.add(lab(scr,'экран 4,2″ e-paper, 400 × 300: перерисовываются только цифры'));
+  const eh=new THREE.Group();eh.rotation.x=-Math.PI/2;eh.position.set(0,0.0181,-0.0042);disp.add(eh);
+  header(eh,'EP',['VCC','GND','DIN','CLK','CS','DC','RST','BUSY'],0.0047,0,-0.00125,0,-1,disp);
+  reg(lab(disp,'экран WeAct 4,2″ e-paper, ч/б, 92 × 89,7 × 2,84 мм'),cpG,{s:12,e:[0,0,0.07]});
   const lh=new THREE.Mesh(new THREE.SphereGeometry(0.0028,16,12),ledH);lh.position.set(0.055,0.040,0.025);
   marker(lh,'LH','A',[0.001,0,-0.0028],[0,0,-1]);marker(lh,'LH','K',[-0.001,0,-0.0028],[0,0,-1]);
   reg(lab(lh,'стрелка «заход»: жёлтый светодиод. Делать ли стрелки — не решено'),cpG,{s:12,e:[0.02,0,0.08]});
