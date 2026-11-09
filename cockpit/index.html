@@ -1,0 +1,526 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta charset="utf-8">
+<title>Блок в кокпите</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500&family=Onest:wght@400;500;600&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Тот же верстак, что у «Флюгера Open 800»: модель слева, пульт справа. Детали — те самые STL, что идут в печать */
+:root{
+  --bg:#edf1f3; --surface:#ffffff; --ink:#14202b; --muted:#536373; --line:#d3dbe1; --accent:#0d6b78; --accent-bg:#e0eff1;
+  --good:#2f7d4f; --warn:#a8740a; --bad:#b8352a;
+  --f-display:"Unbounded","Arial Black",system-ui,sans-serif; --f-body:"Onest",system-ui,-apple-system,"Segoe UI",sans-serif; --f-mono:"JetBrains Mono",ui-monospace,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--bg:#0e151b;--surface:#162029;--ink:#e2e9ee;--muted:#93a3b0;--line:#27343f;--accent:#4db6c2;--accent-bg:#123238;--good:#6cc08d;--warn:#e0b13a;--bad:#ec6a5c;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0e151b;--surface:#162029;--ink:#e2e9ee;--muted:#93a3b0;--line:#27343f;--accent:#4db6c2;--accent-bg:#123238;--good:#6cc08d;--warn:#e0b13a;--bad:#ec6a5c;color-scheme:dark}
+html,body{height:100%}
+body{background:var(--bg);color:var(--ink);font:15px/1.5 var(--f-body);margin:0}
+.app{height:100vh;display:grid;grid-template-columns:minmax(0,1fr) 440px}
+@media (max-width:900px){.app{height:auto;grid-template-columns:minmax(0,1fr)}}
+.stage{position:relative;min-width:0;overflow:hidden;height:100vh}
+@media (max-width:900px){.stage{height:66vh;min-height:400px}}
+#view{position:absolute;inset:0;width:100%;height:100%;display:block;touch-action:none}
+.badge{position:absolute;left:max(16px,env(safe-area-inset-left,0px));top:14px;display:grid;gap:2px;pointer-events:none;max-width:calc(100% - 32px)}
+.badge h1{font:500 20px/1.2 var(--f-display);margin:0}
+.badge span{font:12px var(--f-mono);color:var(--muted)}
+.tools{position:absolute;left:max(16px,env(safe-area-inset-left,0px));top:74px;display:flex;flex-wrap:wrap;gap:6px;max-width:calc(100% - 32px)}
+.load{position:absolute;right:16px;top:16px;font:12px var(--f-mono);color:var(--muted)}
+.hint{position:absolute;left:max(16px,env(safe-area-inset-left,0px));right:16px;bottom:12px;font:12px var(--f-mono);color:var(--muted);pointer-events:none}
+.tip{position:absolute;pointer-events:none;background:var(--surface);color:var(--ink);border:1px solid var(--accent);padding:5px 9px;font:13px/1.4 var(--f-body);border-radius:4px;max-width:320px;box-shadow:0 4px 14px rgba(0,0,0,.25);z-index:5}
+.co{position:absolute;pointer-events:none;font:600 12px/1.25 var(--f-body);color:var(--ink);background:color-mix(in srgb,var(--surface) 88%,transparent);border:1px solid var(--accent);border-radius:4px;padding:3px 6px;max-width:230px;white-space:normal}
+.dot{position:absolute;width:8px;height:8px;margin:-6px 0 0 -6px;border-radius:50%;background:var(--accent);border:2px solid var(--surface);pointer-events:none}
+#lines{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+#lines line{stroke:var(--accent);stroke-width:1.2}
+.co small{display:block;font:11px/1.3 var(--f-mono);color:var(--muted);font-weight:400}
+.err{position:absolute;inset:0;display:grid;place-items:center;text-align:center;padding:24px;color:var(--muted)}
+.panel{background:var(--surface);border-left:1px solid var(--line);overflow-y:auto;padding-block:18px 28px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:grid;gap:14px;align-content:start}
+@media (max-width:900px){.panel{border-left:0;border-top:1px solid var(--line);overflow:visible}}
+.panel h2{font:600 12px var(--f-mono);text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin:10px 0 0}
+.lead{font:500 15.5px/1.45 var(--f-body);margin:0}
+button{font:600 13px var(--f-body);background:var(--accent-bg);color:var(--ink);border:1px solid var(--accent);padding:7px 12px;border-radius:4px;cursor:pointer}
+button[aria-pressed="false"]{background:color-mix(in srgb,var(--surface) 88%,transparent);border-color:var(--line)}
+button:focus-visible,a:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.card{border:1px solid var(--line);border-radius:6px;padding:10px 12px;display:grid;gap:6px}
+.card h3{font:600 15px/1.3 var(--f-body);margin:0;display:flex;justify-content:space-between;gap:8px;align-items:baseline}
+.card h3 button{padding:4px 9px;font-size:12px}
+.card ul{margin:0;padding-left:18px;display:grid;gap:4px;font-size:13.5px}
+.tbl{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:12.5px}
+td,th{border-top:1px solid var(--line);padding:5px 4px;vertical-align:top;text-align:left}
+th{font:600 11px var(--f-mono);color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
+.note{font-size:13px;color:var(--muted);margin:0}
+.steps{margin:0;padding-left:20px;display:grid;gap:5px;font-size:13.5px}
+.legend{display:grid;gap:4px;font-size:13px}
+.legend div{display:flex;gap:8px;align-items:center}
+.legend i{width:12px;height:12px;border-radius:2px;flex:none;border:1px solid var(--line)}
+code{font-family:var(--f-mono);font-size:12px}
+[hidden]{display:none!important}
+.panel{grid-auto-rows:max-content}
+.sch{width:100%;height:auto;aspect-ratio:420/430;display:block}
+.sch text{font:11px var(--f-body);fill:var(--ink)}
+.sch .m{font:10px var(--f-mono);fill:var(--muted)}
+.sch rect{fill:var(--surface);stroke:var(--line);stroke-width:1.2}
+.sch rect.k{stroke:var(--accent)}
+.sch path,.sch line{stroke:var(--ink);stroke-width:1.4;fill:none}
+.sch .b12{stroke:#c0392b}.sch .b5{stroke:#d35400}.sch .bp{stroke:#2e86c1}.sch .bs{stroke:#7d3c98}.sch .b3{stroke:#b7950b}
+.ok{color:var(--good);font-weight:600}.wr{color:var(--warn);font-weight:600}.no{color:var(--bad);font-weight:600}
+.home{position:absolute;top:14px;right:16px;z-index:6;padding:8px 12px;border-radius:4px;border:1px solid var(--accent);background:var(--surface);color:var(--ink);font:600 13px var(--f-body);text-decoration:none}
+.home:hover,.home:focus-visible{background:var(--accent);color:var(--surface);outline:none}
+@media (max-width:900px){.home{top:10px;left:16px;right:auto}.badge{top:54px}.tools{top:114px}.views{top:116px}}
+.tools{z-index:7}
+</style>
+
+<div class="app">
+  <div class="stage" id="stage">
+    <a class="home" href="../">← Главное меню</a>
+    <canvas id="view" aria-label="Блок прибора в кокпите: коробка IP67, экран, платы, аккумулятор 18500, датчики, разъёмы"></canvas>
+    <div class="badge"><h1>Блок в кокпите</h1><span>коробка IP67 200 × 120 × 75 · печатные детали — те же STL · мм</span></div>
+    <div class="tools" role="group" aria-label="Вид">
+      <button type="button" id="bBox" aria-pressed="true">Коробка</button>
+      <button type="button" id="bExp" aria-pressed="false">Разнести</button>
+      <button type="button" id="bLab" aria-pressed="true">Подписи</button>
+      <button type="button" id="bAll" aria-pressed="false">Весь блок</button>
+    </div>
+    <div id="cos"><svg id="lines"></svg></div>
+    <div class="load" id="load">загрузка деталей…</div>
+    <div class="tip" id="tip" hidden></div>
+    <div class="hint">вращать — мышью или пальцем · колесо — ближе · наведите на деталь — что это и чем держится</div>
+    <div class="err" id="err" hidden>Не удалось загрузить 3D-библиотеку. Проверьте интернет и обновите страницу.</div>
+  </div>
+
+  <div class="panel">
+    <p class="lead">Блок работает от двух источников: от аккумулятора лодки 12 В и от своего пакета из трёх элементов 18500. Переключение автоматическое и без перезагрузки. От лодки блок берёт около 0,1 А и заодно подзаряжает пакет. Только от пакета блок работает 14–18 часов, с Wi-Fi 10–13 часов: гоночный день проходит с запасом. Для внешнего модуля, например экрана с картой, есть разъём M12 на 8 контактов: данные NMEA 0183 в обе стороны, +5 В и +12 В. Те же данные идут по Wi-Fi на планшет. Всё это — расчёт и модель: блок ещё не собран.</p>
+
+    <h2>1. Что внутри</h2>
+    <div class="card">
+      <h3>Экран и рамка <button type="button" data-go="dsp">Показать</button></h3>
+      <ul>
+        <li><b>Экран 4,2″ e-paper</b>, 400 × 300, лежит стеклом на печатной <b>рамке</b> за прозрачной крышкой. Плата модуля держится 4 винтами М2,5 в термовставки рамки.</li>
+        <li>Справа на рамке — <b>стрелки «заход» и «отход»</b> (светодиоды 5 мм) и <b>сенсор «ноль»</b>: медная площадка на пружинящей прокладке прижата к крышке изнутри, поэтому палец чувствуется сквозь крышку.</li>
+        <li>Рамка стоит на 4 колоннах монтажной плиты, на винтах М3 в потай. Снимается двумя руками, ничего не отпаивая: экран и стрелки идут на плату связи через разъёмы.</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>Плата связи <button type="button" data-go="main">Показать</button></h3>
+      <ul>
+        <li>Макетная плата 50 × 90. <b>ESP32-S3-DevKitC-1</b> вставлена в 2 гнёзда по 22 контакта: для прошивки и замены её просто вынимают.</li>
+        <li><b>3 модуля MAX3485</b>: приём с мачты, передача в порт и приём из порта. У порта две пары, поэтому данные идут в обе стороны сразу.</li>
+        <li>На входе мачты и порта — <b>SM712</b> на каждой паре. Провода к экрану, датчикам, стрелкам и разъёмам — через разъёмы JST-XH.</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>Датчики на полках <button type="button" data-go="sens">Показать</button></h3>
+      <ul>
+        <li>Коробка стоит на вертикальной переборке, а датчикам нужно лежать горизонтально. Поэтому у плиты две <b>полки</b>, отпечатанные с ней заодно.</li>
+        <li><b>BNO085</b> — справа, ось X к носу (в переборку), 4 винта М2,5. До катушек преобразователей больше 60 мм, иначе они сбивают компас.</li>
+        <li><b>GPS</b> — слева вверху, антенной вверх, под верхней стенкой коробки. ABS сигнал пропускает. Держат его 2 планки по краям платы: антенну они не закрывают.</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>Питание <button type="button" data-go="pwr">Показать</button></h3>
+      <ul>
+        <li><b>Пакет 1S3P</b>: 3 элемента 18500 параллельно, 3,0–4,2 В. Лежит в ложементе плиты и прижат планкой на 2 винтах М3. Датчик температуры NTC зажат под планкой.</li>
+        <li><b>Плата питания</b> 50 × 70: зарядка TP4056 (ток снижен до 0,5 А), выбор источника, TPS63020 даёт 3,3 В, два MT3608 дают по 5 В — на мачту и в порт.</li>
+        <li><b>LM2596</b> понижает 12 В лодки до 5,3 В. Вход защищён от переполюсовки и выбросов.</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>Разъёмы — все снизу <button type="button" data-go="conn">Показать</button></h3>
+      <ul>
+        <li>Слева направо: <b>SP13</b> на 2 контакта — питание лодки, <b>тумблер</b> с колпачком, <b>USB-C</b> с колпачком — зарядка с берега и прошивка, <b>гермоввод PG7</b> — кабель с мачты, <b>M12</b> на 8 контактов — порт внешнего модуля.</li>
+        <li>Разъёмы разные нарочно: 12 В нельзя по ошибке вставить в гнездо мачты, где только 5 В.</li>
+        <li>Блок крепится к переборке 4 винтами М4 сквозь плиту и заднюю стенку коробки, с резиновыми шайбами и герметиком.</li>
+      </ul>
+    </div>
+
+    <h2>2. Два источника питания</h2>
+    <svg class="sch" viewBox="0 0 420 430" role="img" aria-label="Схема питания блока: аккумулятор лодки и пакет 18500, выбор источника, преобразователи, выходы на мачту и в порт">
+      <rect class="k" x="6" y="8" width="118" height="40" rx="4"/><text x="14" y="25">Аккумулятор лодки</text><text class="m" x="14" y="40">12–14,4 В</text>
+      <rect x="6" y="64" width="118" height="44" rx="4"/><text x="14" y="80">предохранитель 2 А</text><text class="m" x="14" y="94">у аккумулятора</text>
+      <rect x="6" y="122" width="118" height="54" rx="4"/><text x="14" y="138">SP13 → 1N5819</text><text class="m" x="14" y="152">от переполюсовки</text><text class="m" x="14" y="166">SMBJ24A — выбросы</text>
+      <rect x="6" y="192" width="118" height="40" rx="4"/><text x="14" y="208">LM2596: 5,3 В</text><text class="m" x="14" y="222">вход до 40 В</text>
+      <rect class="k" x="150" y="8" width="118" height="40" rx="4"/><text x="158" y="25">USB-C с берега</text><text class="m" x="158" y="40">5 В, прошивка</text>
+      <rect x="150" y="192" width="118" height="40" rx="4"/><text x="158" y="208">шина VBUS</text><text class="m" x="158" y="222">4,95–5,0 В</text>
+      <rect x="296" y="122" width="118" height="54" rx="4"/><text x="304" y="138">ключ зарядки</text><text class="m" x="304" y="152">AO3401, IO45</text><text class="m" x="304" y="166">0–45 °C по NTC</text>
+      <rect x="296" y="192" width="118" height="40" rx="4"/><text x="304" y="208">TP4056: 0,5 А</text><text class="m" x="304" y="222">защита DW01</text>
+      <rect class="k" x="296" y="252" width="118" height="44" rx="4"/><text x="304" y="268">пакет 1S3P 18500</text><text class="m" x="304" y="284">3,0–4,2 В, IO2</text>
+      <rect x="150" y="252" width="118" height="44" rx="4"/><text x="158" y="268">выбор источника</text><text class="m" x="158" y="284">1N5819 + AO3401</text>
+      <rect x="150" y="314" width="118" height="40" rx="4"/><text x="158" y="330">VSYS → тумблер</text><text class="m" x="158" y="344">3,0–4,65 В, 470 мкФ</text>
+      <rect x="6" y="378" width="128" height="44" rx="4"/><text x="14" y="394">TPS63020: 3,3 В</text><text class="m" x="14" y="408">ESP32-S3, датчики</text>
+      <rect x="146" y="378" width="128" height="44" rx="4"/><text x="154" y="394">MT3608: 5,0 В</text><text class="m" x="154" y="408">PPTC 0,2 А → мачта</text>
+      <rect x="286" y="378" width="128" height="44" rx="4"/><text x="294" y="394">MT3608: 5,0 В</text><text class="m" x="294" y="408">ключ IO7 → порт</text>
+      <rect x="296" y="314" width="118" height="40" rx="4"/><text x="304" y="330">порт: +12 В</text><text class="m" x="304" y="344">PPTC 1,5 А, IO6</text>
+      <path class="b12" d="M65 48 V64 M65 108 V122 M65 176 V192"/>
+      <path class="b12" d="M124 165 H136 V306 H286 V334 H296"/>
+      <path class="b5" d="M124 212 H150 M209 48 V192 M268 200 H282 V149 H296"/>
+      <path class="b5" d="M355 176 V192"/>
+      <path class="bp" d="M355 232 V252 M296 274 H268"/>
+      <path class="b5" d="M209 232 V252"/>
+      <path class="bs" d="M209 296 V314 M209 354 V366 H70 V378 M209 366 V378 M209 366 H350 V378"/>
+    </svg>
+    <p class="note">Красная линия — 12 В лодки, оранжевая — 5 В, синяя — пакет, фиолетовая — шина после выбора источника. Когда есть VBUS, ключ выбора закрыт и пакет только заряжается. Пропал VBUS — ключ открывается сам, за ≈ 0,15 мс; шина проседает на ≈ 0,1 В, и ESP32-S3 не перезагружается.</p>
+
+    <div class="tbl"><table>
+      <tr><th>Режим</th><th>Что работает</th><th>Итог</th></tr>
+      <tr><td><b>Лодка + пакет</b></td><td>блок питается от лодки, пакет заряжается током 0,5 А и останавливается полным</td><td class="ok">основной режим</td></tr>
+      <tr><td><b>Только лодка</b> (пакета нет или он пуст)</td><td>всё работает, VSYS 4,6 В</td><td class="ok">работает</td></tr>
+      <tr><td><b>Только пакет</b></td><td>всё работает, VSYS 3,0–4,2 В: TPS63020 и MT3608 держат 3,3 и 5,0 В до 3,0 В</td><td class="ok">14–18 ч без Wi-Fi</td></tr>
+      <tr><td><b>Лодку выключили на ходу</b></td><td>ключ подхватывает пакет за 0,15 мс, провал 0,1 В</td><td class="ok">без перезагрузки</td></tr>
+      <tr><td><b>USB-C с берега</b></td><td>то же, что от лодки: питание и зарядка</td><td class="ok">работает</td></tr>
+      <tr><td><b>Провода лодки перепутаны</b></td><td>1N5819 не пропускает ток</td><td class="ok">ничего не горит</td></tr>
+      <tr><td><b>Выброс в бортовой сети</b> до 40 В</td><td>SMBJ24A ограничивает, LM2596 держит до 40 В</td><td class="ok">защищён</td></tr>
+      <tr><td><b>Мороз ниже 0 °C или жара выше 45 °C</b></td><td>литий нельзя заряжать: прошивка по NTC закрывает ключ зарядки (IO45). Блок работает</td><td class="wr">зависит от прошивки</td></tr>
+      <tr><td><b>Тумблер выключен</b>, лодка подключена</td><td>работает только зарядка, потом LM2596 без нагрузки берёт ≈ 5–10 мА</td><td class="wr">≈ 0,2 А·ч в сутки</td></tr>
+      <tr><td><b>Модуль на +5 В порта от пакета</b>, 0,5 А</td><td>пакет садится за 3,5 ч</td><td class="no">не делать: питать модуль от +12 В лодки</td></tr>
+    </table></div>
+    <div class="tbl"><table>
+      <tr><th>Расход</th><th>Мощность</th><th>Пакет 1S3P, 1400 мА·ч</th><th>Пакет 1S3P, 1100 мА·ч</th><th>От лодки 12,5 В</th></tr>
+      <tr><td>Без Wi-Fi</td><td>0,76 Вт</td><td>18 ч</td><td>14 ч</td><td>74 мА, 0,7 А·ч за день</td></tr>
+      <tr><td>С Wi-Fi</td><td>1,11 Вт</td><td>13 ч</td><td>10 ч</td><td>108 мА, 1,1 А·ч за день</td></tr>
+      <tr><td>Wi-Fi и модуль по проводу</td><td>1,17 Вт</td><td>12 ч</td><td>9 ч</td><td>114 мА</td></tr>
+    </table></div>
+    <p class="note">Из 0,76 Вт топ мачты берёт 0,37 Вт: 65 мА при 5 В, из них 17 мА уходит в нагрузку линии RS-485. Зарядка пустого пакета от лодки длится около 10 часов и берёт ещё ≈ 0,2 А. Ток TP4056 снижен с 1 до 0,5 А резистором 2,4 кОм: при 1 А в закрытой коробке модуль греется на 1,25 Вт. Ёмкость 18500 взята реальная, а не с этикетки: у хороших элементов 1400–2000 мА·ч, у дешёвых около 1100.</p>
+
+    <h2>3. Порт внешнего модуля</h2>
+    <p class="note">Подходит отдельный экран с картой, планшет в держателе или регистратор. Данные — стандарт NMEA 0183 по RS-422, 38 400 бод, поэтому любой картплоттер с входом NMEA 0183 понимает их без доработки. Модуль может и отправлять в блок, например точку знака.</p>
+    <div class="tbl"><table>
+      <tr><th>Контакт M12</th><th>Цвет провода</th><th>Что</th></tr>
+      <tr><td>1</td><td>белый</td><td>TX+ (A): данные из блока</td></tr>
+      <tr><td>2</td><td>коричневый</td><td>TX− (B)</td></tr>
+      <tr><td>3</td><td>зелёный</td><td>RX+ (A): данные в блок</td></tr>
+      <tr><td>4</td><td>жёлтый</td><td>RX− (B), на плате связи резистор 120 Ом</td></tr>
+      <tr><td>5</td><td>серый</td><td>+5 В до 0,5 А, включает прошивка (IO7)</td></tr>
+      <tr><td>6</td><td>розовый</td><td>земля</td></tr>
+      <tr><td>7</td><td>синий</td><td>+12 В лодки до 1,5 А: только когда подключена лодка</td></tr>
+      <tr><td>8</td><td>красный</td><td>земля</td></tr>
+    </table></div>
+    <div class="tbl"><table>
+      <tr><th>Блок отправляет</th><th>Что это</th></tr>
+      <tr><td><code>$IIMWV</code> R и T</td><td>вымпельный и истинный ветер: угол и скорость</td></tr>
+      <tr><td><code>$IIMWD</code></td><td>направление истинного ветра от севера</td></tr>
+      <tr><td><code>$IIHDG</code></td><td>курс по компасу BNO085</td></tr>
+      <tr><td><code>$IIXDR</code></td><td>крен и дифферент</td></tr>
+      <tr><td><code>$GPRMC</code>, <code>$GPGGA</code>, <code>$GPVTG</code></td><td>место, скорость и курс по GPS</td></tr>
+      <tr><td><code>$PM5WS</code></td><td>свои данные: заход или отход, качка топа</td></tr>
+      <tr><th>Блок принимает</th><th></th></tr>
+      <tr><td><code>$GPRMB</code>, <code>$GPAPB</code></td><td>пеленг и дистанция до точки — покажет на экране</td></tr>
+    </table></div>
+    <p class="note"><b>Без провода, по Wi-Fi:</b> блок поднимает точку доступа «M5-instr» и отдаёт те же строки NMEA по TCP и UDP на порт 10110. Их понимают OpenCPN, qtVlm, SEAiq и другие программы с картами. Wi-Fi включается из меню, потому что он отнимает 4–5 часов работы от пакета.</p>
+
+    <h2>4. Ножки ESP32-S3</h2>
+    <div class="tbl"><table>
+      <tr><th>Ножка</th><th>Что</th><th>Ножка</th><th>Что</th></tr>
+      <tr><td>IO1</td><td>данные с мачты (RX)</td><td>IO12, 11, 13, 10</td><td>BNO085: SCK, MOSI, MISO, CS</td></tr>
+      <tr><td>IO2</td><td>напряжение пакета, делитель 100/100 кОм</td><td>IO9, IO8</td><td>BNO085: INT, RST</td></tr>
+      <tr><td>IO3</td><td>NTC пакета, делитель 10 кОм</td><td>IO18, 17, 16, 15</td><td>экран: CLK, DIN, CS, DC</td></tr>
+      <tr><td>IO4, IO5</td><td>GPS: RX, TX</td><td>IO21, IO47</td><td>экран: BUSY, RST <span class="wr">(было IO6, IO7)</span></td></tr>
+      <tr><td>IO6</td><td>напряжение лодки, делитель 100/8,2 кОм</td><td>IO39, IO42</td><td>порт: TX, RX</td></tr>
+      <tr><td>IO7</td><td>включить +5 В порта</td><td>IO40, IO41</td><td>стрелки «заход», «отход»</td></tr>
+      <tr><td>IO45</td><td>разрешить зарядку</td><td>IO14</td><td>сенсор «ноль»</td></tr>
+    </table></div>
+    <p class="note">Не занимать: IO35–37 (память на модуле N16R8), IO38 и IO48 (цветной светодиод на разных версиях платы), IO0, IO46. Делитель лодки 100/8,2 кОм даёт 3,0 В даже при выбросе 40 В, поэтому ножка не сгорит. IO3 — настроечная ножка, но вход через делитель её режимов не меняет.</p>
+
+    <h2>5. Что купить и напечатать</h2>
+    <div class="tbl"><table>
+      <tr><th>Что</th><th>Сколько, зачем</th></tr>
+      <tr><td>Коробка ABS IP67 200 × 120 × 75 с прозрачной крышкой</td><td>1. Внутри нужно ≈ 192 × 112 и ≈ 70 до крышки</td></tr>
+      <tr><td>Элементы 18500, 1400–2000 мА·ч, одинаковые, + никелевая лента</td><td>3 — пакет 1S3P, сварить или купить собранный</td></tr>
+      <tr><td>LM2596 модуль 4,5–40 В</td><td>1 — 12 В лодки в 5,3 В</td></tr>
+      <tr><td>MT3608 модуль</td><td>ещё 1 — 5 В в порт</td></tr>
+      <tr><td>MAX3485 модуль</td><td>ещё 2 — порт в обе стороны</td></tr>
+      <tr><td>SM712 на переходнике SOT23</td><td>2 — пары порта (и 1 на мачту, в заказах не найден)</td></tr>
+      <tr><td>AO3401 и 2N7002 на переходниках, 1N5819 ×3, SMBJ24A, 470 мкФ 10 В, NTC 10 кОм, PPTC 0,5 А и 1,5 А</td><td>выбор источника, ключи, защита</td></tr>
+      <tr><td>Разъём SP13 на 2 контакта, пара</td><td>питание лодки</td></tr>
+      <tr><td>M12 на 8 контактов A-кодированный: гнездо на панель и вилка с кабелем</td><td>порт внешнего модуля</td></tr>
+      <tr><td>USB-C на панель с колпачком</td><td>1 — зарядка с берега, прошивка</td></tr>
+      <tr><td>Макетные платы 50 × 70 и 50 × 90, гнёзда 1 × 22 ×2, разъёмы JST-XH</td><td>плата питания и плата связи</td></tr>
+      <tr><td>Предохранитель 2 А в держателе на провод</td><td>ставится у аккумулятора лодки</td></tr>
+      <tr><td>Термовставки М3 ×16, М2,5 ×12; винты М3 ×14, М2,5 ×12, М4 ×4 с резиновыми шайбами</td><td>сборка</td></tr>
+      <tr><td>Печать ASA: плита 90 см³, рамка 38 см³, прижимы 4 см³</td><td>≈ 135 г</td></tr>
+    </table></div>
+    <p class="note">LiPo 906090 из прошлой схемы больше не нужен: пакет 18500 надёжнее в коробке на солнце и меняется по элементам.</p>
+
+    <h2>6. Как проверить на столе</h2>
+    <ol class="steps">
+      <li>Лабораторный блок питания вместо лодки: 12 В. Пакет снят. Блок должен включиться, шина VSYS — 4,6 В.</li>
+      <li>Поставить пакет. Ток с 12 В вырастет на ≈ 0,2 А (идёт зарядка), к полному пакету упадёт до ≈ 0,1 А.</li>
+      <li>На ходу выключить 12 В. Экран не должен мигнуть, счётчик загрузок в прошивке не меняется.</li>
+      <li>Поднять 12 В до 16 В и опустить до 9 В: блок работает. Перепутать провода: ничего не происходит.</li>
+      <li>Нагреть пакет феном до 46 °C: зарядка выключается (светодиод TP4056 гаснет), блок работает.</li>
+      <li>Порт: соединить TX и RX порта перемычкой — блок видит свои же строки. Потом ноутбук с переходником USB–RS-485 и программой терминала, 38 400 бод.</li>
+      <li>Wi-Fi: телефон к «M5-instr», программа «NMEA tools» или OpenCPN, TCP 192.168.4.1:10110.</li>
+    </ol>
+
+    <h2>Сверить по деталям</h2>
+    <ul class="steps">
+      <li>Купленную коробку: внутренний размер, высоту до крышки (у модели 70 мм), где колонны винтов крышки. От этого зависят вырезы плиты и высота колонн.</li>
+      <li>Отверстия модуля экрана WeAct: взяты по Waveshare.</li>
+      <li>GPS QUESCAN AN181: размер платы и антенны взяты 25 × 25 и 18 × 18.</li>
+      <li>BNO085: взят как плата Adafruit 25,6 × 22,7 с отверстиями в 2,54 мм от краёв.</li>
+      <li>Размер модулей MAX3485, TPS63020 — примерные.</li>
+    </ul>
+
+    <h2>Цвета</h2>
+    <div class="legend">
+      <div><i style="background:#3a3e45"></i>печать ASA: плита, рамка экрана, прижимы</div>
+      <div><i style="background:#d9dcd6"></i>коробка ABS и прозрачная крышка</div>
+      <div><i style="background:#c9a227"></i>латунь: термовставки</div>
+      <div><i style="background:#d7dbe0"></i>нержавеющий крепёж</div>
+      <div><i style="background:#c2b280"></i>макетные платы</div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js" integrity="sha384-CI3ELBVUz9XQO+97x6nwMDPosPR5XvsxW2ua7N1Xeygeh1IxtgqtCkGfQY9WWdHu" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js" integrity="sha384-wagZhIFgY4hD+7awjQjR4e2E294y6J2HSnd8eTNc15ZubTeQeVRZwhQJ+W6hnBsf" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/STLLoader.js" integrity="sha384-QF8EmP6pyNE+i7WmcltzC4ddzFVKDxfn5WD5gXyKTSE4SCw0R25TI+q0LUlnf7tq" crossorigin="anonymous"></script>
+<script>
+(function(){
+'use strict';
+const $=id=>document.getElementById(id);
+if(!window.THREE||!THREE.OrbitControls||!THREE.STLLoader){$('err').hidden=false;return;}
+const V=(x,y,z)=>new THREE.Vector3(x,y,z),D=Math.PI/180;
+function css(v){return getComputedStyle(document.documentElement).getPropertyValue(v).trim();}
+const canvas=$('view'),stage=$('stage');
+const renderer=new THREE.WebGLRenderer({canvas,antialias:true});renderer.setPixelRatio(Math.min(2,devicePixelRatio||1));
+const scene=new THREE.Scene(),camera=new THREE.PerspectiveCamera(32,1,1,6000);
+const controls=new THREE.OrbitControls(camera,canvas);controls.enableDamping=true;
+scene.add(new THREE.HemisphereLight(0xffffff,0x6f8494,0.8));const s1=new THREE.DirectionalLight(0xffffff,0.75);s1.position.set(200,300,400);scene.add(s1);const s2=new THREE.DirectionalLight(0xffffff,0.35);s2.position.set(-300,100,-250);scene.add(s2);
+function applyTheme(){renderer.setClearColor(new THREE.Color(css('--bg')||'#edf1f3'));}
+applyTheme();try{matchMedia('(prefers-color-scheme: dark)').addEventListener('change',applyTheme);}catch(e){}
+new MutationObserver(applyTheme).observe(document.documentElement,{attributes:true,attributeFilter:['data-theme']});
+
+// координаты — как в kokpit.scad: X поперёк, Y вверх, Z от переборки к крышке; совпадают с системой three
+const root=new THREE.Group();scene.add(root);
+const M=(c,o)=>new THREE.MeshStandardMaterial(Object.assign({color:c,roughness:0.55},o||{}));
+const parts=[];
+function add(obj,ex,label,front){if(label)obj.userData.label=label;obj.userData.base=obj.position.clone();obj.userData.ex=ex||V(0,0,0);obj.userData.front=!!front;root.add(obj);parts.push(obj);return obj;}
+function lab(o,l){o.userData.label=l;return o;}
+function bx(x0,y0,z0,x1,y1,z1,m,l){const o=new THREE.Mesh(new THREE.BoxGeometry(x1-x0,y1-y0,z1-z0),m);o.position.set((x0+x1)/2,(y0+y1)/2,(z0+z1)/2);if(l)o.userData.label=l;return o;}
+function cyl(r,h,m,seg,l){const o=new THREE.Mesh(new THREE.CylinderGeometry(r,r,h,seg||24),m);if(l)o.userData.label=l;return o;}   // ось Y
+function cz(x,y,z0,z1,r,m,l,seg){const o=cyl(r,z1-z0,m,seg,l);o.rotation.x=Math.PI/2;o.position.set(x,y,(z0+z1)/2);return o;}
+function G(){const g=new THREE.Group();for(const c of arguments)g.add(c);return g;}
+const steel=M(0xd7dbe0,{metalness:0.9,roughness:0.25}),brass=M(0xc9a227,{metalness:0.8,roughness:0.3}),blk=M(0x17181b,{roughness:0.6}),tin=M(0xd9dde0,{metalness:0.85,roughness:0.35}),gold=M(0xd4af37,{metalness:0.85,roughness:0.3});
+
+// ---------- платы: доска с рисунком сверху ----------
+function sheet(w,h,bg,draw){const k=Math.min(12,1024/Math.max(w,h)),c=document.createElement('canvas');c.width=Math.ceil(w*k);c.height=Math.ceil(h*k);const g=c.getContext('2d');g.fillStyle=bg;g.fillRect(0,0,c.width,c.height);g.setTransform(k,0,0,-k,c.width/2,c.height/2);if(draw)draw(g);return c;}
+function txt(g,s,x,y,size,col,rot){g.save();g.translate(x,y);g.rotate((rot||0)*D);g.scale(1,-1);g.fillStyle=col||'#eef2f0';g.font='600 '+size+'px Arial, sans-serif';g.textAlign='center';g.textBaseline='middle';g.fillText(s,0,0);g.restore();}
+function grid(g,w,h,col){g.fillStyle=col||'#8a6d3b';for(let x=-w/2+1.27;x<w/2;x+=2.54)for(let y=-h/2+1.27;y<h/2;y+=2.54){g.beginPath();g.arc(x,y,0.55,0,7);g.fill();}}
+function pcb(w,h,t,col,label,draw,edge){const g=new THREE.Group();g.add(lab(new THREE.Mesh(new THREE.BoxGeometry(w,h,t),M(edge||col,{roughness:0.5})),label));
+  const tx=new THREE.CanvasTexture(sheet(w,h,'#'+new THREE.Color(col).getHexString(),draw));tx.anisotropy=8;
+  const p=lab(new THREE.Mesh(new THREE.PlaneGeometry(w,h),M(0xffffff,{map:tx,roughness:0.45})),label);p.position.z=t/2+0.01;g.add(p);return g;}   // плата: центр в начале, толщина по Z
+function perf(w,h,label,draw){return pcb(w,h,1.6,0xc2b280,label,g=>{grid(g,w,h,'#7a5a2a');g.fillStyle='#b88a3a';if(draw)draw(g);},0xb7a46d);}
+function chip(g,x,y,w,h,ht,m,l){const o=bx(x-w/2,y-h/2,0,x+w/2,y+h/2,ht,m||blk,l);g.add(o);return o;}
+function up(g,z){g.position.z=z;return g;}
+// гребёнка 1 ряд: n штырей с шагом 2,54 вдоль X
+function pins(g,x0,y,n,z0,dir,len,l){for(let i=0;i<n;i++){const x=x0+i*2.54;g.add(bx(x-1.21,y-1.21,z0,x+1.21,y+1.21,z0+dir*2.5,blk,l));g.add(bx(x-0.32,y-0.32,Math.min(z0,z0+dir*len),x+0.32,y+0.32,Math.max(z0,z0+dir*len),gold,l));}}
+function sock(g,x0,y,n,z0,l){for(let i=0;i<n;i++){const x=x0+i*2.54;g.add(bx(x-1.27,y-1.27,z0,x+1.27,y+1.27,z0+8.5,blk,l));}}
+function jst(g,x,y,n,z0,rot,l){const o=bx(-n*1.25,-2.9,0,n*1.25,2.9,7,M(0xf2efe6,{roughness:0.5}),l);const w=new THREE.Group();w.add(o);w.position.set(x,y,z0);w.rotation.z=(rot||0)*D;g.add(w);}
+
+// ---------- коробка и переборка ----------
+const boxM=M(0xd9dcd6,{transparent:true,opacity:0.2,roughness:0.6,depthWrite:false,side:THREE.DoubleSide});
+const boxG=new THREE.Group();
+const W=96,H=56,T=3;
+boxG.add(bx(-W-T,-H-T,-T,W+T,H+T,0,boxM),bx(-W-T,-H-T,0,-W,H+T,55,boxM),bx(W,-H-T,0,W+T,H+T,55,boxM),bx(-W,H,0,W,H+T,55,boxM),bx(-W,-H-T,0,W,-H,55,boxM));
+[[-1,-1],[-1,1],[1,-1],[1,1]].forEach(q=>boxG.add(cz(q[0]*(W-5),q[1]*(H-5),0,55,5,boxM,'',16)));
+add(lab(boxG,'коробка ABS IP67 200 × 120 × 75: внутри ≈ 192 × 112; в углах колонны винтов крышки'),V(0,0,0));
+const lidM=M(0xd6ecf2,{transparent:true,opacity:0.16,roughness:0.08,depthWrite:false,side:THREE.DoubleSide});
+const lidG=G(bx(-W-T,-H-T,70,W+T,H+T,73,lidM),bx(-W-T,-H-T,55,-W,H+T,70,lidM),bx(W,-H-T,55,W+T,H+T,70,lidM),bx(-W,H,55,W,H+T,70,lidM),bx(-W,-H-T,55,W,-H,70,lidM));
+add(lab(lidG,'прозрачная крышка: поликарбонат, 4 винта в углах, прокладка по кругу'),V(0,0,140),true);
+add(lab(bx(-170,-120,-25,170,120,-3,M(0xb59b74,{roughness:0.85})),'кормовая переборка рубки: блок экраном к рулевому'),V(0,0,-40));
+[[-88,-20],[-88,20],[88,-20],[88,20]].forEach((p,i)=>{add(G(cz(p[0],p[1],-14,6.5,2,steel,'',12),cz(p[0],p[1],3,6.5,4,steel,'',6)),V(0,0,-20),'винт М4 '+(i+1)+' из 4: плита, задняя стенка коробки и переборка вместе; под коробкой резиновая шайба и герметик');});
+
+// ---------- печатные детали из STL ----------
+const STLS=[
+ ['plate',[0,0,0],0,'#3a3e45',V(0,0,0),'монтажная плита: ASA, 3 мм; бобышки плат, 4 колонны рамки, ложемент пакета и 2 полки датчиков отпечатаны заодно'],
+ ['bezel',[0,0,61],1,'#4a505a',V(0,0,95),'рамка экрана: ASA; окно экрана, отверстия стрелок, окно сенсора «ноль»; знаки стрелок углублены. 4 винта М3 в потай в колонны плиты'],
+ ['pack_clamp',[-53,-28,26],0,'#556070',V(0,0,48),'прижимная планка пакета: ASA, 2 винта М3 в бобышки ложемента; под ней датчик NTC'],
+ ['gps_clamp',[-66,44,5.5],2,'#556070',V(0,22,40),'планка GPS у плиты: ASA, лапки 1,6 мм, 2 винта М2,5 в полку'],
+ ['gps_clamp',[-66,44,32.5],2,'#556070',V(0,22,40),'планка GPS у крышки: ASA, лапки 1,6 мм, 2 винта М2,5 в полку']
+];
+const b64=s=>{const bin=atob(s.replace(/\s+/g,'')),u=new Uint8Array(bin.length);for(let i=0;i<bin.length;i++)u[i]=bin.charCodeAt(i);return u.buffer;};
+const loader=new THREE.STLLoader();let loaded=0;
+STLS.forEach(([name,pos,how,col,ex,label])=>{
+  fetch('stl/'+name+'.txt').then(r=>{if(!r.ok)throw r.status;return r.text();}).then(t=>{
+    const geo=loader.parse(b64(t));geo.computeVertexNormals();
+    const m=new THREE.Mesh(geo,M(col,{roughness:0.6,side:THREE.DoubleSide}));m.position.set(pos[0],pos[1],pos[2]);
+    if(how===1)m.scale.z=-1;            // рамка: в сборке перевёрнута лицом к крышке
+    if(how===2)m.rotation.x=-Math.PI/2; // планка GPS: лежит на полке, лапками вниз
+    add(m,ex,label,name==='bezel');loaded++;$('load').textContent=loaded<STLS.length?('загружено '+loaded+' из '+STLS.length):'';applyAll();
+  }).catch(()=>{loaded++;$('load').textContent='не загрузилось: '+name;});
+});
+
+// ---------- пакет 1S3P 18500 ----------
+(function(){const g=new THREE.Group();const wrap=[0x2b6cb0,0x2b6cb0,0x2b6cb0];
+  [-71.5,-53,-34.5].forEach((x,i)=>{const c=cyl(9.25,50,M(wrap[i],{roughness:0.35}),28,'элемент 18500 '+(i+1)+' из 3: Ø18,5 × 50, литий-ион 3,6 В');c.position.set(x,-28,12.75);g.add(c);
+    const cap=cyl(4,0.6,tin,20);cap.position.set(x,-2.7,12.75);g.add(cap);});
+  [-3,-53].forEach(y=>g.add(bx(-78,y-0.15,8,-30,y+0.15,17.5,M(0xc9cdd0,{metalness:0.8,roughness:0.3}),'никелевая лента: 3 элемента параллельно')));
+  g.add(lab(bx(-58,-31,22,-48,-25,23.2,M(0x1c1d22)),'датчик NTC 10 кОм: зажат планкой, по нему прошивка запрещает зарядку ниже 0 и выше 45 °C'));
+  add(lab(g,'пакет 1S3P из 18500: 3,0–4,2 В'),V(0,0,30));})();
+
+// ---------- плата питания 50 × 70 ----------
+(function(){const g=new THREE.Group();g.position.set(15,-30,8.8);
+  g.add(perf(70,50,'плата питания: макетная 50 × 70 на 4 винтах М3 в бобышки плиты'));
+  const z=0.8;
+  const tp=up(pcb(28,17,1.2,0x1f4f91,'TP4056 с защитой DW01: зарядка пакета 0,5 А (резистор 2,4 кОм вместо 1,2 кОм)',g2=>{txt(g2,'TP4056',0,4,2.4);}),z+3);tp.position.x=-19;tp.position.y=13;g.add(tp);
+  chip(tp,0,-1,4.9,3.9,1.6,blk,'TP4056: линейная зарядка');chip(tp,-12,0,7.4,9,3.2,M(0xb8bcc2,{metalness:0.7}),'USB-C модуля: не используется, зарядка идёт с шины VBUS');
+  const tps=up(pcb(20,15,1.2,0x1d6a3a,'TPS63020: 3,3 В из 3,0–4,65 В, вверх и вниз',g2=>txt(g2,'TPS63020',0,4.5,2)),z+3);tps.position.set(15,13,z+3);g.add(tps);chip(tps,0,-1,3,4,0.9,blk,'TPS63020');chip(tps,6,-2,4,4,2.2,M(0x3a3a3a),'катушка 1 мкГн');
+  const m1=up(pcb(36,17,1.2,0x1f4f91,'MT3608 №1: 5,0 В на мачту, через PPTC 0,2 А и SMBJ5.0A',g2=>txt(g2,'MT3608',-6,5,2.4)),z+3);m1.position.set(-15,-6,z+3);g.add(m1);
+  const m2=up(pcb(36,17,1.2,0x1f4f91,'MT3608 №2: 5,0 В в порт, включается ключом по IO7',g2=>txt(g2,'MT3608',-6,5,2.4)),z+3);m2.position.set(15,-15,z+3);g.add(m2);
+  [m1,m2].forEach(m=>{chip(m,-2,-1,4,4,3.5,M(0x3a3a3a),'катушка 22 мкГн');chip(m,10,0,9.5,9.5,4.5,M(0x2f6fb0),'подстроечник: выставить 5,0 В мультиметром и залить лаком');chip(m,-11,0,3,1.6,1,blk,'MT3608');});
+  // выбор источника и ключи
+  [[-6,5,'1N5819: лодка → VBUS'],[0,5,'1N5819: VBUS → шина VSYS'],[6,5,'1N5819: защита от переполюсовки лодки']].forEach(d=>{const o=cyl(1.35,5.2,blk,16,d[2]);o.rotation.z=Math.PI/2;o.position.set(d[0],d[1],z+1.4);g.add(o);const bnd=cyl(1.4,0.8,M(0xd0d4d8),16);bnd.rotation.z=Math.PI/2;bnd.position.set(d[0]+1.8,d[1],z+1.4);g.add(bnd);});
+  [[-26,-18,'AO3401: выбор источника — открывается, когда пропал VBUS'],[-20,-18,'AO3401: ключ зарядки, управляет IO45'],[-14,-18,'AO3401: ключ +5 В порта, управляет IO7 через 2N7002']].forEach(a=>{const ad=new THREE.Group();ad.position.set(a[0],a[1],z);ad.add(bx(-2.5,-3.5,0,2.5,3.5,1.2,M(0x1d6a3a),a[2]));ad.add(bx(-1,-1.5,1.2,1,1.5,2.2,blk,a[2]));g.add(ad);});
+  const cap=cyl(4,12,M(0x1c2a5a,{roughness:0.4}),24,'конденсатор 470 мкФ 10 В на шине VSYS: держит её при переключении источников');cap.rotation.x=Math.PI/2;cap.position.set(28,-18,z+6);g.add(cap);
+  [[22,5,0xe8c21a,'PPTC 0,2 А: +5 В на мачту'],[27,5,0xe8c21a,'PPTC 0,5 А: +5 В в порт'],[32,5,0xd4a017,'PPTC 1,5 А: +12 В в порт']].forEach(p=>{const o=bx(p[0]-2,p[1]-0.8,z,p[0]+2,p[1]+0.8,z+6,M(p[2],{roughness:0.5}),p[3]);g.add(o);});
+  g.add(bx(30,-4,z,34.5,-0.4,z+2.3,blk,'SMBJ24A: срезает выбросы бортовой сети'));g.add(bx(30,-10,z,34.5,-6.4,z+2.3,blk,'SMBJ5.0A: защита +5 В кабеля мачты'));
+  jst(g,-30,-21,3,z,0,'разъём JST-XH: пакет и NTC');jst(g,30,21,4,z,0,'разъём JST-XH: 3,3 В, 5 В и земля на плату связи');
+  add(g,V(0,0,14),'плата питания');})();
+
+// ---------- LM2596 ----------
+(function(){const g=pcb(21,43,1.6,0x1f4f91,'LM2596: 12 В лодки → 5,3 В; вход до 40 В. 2 винта М3 в бобышки плиты',c=>{txt(c,'LM2596',0,15,2.4,'#eef2f0',90);});g.position.set(72.5,-32.5,8.8);
+  chip(g,0,3,10,10,4.5,M(0x2a2a2a),'TO-263: микросхема LM2596S');const ind=cyl(6,7,M(0x2b2b2b),24,'катушка 33 мкГн');ind.rotation.x=Math.PI/2;ind.position.set(0,-10,4.3);g.add(ind);
+  [[-6,15],[6,15]].forEach(p=>{const c=cyl(4,10,M(0x1c2a5a),20,'конденсатор 220 мкФ');c.rotation.x=Math.PI/2;c.position.set(p[0],p[1],5.8);g.add(c);});chip(g,6,-18,6,6,5,M(0x2f6fb0),'подстроечник: выставить 5,3 В');
+  add(g,V(0,0,14),'LM2596');})();
+
+// ---------- плата связи 50 × 90 ----------
+(function(){const g=new THREE.Group();g.position.set(0,25,8.8);
+  g.add(perf(90,50,'плата связи: макетная 50 × 90 на 4 винтах М3'));const z=0.8;
+  sock(g,-39.4,-11.43,22,z,'гнездо 1 × 22: ESP32-S3 вставляется, не паяется');sock(g,-39.4,11.43,22,z,'гнездо 1 × 22: ESP32-S3 вставляется, не паяется');
+  // ESP32-S3-DevKitC-1
+  const s3=pcb(62.74,25.4,1.6,0x121417,'ESP32-S3-DevKitC-1 N16R8, 62,74 × 25,4: главный — вычитает качку, считает истинный ветер, заходы, рисует экран, отдаёт NMEA',c=>{txt(c,'ESP32-S3-DevKitC-1',-6,0,2.6,'#d9dde0');});s3.position.set(-12,0,z+8.5+2.5+0.8);g.add(s3);
+  pins(s3,-26.67,-11.43,22,-0.8,-1,8.5);pins(s3,-26.67,11.43,22,-0.8,-1,8.5);
+  const mod=new THREE.Group();mod.position.set(17.4,0,0.8);s3.add(mod);mod.add(bx(-12.75,-9,0,12.75,9,0.8,M(0x1a1a1a),'модуль ESP32-S3-WROOM-1 N16R8'));mod.add(bx(-12.75,-8.5,0.8,5,8.5,3.2,M(0xb8bcc2,{metalness:0.8,roughness:0.3}),'экран модуля: процессор, 16 МБ флеш, 8 МБ памяти'));mod.add(bx(5.5,-8.5,0.8,12.5,8.5,0.9,M(0x2a2a2a),'антенна на плате: ничего металлического сверху'));
+  [[-28.6,-4.5],[-28.6,4.5]].forEach((p,i)=>s3.add(bx(p[0]-3.6,p[1]-4.5,0.8,p[0]+3.8,p[1]+4.5,4,M(0xb8bcc2,{metalness:0.8,roughness:0.3}),i?'USB-C «USB»: прошивка через встроенный USB':'USB-C «UART»: прошивка через CP2102')));
+  [[-22,-9.2,'кнопка BOOT'],[-22,9.2,'кнопка RST']].forEach(b=>{s3.add(bx(b[0]-2.6,b[1]-1.8,0.8,b[0]+2.6,b[1]+1.8,2.6,M(0xe9e9e9),b[2]));s3.add(bx(b[0]-1,b[1]-0.6,2.6,b[0]+1,b[1]+0.6,3.3,blk,b[2]));});
+  s3.add(bx(-16,-1,0.8,-14,1,1.7,M(0xf3f3f3),'цветной светодиод на IO38 или IO48 — эти ножки не занимать'));chip(s3,-10,-6,3,1.8,1.1,blk,'стабилизатор 3,3 В платы');
+  // MAX3485 ×3
+  [['приём с мачты: RO → IO1, A и B — от SM712',-17],['передача в порт: DI ← IO39, передатчик включён всегда',0],['приём из порта: RO → IO42, на входе 120 Ом',17]].forEach((m,i)=>{const b=pcb(22,14,1.2,0x1f4f91,'MAX3485 №'+(i+1)+': '+m[0],c=>txt(c,'MAX3485',-2,4,2));b.position.set(33,m[1]*0.83,z+3.2);g.add(b);chip(b,-1,-1,4.9,3.9,1.6,blk,'MAX3485');const tb=bx(7,-5,0.6,11,5,8,M(0x2f6fb0),'клеммы A и B');b.add(tb);});
+  [[21,-21,'SM712 на переходнике: защита пары с мачты'],[21,21,'SM712 на переходнике: защита пар порта']].forEach(a=>{const ad=new THREE.Group();ad.position.set(a[0],a[1],z);ad.add(bx(-3,-2.5,0,3,2.5,1.2,M(0x1d6a3a),a[2]));ad.add(bx(-1.5,-0.8,1.2,1.5,0.8,2.2,blk,a[2]));g.add(ad);});
+  [[-40,-21,8,'экран: 8 проводов'],[-24,-21,10,'BNO085: SPI и питание'],[-8,-21,4,'GPS'],[6,-21,5,'стрелки и сенсор «ноль»'],[-40,21,4,'кабель мачты'],[-26,21,8,'порт M12'],[-10,21,4,'питание с платы питания'],[2,21,3,'делители: лодка и пакет']].forEach(j=>jst(g,j[0]+j[2]*1.25,j[1],j[2],z,0,'разъём JST-XH: '+j[3]));
+  add(g,V(0,0,30),'плата связи');})();
+
+// ---------- датчики на полках ----------
+(function(){
+  const b=pcb(25.6,22.7,1.6,0x5a2a82,'BNO085: крен, дифферент, курс. Лежит горизонтально, ось X — к носу (в переборку), 4 винта М2,5 в полку',c=>{txt(c,'BNO085',0,6,2.4);txt(c,'X →',8,-6,2.4);});
+  b.rotation.x=-Math.PI/2;b.rotation.z=0;b.position.set(67,26.8,19);chip(b,0,0,5.2,3.8,1.1,blk,'BNO085: датчик в корпусе LGA');
+  [[-10.26,-8.81],[10.26,-8.81],[-10.26,8.81],[10.26,8.81]].forEach(p=>{b.add(G(cz(p[0],p[1],0.8,2.4,2.2,steel,'винт М2,5 × 8',6)));});
+  const ar=new THREE.Mesh(new THREE.ConeGeometry(1.6,5,12),M(0xd62828));ar.rotation.x=-Math.PI/2;ar.position.set(67,30,6);
+  add(G(b,lab(ar,'ось X датчика: к носу')),V(0,30,40),'BNO085');
+  const gp=pcb(25,25,1.6,0x1f4f91,'GPS u-blox M10 (QUESCAN AN181): скорость и курс 10 раз в секунду. Антенной вверх, под верхней стенкой',c=>txt(c,'AN181',0,-10,2.2));
+  gp.rotation.x=-Math.PI/2;gp.position.set(-66,44.8,19);
+  const pat=bx(-9,-9,0.8,9,9,4.8,M(0xc9b48a,{roughness:0.7}),'керамическая антенна 18 × 18');gp.add(pat);const pt=cz(0,0,4.8,5,3,tin,'',16);gp.add(pt);
+  add(gp,V(0,30,40),'GPS');})();
+
+// ---------- экран, стрелки, сенсор ----------
+const dc=document.createElement('canvas');dc.width=800;dc.height=600;(function(){const c=dc.getContext('2d');c.fillStyle='#dcdad1';c.fillRect(0,0,800,600);c.fillStyle='#17171b';
+  c.font='600 34px Arial';c.fillText('ИСТИННЫЙ ВЕТЕР',40,70);c.font='700 150px Arial';c.fillText('12,4',40,230);c.font='600 40px Arial';c.fillText('уз',360,230);
+  c.font='700 110px Arial';c.fillText('215°',470,230);c.fillRect(40,270,720,4);
+  c.font='600 34px Arial';c.fillText('ЗАХОД',40,340);c.fillText('КРЕН',300,340);c.fillText('SOG',560,340);
+  c.font='700 90px Arial';c.fillText('+3°',40,450);c.fillText('14°',300,450);c.fillText('6,1',560,450);
+  c.font='500 26px Arial';c.fillText('лодка 12,7 В · пакет 98 % · Wi-Fi выкл.',40,560);})();
+const dtex=new THREE.CanvasTexture(dc);
+(function(){const g=new THREE.Group();
+  g.add(bx(-88,-40,55.2,15,38.5,56.8,M(0x1b1c1f),'модуль экрана WeAct 4,2″, плата 103 × 78,5: держится 4 винтами М2,5 на бобышках рамки'));
+  g.add(bx(-86,-39.25,56.8,5,37.75,58,M(0xe6e4dc,{roughness:0.3}),'стекло экрана 91 × 77'));
+  const s=new THREE.Mesh(new THREE.PlaneGeometry(84.8,63.6),new THREE.MeshBasicMaterial({map:dtex}));s.position.set(-40.5,-0.75,58.02);g.add(lab(s,'экран 4,2″ e-paper, 400 × 300: виден на солнце, тратит ток только на перерисовку'));
+  add(g,V(0,0,70),'экран',true);
+  const led=(y,c,l)=>{const o=new THREE.Group();o.add(cz(58,y,57,64,2.5,M(c,{transparent:true,opacity:0.85,roughness:0.2}),l,20));const d=new THREE.Mesh(new THREE.SphereGeometry(2.5,20,12),M(c,{transparent:true,opacity:0.85,roughness:0.2}));d.position.set(58,y,64);o.add(lab(d,l));return o;};
+  add(led(24,0xffc61a,'стрелка «заход»: жёлтый светодиод 5 мм, IO40 через 68 Ом'),V(0,0,110),'',true);
+  add(led(6,0xe53935,'стрелка «отход»: красный светодиод 5 мм, IO41 через 68 Ом'),V(0,0,110),'',true);
+  add(G(bx(48,-32,58,68,-12,69.4,M(0x2a2a2a,{roughness:0.9}),'пружинящая прокладка: прижимает площадку к крышке'),bx(48,-32,69.4,68,-12,69.9,M(0xb87333,{metalness:0.7,roughness:0.3}),'сенсор «ноль»: медная площадка 20 × 20 изнутри крышки, IO14. Держать палец 3 с — крен и дифферент обнулятся')),V(0,0,115),'',true);
+})();
+
+// ---------- разъёмы в нижней стенке ----------
+(function(){const zc=40,y0=-H;
+  const nut=(x,r,l)=>{const n=cyl(r,3,steel,6,l);n.position.set(x,y0+1.5,zc);return n;};
+  const g1=G(cyl(8,22,blk,24,'SP13 на 2 контакта: питание от аккумулятора лодки; внутри провода идут на 1N5819 платы питания'),nut(-70,10,'гайка SP13'));g1.children[0].position.set(-70,y0+5,zc);
+  const outer1=cyl(7,10,blk,24,'вилка SP13 с проводом к лодке');outer1.position.set(-70,y0-12,zc);g1.add(outer1);
+  add(g1,V(0,-40,0),'');
+  const g2=G(cyl(6,16,steel,20,'тумблер IP67 с колпачком: выключает всё, кроме зарядки'),nut(-45,8,'гайка тумблера'));g2.children[0].position.set(-45,y0+2,zc);const lev=cyl(1.5,12,steel,10,'рычаг тумблера под резиновым колпачком');lev.position.set(-45,y0-9,zc);g2.add(lev);
+  const boot=cyl(5,9,M(0x22252a,{roughness:0.9}),20,'резиновый колпачок тумблера');boot.position.set(-45,y0-7,zc);g2.add(boot);add(g2,V(0,-40,0),'');
+  const g3=G(bx(-27,y0-2,zc-6,-13,y0+14,zc+6,blk,'USB-C на панель с колпачком на шнурке: зарядка с берега и прошивка'),bx(-25,y0-6,zc-5,-15,y0-2,zc+5,M(0x22252a,{roughness:0.9}),'колпачок USB-C'));add(g3,V(0,-40,0),'');
+  const g4=G(cyl(6.5,16,M(0x1c1d22),20,'гермоввод PG7: кабель с мачты, 4 жилы и оплётка'),nut(20,8,'гайка PG7'));g4.children[0].position.set(20,y0+1,zc);const cab=cyl(2.7,40,M(0x2b2f35,{roughness:0.8}),16,'кабель RVSP 4 × 24AWG с мачты');cab.position.set(20,y0-26,zc);g4.add(cab);add(g4,V(0,-40,0),'');
+  const g5=G(cyl(8,24,steel,24,'M12 на 8 контактов, гнездо на панель: порт внешнего модуля — NMEA 0183 по RS-422 в обе стороны, +5 В и +12 В'),nut(55,11,'гайка M12'));g5.children[0].position.set(55,y0+6,zc);const cp=cyl(9,7,M(0x22252a,{roughness:0.9}),24,'заглушка M12: когда модуль не подключён');cp.position.set(55,y0-4,zc);g5.add(cp);add(g5,V(0,-40,0),'');
+})();
+
+// ---------- разнос, коробка, подписи ----------
+let exp=0,expT=0,labOn=!matchMedia('(max-width:900px)').matches,boxOn=true;
+const inner=['main','sens','pwr','conn'];
+function applyAll(){parts.forEach(p=>{p.position.copy(p.userData.base).addScaledVector(p.userData.ex,exp);
+  if(p.userData.front)p.visible=!(exp<0.02&&inner.includes(focus));});
+  boxG.visible=boxOn&&exp<0.02;lidG.visible=boxOn&&!(exp<0.02&&inner.includes(focus));}
+$('bBox').addEventListener('click',()=>{boxOn=!boxOn;$('bBox').setAttribute('aria-pressed',String(boxOn));applyAll();});
+function setExp(v){expT=v;$('bExp').setAttribute('aria-pressed',String(!!v));}
+$('bExp').addEventListener('click',()=>{setExp(expT?0:1);go(expT?'ex':(focus==='ex'?'all':focus));});
+$('bLab').addEventListener('click',()=>{labOn=!labOn;$('bLab').setAttribute('aria-pressed',String(labOn));$('cos').hidden=!labOn;});
+$('bAll').addEventListener('click',()=>go(expT?'ex':'all'));
+$('bLab').setAttribute('aria-pressed',String(labOn));$('cos').hidden=!labOn;
+
+const CO=[
+ {p:[-40,20,58],e:[0,0,70],t:'экран 4,2″ e-paper',s:'400 × 300, за крышкой',v:'dsp',m:1,x:1},
+ {p:[58,24,64],e:[0,0,110],t:'стрелки',s:'«заход» и «отход», 5 мм',v:'dsp',m:1},
+ {p:[58,-22,69.9],e:[0,0,115],t:'сенсор «ноль»',s:'медь на прокладке к крышке',v:'dsp',x:1},
+ {p:[-88,40,58],e:[0,0,95],t:'рамка экрана',s:'4 винта М3 в колонны плиты',v:'dsp',x:1},
+ {p:[-12,25,22],e:[0,0,30],t:'ESP32-S3-DevKitC-1',s:'в гнёздах, вынимается',v:'main',x:1},
+ {p:[33,25,12],e:[0,0,30],t:'3 × MAX3485',s:'мачта, порт туда и обратно',v:'main'},
+ {p:[21,46,10],e:[0,0,30],t:'SM712',s:'защита пар порта и мачты',v:'main'},
+ {p:[67,29,19],e:[0,30,40],t:'BNO085',s:'горизонтально, X к носу',v:'sens',x:1},
+ {p:[-66,49.6,19],e:[0,30,40],t:'GPS M10',s:'антенной вверх',v:'sens',x:1},
+ {p:[-53,-28,22],e:[0,0,30],t:'пакет 1S3P 18500',s:'3,0–4,2 В, прижат планкой',v:'pwr',x:1},
+ {p:[-4,-23,13],e:[0,0,14],t:'TP4056',s:'зарядка 0,5 А',v:'pwr'},
+ {p:[-11,-24,10],e:[0,0,14],t:'выбор источника',s:'1N5819 + AO3401',v:'pwr'},
+ {p:[30,-17,13],e:[0,0,14],t:'TPS63020',s:'3,3 В',v:'pwr'},
+ {p:[0,-36,13],e:[0,0,14],t:'2 × MT3608',s:'5 В на мачту и в порт',v:'pwr'},
+ {p:[72.5,-42,16],e:[0,0,14],t:'LM2596',s:'12 В лодки → 5,3 В',v:'pwr',x:1},
+ {p:[-70,-61,40],e:[0,-40,0],t:'SP13',s:'питание лодки 12 В',v:'conn',m:1,x:1},
+ {p:[-45,-64,40],e:[0,-40,0],t:'тумблер',s:'с колпачком',v:'conn'},
+ {p:[-20,-60,40],e:[0,-40,0],t:'USB-C',s:'берег и прошивка',v:'conn'},
+ {p:[20,-62,40],e:[0,-40,0],t:'PG7',s:'кабель с мачты',v:'conn',x:1},
+ {p:[55,-60,40],e:[0,-40,0],t:'M12, 8 контактов',s:'порт внешнего модуля',v:'conn',m:1,x:1},
+ {p:[-88,20,3],e:[0,0,-20],t:'4 винта М4',s:'плита + коробка + переборка',v:'none',x:1}
+];
+const NS='http://www.w3.org/2000/svg',svg=$('lines');
+const coEls=CO.map(c=>{const d=document.createElement('div');d.className='co';d.innerHTML=c.t+'<small>'+c.s+'</small>';$('cos').appendChild(d);
+  const dot=document.createElement('div');dot.className='dot';$('cos').appendChild(dot);const ln=document.createElementNS(NS,'line');svg.appendChild(ln);return {d,dot,ln};});
+const tmp=new THREE.Vector3();
+function placeCO(){if(!labOn)return;const r=stage.getBoundingClientRect();const act=[];
+  CO.forEach((c,i)=>{const sh=c.e||[0,0,0];tmp.set(c.p[0]+sh[0]*exp,c.p[1]+sh[1]*exp,c.p[2]+sh[2]*exp);tmp.project(camera);const e=coEls[i];
+    const vis=tmp.z<1&&(focus==='ex'?!!(c.m||c.x):focus==='all'?!!c.m:c.v===focus);
+    [e.d,e.dot].forEach(x=>x.hidden=!vis);e.ln.style.display=vis?'':'none';
+    if(vis)act.push({e,x:(tmp.x+1)/2*r.width,y:(1-tmp.y)/2*r.height});});
+  const cx=r.width/2,L=act.filter(a=>a.x<cx-40),R=act.filter(a=>a.x>=cx-40);
+  [[R,1],[L,-1]].forEach(([arr,side])=>{arr.sort((p,q)=>p.y-q.y);const xs=side>0?Math.max(...arr.map(a=>a.x))+60:Math.min(...arr.map(a=>a.x))-60;let last=-1e9;
+    arr.forEach(a=>{const h=a.e.d.offsetHeight||34,w=a.e.d.offsetWidth||180;let y=Math.max(a.y-h/2,last+6,110);last=y+h;
+      let lx=side>0?Math.min(xs,r.width-w-8):Math.max(8,xs-w);
+      a.e.d.style.left=lx+'px';a.e.d.style.top=y+'px';a.e.dot.style.left=a.x+'px';a.e.dot.style.top=a.y+'px';
+      const ex=side>0?lx:lx+w;a.e.ln.setAttribute('x1',a.x);a.e.ln.setAttribute('y1',a.y);a.e.ln.setAttribute('x2',ex);a.e.ln.setAttribute('y2',y+h/2);});});}
+
+const VIEWS={all:{t:[0,0,30],p:[150,110,520]},ex:{t:[0,-5,70],p:[360,260,860]},dsp:{t:[-5,0,58],p:[110,80,350]},main:{t:[5,20,14],p:[105,125,250]},sens:{t:[0,35,20],p:[60,260,220]},pwr:{t:[10,-28,12],p:[120,40,270]},conn:{t:[0,-50,36],p:[90,-310,235]}};
+let focus='all',tw=null;
+function go(k){focus=k;const v=VIEWS[k]||VIEWS.all;tw={p0:camera.position.clone(),t0:controls.target.clone(),p1:V(...v.p),t1:V(...v.t),st:performance.now()};
+  document.querySelectorAll('[data-go]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.go===k)));$('bAll').setAttribute('aria-pressed',String(k==='all'||k==='ex'));applyAll();}
+document.querySelectorAll('[data-go]').forEach(b=>b.addEventListener('click',()=>go(b.dataset.go)));
+camera.position.set(...VIEWS.all.p);controls.target.set(...VIEWS.all.t);controls.update();
+
+const ray=new THREE.Raycaster(),mouse=new THREE.Vector2(),tip=$('tip');
+function labelOf(o){while(o){if(o.userData&&o.userData.label)return o.userData.label;o=o.parent;}return null;}
+function shown(o){while(o){if(!o.visible)return false;o=o.parent;}return true;}
+canvas.addEventListener('pointermove',ev=>{const r=canvas.getBoundingClientRect();mouse.set((ev.clientX-r.left)/r.width*2-1,-(ev.clientY-r.top)/r.height*2+1);ray.setFromCamera(mouse,camera);
+  const hits=ray.intersectObjects([root],true).filter(h=>shown(h.object)&&labelOf(h.object)&&!(h.object.material&&h.object.material.transparent&&h.object.material.opacity<0.3));
+  const hit=hits[0];
+  if(hit){tip.textContent=labelOf(hit.object);tip.hidden=false;tip.style.left=Math.min(ev.clientX-r.left+14,r.width-tip.offsetWidth-8)+'px';tip.style.top=Math.min(ev.clientY-r.top+14,r.height-tip.offsetHeight-8)+'px';}else tip.hidden=true;});
+canvas.addEventListener('pointerleave',()=>{tip.hidden=true;});
+
+function resize(){const r=stage.getBoundingClientRect();renderer.setSize(r.width,r.height,false);camera.aspect=r.width/Math.max(1,r.height);camera.updateProjectionMatrix();}
+new ResizeObserver(resize).observe(stage);resize();
+applyAll();
+const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+function frame(now){
+  if(exp!==expT){exp+=Math.sign(expT-exp)*Math.min(Math.abs(expT-exp),reduce?1:0.04);applyAll();}
+  if(tw){const k=reduce?1:Math.min(1,(now-tw.st)/900),e=k<0.5?2*k*k:1-Math.pow(-2*k+2,2)/2;camera.position.lerpVectors(tw.p0,tw.p1,e);controls.target.lerpVectors(tw.t0,tw.t1,e);if(k>=1)tw=null;}
+  controls.update();renderer.render(scene,camera);placeCO();requestAnimationFrame(frame);}
+requestAnimationFrame(frame);
+})();
+</script>

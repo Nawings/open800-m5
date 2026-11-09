@@ -81,6 +81,7 @@ button:focus-visible,input:focus-visible,a:focus-visible{outline:2px solid var(-
 .unk{margin:0;padding-left:18px;display:grid;gap:4px;font-size:13px}
 code{font-family:var(--f-mono);font-size:12px}
 [hidden]{display:none!important}
+.panel{grid-auto-rows:max-content}
 .home{position:absolute;top:14px;right:16px;z-index:6;padding:8px 12px;border-radius:4px;border:1px solid var(--accent);background:var(--surface);color:var(--ink);font:600 13px var(--f-body);text-decoration:none}
 .home:hover,.home:focus-visible{background:var(--accent);color:var(--surface);outline:none}
 @media (max-width:900px){.home{top:10px;left:16px;right:auto}.badge{top:54px}.tools{top:114px}.views{top:116px}}
@@ -164,7 +165,7 @@ code{font-family:var(--f-mono);font-size:12px}
       <li><b>0,7 м</b><span>вынос от устья гнезда на мачте до оси капсулы: карбоновая трубка 25 × 23 мм длиной 0,73 м, на 20° вверх, без подкоса. Частота ≈ 19 Гц, резонанс с чашками — около 28 м/с</span></li>
       <li><b>100 /с</b><span>пакетов с топа вниз по RS-485, 460 800 бод; задержка в кабеле до 10 мс</span></li>
       <li><b>0,2–0,5 с</b><span>от поворота флюгера до стрелки «заход / отход»; до цифр на экране 0,5–1,5 с. Это расчёт, замера ещё не было</span></li>
-      <li><b>≈ 40 ч</b><span>работы от LiPo 6000 мА·ч: прибор берёт ≈ 150 мА, из них топ 40–50 мА</span></li>
+      <li><b>14–18 ч</b><span>работы от пакета 1S3P 18500 без Wi-Fi, с Wi-Fi 10–13 ч; от лодки без ограничений. Прибор берёт 0,76 Вт, из них топ 0,37 Вт. Прежняя цифра ≈ 40 ч от LiPo была завышена, по расчёту 26 ч</span></li>
     </ul>
 
     <h2>Кабель и разъём M12</h2>
@@ -176,6 +177,8 @@ code{font-family:var(--f-mono);font-size:12px}
       <tr><td>оплётка</td><td></td><td>на GND только в кокпите, с одного конца</td></tr>
     </tbody></table></div>
     <p class="note">RVSP, 4 жилы, 24AWG, ≈ 15–20 м. Защита на обоих концах: SM712 на A и B, SMBJ5.0A на +5 В. Трасса: внутри мачты вниз, через пятку мачты в каюту, разъём M12 под подволоком у мачты, по подволоку к переборке и снизу в блок. На палубу кабель не выходит (решение от 05.11). Гермовводы PG7 — на капсуле и на блоке в кокпите; проход под мачтой — уплотнить.</p>
+
+    <p class="note">Как устроен блок в кокпите, питание от двух источников и порт внешнего модуля: <a href="../cockpit/">«Блок в кокпите»</a>.</p>
 
     <h2>Детали и что с ними</h2>
     <div class="tbl"><table class="parts"><tbody>
@@ -199,9 +202,10 @@ code{font-family:var(--f-mono);font-size:12px}
       <tr><td>Экран 4,2″ e-paper WeAct, ч/б</td><td><span class="st y">куплено</span></td></tr>
       <tr><td>GPS QUESCAN AN181 (u-blox M10)</td><td><span class="st y">куплено</span></td></tr>
       <tr><td>TP4056, TPS63020, MT3608</td><td><span class="st y">куплено</span></td></tr>
-      <tr><td>LiPo 906090, 6000 мА·ч</td><td><span class="st y">куплено 2</span></td></tr>
+      <tr><td>Пакет 1S3P: 3 элемента 18500 (LiPo 906090 больше не нужен)</td><td><span class="st n">купить</span></td></tr>
+      <tr><td>LM2596, второй MT3608, ещё 2 MAX3485, SP13, M12 на 8 контактов</td><td><span class="st n">купить</span></td></tr>
       <tr><td>Резисторы и светодиоды (набор)</td><td><span class="st y">куплено</span></td></tr>
-      <tr><td>Коробка IP67 ≥ 160 × 120 × 70, прозрачная крышка</td><td><span class="st n">в заказах не найдена</span></td></tr>
+      <tr><td>Коробка IP67 200 × 120 × 75, прозрачная крышка</td><td><span class="st n">в заказах не найдена</span></td></tr>
       <tr><td>Тумблер IP67 с колпачком</td><td><span class="st w">отложено</span></td></tr>
     </tbody></table></div>
     <p class="note">Статусы взяты из хранилища: «Заказ — что куплено» от 30.10. Из 41 покупки опознаны 24.</p>
@@ -658,7 +662,7 @@ const black=M(0x22252a,{roughness:0.55}), carbon=M(0x17191c,{roughness:0.35,meta
 const pcbG=0x1d6a3a,pcbB=0x1f4f91,pcbK=0x1c1d22,chipC=0x101114;
 function board(w,d,c,chips,label){const g=new THREE.Group();const b=box(w,0.0016,d,M(c,{roughness:0.5}));g.add(b);(chips||[]).forEach(ch=>{const m=box(ch[2],ch[4]||0.0012,ch[3],M(ch[5]||chipC,{roughness:0.4,metalness:ch[5]?0.6:0}));m.position.set(ch[0],(ch[6]===-1?-1:1)*(0.0008+(ch[4]||0.0012)/2),ch[1]);g.add(m);});g.userData.label=label;return g;}
 // детальная плата вместо простой коробки: lib — группа в мм из PCBLIB
-function det(g,lib,k){g.children[0].visible=false;lib.traverse(m=>{if(m.material&&m.material.map)m.material.color.setScalar(0.55);});lib.scale.setScalar(0.001);if(k==='as'){lib.rotation.x=-Math.PI/2;lib.position.y=-0.0008;}else if(k==='mt'){lib.rotation.x=Math.PI/2;lib.position.y=0.00075;}else{lib.quaternion.setFromRotationMatrix(new THREE.Matrix4().makeBasis(V(-1,0,0),V(0,0,1),V(0,1,0)));lib.position.y=-0.0008;}g.add(lib);}
+function det(g,lib,k){g.children[0].visible=false;lib.traverse(m=>{if(m.material&&m.material.isMaterial&&m.material.map)m.material.color.setScalar(0.55);});lib.scale.setScalar(0.001);if(k==='as'){lib.rotation.x=-Math.PI/2;lib.position.y=-0.0008;}else if(k==='mt'){lib.rotation.x=Math.PI/2;lib.position.y=0.00075;}else{lib.quaternion.setFromRotationMatrix(new THREE.Matrix4().makeBasis(V(-1,0,0),V(0,0,1),V(0,1,0)));lib.position.y=-0.0008;}g.add(lib);}
 // гребёнки выводов и точки подключения: провода строятся от вывода к выводу
 const PIN={},pinMat=M(0xd4af37,{metalness:0.8,roughness:0.3}),P254=0.00254;
 function header(g,key,names,x0,z0,dx,dz,side,own){PIN[key]=PIN[key]||{};names.forEach((n,i)=>{const x=x0+i*dx,z=z0+i*dz;
@@ -743,17 +747,17 @@ const cpG=new THREE.Group();cpG.position.set(CAB_AFT-0.035,0.92,0.52);cpG.rotati
 function cpToBoat(u,v,w){return V(cpG.position.x-w,cpG.position.y+v,cpG.position.z+u);}
 const dc=document.createElement('canvas');dc.width=400;dc.height=300;const dctx=dc.getContext('2d');const dtex=new THREE.CanvasTexture(dc);
 (function(){
-  const base=box(0.16,0.12,0.062,M(0xd9dcd6,{roughness:0.6,side:THREE.DoubleSide}));base.position.set(0,0,-0.004);
-  reg(lab(base,'коробка IP67, не меньше 160 × 120 × 70 мм, светлая. Все отверстия снизу'),cpG,{s:8,shell:true,op:0.16});
+  const base=box(0.2,0.12,0.072,M(0xd9dcd6,{roughness:0.6,side:THREE.DoubleSide}));base.position.set(0,0,-0.004);
+  reg(lab(base,'коробка IP67 200 × 120 × 75 мм, светлая. Все вводы снизу. Подробно: страница «Блок в кокпите»'),cpG,{s:8,shell:true,op:0.16});
   const gl=new THREE.Mesh(new THREE.CylinderGeometry(0.0065,0.0075,0.016,20),black);gl.position.set(0,-0.068,-0.004);reg(lab(gl,'гермоввод PG7: сюда входит кабель с мачты'),cpG,{s:8});
   const tg=new THREE.Group();const tb=new THREE.Mesh(new THREE.CylinderGeometry(0.006,0.006,0.012,20),chrome);tb.position.y=-0.066;tg.add(tb);tg.add(rod(V(0,-0.07,0),V(0,-0.082,0.004),0.0015,chrome));tg.position.x=-0.045;tg.position.z=-0.004;reg(lab(tg,'тумблер IP67 с колпачком: выключает всё, кроме зарядки'),cpG,{s:8});
   const usb=box(0.014,0.008,0.01,M(0x3a3f45,{roughness:0.9}));usb.position.set(0.045,-0.064,-0.004);reg(lab(usb,'USB-C с резиновым колпачком: зарядка и прошивка'),cpG,{s:8});
   [['5V',-0.0015,-0.0015],['A',0.0015,-0.0015],['GND',-0.0015,0.0015],['B',0.0015,0.0015],['SH',0,0]].forEach(c=>marker(gl,'CC',c[0],[c[1],0.0085,c[2]],[0,1,0]));
   marker(tg,'SW','IN',[-0.0025,-0.0595,0],[0,1,0]);marker(tg,'SW','OUT',[0.0025,-0.0595,0],[0,1,0]);
   // питание
-  const lipo=box(0.06,0.09,0.009,M(0xc7cad0,{metalness:0.5,roughness:0.35}));lipo.position.set(-0.035,-0.006,-0.026);
+  const lipo=box(0.057,0.052,0.019,M(0xc7cad0,{transparent:true,opacity:0.01,depthWrite:false}));lipo.position.set(-0.055,-0.022,-0.026);[-0.0185,0,0.0185].forEach(x=>{const c=new THREE.Mesh(new THREE.CylinderGeometry(0.00925,0.00925,0.05,24),M(0x2b6cb0,{roughness:0.35}));c.position.set(x,0,0);lipo.add(lab(c,'элемент 18500 из пакета 1S3P'));});
   marker(lipo,'BAT','+',[0.004,-0.045,0],[0,-1,0]);marker(lipo,'BAT','-',[-0.004,-0.045,0],[0,-1,0]);
-  reg(lab(lipo,'LiPo 906090, 6000 мА·ч: ≈ 40 часов работы'),cpG,{s:9,e:[-0.08,0,-0.02]});
+  reg(lab(lipo,'пакет 1S3P из трёх 18500, 3,0–4,2 В: 14–18 часов без Wi-Fi. Заряжается от лодки и от USB-C'),cpG,{s:9,e:[-0.08,0,-0.02]});
   const vb=(w,h,c,ch,l,pos,s,e,hdr)=>{const b=board(w,h,c,ch,l);if(hdr)hdr(b);b.rotation.x=Math.PI/2;b.position.set(pos[0],pos[1],pos[2]);return reg(b,cpG,{s,e});};
   vb(0.028,0.017,pcbB,[[0,0,0.006,0.005],[0.011,0,0.006,0.008,0.003,0xb8bcc2]],'TP4056 Type-C: зарядка с защитой',[-0.035,-0.044,-0.012],9,[-0.04,-0.05,0.03],
     b=>{header(b,'TP',['B+','B-'],-0.012,-0.002,0,0.004,1);header(b,'TP',['OUT+','OUT-'],-0.012,-0.0068,0,0.0136,1);});
@@ -799,7 +803,7 @@ const dc=document.createElement('canvas');dc.width=400;dc.height=300;const dctx=
   const pad=box(0.02,0.02,0.0008,M(0xb87333,{metalness:0.7,roughness:0.3}));pad.position.set(0.055,-0.012,0.0275);
   marker(pad,'PAD','S',[0,0,-0.0004],[0,0,-1]);
   reg(lab(pad,'сенсор «ноль»: держать палец 3 с — крен и дифферент обнулятся. Работает через крышку'),cpG,{s:12,e:[0.02,0,0.08]});
-  const lid=box(0.16,0.12,0.006,M(0xd6ecf2,{transparent:true,opacity:0.22,roughness:0.08,depthWrite:false}));lid.position.set(0,0,0.032);reg(lab(lid,'прозрачная крышка'),cpG,{s:12,e:[0,0,0.11]});
+  const lid=box(0.2,0.12,0.006,M(0xd6ecf2,{transparent:true,opacity:0.22,roughness:0.08,depthWrite:false}));lid.position.set(0,0,0.032);reg(lab(lid,'прозрачная крышка'),cpG,{s:12,e:[0,0,0.11]});
 })();
 
 // ---------- кабель: топ → мачта → M12 → рубка → кокпит ----------
@@ -827,12 +831,12 @@ routeColor();try{matchMedia('(prefers-color-scheme: dark)').addEventListener('ch
 new MutationObserver(routeColor).observe(document.documentElement,{attributes:true,attributeFilter:['data-theme']});
 
 // ---------- проводка: каждый провод от вывода к выводу, по таблицам проводов из хранилища ----------
-const NM={BNO:'BNO085',S3:'ESP32-S3',EP:'экран',GPS:'GPS',MXR:'MAX3485',TP:'TP4056',TPS:'TPS63020',MT3:'MT3608',PP:'PPTC 0,2 А',TVSc:'защита, вход кабеля',TVSco:'защита, выход',CC:'кабель с мачты',SW:'тумблер',BAT:'LiPo',LH:'светодиод «заход»',LL:'светодиод «отход»',PAD:'сенсор «ноль»',DIV:'делитель',C3:'ESP32-C3',AS:'AS5600',MT:'MT6701',GY:'GY-50',MXT:'MAX3485',TVSt:'защита, вход кабеля',TVSto:'защита, выход',CT:'кабель с мачты'};
+const NM={BNO:'BNO085',S3:'ESP32-S3',EP:'экран',GPS:'GPS',MXR:'MAX3485',TP:'TP4056',TPS:'TPS63020',MT3:'MT3608',PP:'PPTC 0,2 А',TVSc:'защита, вход кабеля',TVSco:'защита, выход',CC:'кабель с мачты',SW:'тумблер',BAT:'пакет 18500',LH:'светодиод «заход»',LL:'светодиод «отход»',PAD:'сенсор «ноль»',DIV:'делитель',C3:'ESP32-C3',AS:'AS5600',MT:'MT6701',GY:'GY-50',MXT:'MAX3485',TVSt:'защита, вход кабеля',TVSto:'защита, выход',CT:'кабель с мачты'};
 const WC={p5:['+5 В','#d62828'],p33:['3,3 В','#f28c28'],gnd:['земля (GND)','#1a1a1a'],bat:['аккумулятор → тумблер → преобразователи','#ff8a8a'],sda:['I²C SDA — данные','#2f7fe0'],scl:['I²C SCL — такт','#2fa84f'],sck:['SPI — такт','#f2d024'],mosi:['SPI — данные к модулю','#f4f4f4'],miso:['SPI — данные от модуля','#22b8c8'],cs:['SPI — выбор модуля','#e05fa0'],ctl:['служебные: INT, RST, DC, BUSY, делитель','#7a8794'],uart:['UART: GPS и данные с мачты','#b07cf0'],rs:['RS-485: A и B','#9a4fd6'],led:['стрелки и сенсор «ноль»','#ffd23f'],cb:['жила кабеля, коричневая: +5 В','#8a5a2b'],cw:['жила кабеля, белая: A','#e9e9e9'],cu:['жила кабеля, синяя: GND','#2f6fd6'],ck:['жила кабеля, чёрная: B','#111111'],sh:['оплётка кабеля','#b0b5ba']};
 const WIRES={cp:[
  ['BNO.VIN','S3.3V3','p33','питание'],['BNO.GND','S3.GND1','gnd','земля'],['BNO.P0','S3.3V3','p33','P0 на 3,3 В — режим SPI'],['BNO.P1','S3.3V3','p33','P1 на 3,3 В — режим SPI'],
  ['BNO.SCL','S3.IO12','sck','SCL (SCK): такт SPI'],['BNO.DI','S3.IO11','mosi','DI (MOSI): команды датчику'],['BNO.SDA','S3.IO13','miso','SDA (MISO): углы и курс'],['BNO.CS','S3.IO10','cs','CS: выбор датчика'],['BNO.INT','S3.IO9','ctl','INT: «данные готовы», обязателен'],['BNO.RST','S3.IO8','ctl','RST: сброс, обязателен'],
- ['EP.VCC','S3.3V3b','p33','питание'],['EP.GND','S3.GND1','gnd','земля'],['EP.CLK','S3.IO18','sck','CLK: такт SPI экрана — своя шина, не как у датчика'],['EP.DIN','S3.IO17','mosi','DIN: картинка на экран'],['EP.CS','S3.IO16','cs','CS: выбор экрана'],['EP.DC','S3.IO15','ctl','DC: команда или данные'],['EP.RST','S3.IO7','ctl','RST: сброс экрана'],['EP.BUSY','S3.IO6','ctl','BUSY: экран занят перерисовкой'],
+ ['EP.VCC','S3.3V3b','p33','питание'],['EP.GND','S3.GND1','gnd','земля'],['EP.CLK','S3.IO18','sck','CLK: такт SPI экрана — своя шина, не как у датчика'],['EP.DIN','S3.IO17','mosi','DIN: картинка на экран'],['EP.CS','S3.IO16','cs','CS: выбор экрана'],['EP.DC','S3.IO15','ctl','DC: команда или данные'],['EP.RST','S3.IO47','ctl','RST: сброс экрана'],['EP.BUSY','S3.IO21','ctl','BUSY: экран занят перерисовкой'],
  ['GPS.VCC','S3.3V3b','p33','питание'],['GPS.GND','S3.GND2','gnd','земля'],['GPS.TX','S3.IO5','uart','TX → ESP32: скорость и курс'],['GPS.RX','S3.IO4','uart','RX ← ESP32: настройка 10 раз/с при включении'],
  ['MXR.VCC','S3.3V3b','p33','питание'],['MXR.GND','S3.GND2','gnd','земля'],['MXR.RO','S3.IO1','uart','RO: данные с мачты'],['MXR.DE','S3.GND2','gnd','DE на GND: передатчик выключен'],['MXR.RE','S3.GND2','gnd','RE на GND: приёмник всегда включён'],['MXR.A','TVSco.A','rs','A через SM712'],['MXR.B','TVSco.B','rs','B через SM712'],
  ['PAD.S','S3.IO14','led','сенсор «ноль»'],['LH.A','S3.IO40','led','стрелка «заход»: через резистор 56–68 Ом (схема стрелок не решена)'],['LH.K','S3.GND3','gnd','земля светодиода'],['LL.A','S3.IO41','led','стрелка «отход»: через резистор 68 Ом (схема стрелок не решена)'],['LL.K','S3.GND3','gnd','земля светодиода'],
@@ -920,8 +924,8 @@ const STEPS=[
  {n:5,v:'top',t:'AS5600 и крышка — направление ветра',x:'Плата 42 × 42 мм стоит под самой крышкой на 4 коротких стойках, повёрнута на 45°: углы проходят между бобышками. Винты М2,5 × 6 в термовставки. Магнит оси флюгера снаружи, над окном крышки, зазор ≈ 1,8 мм. Шаг 0,09°, без контакта. Крышка на 4 винтах М3, уплотнение — кольцо в канавке.',h:'DIR не должен висеть: проверить мультиметром ножку 8. Если датчик сбоит на 3,3 В — капля припоя между ножками 1 и 2, после этого 5 В не подавать. Под головки винтов крышки — герметик, внутрь пакетик силикагеля.'},
  {n:6,v:'top',t:'Флюгер и чашки',x:'Ступица-колокол накрывает башенку с подшипниками. Перо 60 × 175 мм из рамки ASA и плёнки 25 мкм на карбоновом плече 280 мм, напротив — носик с дробью. Снизу три конические чашки Ø50 на радиусе 60 мм. Ступицы держатся на осях установочными винтами М3 в лыску.',h:'Подшипники керамические, без смазки. Вес оси идёт только на внутреннее кольцо: упор Ø4,4 на ступице и на стаканчике магнита. Флюгер уравновесить дробью при горизонтальной оси. Чашки взвесить и подобрать одинаковые.'},
  {n:7,v:'top',t:'Вынос и кронштейн мачты',x:'Карбоновая трубка 25 × 23 мм, 0,73 м, уходит на 0,7 м вперёд от устья и на 20° вверх. В каждом гнезде по 2 болта М5 × 45 с распорками, без клея. Кронштейн — плита 8 мм с полым коробом, 4 болта М5 в заклёпки-гайки на крышке мачты. Кабель идёт внутри трубки и короба.',h:'Кромку устья кронштейна промазать герметиком: она смотрит вверх. Плиту подогнать под настоящую крышку мачты. Частота штанги ≈ 19 Гц.'},
- {n:8,v:'cockpit',t:'Коробка в кокпите',x:'Коробка IP67 с прозрачной крышкой, не меньше 160 × 120 × 70 мм, светлая. Стоит на кормовой переборке рубки экраном к рулевому, на 4 винтах через резиновые шайбы. Все отверстия снизу: гермоввод кабеля, тумблер, USB-C с колпачком.',h:'Коробка в заказах 30.10 не найдена. Место на переборке в модели примерное: куда смотрит вход в каюту, пока неизвестно.'},
- {n:9,v:'cockpit',t:'Питание',x:'LiPo 6000 мА·ч → TP4056 (зарядка по USB-C) → тумблер → TPS63020 даёт 3,3 В всем модулям, MT3608 — 5 В на мачту через предохранитель PPTC 0,2 А и SMBJ5.0A. Хватает примерно на 40 часов.',h:'MT3608 до подключения кабеля выставить на 5,0 В мультиметром и залить винт лаком. Тумблер отключает всё, кроме зарядки.'},
+ {n:8,v:'cockpit',t:'Коробка в кокпите',x:'Коробка IP67 с прозрачной крышкой 200 × 120 × 75 мм, светлая. Стоит на кормовой переборке рубки экраном к рулевому, на 4 винтах через резиновые шайбы. Все вводы снизу: питание лодки SP13, тумблер, USB-C с колпачком, гермоввод кабеля мачты и разъём M12 внешнего модуля.',h:'Коробка в заказах 30.10 не найдена. Место на переборке в модели примерное: куда смотрит вход в каюту, пока неизвестно.'},
+ {n:9,v:'cockpit',t:'Питание',x:'Два источника: аккумулятор лодки 12 В через LM2596 и пакет из трёх 18500. Переключение автоматическое, без перезагрузки. Лодка заодно заряжает пакет через TP4056. TPS63020 даёт 3,3 В всем модулям, MT3608 — 5 В на мачту через PPTC 0,2 А и SMBJ5.0A, второй MT3608 — в порт внешнего модуля. От пакета 14–18 часов без Wi-Fi.',h:'MT3608 до подключения кабеля выставить на 5,0 В, LM2596 — на 5,3 В, винты залить лаком. Тумблер отключает всё, кроме зарядки. Схема и режимы — на странице «Блок в кокпите».'},
  {n:10,v:'cockpit',t:'ESP32-S3 и приёмник',x:'ESP32-S3 — главный: вычитает качку, считает истинный ветер и заходы, рисует экран. MAX3485 принимает данные с топа.',h:'Прошивать только при выключенном тумблере. Оплётку кабеля — на GND только здесь, с одного конца.'},
  {n:11,v:'cockpit',t:'BNO085 и GPS',x:'BNO085 даёт крен, дифферент и курс. Лежит горизонтально, ось X — к носу, подальше от аккумулятора и преобразователей: их катушки сбивают компас. GPS u-blox M10 лежит горизонтально, антенной вверх, и выдаёт скорость 10 раз в секунду.',h:'У датчика и экрана разные шины SPI, чтобы перерисовка экрана не задерживала чтение датчика. Компас калибровать уже на месте: два полных круга на ходу.'},
  {n:12,v:'cockpit',t:'Экран, стрелки, «ноль», крышка',x:'Экран 4,2″ e-paper, ч/б, 400 × 300: перерисовываются только цифры. Справа — стрелки «заход» (жёлтая) и «отход» (красная) и сенсор «ноль». Сверху прозрачная крышка.',h:'Стрелки не решены: прямо от выводов через 56–68 Ом или через AO3400. Экран работает примерно от 0 до +50 °C.'},
@@ -935,7 +939,7 @@ $('asmNext').addEventListener('click',()=>{if(asm<STEPS.length-1){asm++;showStep
 $('asmExit').addEventListener('click',()=>{asm=-1;$('asmBox').hidden=true;$('asmStart').hidden=false;applyParts();});
 
 // ---------- найти деталь ----------
-const FIND=[['BNO085','BNO085','cockpit'],['GPS','GPS u-blox','cockpit'],['ESP32-S3','ESP32-S3','cockpit'],['Экран','экран 4,2″ e-paper WeAct','cockpit'],['Аккумулятор','LiPo','cockpit'],['MAX3485 в кокпите','MAX3485 — приёмник','cockpit'],['AS5600','AS5600','top'],['MT6701','MT6701','top'],['Гироскоп GY-50','гироскоп','top'],['ESP32-C3','ESP32-C3','top']];
+const FIND=[['BNO085','BNO085','cockpit'],['GPS','GPS u-blox','cockpit'],['ESP32-S3','ESP32-S3','cockpit'],['Экран','экран 4,2″ e-paper WeAct','cockpit'],['Аккумулятор','пакет 1S3P','cockpit'],['MAX3485 в кокпите','MAX3485 — приёмник','cockpit'],['AS5600','AS5600','top'],['MT6701','MT6701','top'],['Гироскоп GY-50','гироскоп','top'],['ESP32-C3','ESP32-C3','top']];
 let flash=null,flashUntil=0;
 $('finds').innerHTML=FIND.map((f,i)=>'<button type="button" data-find="'+i+'">'+f[0]+'</button>').join('');
 document.querySelectorAll('[data-find]').forEach(b=>b.addEventListener('click',()=>findPart(+b.dataset.find)));
