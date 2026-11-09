@@ -334,6 +334,7 @@ function as5600(){const w=42,h=42,t=1.6,M='#0f6a49',D='#0d4b39',S='#e3ece6',C='#
   [[0.17,4.33,'c','конденсатор C2'],[1.67,4.33,'c','конденсатор C1'],[3.17,4.33,'r','резистор R1'],[-1,-4.67,'r','резистор R3'],[0.5,-4.67,'r','резистор R2'],[2,-4.67,'r','резистор R4']].forEach(p=>smd(g,p[0],p[1],t,1,true,p[2],p[3]));
   led(g,4.33,1.5,t,1,true,'светодиод LD1');
   hdr(g,px,py,0,-1,8.5,'штыревой разъём: SDA, SCL, VCC, GND, смотрит вниз; провода припаять, штыри можно укоротить');
+  g.userData.pins={SDA:[px[0],py,-8.5],SCL:[px[1],py,-8.5],VCC:[px[2],py,-8.5],GND:[px[3],py,-8.5]};
   return g;}
 
 function mt6701(){const w=17.22,h=15.08,t=1.51,M='#0f1012',C='#1e2025',TIN='#c7c9cb',S='#e6e7e8';
@@ -363,6 +364,7 @@ function mt6701(){const w=17.22,h=15.08,t=1.51,M='#0f1012',C='#1e2025',TIN='#c7c
   soic(g,-0.05,0.15,t,1,null,'микросхема MT6701: датчик угла, SOIC-8, магнит под ней, стоит по центру платы',[1.45,1.05]);
   smd(g,3.3,5.9,0,-1,false,'r','резистор на обратной стороне');smd(g,-4.5,5.6,0,-1,true,'r','резистор на обратной стороне');
   R.forEach(y=>dome(g,6.65,y,t,1,0.4));Lf.forEach(y=>dome(g,-6.65,y,t,1,0.4));
+  g.userData.pins={VCC:[6.65,-3.9,-0.3],SCL:[6.65,0.1,-0.3],SDA:[6.65,2.1,-0.3],GND:[6.65,4.1,-0.3]};
   return g;}
 
 function gy50(){const w=24,h=23.6,t=1.6,M='#0f4fb0',C='#0a3b8c',TIN='#d3d7da',S='#f3f6fb';
@@ -394,8 +396,57 @@ function gy50(){const w=24,h=23.6,t=1.6,M='#0f4fb0',C='#0a3b8c',TIN='#d3d7da',S=
   const rg=new T.Group();rg.position.set(3.3,8.8,t);rg.add(bx(0,0,0.55,1.7,3,1.1,pkg,'стабилизатор 3,3 В, корпус SOT-23-5'));[[-1.35,0.95],[-1.35,-0.95],[1.35,0.95],[1.35,0],[1.35,-0.95]].forEach(p=>rg.add(bx(p[0],p[1],0.12,1.2,0.42,0.24,tin)));g.add(rg);
   [[-0.3,8.3,'c','конденсатор C2'],[7.25,8.3,'cb','конденсатор C5'],[-5.6,3.4,'r','резистор R1'],[-4,3.4,'r','резистор R2'],[5.4,1.5,'r','резистор R5'],[7.25,1.5,'r','резистор R7'],[5.2,-2.3,'r','резистор R4'],[6.9,-2.3,'r','резистор R6'],[-1,-5.45,'r','резистор R3'],[0.75,-5.45,'c','конденсатор C9'],[2.5,-5.45,'c','конденсатор C4']].forEach(p=>smd(g,p[0],p[1],t,1,true,p[2],p[3]));
   ['VCC','SCL','SDA','GND'].forEach((n,i)=>{dome(g,xr,Lc[i],t,1,0.5,'контакт '+n+': провод припаять');});
+  g.userData.pins={VCC:[xr,Lc[0],2.1],SCL:[xr,Lc[1],2.1],SDA:[xr,Lc[2],2.1],GND:[xr,Lc[3],2.1],SDO:[xl,Lc[0],2.1],CS:[xl,Lc[1],2.1]};
   return g;}
-return {as5600,mt6701,gy50};
+
+function bno08x(){const w=25.65,h=15.55,t=1.6,M='#57207a',C='#6a2c92',S='#e9e4f0',GOLD='#c8a14a',TIN='#c9cdd0';
+  const s=rrect(w,h,[0.5,0.5,0.5,0.5]);const hx=10.35,hy=5.1;[-1,1].forEach(q=>hole(s,q*hx,hy,3.1));
+  const names=['VCC','GND','SCL','SDA','ADO','CS','INT','RST','PS1','PS0'],py=-6.5,pxs=names.map((n,i)=>-11.43+i*2.54);pxs.forEach(x=>hole(s,x,py,0.95));
+  hole(s,7.41,1.79,0.7);
+  const f=sheet(w,h,1024,M,front),b=sheet(w,h,1024,M,backM);
+  const hatch=(d,x0,y0,x1,y1)=>{d.g.save();d.g.beginPath();d.g.rect(x0,y0,x1-x0,y1-y0);d.g.clip();for(let k=-40;k<40;k+=0.85)d.line([[k,y0-1],[k+(y1-y0+2),y1+1]],C,0.16);d.g.restore();};
+  hatch(f,-12.8,-7.7,12.8,-3.2);hatch(b,-12.8,-1,-4,7.7);
+  [f,b].forEach((d,i)=>{const sx=i?-1:1;[-1,1].forEach(q=>{d.disc(sx*q*hx,hy,2.05,GOLD);d.disc(sx*q*hx,hy,1.55,'#2a0f3a');});
+    pxs.forEach(x=>d.disc(sx*x,py,0.82,TIN));d.disc(sx*7.41,1.79,0.78,GOLD);d.disc(sx*7.41,1.79,0.36,'#2a0f3a');
+    d.disc(-12.2*sx,7.05,0.32,TIN);d.disc(12.2*sx,6.9,0.32,TIN);});
+  f.line([[-7.4,0.6],[-7.4,2.2],[-3.6,3.4]],C,0.2).line([[-5.6,0.6],[-5.6,1.8],[-2.9,2.2]],C,0.2).line([[3.6,0.6],[3.6,1.6],[2.7,2.6]],C,0.2).line([[5.5,0.6],[5.5,2],[2.7,3.6]],C,0.2);
+  f.text('GY-BNO08X',-0.1,6.72,1.25,S,0,'700 ');f.text('←BOOT',7.6,4.6,0.95,S,90,'700 ');
+  names.forEach((n,i)=>f.text(n,pxs[i]+0.15,-3.9,1.05,S,90,'700 '));
+  [[-0.11,3.42]].forEach(p=>{for(let k=-2.4;k<=2.4;k+=0.5){f.rect(p[0]+k-0.1,p[1]+1.96,p[0]+k+0.1,p[1]+2.28,TIN);f.rect(p[0]+k-0.1,p[1]-2.28,p[0]+k+0.1,p[1]-1.96,TIN);}for(let k=-1.5;k<=1.5;k+=0.5){f.rect(p[0]-2.92,p[1]+k-0.1,p[0]-2.6,p[1]+k+0.1,TIN);f.rect(p[0]+2.6,p[1]+k-0.1,p[0]+2.92,p[1]+k+0.1,TIN);}});
+  f.disc(3.1,1.4,0.42,TIN);
+  // обратная сторона: u = −x
+  [['VCC_3V3',-1.7],['GND',-3.4],['SCL/SCK/RX',-0.7],['SDA/MISO/TX',-0.1],['ADDR/MOSI',-0.8],['CS',-3.9],['INT',-3.6],['RST',-3.6],['PS1',-3.2],['PS0',-3.2]].forEach((a,i)=>b.text(a[0],-pxs[i],a[1],1.02,S,90,'700 '));
+  [[8.89],[11.43]].forEach(a=>{const u=-a[0];b.rect(u-0.75,-0.75,u-0.08,0.75,GOLD);b.rect(u+0.08,-0.75,u+0.75,0.75,GOLD);b.frame(u-1,-1,u+1,1,S,0.1);});
+  const ax=-4.3,ay=1.3;b.ring(ax,ay,0.7,S,0.14).line([[ax-0.5,ay-0.5],[ax+0.5,ay+0.5]],S,0.1).line([[ax-0.5,ay+0.5],[ax+0.5,ay-0.5]],S,0.1);
+  b.line([[ax+0.7,ay],[ax+2.8,ay]],S,0.14).line([[ax+2.3,ay+0.4],[ax+2.8,ay],[ax+2.3,ay-0.4]],S,0.12).text('X',ax+3.5,ay,0.95,S,0,'700 ');
+  b.line([[ax,ay-0.7],[ax,ay-2.8]],S,0.14).line([[ax-0.4,ay-2.3],[ax,ay-2.8],[ax+0.4,ay-2.3]],S,0.12).text('Y',ax+0.9,ay-2.9,0.95,S,0,'700 ').text('Z',ax-1.5,ay+0.2,0.95,S,0,'700 ');
+  b.rect(-3.8,3.2,-0.7,5.6,'#1b0b26');
+  const g=base({w,h,t,shape:s,mask:0x57207a,edge:0xb9b48a,top:f,bot:b,label:'GY-BNO08X (BNO085), 25,65 × 15,55 × 1,6: крен, дифферент, курс'});
+  const ch=new T.Group();ch.position.set(-0.11,3.42,t);ch.add(bx(0,0,0.55,5.2,3.8,1.1,pkg,'BNO085: датчик в корпусе LGA 5,2 × 3,8 мм'));
+  ch.add(cy(-2.2,-1.5,1.108,0.2,0.2,0.01,std(0x34363b,{roughness:0.8}),'',10));g.add(ch);
+  g.add(bx(-0.11-1.6,-1.31-0.6,t,-0.11+1.6,-1.31+0.6,t+0.9,std(0x3a3a33,{roughness:0.5}),'кварц 32,768 кГц'));
+  [-1,1].forEach(q=>g.add(bx(-0.11+q*1.75-0.2,-1.31-0.55,t,-0.11+q*1.75+0.2,-1.31+0.55,t+0.5,tin)));
+  [[-10.94,-0.55,'c','конденсатор'],[-9.21,-0.55,'r','резистор'],[-7.4,-0.55,'r','резистор'],[-5.61,-0.55,'r','резистор'],[-3.87,-0.55,'c','конденсатор'],[3.64,-0.55,'c','конденсатор'],[5.51,-0.55,'c','конденсатор'],[7.37,-0.55,'r','резистор'],[9.24,-0.55,'r','резистор'],[11.06,-0.55,'r','резистор'],[-5.29,4.3,'r','резистор'],[5.2,3.98,'c','конденсатор']].forEach(p=>smd(g,p[0],p[1],t,1,true,p[2],p[3]));
+  hdr(g,pxs,py,0,-1,8.5,'гребёнка 10 контактов: смотрит вниз, от стороны с подписями');
+  g.userData.pins={};names.forEach((n,i)=>g.userData.pins[n]=[pxs[i],py,-8.5]);
+  return g;}
+
+// провода между контактами: pins[имя] = {o: Object3D, n: [x,y,z] в системе o}; list = [от, до, ключ цвета, подпись]
+function wires(root,list,pins,colors,rad){const grp=new T.Group();root.add(grp);const mats={};
+  const mat=k=>mats[k]||(mats[k]=std(new T.Color((colors[k]||['',  '#888888'])[1]).getHex(),{roughness:0.6}));
+  const shown=o=>{while(o){if(!o.visible)return false;o=o.parent;}return true;};
+  const q=new T.Quaternion();
+  function build(){while(grp.children.length){const c=grp.children.pop();c.geometry.dispose();}
+    root.updateMatrixWorld(true);root.getWorldQuaternion(q);const qi=q.clone().invert();let miss=[];
+    list.forEach((w,i)=>{const A=pins[w[0]],B=pins[w[1]];if(!A||!B){miss.push(w[0]+'>'+w[1]);return;}if(!shown(A.o)||!shown(B.o))return;
+      const end=P=>{const p=root.worldToLocal(P.o.getWorldPosition(new T.Vector3()));const q2=new T.Quaternion();P.o.getWorldQuaternion(q2);const n=new T.Vector3().fromArray(P.n||[0,0,1]).applyQuaternion(q2).applyQuaternion(qi).normalize();return {p,n};};
+      const a=end(A),b=end(B),d=a.p.distanceTo(b.p),L=Math.min(4+d*0.12,14)+(i%5)*0.7;
+      const a1=a.p.clone().addScaledVector(a.n,L),b1=b.p.clone().addScaledVector(b.n,L),m=a1.clone().add(b1).multiplyScalar(0.5).addScaledVector(a.n.clone().add(b.n).normalize(),(i%7)*0.5+Math.min(d*0.08,8));
+      const curve=new T.CatmullRomCurve3([a.p,a1,m,b1,b.p],false,'centripetal');
+      const o=new T.Mesh(new T.TubeGeometry(curve,22,rad||0.32,6,false),mat(w[2]));o.userData.label=w[3]||'';grp.add(o);});
+    if(miss.length)console.warn('нет контакта',miss.join(' '));}
+  return {group:grp,build};}
+return {as5600,mt6701,gy50,bno08x,wires};
 })();
 </script><!--/pcblib-->
 <script>
@@ -678,7 +729,7 @@ const black=M(0x22252a,{roughness:0.55}), carbon=M(0x17191c,{roughness:0.35,meta
 const pcbG=0x1d6a3a,pcbB=0x1f4f91,pcbK=0x1c1d22,chipC=0x101114;
 function board(w,d,c,chips,label){const g=new THREE.Group();const b=box(w,0.0016,d,M(c,{roughness:0.5}));g.add(b);(chips||[]).forEach(ch=>{const m=box(ch[2],ch[4]||0.0012,ch[3],M(ch[5]||chipC,{roughness:0.4,metalness:ch[5]?0.6:0}));m.position.set(ch[0],(ch[6]===-1?-1:1)*(0.0008+(ch[4]||0.0012)/2),ch[1]);g.add(m);});g.userData.label=label;return g;}
 // детальная плата вместо простой коробки: lib — группа в мм из PCBLIB
-function det(g,lib,k){g.children[0].visible=false;lib.traverse(m=>{if(m.material&&m.material.isMaterial&&m.material.map)m.material.color.setScalar(0.55);});lib.scale.setScalar(0.001);if(k==='as'){lib.rotation.x=-Math.PI/2;lib.position.y=-0.0008;}else if(k==='mt'){lib.rotation.x=Math.PI/2;lib.position.y=0.00075;}else{lib.quaternion.setFromRotationMatrix(new THREE.Matrix4().makeBasis(V(-1,0,0),V(0,0,1),V(0,1,0)));lib.position.y=-0.0008;}g.add(lib);}
+function det(g,lib,k){g.children[0].visible=false;lib.traverse(m=>{if(m.material&&m.material.isMaterial&&m.material.map)m.material.color.setScalar(0.55);});lib.scale.setScalar(0.001);if(k==='as'){lib.rotation.x=-Math.PI/2;lib.position.y=-0.0008;}else if(k==='mt'){lib.rotation.x=Math.PI/2;lib.position.y=0.00075;}else if(k==='bno'){lib.quaternion.setFromRotationMatrix(new THREE.Matrix4().makeBasis(V(0,0,1),V(1,0,0),V(0,1,0)));lib.position.y=-0.0008;}else{lib.quaternion.setFromRotationMatrix(new THREE.Matrix4().makeBasis(V(-1,0,0),V(0,0,1),V(0,1,0)));lib.position.y=-0.0008;}g.add(lib);}
 // гребёнки выводов и точки подключения: провода строятся от вывода к выводу
 const PIN={},pinMat=M(0xd4af37,{metalness:0.8,roughness:0.3}),P254=0.00254;
 function header(g,key,names,x0,z0,dx,dz,side,own){PIN[key]=PIN[key]||{};names.forEach((n,i)=>{const x=x0+i*dx,z=z0+i*dz;
@@ -797,9 +848,9 @@ const dc=document.createElement('canvas');dc.width=400;dc.height=300;const dctx=
   vb(0.022,0.014,pcbB,[[0.002,0,0.005,0.004]],'MAX3485 — приёмник данных с топа',[0.055,0.012,-0.014],10,[0.07,0,0.02],
     b=>{header(b,'MXR',['RO','RE','DE','DI','VCC','GND'],-0.004,-0.005,P254,0,1);header(b,'MXR',['A','B'],-0.0095,0.001,0,P254,1);});
   // датчики
-  const bno=board(0.025,0.020,0x5a2a82,[[0,0,0.005,0.005]],'BNO085 — крен, дифферент, курс. В коробке в кокпите, вверху справа, в глубине за стрелками. Лежит горизонтально, ось X (красная стрелка) — к носу');
+  const bno=board(0.02565,0.01555,0x5a2a82,[],'BNO085 на плате GY-BNO08X, 25,65 × 15,55 × 1,6 — крен, дифферент, курс. В коробке в кокпите, вверху справа, в глубине за стрелками. Лежит горизонтально, ось X (красная стрелка) — к носу');
   const ar=new THREE.Mesh(new THREE.ConeGeometry(0.0022,0.006,12),M(0xd62828));ar.rotation.x=-Math.PI/2;ar.position.set(0,0.002,-0.006);bno.add(ar);
-  header(bno,'BNO',['VIN','GND','P0','P1','SCL','DI','SDA','CS','INT','RST'],-0.0114,0.0082,P254,0,1);
+  header(bno,'BNO',['VCC','GND','SCL','SDA','ADO','CS','INT','RST','PS1','PS0'],-0.0065,-0.01143,0,P254,-1);det(bno,PCBLIB.bno08x(),'bno');
   bno.position.set(0.05,0.045,-0.012);reg(bno,cpG,{s:11,e:[0.06,0.05,0.02]});
   const gps=board(0.025,0.025,pcbB,[[0,0,0.018,0.018,0.004,0xc9b48a]],'GPS u-blox M10 (QUESCAN AN181): скорость и курс 10 раз/с. Антенной вверх');
   header(gps,'GPS',['VCC','GND','TX','RX'],-0.0038,0.0105,P254,0,1);
@@ -850,8 +901,8 @@ new MutationObserver(routeColor).observe(document.documentElement,{attributes:tr
 const NM={BNO:'BNO085',S3:'ESP32-S3',EP:'экран',GPS:'GPS',MXR:'MAX3485',TP:'TP4056',TPS:'TPS63020',MT3:'MT3608',PP:'PPTC 0,2 А',TVSc:'защита, вход кабеля',TVSco:'защита, выход',CC:'кабель с мачты',SW:'тумблер',BAT:'пакет 18500',LH:'светодиод «заход»',LL:'светодиод «отход»',PAD:'сенсор «ноль»',DIV:'делитель',C3:'ESP32-C3',AS:'AS5600',MT:'MT6701',GY:'GY-50',MXT:'MAX3485',TVSt:'защита, вход кабеля',TVSto:'защита, выход',CT:'кабель с мачты'};
 const WC={p5:['+5 В','#d62828'],p33:['3,3 В','#f28c28'],gnd:['земля (GND)','#1a1a1a'],bat:['аккумулятор → тумблер → преобразователи','#ff8a8a'],sda:['I²C SDA — данные','#2f7fe0'],scl:['I²C SCL — такт','#2fa84f'],sck:['SPI — такт','#f2d024'],mosi:['SPI — данные к модулю','#f4f4f4'],miso:['SPI — данные от модуля','#22b8c8'],cs:['SPI — выбор модуля','#e05fa0'],ctl:['служебные: INT, RST, DC, BUSY, делитель','#7a8794'],uart:['UART: GPS и данные с мачты','#b07cf0'],rs:['RS-485: A и B','#9a4fd6'],led:['стрелки и сенсор «ноль»','#ffd23f'],cb:['жила кабеля, коричневая: +5 В','#8a5a2b'],cw:['жила кабеля, белая: A','#e9e9e9'],cu:['жила кабеля, синяя: GND','#2f6fd6'],ck:['жила кабеля, чёрная: B','#111111'],sh:['оплётка кабеля','#b0b5ba']};
 const WIRES={cp:[
- ['BNO.VIN','S3.3V3','p33','питание'],['BNO.GND','S3.GND1','gnd','земля'],['BNO.P0','S3.3V3','p33','P0 на 3,3 В — режим SPI'],['BNO.P1','S3.3V3','p33','P1 на 3,3 В — режим SPI'],
- ['BNO.SCL','S3.IO12','sck','SCL (SCK): такт SPI'],['BNO.DI','S3.IO11','mosi','DI (MOSI): команды датчику'],['BNO.SDA','S3.IO13','miso','SDA (MISO): углы и курс'],['BNO.CS','S3.IO10','cs','CS: выбор датчика'],['BNO.INT','S3.IO9','ctl','INT: «данные готовы», обязателен'],['BNO.RST','S3.IO8','ctl','RST: сброс, обязателен'],
+ ['BNO.VCC','S3.3V3','p33','питание 3,3 В'],['BNO.GND','S3.GND1','gnd','земля'],['BNO.PS0','S3.3V3','p33','PS0 на 3,3 В — режим SPI'],['BNO.PS1','S3.3V3','p33','PS1 на 3,3 В — режим SPI'],
+ ['BNO.SCL','S3.IO12','sck','SCL (SCK): такт SPI'],['BNO.ADO','S3.IO11','mosi','ADO (MOSI): команды датчику'],['BNO.SDA','S3.IO13','miso','SDA (MISO): углы и курс'],['BNO.CS','S3.IO10','cs','CS: выбор датчика'],['BNO.INT','S3.IO9','ctl','INT: «данные готовы», обязателен'],['BNO.RST','S3.IO8','ctl','RST: сброс, обязателен'],
  ['EP.VCC','S3.3V3b','p33','питание'],['EP.GND','S3.GND1','gnd','земля'],['EP.CLK','S3.IO18','sck','CLK: такт SPI экрана — своя шина, не как у датчика'],['EP.DIN','S3.IO17','mosi','DIN: картинка на экран'],['EP.CS','S3.IO16','cs','CS: выбор экрана'],['EP.DC','S3.IO15','ctl','DC: команда или данные'],['EP.RST','S3.IO47','ctl','RST: сброс экрана'],['EP.BUSY','S3.IO21','ctl','BUSY: экран занят перерисовкой'],
  ['GPS.VCC','S3.3V3b','p33','питание'],['GPS.GND','S3.GND2','gnd','земля'],['GPS.TX','S3.IO5','uart','TX → ESP32: скорость и курс'],['GPS.RX','S3.IO4','uart','RX ← ESP32: настройка 10 раз/с при включении'],
  ['MXR.VCC','S3.3V3b','p33','питание'],['MXR.GND','S3.GND2','gnd','земля'],['MXR.RO','S3.IO1','uart','RO: данные с мачты'],['MXR.DE','S3.GND2','gnd','DE на GND: передатчик выключен'],['MXR.RE','S3.GND2','gnd','RE на GND: приёмник всегда включён'],['MXR.A','TVSco.A','rs','A через SM712'],['MXR.B','TVSco.B','rs','B через SM712'],

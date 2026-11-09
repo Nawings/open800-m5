@@ -71,6 +71,7 @@ code{font-family:var(--f-mono);font-size:12px}
     <div class="badge"><h1>Капсула флюгера</h1><span>детали — те же STL, что идут в печать · мм</span></div>
     <div class="tools" role="group" aria-label="Вид">
       <button type="button" id="bCut" aria-pressed="true">Разрез</button>
+      <button type="button" id="bWire" aria-pressed="true">Провода</button>
       <button type="button" id="bExp" aria-pressed="false">Разнести</button>
       <button type="button" id="bLab" aria-pressed="true">Подписи</button>
       <button type="button" id="bAll" aria-pressed="false">Вся капсула</button>
@@ -191,6 +192,11 @@ code{font-family:var(--f-mono);font-size:12px}
     </table></div>
     <p class="note">Смещение в мм разделить на 470 — получится ошибка в градусах при ветре 15 м/с. 45 мм соответствуют 0,1°.</p>
 
+    <h2>Провода</h2>
+    <p class="note">В модели <b id="wcount"></b> проводов: каждый идёт от контакта одной платы к контакту другой. Провода припаивать: разъёмы «дюпон» на топе разболтаются от вибрации.</p>
+    <div class="legend" id="wlegend"></div>
+    <details><summary style="cursor:pointer;font-size:13.5px">Таблица всех проводов</summary><div class="tbl"><table id="wtab"></table></div></details>
+
     <h2>Цвета</h2>
     <div class="legend">
       <div><i style="background:#2a2d33"></i>печать ASA: корпус, крышка, этажерка, ступицы</div>
@@ -308,6 +314,7 @@ function as5600(){const w=42,h=42,t=1.6,M='#0f6a49',D='#0d4b39',S='#e3ece6',C='#
   [[0.17,4.33,'c','конденсатор C2'],[1.67,4.33,'c','конденсатор C1'],[3.17,4.33,'r','резистор R1'],[-1,-4.67,'r','резистор R3'],[0.5,-4.67,'r','резистор R2'],[2,-4.67,'r','резистор R4']].forEach(p=>smd(g,p[0],p[1],t,1,true,p[2],p[3]));
   led(g,4.33,1.5,t,1,true,'светодиод LD1');
   hdr(g,px,py,0,-1,8.5,'штыревой разъём: SDA, SCL, VCC, GND, смотрит вниз; провода припаять, штыри можно укоротить');
+  g.userData.pins={SDA:[px[0],py,-8.5],SCL:[px[1],py,-8.5],VCC:[px[2],py,-8.5],GND:[px[3],py,-8.5]};
   return g;}
 
 function mt6701(){const w=17.22,h=15.08,t=1.51,M='#0f1012',C='#1e2025',TIN='#c7c9cb',S='#e6e7e8';
@@ -337,6 +344,7 @@ function mt6701(){const w=17.22,h=15.08,t=1.51,M='#0f1012',C='#1e2025',TIN='#c7c
   soic(g,-0.05,0.15,t,1,null,'микросхема MT6701: датчик угла, SOIC-8, магнит под ней, стоит по центру платы',[1.45,1.05]);
   smd(g,3.3,5.9,0,-1,false,'r','резистор на обратной стороне');smd(g,-4.5,5.6,0,-1,true,'r','резистор на обратной стороне');
   R.forEach(y=>dome(g,6.65,y,t,1,0.4));Lf.forEach(y=>dome(g,-6.65,y,t,1,0.4));
+  g.userData.pins={VCC:[6.65,-3.9,-0.3],SCL:[6.65,0.1,-0.3],SDA:[6.65,2.1,-0.3],GND:[6.65,4.1,-0.3]};
   return g;}
 
 function gy50(){const w=24,h=23.6,t=1.6,M='#0f4fb0',C='#0a3b8c',TIN='#d3d7da',S='#f3f6fb';
@@ -368,8 +376,57 @@ function gy50(){const w=24,h=23.6,t=1.6,M='#0f4fb0',C='#0a3b8c',TIN='#d3d7da',S=
   const rg=new T.Group();rg.position.set(3.3,8.8,t);rg.add(bx(0,0,0.55,1.7,3,1.1,pkg,'стабилизатор 3,3 В, корпус SOT-23-5'));[[-1.35,0.95],[-1.35,-0.95],[1.35,0.95],[1.35,0],[1.35,-0.95]].forEach(p=>rg.add(bx(p[0],p[1],0.12,1.2,0.42,0.24,tin)));g.add(rg);
   [[-0.3,8.3,'c','конденсатор C2'],[7.25,8.3,'cb','конденсатор C5'],[-5.6,3.4,'r','резистор R1'],[-4,3.4,'r','резистор R2'],[5.4,1.5,'r','резистор R5'],[7.25,1.5,'r','резистор R7'],[5.2,-2.3,'r','резистор R4'],[6.9,-2.3,'r','резистор R6'],[-1,-5.45,'r','резистор R3'],[0.75,-5.45,'c','конденсатор C9'],[2.5,-5.45,'c','конденсатор C4']].forEach(p=>smd(g,p[0],p[1],t,1,true,p[2],p[3]));
   ['VCC','SCL','SDA','GND'].forEach((n,i)=>{dome(g,xr,Lc[i],t,1,0.5,'контакт '+n+': провод припаять');});
+  g.userData.pins={VCC:[xr,Lc[0],2.1],SCL:[xr,Lc[1],2.1],SDA:[xr,Lc[2],2.1],GND:[xr,Lc[3],2.1],SDO:[xl,Lc[0],2.1],CS:[xl,Lc[1],2.1]};
   return g;}
-return {as5600,mt6701,gy50};
+
+function bno08x(){const w=25.65,h=15.55,t=1.6,M='#57207a',C='#6a2c92',S='#e9e4f0',GOLD='#c8a14a',TIN='#c9cdd0';
+  const s=rrect(w,h,[0.5,0.5,0.5,0.5]);const hx=10.35,hy=5.1;[-1,1].forEach(q=>hole(s,q*hx,hy,3.1));
+  const names=['VCC','GND','SCL','SDA','ADO','CS','INT','RST','PS1','PS0'],py=-6.5,pxs=names.map((n,i)=>-11.43+i*2.54);pxs.forEach(x=>hole(s,x,py,0.95));
+  hole(s,7.41,1.79,0.7);
+  const f=sheet(w,h,1024,M,front),b=sheet(w,h,1024,M,backM);
+  const hatch=(d,x0,y0,x1,y1)=>{d.g.save();d.g.beginPath();d.g.rect(x0,y0,x1-x0,y1-y0);d.g.clip();for(let k=-40;k<40;k+=0.85)d.line([[k,y0-1],[k+(y1-y0+2),y1+1]],C,0.16);d.g.restore();};
+  hatch(f,-12.8,-7.7,12.8,-3.2);hatch(b,-12.8,-1,-4,7.7);
+  [f,b].forEach((d,i)=>{const sx=i?-1:1;[-1,1].forEach(q=>{d.disc(sx*q*hx,hy,2.05,GOLD);d.disc(sx*q*hx,hy,1.55,'#2a0f3a');});
+    pxs.forEach(x=>d.disc(sx*x,py,0.82,TIN));d.disc(sx*7.41,1.79,0.78,GOLD);d.disc(sx*7.41,1.79,0.36,'#2a0f3a');
+    d.disc(-12.2*sx,7.05,0.32,TIN);d.disc(12.2*sx,6.9,0.32,TIN);});
+  f.line([[-7.4,0.6],[-7.4,2.2],[-3.6,3.4]],C,0.2).line([[-5.6,0.6],[-5.6,1.8],[-2.9,2.2]],C,0.2).line([[3.6,0.6],[3.6,1.6],[2.7,2.6]],C,0.2).line([[5.5,0.6],[5.5,2],[2.7,3.6]],C,0.2);
+  f.text('GY-BNO08X',-0.1,6.72,1.25,S,0,'700 ');f.text('←BOOT',7.6,4.6,0.95,S,90,'700 ');
+  names.forEach((n,i)=>f.text(n,pxs[i]+0.15,-3.9,1.05,S,90,'700 '));
+  [[-0.11,3.42]].forEach(p=>{for(let k=-2.4;k<=2.4;k+=0.5){f.rect(p[0]+k-0.1,p[1]+1.96,p[0]+k+0.1,p[1]+2.28,TIN);f.rect(p[0]+k-0.1,p[1]-2.28,p[0]+k+0.1,p[1]-1.96,TIN);}for(let k=-1.5;k<=1.5;k+=0.5){f.rect(p[0]-2.92,p[1]+k-0.1,p[0]-2.6,p[1]+k+0.1,TIN);f.rect(p[0]+2.6,p[1]+k-0.1,p[0]+2.92,p[1]+k+0.1,TIN);}});
+  f.disc(3.1,1.4,0.42,TIN);
+  // обратная сторона: u = −x
+  [['VCC_3V3',-1.7],['GND',-3.4],['SCL/SCK/RX',-0.7],['SDA/MISO/TX',-0.1],['ADDR/MOSI',-0.8],['CS',-3.9],['INT',-3.6],['RST',-3.6],['PS1',-3.2],['PS0',-3.2]].forEach((a,i)=>b.text(a[0],-pxs[i],a[1],1.02,S,90,'700 '));
+  [[8.89],[11.43]].forEach(a=>{const u=-a[0];b.rect(u-0.75,-0.75,u-0.08,0.75,GOLD);b.rect(u+0.08,-0.75,u+0.75,0.75,GOLD);b.frame(u-1,-1,u+1,1,S,0.1);});
+  const ax=-4.3,ay=1.3;b.ring(ax,ay,0.7,S,0.14).line([[ax-0.5,ay-0.5],[ax+0.5,ay+0.5]],S,0.1).line([[ax-0.5,ay+0.5],[ax+0.5,ay-0.5]],S,0.1);
+  b.line([[ax+0.7,ay],[ax+2.8,ay]],S,0.14).line([[ax+2.3,ay+0.4],[ax+2.8,ay],[ax+2.3,ay-0.4]],S,0.12).text('X',ax+3.5,ay,0.95,S,0,'700 ');
+  b.line([[ax,ay-0.7],[ax,ay-2.8]],S,0.14).line([[ax-0.4,ay-2.3],[ax,ay-2.8],[ax+0.4,ay-2.3]],S,0.12).text('Y',ax+0.9,ay-2.9,0.95,S,0,'700 ').text('Z',ax-1.5,ay+0.2,0.95,S,0,'700 ');
+  b.rect(-3.8,3.2,-0.7,5.6,'#1b0b26');
+  const g=base({w,h,t,shape:s,mask:0x57207a,edge:0xb9b48a,top:f,bot:b,label:'GY-BNO08X (BNO085), 25,65 × 15,55 × 1,6: крен, дифферент, курс'});
+  const ch=new T.Group();ch.position.set(-0.11,3.42,t);ch.add(bx(0,0,0.55,5.2,3.8,1.1,pkg,'BNO085: датчик в корпусе LGA 5,2 × 3,8 мм'));
+  ch.add(cy(-2.2,-1.5,1.108,0.2,0.2,0.01,std(0x34363b,{roughness:0.8}),'',10));g.add(ch);
+  g.add(bx(-0.11-1.6,-1.31-0.6,t,-0.11+1.6,-1.31+0.6,t+0.9,std(0x3a3a33,{roughness:0.5}),'кварц 32,768 кГц'));
+  [-1,1].forEach(q=>g.add(bx(-0.11+q*1.75-0.2,-1.31-0.55,t,-0.11+q*1.75+0.2,-1.31+0.55,t+0.5,tin)));
+  [[-10.94,-0.55,'c','конденсатор'],[-9.21,-0.55,'r','резистор'],[-7.4,-0.55,'r','резистор'],[-5.61,-0.55,'r','резистор'],[-3.87,-0.55,'c','конденсатор'],[3.64,-0.55,'c','конденсатор'],[5.51,-0.55,'c','конденсатор'],[7.37,-0.55,'r','резистор'],[9.24,-0.55,'r','резистор'],[11.06,-0.55,'r','резистор'],[-5.29,4.3,'r','резистор'],[5.2,3.98,'c','конденсатор']].forEach(p=>smd(g,p[0],p[1],t,1,true,p[2],p[3]));
+  hdr(g,pxs,py,0,-1,8.5,'гребёнка 10 контактов: смотрит вниз, от стороны с подписями');
+  g.userData.pins={};names.forEach((n,i)=>g.userData.pins[n]=[pxs[i],py,-8.5]);
+  return g;}
+
+// провода между контактами: pins[имя] = {o: Object3D, n: [x,y,z] в системе o}; list = [от, до, ключ цвета, подпись]
+function wires(root,list,pins,colors,rad){const grp=new T.Group();root.add(grp);const mats={};
+  const mat=k=>mats[k]||(mats[k]=std(new T.Color((colors[k]||['',  '#888888'])[1]).getHex(),{roughness:0.6}));
+  const shown=o=>{while(o){if(!o.visible)return false;o=o.parent;}return true;};
+  const q=new T.Quaternion();
+  function build(){while(grp.children.length){const c=grp.children.pop();c.geometry.dispose();}
+    root.updateMatrixWorld(true);root.getWorldQuaternion(q);const qi=q.clone().invert();let miss=[];
+    list.forEach((w,i)=>{const A=pins[w[0]],B=pins[w[1]];if(!A||!B){miss.push(w[0]+'>'+w[1]);return;}if(!shown(A.o)||!shown(B.o))return;
+      const end=P=>{const p=root.worldToLocal(P.o.getWorldPosition(new T.Vector3()));const q2=new T.Quaternion();P.o.getWorldQuaternion(q2);const n=new T.Vector3().fromArray(P.n||[0,0,1]).applyQuaternion(q2).applyQuaternion(qi).normalize();return {p,n};};
+      const a=end(A),b=end(B),d=a.p.distanceTo(b.p),L=Math.min(4+d*0.12,14)+(i%5)*0.7;
+      const a1=a.p.clone().addScaledVector(a.n,L),b1=b.p.clone().addScaledVector(b.n,L),m=a1.clone().add(b1).multiplyScalar(0.5).addScaledVector(a.n.clone().add(b.n).normalize(),(i%7)*0.5+Math.min(d*0.08,8));
+      const curve=new T.CatmullRomCurve3([a.p,a1,m,b1,b.p],false,'centripetal');
+      const o=new T.Mesh(new T.TubeGeometry(curve,22,rad||0.32,6,false),mat(w[2]));o.userData.label=w[3]||'';grp.add(o);});
+    if(miss.length)console.warn('нет контакта',miss.join(' '));}
+  return {group:grp,build};}
+return {as5600,mt6701,gy50,bno08x,wires};
 })();
 </script><!--/pcblib-->
 <script>
@@ -531,10 +588,41 @@ tubeJoint(padG,[18,38],15.5,3,150,135,70,'карбоновая трубка вы
   add(G(rod(V(10,0,49),V(-46,0,29),2.2,cab,12),rod(V(-46,0,29),V(-42,0,12),2.2,cab,12),rod(V(-42,0,12),V(-42,0,-40),2.2,cab,12)),brRoot,V(0,0,0),'кабель: внутри трубки, через короб и отверстие Ø14 в мачту');
 })();
 
+// ---------- контакты и провода ----------
+const PN={};
+function rp(key,name,par,x,y,z,n){const o=new THREE.Object3D();o.position.set(x,y,z);par.add(o);PN[key+'.'+name]={o,n:n||[0,0,1]};}
+Object.entries(asb.userData.pins).forEach(([n,p])=>rp('AS',n,asb,p[0],p[1],p[2],[0,0,-1]));
+Object.entries(mtb.userData.pins).forEach(([n,p])=>{rp('MT',n,mtb,p[0],p[1],p[2],[0,0,-1]);mtb.add(at(cylZ(0.32,-1.6,0,brass,8),p[0],p[1]));});
+Object.entries(gyb.userData.pins).forEach(([n,p])=>rp('GY',n,gyb,p[0],p[1],p[2],[0,0,1]));
+(function(){const g=new THREE.Group();add(g,root,V(100,-44,10));
+  const pin=(x,z)=>g.add(new THREE.Mesh(new THREE.BoxGeometry(0.64,3.4,0.64),brass).translateX(x).translateY(5.3).translateZ(z));
+  [['5V','GND','3V3','IO4','IO3','IO2','IO1','IO0'],['IO5','IO6','IO7','IO8','IO9','IO10','IO20','IO21']].forEach((r,k)=>r.forEach((n,i)=>{const x=-3.2-i*2.54,z=k?41.84:26.6;rp('C3',n,g,x,3.3,z,[0,-1,0]);pin(x,z);}));
+  ['RO','RE','DE','DI','VCC','GND'].forEach((n,i)=>{const x=5.5+i*2.54;rp('MX',n,g,x,3.3,27.4,[0,-1,0]);pin(x,27.4);});
+  rp('MX','A',g,21.8,3.3,31,[0,-1,0]);rp('MX','B',g,21.8,3.3,36,[0,-1,0]);
+  ['5V','A','GND','B'].forEach((n,i)=>{rp('TV',n,g,25.2+i*0.9,4.5,36.2,[0,-1,0.4]);rp('TO',n,g,25.2+i*0.9,4.5,31.2,[0,-1,-0.4]);});})();
+[['5V',-1.5,-1.5],['A',1.5,-1.5],['GND',-1.5,1.5],['B',1.5,1.5]].forEach(c=>rp('CT',c[0],padG,c[1],c[2],3,[0,0,1]));
+const WCT={p33:['3,3 В','#f2a33a'],p5:['+5 В','#d62828'],gnd:['земля','#26282c'],sda:['I²C, данные','#2f7fe0'],scl:['I²C, такт','#2fa84f'],uart:['UART','#b07cf0'],rs:['RS-485: A и B','#9a4fd6'],cb:['жила кабеля: +5 В, коричневая','#8a5a2b'],cw:['жила кабеля: A, белая','#e9e9e9'],cu:['жила кабеля: земля, синяя','#2f6fd6'],ck:['жила кабеля: B, чёрная','#111111']};
+const WTOP=[
+ ['AS.VCC','C3.3V3','p33','AS5600: питание'],['AS.GND','C3.GND','gnd','AS5600: земля'],['AS.SDA','C3.IO6','sda','AS5600: данные'],['AS.SCL','C3.IO7','scl','AS5600: такт'],
+ ['MT.VCC','C3.3V3','p33','MT6701: питание'],['MT.GND','C3.GND','gnd','MT6701: земля'],['MT.SDA','C3.IO6','sda','MT6701: данные, контакт A'],['MT.SCL','C3.IO7','scl','MT6701: такт, контакт B'],
+ ['GY.VCC','C3.3V3','p33','GY-50: питание'],['GY.GND','C3.GND','gnd','GY-50: земля'],['GY.SCL','C3.IO7','scl','GY-50: такт'],['GY.SDA','C3.IO6','sda','GY-50: данные'],['GY.CS','C3.3V3','p33','GY-50: режим I²C'],['GY.SDO','C3.GND','gnd','GY-50: адрес 0x68'],
+ ['MX.VCC','C3.3V3','p33','MAX3485: питание'],['MX.GND','C3.GND','gnd','MAX3485: земля'],['MX.DI','C3.IO10','uart','данные о ветре, 460 800 бод'],['MX.DE','C3.3V3','p33','передатчик всегда включён'],['MX.RE','C3.3V3','p33','приёмник выключен'],['MX.A','TO.A','rs','A через SM712'],['MX.B','TO.B','rs','B через SM712'],
+ ['TO.5V','C3.5V','p5','5 В из кабеля через SMBJ5.0A'],['TO.GND','C3.GND','gnd','земля из кабеля'],
+ ['CT.5V','TV.5V','cb','контакт 1 кабеля: +5 В'],['CT.A','TV.A','cw','контакт 2 кабеля: A'],['CT.GND','TV.GND','cu','контакт 3 кабеля: земля'],['CT.B','TV.B','ck','контакт 4 кабеля: B']
+];
+const NMT={AS:'AS5600',MT:'MT6701',GY:'GY-50',C3:'ESP32-C3',MX:'MAX3485',TO:'защита, выход',TV:'защита, вход',CT:'кабель'};
+const wiresObj=PCBLIB.wires(root,WTOP,PN,WCT,0.22);let wireOn=true,wireKey='';
+$('wcount').textContent=WTOP.length;
+$('wlegend').innerHTML=Object.keys(WCT).map(k=>'<div><i style="background:'+WCT[k][1]+'"></i>'+WCT[k][0]+'</div>').join('');
+const pnm=x=>{const a=x.split('.');return (NMT[a[0]]||a[0])+' · '+a[1];};
+$('wtab').innerHTML='<tr><th>От</th><th>До</th><th>Что</th></tr>'+WTOP.map(w=>'<tr><td>'+pnm(w[0])+'</td><td>'+pnm(w[1])+'</td><td><i style="display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:4px;background:'+WCT[w[2]][1]+'"></i>'+w[3]+'</td></tr>').join('');
+
 // ---------- разрез, разнос, подписи ----------
 let cut=true,exp=0,expT=0,labOn=!matchMedia('(max-width:900px)').matches,smallClip=true;
 function applyAll(){renderer.localClippingEnabled=cut;parts.forEach(p=>{p.position.copy(p.userData.base).addScaledVector(p.userData.ex,exp);});
-  grid.position.y=-80-100*exp;const on=exp<0.02;if(on!==smallClip){smallClip=on;mats.forEach(m=>{m.clippingPlanes=on?[cutPlane]:[];m.needsUpdate=true;});}}
+  grid.position.y=-80-100*exp;const on=exp<0.02;if(on!==smallClip){smallClip=on;mats.forEach(m=>{m.clippingPlanes=on?[cutPlane]:[];m.needsUpdate=true;});}
+  const moving=exp>0.001&&exp<0.999;wiresObj.group.visible=wireOn&&!moving&&root.visible;if(wireOn&&!moving&&root.visible){const k=exp.toFixed(1);if(k!==wireKey){wireKey=k;wiresObj.build();}}}
+$('bWire').addEventListener('click',()=>{wireOn=!wireOn;$('bWire').setAttribute('aria-pressed',String(wireOn));wireKey='';applyAll();});
 $('bCut').addEventListener('click',()=>{cut=!cut;$('bCut').setAttribute('aria-pressed',String(cut));applyAll();});
 function setExp(v){expT=v;$('bExp').setAttribute('aria-pressed',String(!!v));}
 $('bExp').addEventListener('click',()=>{setExp(expT?0:1);const br=focus==='br'||focus==='brx',ov=focus==='all'||focus==='ex';go(br?(expT?'brx':'br'):ov?(expT?'ex':'all'):focus);});
