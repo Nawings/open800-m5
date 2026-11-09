@@ -2,6 +2,7 @@
 <html lang="ru">
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" href="data:,">
 <meta charset="utf-8">
 <title>Блок в кокпите</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500&family=Onest:wght@400;500;600&family=JetBrains+Mono:wght@400;600&display=swap">
@@ -56,6 +57,7 @@ th{font:600 11px var(--f-mono);color:var(--muted);text-transform:uppercase;lette
 .legend i{width:12px;height:12px;border-radius:2px;flex:none;border:1px solid var(--line)}
 code{font-family:var(--f-mono);font-size:12px}
 [hidden]{display:none!important}
+.panel{grid-auto-rows:max-content}
 .panel{grid-auto-rows:max-content}
 .sch{width:100%;height:auto;aspect-ratio:420/430;display:block}
 .sch text{font:11px var(--f-body);fill:var(--ink)}
@@ -272,6 +274,21 @@ code{font-family:var(--f-mono);font-size:12px}
   </div>
 </div>
 
+<!--glguard--><script>
+(function(){
+  var st=document.getElementById('stage'),box=null;
+  function show(){if(box){box.hidden=false;return;}
+    box=document.createElement('div');box.setAttribute('role','alert');
+    box.style.cssText='position:absolute;inset:0;z-index:20;display:grid;place-content:center;justify-items:center;gap:12px;padding:24px;text-align:center;background:var(--bg);color:var(--ink);font:15px/1.5 var(--f-body,system-ui,sans-serif)';
+    var p=document.createElement('p');p.style.cssText='margin:0;max-width:440px';p.textContent='Браузер отключил 3D на этой странице: видеокарта перегружена или сбросилась. Закройте лишние вкладки с 3D-моделями и нажмите «Обновить». Если не поможет, полностью перезапустите браузер.';
+    var b=document.createElement('button');b.type='button';b.textContent='Обновить';b.addEventListener('click',function(){location.reload();});
+    box.appendChild(p);box.appendChild(b);st.appendChild(box);}
+  var v=document.getElementById('view');
+  v.addEventListener('webglcontextlost',show);
+  v.addEventListener('webglcontextrestored',function(){if(box)box.hidden=true;});
+  window.addEventListener('error',function(e){if(/WebGL/i.test(e.message||''))show();});
+})();
+</script><!--/glguard-->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js" integrity="sha384-CI3ELBVUz9XQO+97x6nwMDPosPR5XvsxW2ua7N1Xeygeh1IxtgqtCkGfQY9WWdHu" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js" integrity="sha384-wagZhIFgY4hD+7awjQjR4e2E294y6J2HSnd8eTNc15ZubTeQeVRZwhQJ+W6hnBsf" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/STLLoader.js" integrity="sha384-QF8EmP6pyNE+i7WmcltzC4ddzFVKDxfn5WD5gXyKTSE4SCw0R25TI+q0LUlnf7tq" crossorigin="anonymous"></script>

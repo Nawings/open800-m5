@@ -2,6 +2,7 @@
 <html lang="ru">
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" href="data:,">
 <meta charset="utf-8">
 <title>Флюгер Open 800</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500&family=Onest:wght@400;500;600&family=JetBrains+Mono:wght@400;600;700&display=swap">
@@ -297,6 +298,21 @@ code{font-family:var(--f-mono);font-size:12px}
   </div>
 </div>
 
+<!--glguard--><script>
+(function(){
+  var st=document.getElementById('stage'),box=null;
+  function show(){if(box){box.hidden=false;return;}
+    box=document.createElement('div');box.setAttribute('role','alert');
+    box.style.cssText='position:absolute;inset:0;z-index:20;display:grid;place-content:center;justify-items:center;gap:12px;padding:24px;text-align:center;background:var(--bg);color:var(--ink);font:15px/1.5 var(--f-body,system-ui,sans-serif)';
+    var p=document.createElement('p');p.style.cssText='margin:0;max-width:440px';p.textContent='Браузер отключил 3D на этой странице: видеокарта перегружена или сбросилась. Закройте лишние вкладки с 3D-моделями и нажмите «Обновить». Если не поможет, полностью перезапустите браузер.';
+    var b=document.createElement('button');b.type='button';b.textContent='Обновить';b.addEventListener('click',function(){location.reload();});
+    box.appendChild(p);box.appendChild(b);st.appendChild(box);}
+  var v=document.getElementById('view');
+  v.addEventListener('webglcontextlost',show);
+  v.addEventListener('webglcontextrestored',function(){if(box)box.hidden=true;});
+  window.addEventListener('error',function(e){if(/WebGL/i.test(e.message||''))show();});
+})();
+</script><!--/glguard-->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js" integrity="sha384-CI3ELBVUz9XQO+97x6nwMDPosPR5XvsxW2ua7N1Xeygeh1IxtgqtCkGfQY9WWdHu" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js" integrity="sha384-wagZhIFgY4hD+7awjQjR4e2E294y6J2HSnd8eTNc15ZubTeQeVRZwhQJ+W6hnBsf" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/STLLoader.js" integrity="sha384-QF8EmP6pyNE+i7WmcltzC4ddzFVKDxfn5WD5gXyKTSE4SCw0R25TI+q0LUlnf7tq" crossorigin="anonymous"></script>
@@ -327,7 +343,7 @@ function sheet(w,h,res,mask,xf){const c=document.createElement('canvas'),k=res/M
 const front=(g,k,cx,cy2)=>g.setTransform(k,0,0,-k,cx,cy2);
 const backM=(g,k,cx,cy2)=>g.setTransform(-k,0,0,-k,cx,cy2);        // вид снизу, зеркально: x зрителя = −x платы
 const backT=(g,k,cx,cy2)=>g.setTransform(0,-k,k,0,cx,cy2);         // вид снизу, повёрнут: (p, q) зрителя → x = q, y = p
-function tex(c,w,h){const t=new T.CanvasTexture(c);t.wrapS=t.wrapT=T.ClampToEdgeWrapping;t.repeat.set(1/w,1/h);t.offset.set(0.5,0.5);t.anisotropy=8;return t;}
+function tex(c,w,h){const t=new T.CanvasTexture(c);t.wrapS=t.wrapT=T.ClampToEdgeWrapping;t.repeat.set(1/w,1/h);t.offset.set(0.5,0.5);t.anisotropy=4;return t;}
 function base(o){const g=new T.Group(),t=o.t;
   const edge=mesh(new T.ExtrudeGeometry(o.shape,{depth:t,bevelEnabled:false,curveSegments:20}),[std(o.mask,{roughness:0.45}),std(o.edge||0xb9b48a,{roughness:0.6})],o.label);g.add(edge);
   const cap=new T.ShapeGeometry(o.shape,20);
@@ -339,7 +355,7 @@ function smd(g,x,y,z0,up,vert,kind,l){const L=1.6,W=0.8,H=0.5,bodyC={r:0x15161a,
   const n=new T.Group();n.position.set(x,y,z0);if(vert)n.rotation.z=Math.PI/2;
   n.add(bx(0,0,up*H/2,L*0.68,W,H,b,l));[-1,1].forEach(s=>n.add(bx(s*(L/2-0.15),0,up*H/2,0.32,W,H+0.02,tin,l)));g.add(n);}
 function led(g,x,y,z0,up,vert,l){const n=new T.Group();n.position.set(x,y,z0);if(vert)n.rotation.z=Math.PI/2;n.add(bx(0,0,up*0.25,1.2,0.8,0.5,std(0xf1efe2,{roughness:0.3}),l));n.add(bx(0,0,up*0.42,0.8,0.55,0.16,std(0xfff3b0,{roughness:0.15,transparent:true,opacity:0.9}),l));[-1,1].forEach(s=>n.add(bx(s*0.68,0,up*0.2,0.25,0.8,0.4,tin,l)));g.add(n);}
-function labelTop(lines,w,h,col){const c=document.createElement('canvas');c.width=256;c.height=Math.round(256*h/w);const g=c.getContext('2d');g.fillStyle='#17181b';g.fillRect(0,0,c.width,c.height);g.fillStyle=col||'#8e9196';g.textAlign='center';g.textBaseline='middle';const fs=c.height/(lines.length+1.3);g.font='600 '+fs+'px Arial, sans-serif';lines.forEach((s,i)=>g.fillText(s,c.width/2,c.height*(i+1)/(lines.length+1)));const t=new T.CanvasTexture(c);t.anisotropy=8;return std(0xffffff,{map:t,roughness:0.6});}
+function labelTop(lines,w,h,col){const c=document.createElement('canvas');c.width=256;c.height=Math.round(256*h/w);const g=c.getContext('2d');g.fillStyle='#17181b';g.fillRect(0,0,c.width,c.height);g.fillStyle=col||'#8e9196';g.textAlign='center';g.textBaseline='middle';const fs=c.height/(lines.length+1.3);g.font='600 '+fs+'px Arial, sans-serif';lines.forEach((s,i)=>g.fillText(s,c.width/2,c.height*(i+1)/(lines.length+1)));const t=new T.CanvasTexture(c);t.anisotropy=4;return std(0xffffff,{map:t,roughness:0.6});}
 function soic(g,x,y,z0,up,lines,l,dot){const n=new T.Group();n.position.set(x,y,z0);const H=1.75,lift=0.15;
   n.add(bx(0,0,up*(lift+(H-lift)/2),4.9,3.9,H-lift,pkg,l));
   if(lines){const p=mesh(new T.PlaneGeometry(4.7,3.7),labelTop(lines,4.7,3.7),l);p.position.z=up*(H+0.004);if(up<0)p.rotation.x=Math.PI;n.add(p);}
@@ -356,7 +372,7 @@ function as5600(){const w=42,h=42,t=1.6,M='#0f6a49',D='#0d4b39',S='#e3ece6',C='#
   ring.forEach(r=>{hole(s,r[0][0],r[0][1],2.9);if(r.length===3)slot(s,r[1][0],r[1][1],r[2][0],r[2][1],2.9);else hole(s,r[1][0],r[1][1],2.9);});
   [[-2.83,11.17],[-0.29,11.17],[2.25,11.17]].forEach(p=>hole(s,p[0],p[1],0.95));
   const px=[-4.21,-1.67,0.87,3.41],py=-10.93;px.forEach(x=>hole(s,x,py,0.95));
-  const f=sheet(w,h,1536,M,front),b=sheet(w,h,1536,M,backM);
+  const f=sheet(w,h,1024,M,front),b=sheet(w,h,1024,M,backM);
   [f,b].forEach((d,i)=>{const sx=i?-1:1;
     corners.forEach(q=>{d.disc(sx*q[0]*15.75,q[1]*15.75,3.4,D);d.disc(sx*q[0]*17.3,q[1]*17.3,3.4,D);});
     ring.forEach(r=>r.forEach(p=>d.disc(sx*p[0],p[1],3.4,D)));});
@@ -391,7 +407,7 @@ function mt6701(){const w=17.22,h=15.08,t=1.51,M='#0f1012',C='#1e2025',TIN='#c7c
   const s=rrect(w,h,[3,3,2.2,0.5]);
   hole(s,0.1,6.1,2.3);hole(s,0.1,-6.1,2.3);
   const R=[4.1,2.1,0.1,-1.9,-3.9],Lf=[2.1,0.1,-1.9];R.forEach(y=>hole(s,6.65,y,0.9));Lf.forEach(y=>hole(s,-6.65,y,0.9));
-  const f=sheet(w,h,1024,M,front),b=sheet(w,h,1024,M,backT);
+  const f=sheet(w,h,768,M,front),b=sheet(w,h,768,M,backT);
   R.forEach(y=>f.disc(6.65,y,0.68,TIN));Lf.forEach(y=>f.disc(-6.65,y,0.68,TIN));
   f.ring(0.1,6.1,1.3,'#26282c',0.22).ring(0.1,-6.1,1.3,'#26282c',0.22);
   f.disc(-5.45,-5.35,1.42,'#7f7b4f').disc(-5.45,-5.35,0.48,'#d9d6c0');
