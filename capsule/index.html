@@ -777,7 +777,7 @@ const mtb=PCBLIB.mt6701();mtb.position.z=23.21;mtb.rotation.x=Math.PI;add(mtb,ro
 
 // ---------- платы этажерки: каждая отдельно ----------
 // плата-носитель и всё, что на ней запаяно
-add(box(-31,7.7,25,31,9.3,43.4,M(0x7a6a3a,{roughness:0.7})),root,V(100,-24,10),'плата-носитель: макетная плата 62 × 18,4; на ней в цанговых гнёздах SuperMini и MAX3485, рядом защита');
+add(box(-31,7.7,25,31,9.3,51,M(0x7a6a3a,{roughness:0.7})),root,V(100,-24,10),'плата-носитель: макетная плата 62 × 26; на ней в цанговых гнёздах SuperMini и MAX3485, рядом защита');
 add(G((()=>{const g=PCBLIB.esp32c3();g.quaternion.setFromRotationMatrix(new THREE.Matrix4().makeBasis(new THREE.Vector3(0,0,-1),new THREE.Vector3(1,0,0),new THREE.Vector3(0,-1,0)));g.position.set(-12.67,5.2,34.2);return g;})(),box(-21.77,5.2,25.9,-1.44,7.7,27.3,chipM),box(-21.77,5.2,41.1,-1.44,7.7,42.5,chipM)),root,V(100,-44,10),'ESP32-C3 SuperMini, 17,81 × 22,66 × 1,06, с выносом USB 24,1: контроллер, запаян на штырях в плату-носитель');
 add(G((()=>{const g=PCBLIB.max3485s('MAX3485 на переходнике SOP-8, 11,5 × 11,5 мм: передатчик линии RS-485, 460 800 бод');g.quaternion.setFromRotationMatrix(new THREE.Matrix4().makeBasis(new THREE.Vector3(0,0,-1),new THREE.Vector3(1,0,0),new THREE.Vector3(0,-1,0)));g.position.set(10,5.2,34.2);return g;})(),box(4.92,5.2,29.7,15.08,7.7,31.1,chipM),box(4.92,5.2,37.3,15.08,7.7,38.7,chipM)),root,V(100,-44,10),'MAX3485 на переходнике SOP-8, 11,5 × 11,5 мм: передатчик линии RS-485, 460 800 бод, в цанговых гнёздах');
 add(box(24.7,4.7,31,28.3,7.7,36.4,M(0x1d6a3a)),root,V(100,-44,10),'защита линий: SM712 на переходнике и SMBJ5.0A, запаяны на плату-носитель у ввода кабеля. Схема');
@@ -860,12 +860,13 @@ const WTOP=[
  ['CT.5V','TV.5V','cb','контакт 1 кабеля: +5 В'],['CT.A','TV.A','cw','контакт 2 кабеля: A'],['CT.GND','TV.GND','cu','контакт 3 кабеля: земля'],['CT.B','TV.B','ck','контакт 4 кабеля: B']
 ];
 const NMT={AS:'AS5600',MT:'MT6701',GY:'GY-50',C3:'ESP32-C3',MX:'MAX3485',TO:'защита, выход',TV:'защита, вход',CT:'кабель'};
-// внутри платы-носителя — разводка снизу; датчики и кабель приходят со своим хвостом и разъёмом с защёлкой на верхнем крае платы
+// внутри платы-носителя — разводка снизу; датчики и кабель приходят со своим хвостом и разъёмом: гнёзда впаяны в лицевую сторону платы вдоль верхнего края, вилка входит перпендикулярно плате
 const CCNT={};WTOP.forEach(w=>{const A=PN[w[0]],B=PN[w[1]];if((A.car&&B.car)||(!A.car&&!B.car))return;const dev=(A.car?w[1]:w[0]).split('.')[0];CCNT[dev]=(CCNT[dev]||0)+1;});
+const hdrG=new THREE.Group();add(hdrG,root,V(100,-40,10),'гнездо разъёма: штыри входят в отверстия платы и паяются с обратной стороны');const plugG=new THREE.Group();add(plugG,root,V(100,-58,10),'вилка с проводами: вставляется в гнездо и вынимается без паяльника');
 const CS={};let cx=-21.8;['CT','AS','GY','MT'].forEach(d=>{const n=CCNT[d]||0;if(!n)return;CS[d]={x:cx,i:0};const w=n*2.5+2.4;
-  carG.add(box(cx-1.2,5.6,43.4,cx-1.2+w,11.2,46.6,M(0xf2efe6,{roughness:0.5})));carG.add(box(cx-0.7,6.3,46.6,cx-1.7+w,10.7,51.6,M(0xfbf8ee,{roughness:0.55})));cx+=w+1;});
+  hdrG.add(box(cx-1.2,0.7,43.9,cx-1.2+w,7.7,49.6,M(0xf2efe6,{roughness:0.5})));plugG.add(box(cx-0.7,-2.9,44.4,cx-1.7+w,0.7,49.1,M(0xfbf8ee,{roughness:0.55})));for(let i=0;i<n;i++){hdrG.add(box(cx+i*2.5-0.32,7.7,46.38,cx+i*2.5+0.32,10.3,47.02,M(0xd4b24a,{metalness:0.7,roughness:0.3})));carG.add(box(cx+i*2.5-0.5,9.3,46.2,cx+i*2.5+0.5,9.9,47.2,M(0xc9cdd0,{metalness:0.6,roughness:0.35})));}cx+=w+1;});
 const WT=[];WTOP.forEach(w=>{const A=PN[w[0]],B=PN[w[1]];if(A.car&&B.car){w.kind='разводка платы';return;}if(!A.car&&!B.car){w.kind='перемычка';WT.push([w[0],w[1],w[2],w[3]]);return;}
-  const devSide=A.car?w[1]:w[0],carSide=A.car?w[0]:w[1],dev=devSide.split('.')[0],sl=CS[dev],nm='J'+dev,idx=sl.i++;rp(nm,String(idx),carG,sl.x+idx*2.5,8.5,51.6,[0,0,1]);w.kind='жгут с разъёмом';WT.push([devSide,nm+'.'+idx,w[2],w[3]]);});
+  const devSide=A.car?w[1]:w[0],carSide=A.car?w[0]:w[1],dev=devSide.split('.')[0],sl=CS[dev],nm='J'+dev,idx=sl.i++;rp(nm,String(idx),plugG,sl.x+idx*2.5,-2.9,46.7,[0,-1,0.35]);w.kind='жгут с разъёмом';WT.push([devSide,nm+'.'+idx,w[2],w[3]]);});
 const wiresObj=PCBLIB.wires(root,WT,PN,WCT,0.22);let wireOn=true,wireKey='';
 $('wcount').textContent=WTOP.length;
 $('wlegend').innerHTML=Object.keys(WCT).map(k=>'<div><i style="background:'+WCT[k][1]+'"></i>'+WCT[k][0]+'</div>').join('');
