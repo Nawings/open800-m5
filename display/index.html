@@ -561,14 +561,14 @@ function epd42(){const w=92,h=89.7,t=1.6,M='#141518',S='#e8e9ea',TIN='#c9cdd0';c
   const u=x=>0.33+4.375-x*1.25;g.userData.pins={};[['VCC'],['GND'],['DIN'],['CLK'],['CS'],['DC'],['RST'],['BUSY']].forEach((n,i)=>g.userData.pins[n[0]]=[u(i),18.1,-1.5]);
   return g;}
 
-// экран прибора 400 × 300, чёрно-белый. v: aws, awa (+ справа), hdg, sog, heel (+ на правый), pitch (+ на нос), sig, d, dev (отклонение от базового курса: увал +, привод −), boat и res (напряжения, В), onRes (работает от резерва), batt (заряд, %), chg (идёт зарядка), mode 0–4, cfg, menu
+// экран прибора 400 × 300, чёрно-белый. v: aws, awa (+ справа), hdg, sog, heel (+ на правый), pitch (+ на нос), sig, d, dev (отклонение от базового курса: увал +, привод −), settling (после поворота курс ещё не запомнен), boat и res (напряжения, В), onRes (работает от резерва), batt (заряд, %), chg (идёт зарядка), mode 0–4, cfg, menu
 function drawScreen(c,v){const INK='#17171b',PAP='#dcdad1',F='Arial, sans-serif',D=Math.PI/180,cfg=v.cfg||{},ms=cfg.unit==='м/с',U=ms?'м/с':'уз';
   const f1=x=>x.toFixed(1).replace('.',','),spd=x=>f1(ms?x*0.5144:x),side=a=>Math.abs(a)<0.5?'':(a<0?'Л':'П'),n360=a=>((Math.round(a)%360)+360)%360;
   const ar=v.awa*D,wx=v.aws*Math.sin(ar),wy=v.aws*Math.cos(ar)-v.sog,tws=Math.hypot(wx,wy),twa=Math.atan2(wx,wy)/D,twd=n360(v.hdg+twa),cog=n360(v.hdg+2),vmg=v.sog*Math.cos(twa*D);
   const T=(s,X,Y,sz,w,al)=>{c.font=(w||700)+' '+sz+'px '+F;c.textAlign=al||'left';c.textBaseline='alphabetic';c.fillText(s,X,Y);c.textAlign='left';};
   const H=(x,y,w,t)=>c.fillRect(x,y,w,t||1.5);
   c.save();c.fillStyle=PAP;c.fillRect(0,0,400,300);c.fillStyle=INK;c.strokeStyle=INK;c.lineJoin='round';c.lineCap='round';
-  const mode=v.mode||0,names=['ОСНОВНОЙ','ВЕТЕР','ТАКТИКА','ЛОДКА','ТАБЛО'],nw=!!v.noWind,ng=!!v.noGps,tn=nw||ng,dn=tn||!!v.noHdg,NA='—',TW=x=>tn?NA:spd(x),AT=a=>tn?'угол —':'угол '+Math.round(Math.abs(a))+'° '+side(a),W=x=>nw?NA:spd(x),GS=x=>ng?NA:spd(x),VM=x=>(nw||ng)?NA:spd(x),AU=a=>nw?'угол —':'угол '+Math.round(Math.abs(a))+'° '+side(a),hs=v.noHdg?NA:n360(v.hdg)+'°',dr=(v.dev==null||v.noHdg)?null:Math.round(v.dev),devS=dr==null?'':(dr>0?'+':dr<0?'−':'')+Math.abs(dr)+'°';
+  const mode=v.mode||0,names=['ОСНОВНОЙ','ВЕТЕР','ТАКТИКА','ЛОДКА','ТАБЛО'],nw=!!v.noWind,ng=!!v.noGps,tn=nw||ng,dn=tn||!!v.noHdg,NA='—',TW=x=>tn?NA:spd(x),AT=a=>tn?'угол —':'угол '+Math.round(Math.abs(a))+'° '+side(a),W=x=>nw?NA:spd(x),GS=x=>ng?NA:spd(x),VM=x=>(nw||ng)?NA:spd(x),AU=a=>nw?'угол —':'угол '+Math.round(Math.abs(a))+'° '+side(a),hs=v.noHdg?NA:n360(v.hdg)+'°',dr=(v.dev==null||v.noHdg)?null:Math.round(v.dev),devS=dr==null?'':v.settling?'…':(dr>0?'+':dr<0?'−':'')+Math.abs(dr)+'°';
   if(v.boot){T('М5',200,104,70,700,'center');T('Open 800 · RUS 4223',200,136,16,600,'center');H(70,152,260);v.boot.forEach((r,i)=>{T(r[0],78,182+i*26,15,700);T(r[1],322,182+i*26,15,600,'right');});c.restore();return;}
   T('М5',6,15,13);T(v.menu?'МЕНЮ':names[mode],44,15,11);const bp=Math.max(0,Math.min(100,Math.round(v.batt||0))),low=bp<=25&&!v.chg;c.lineWidth=1.4;c.strokeRect(336.7,5.7,21,10.6);c.fillRect(357.7,8.6,2.4,4.8);if(v.chg){c.beginPath();c.moveTo(349,6.6);c.lineTo(343,11.6);c.lineTo(346.8,11.6);c.lineTo(345,15.4);c.lineTo(351.4,10);c.lineTo(347.6,10);c.closePath();c.fill();T('зар',398,15,12,700,'right');}else{c.fillRect(338.7,7.7,17*bp/100,6.6);T(bp+' %',398,15,12,700,'right');}{const st=[v.chg?'зарядка':v.onRes?'НА РЕЗЕРВЕ':low?'РАЗРЯД':'','лодка '+f1(v.boat||0)+' В',v.res!=null?'резерв '+f1(v.res)+' В':'',cfg.wifi==='вкл'?'Wi-Fi':'',cfg.sd==='выкл'?'':'SD'].filter(Boolean).join(' · '),fw=(low||v.onRes)?800:600;let fz=10.5;c.font=fw+' '+fz+'px '+F;const sw=c.measureText(st).width,mx=215;if(sw>mx)fz*=mx/sw;T(st,332,14,fz,fw,'right');}H(0,20,400);
   function rose(cx,cy,R){const k=R/60;c.lineWidth=1.5;c.beginPath();c.arc(cx,cy,R,0,7);c.stroke();
@@ -589,7 +589,7 @@ function drawScreen(c,v){const INK='#17171b',PAP='#dcdad1',F='Arial, sans-serif'
     T('КУРС',278,248,11);T(hs,278,288,34);if(devS)T(devS,396,288,22,700,'right');}
   else if(mode===2){T('НАПРАВЛЕНИЕ ВЕТРА, 10 МИНУТ',10,38,11);c.lineWidth=1;c.setLineDash([3,3]);c.beginPath();c.moveTo(10,108);c.lineTo(390,108);c.stroke();c.setLineDash([]);if(!dn){T((twd+10)+'°',392,52,10,600,'right');T((twd-10)+'°',392,172,10,600,'right');}
     if(dn)T(nw?'нет данных с мачты':ng?'нет GPS':'нет компаса',200,114,18,700,'center');else{c.lineWidth=2.2;c.beginPath();for(let i=0;i<=120;i++){const x=10+i*380/120,a=6*Math.sin(i/11+0.6)+2.6*Math.sin(i/4.3),y=108-a*6;i?c.lineTo(x,y):c.moveTo(x,y);}c.stroke();}H(0,184,400);c.fillRect(133,184,1.5,116);c.fillRect(266,184,1.5,116);
-    T('СДВИГ ВЕТРА',8,202,10.5);shift(8,214);T('VMG',141,202,10.5);T(VM(vmg),141,250,36);T(U,141,270,13);T('КУРС',274,202,10.5);T(hs,274,250,38);if(devS)T(devS+' от базового',274,274,13);}
+    T('СДВИГ ВЕТРА',8,202,10.5);shift(8,214);T('VMG',141,202,10.5);T(VM(vmg),141,250,36);T(U,141,270,13);T('КУРС',274,202,10.5);T(hs,274,250,38);if(devS)T(devS==='…'?'ждём курс':devS+' от базового',274,274,13);}
   else if(mode===3){c.fillRect(200,20,1.5,238);T('КРЕН',10,42,13);T(heelS,100,92,42,700,'center');stern(100,205,1.6);T('ДИФФЕРЕНТ',210,42,13);T(pitchS,300,92,42,700,'center');prof(300,205,1.45);T('нос →',390,252,10,600,'right');H(0,258,400);T('КУРС',8,296,12);T(hs,200,296,36,700,'center');if(devS)T(devS,392,296,26,700,'right');}
   else if(mode===4){const val=(X,Y,lb,s,sz,by,tail,tz)=>{T(lb,X,Y,10.5);T(s,X,by,sz);if(tail){c.font='700 '+sz+'px '+F;const w=c.measureText(s).width;T(tail,X+w+4,by,tz||20);}},
       deg=(a,no)=>no?NA:Math.round(Math.abs(a))+'°',L=7,R=207;
@@ -601,7 +601,7 @@ function drawScreen(c,v){const INK='#17171b',PAP='#dcdad1',F='Arial, sans-serif'
     val(R,110,'ГРАДУС ВЫМ.',deg(v.awa,nw),80,172,nw?'':side(v.awa));
     val(L,187,'ГР. К ВЕТРУ',deg(twa,tn),58,231,tn?'':side(twa));
     val(R,187,'V ИСТИН., '+U,TW(tws),58,231);
-    val(L,251,'+/− ОТ СР. ЗН.',devS||NA,58,295,dr==null?'':dr>0?'увал':dr<0?'привод':'на курсе',13);
+    val(L,251,'+/− ОТ БАЗОВОГО КУРСА',devS||NA,58,295,dr==null?'':v.settling?'ждём курс':dr>0?'увал':dr<0?'привод':'на курсе',13);
     val(R,251,'ГРАД. ИСТИН., от севера',dn?NA:twd+'°',58,295);}
   else{rose(70,108,60);
     const X1=146,X2=276,tile=(X,Y,t,val,unit,sub)=>{T(t,X,Y,10.5);T(val,X,Y+31,29);if(unit){c.font='700 29px '+F;const w=c.measureText(val).width;T(unit,X+w+3,Y+31,12);}if(sub)T(sub,X,Y+45,11,600);};
@@ -632,7 +632,7 @@ return {reserveBlock,as5600,mt6701,gy50,bno08x,esp32s3,sd3v3,epd42,an181,tp4056,
             <div class="ledrow"><span class="led r" id="ledR"></span>отход</div>
             <button type="button" class="key" id="kMode">РЕЖИМ</button>
             <button type="button" class="key" id="kMenu">МЕНЮ</button>
-            <button type="button" class="key" id="kUp" aria-label="Вверх, вне меню ноль базового курса">▲</button>
+            <button type="button" class="key" id="kUp" aria-label="Вверх, вне меню запомнить текущий курс как базовый">▲</button>
             <button type="button" class="key" id="kDn" aria-label="Вниз">▼</button>
           </div>
         </div>
@@ -663,6 +663,7 @@ return {reserveBlock,as5600,mt6701,gy50,bno08x,esp32s3,sd3v3,epd42,an181,tp4056,
     <tr><th>Вопрос</th><th>Как проверить</th></tr>
     <tr><td><b>Читается ли курс с места рулевого?</b></td><td>Поставьте «1,5 м» и «2,5 м», запустите гонку</td></tr>
     <tr><td><b>Понятен ли знак отклонения?</b></td><td>Нажмите «Увал» и «Привод», сделайте поворот оверштаг: знак не должен путаться на другом галсе</td></tr>
+    <tr><td><b>Видно ли, что курс запомнен?</b></td><td>Нажмите «Поворот оверштаг»: «…» сменится цифрой примерно через 15 секунд, затем отклоняйтесь и смотрите, что базовый курс не ползёт</td></tr>
     <tr><td><b>Какой вид нужен на старте, на лавировке, на попутном?</b></td><td>Листайте РЕЖИМ при разных условиях</td></tr>
     <tr><td><b>Хватает ли стрелок заход и отход?</b></td><td>Запустите гонку и смотрите только на стрелки</td></tr>
     <tr><td><b>Удобно ли ночью и на солнце?</b></td><td>Меняйте освещение и подсветку кнопкой снизу</td></tr>
@@ -674,13 +675,13 @@ return {reserveBlock,as5600,mt6701,gy50,bno08x,esp32s3,sd3v3,epd42,an181,tp4056,
     <tr><td><b>Скорость</b></td><td>скорость лодки</td><td>измеряет GPS</td><td>это скорость над грунтом: лага нет, поэтому течение входит в показание</td></tr>
     <tr><td><b>Градус к N</b></td><td>курс относительно севера</td><td>измеряет компас BNO085</td><td>север магнитный; компас надо откалибровать в собранном блоке</td></tr>
     <tr><td><b>Гр. к ветру</b></td><td>угол лодки к истинному ветру</td><td>считает прибор: вымпельный ветер и скорость</td><td>ошибки флюгера и скорости, см. ниже</td></tr>
-    <tr><td><b>+/− от ср. зн.</b></td><td>отклонение от базового курса: увал +, привод −</td><td>считает прибор: компас и среднее за 30 с после поворота</td><td>база обновляется после поворота, ▲ ставит ноль вручную</td></tr>
+    <tr><td><b>+/− от базового курса</b></td><td>отклонение от курса, запомненного после поворота: увал +, привод −</td><td>считает прибор: компас и запомненный курс</td><td>курс запоминается один раз и не меняется до следующего поворота, ▲ запоминает текущий курс вручную</td></tr>
     <tr><td><b>Скорость вым.</b></td><td>скорость вымпельного ветра</td><td>измеряют чашки на мачте</td><td>нужна калибровка чашек</td></tr>
     <tr><td><b>Градус вым.</b></td><td>угол вымпельного ветра, Л или П</td><td>измеряет флюгер на мачте</td><td>ноль флюгера выставляется при установке. При крене 20° флюгер покажет 30° вместо 31,6°, прошивка должна поправлять это по крену</td></tr>
     <tr><td><b>V истин.</b></td><td>скорость истинного ветра</td><td>считает прибор: вымпельный ветер и скорость</td><td>ошибки чашек и скорости</td></tr>
     <tr><td><b>Град. истин.</b></td><td>откуда дует истинный ветер, от севера</td><td>считает прибор: курс и угол к ветру</td><td>суммируются ошибки компаса и угла к ветру</td></tr>
   </table></div><p class="note">Расчётный пример на лавировке: вымпельный ветер 14 уз под 30° при скорости 6 уз дают истинный ветер 9,3 уз под 49°. Ошибка флюгера 2° даёт ошибку угла к ветру 2,8°. Течение или ошибка скорости 0,5 уз дают 2,4° по углу и 0,3 уз по скорости ветра. Без GPS истинный ветер посчитать нельзя, на экране будет прочерк.</p></section>
-  <section class="grp"><h2>Курс и базовый курс</h2><p class="note">Большое число — курс по компасу, относительно севера. Рядом отклонение от базового: увал +, привод −, на обоих галсах одинаково. После поворота прибор 30 секунд ждёт, пока лодка ляжет на курс, берёт средний курс за это время как новый базовый и дальше его не меняет.</p><div class="gal" id="g2"></div></section>
+  <section class="grp"><h2>Курс и базовый курс</h2><p class="note">Большое число — курс по компасу, относительно севера. Рядом отклонение от базового: увал +, привод −, на обоих галсах одинаково. Базовый курс — это один запомненный курс, он не усредняется на ходу. После поворота вместо отклонения стоит «…»: прибор ждёт, пока лодка ляжет на курс. Первые 5 секунд после поворота не учитываются. Затем, как только курс 10 секунд подряд держится в коридоре 10°, прибор запоминает его и больше не меняет до следующего поворота. Запоминается середина этих 10 секунд, чтобы рыскание на волне не попало в базовый курс. Если за 60 секунд курс так и не устоялся, запоминается средний курс за последние 15 секунд. Поворотом считается смена галса или изменение курса больше чем на 60° за минуту. Кнопка ▲ вне меню запоминает текущий курс сразу.</p><div class="gal" id="g2"></div></section>
   <section class="grp"><h2>Сдвиг ветра</h2><p class="note">Сравнивается направление истинного ветра со средним за последние минуты. Порог задаётся в меню. Отход — ветер повернул в вашу пользу, заход — против.</p><div class="gal" id="g3"></div></section>
   <section class="grp"><h2>Питание</h2><p class="note">Значок и проценты показывают источник, от которого прибор работает сейчас. Рядом напряжение лодки и резерва.</p><div class="gal" id="g4"></div></section>
   <section class="grp"><h2>Меню и системные экраны</h2><div class="gal" id="g5"></div></section>
@@ -689,7 +690,7 @@ return {reserveBlock,as5600,mt6701,gy50,bno08x,esp32s3,sd3v3,epd42,an181,tp4056,
     <tr><th>Кнопка</th><th>Вне меню</th><th>В меню</th></tr>
     <tr><td><b>РЕЖИМ</b></td><td>следующий вид экрана</td><td>нет действия</td></tr>
     <tr><td><b>МЕНЮ</b></td><td>открыть меню</td><td>изменить значение пункта; на пункте «Выход» — закрыть меню</td></tr>
-    <tr><td><b>▲</b></td><td>поставить ноль базового курса вручную</td><td>пункт выше</td></tr>
+    <tr><td><b>▲</b></td><td>запомнить текущий курс как базовый</td><td>пункт выше</td></tr>
     <tr><td><b>▼</b></td><td>полное обновление экрана, убирает следы старых кадров e-paper</td><td>пункт ниже</td></tr>
     <tr><td><b>Кнопка снизу</b></td><td>коротко: подсветка, по кругу выключена, 30, 60, 100 %. Держать 3 с: ноль крена и дифферента</td><td>то же</td></tr>
     <tr><td><b>Тумблер снизу</b></td><td>включает и выключает прибор</td><td>то же</td></tr>
@@ -727,12 +728,17 @@ const CFG={unit:'узлы',wifi:'выкл',sd:'вкл'},MENU=[{t:'Подсвет
 const f1=x=>x.toFixed(1).replace('.',',');
 const pwTxt=(b,r)=>'лодка '+f1(b)+(r!=null?' · резерв '+f1(r):'')+' В';
 const rows=(b,r)=>MENU.map(m=>({t:m.t,v:m.ro?pwTxt(b,r):m.o?m.o[m.v]:''}));
-const S={aws:17.4,awa:28.5,hdg:177,sog:6.1,heel:-14,pitch:1.2,sig:1,d:3,boatV:12.7,resV:12.3,mode:0,menu:null,noWind:false,noGps:false,noHdg:false,toast:null,boot:null,on:true,light:0,base:{'1':183,'-1':183}};
+const S={aws:17.4,awa:28.5,hdg:177,sog:6.1,heel:-14,pitch:1.2,sig:1,d:3,boatV:12.7,resV:12.3,mode:0,menu:null,noWind:false,noGps:false,noHdg:false,toast:null,boot:null,on:true,light:0,base:{'1':183,'-1':183},aim:{'1':183,'-1':183},swing:0,settling:false};
 const tack=()=>S.awa<0?-1:1;
 function wrap(a){return ((a+540)%360)-180;}
 const dev=()=>tack()*wrap(S.base[tack()]-S.hdg);
+let sett=null;const SETTLE={skip:5,win:10,band:10,max:60,fall:15};
+function meanHdg(a){const r=a[0];return (r+a.reduce((s,x)=>s+wrap(x-r),0)/a.length+360)%360;}
+function spreadHdg(a){const r=a[0],d=a.map(x=>wrap(x-r));return Math.max(...d)-Math.min(...d);}
+function settleStart(){sett={t:0,buf:[]};S.settling=true;}
+function settleEnd(){sett=null;S.settling=false;}
 const ctx=$('main').getContext('2d');ctx.scale(2,2);
-function view(){const m=S.menu;return Object.assign({aws:S.aws,awa:S.awa,hdg:S.hdg,sog:S.sog,heel:S.heel,pitch:S.pitch,sig:S.sig,d:S.d,dev:dev(),mode:S.mode,cfg:CFG,noWind:S.noWind,noGps:S.noGps,noHdg:S.noHdg,toast:S.toast,boot:S.boot,menu:m===null?null:{i:m,rows:rows(S.boatV,S.resV)}},pw(S.boatV,S.resV));}
+function view(){const m=S.menu;return Object.assign({aws:S.aws,awa:S.awa,hdg:S.hdg,sog:S.sog,heel:S.heel,pitch:S.pitch,sig:S.sig,d:S.d,dev:dev(),settling:S.settling,mode:S.mode,cfg:CFG,noWind:S.noWind,noGps:S.noGps,noHdg:S.noHdg,toast:S.toast,boot:S.boot,menu:m===null?null:{i:m,rows:rows(S.boatV,S.resV)}},pw(S.boatV,S.resV));}
 let render=function(){D(ctx,view());
   const L=S.on?S.light:0,o=[0,0.35,0.65,1][L];$('gT').style.opacity=o;$('gB').style.opacity=o;$('tint').style.opacity=o?0.25+o*0.45:0;
   const nw=S.noWind||!S.on;$('ledG').classList.toggle('on',!nw&&S.sig<0);$('ledR').classList.toggle('on',!nw&&S.sig>0);$('off').hidden=S.on;
@@ -740,7 +746,7 @@ let render=function(){D(ctx,view());
 let toastT=0;function toast(s,ms){S.toast=s;clearTimeout(toastT);render();toastT=setTimeout(()=>{S.toast=null;render();},ms||1500);}
 $('kMode').onclick=()=>{if(!S.on||S.menu!==null)return;S.mode=(S.mode+1)%5;render();};
 $('kMenu').onclick=()=>{if(!S.on)return;if(S.menu===null){S.menu=0;}else{const r=MENU[S.menu];if(r.k==='exit')S.menu=null;else if(r.o){r.v=(r.v+1)%r.o.length;if(r.k==='light')S.light=r.v;else CFG[r.k]=r.o[r.v];}}render();};
-$('kUp').onclick=()=>{if(!S.on)return;if(S.menu!==null){S.menu=(S.menu+MENU.length-1)%MENU.length;render();}else{S.base[tack()]=S.hdg;toast('Базовый курс: ноль');}};
+$('kUp').onclick=()=>{if(!S.on)return;if(S.menu!==null){S.menu=(S.menu+MENU.length-1)%MENU.length;render();}else{settleEnd();S.base[tack()]=S.hdg;toast('Базовый курс: запомнен');}};
 $('kDn').onclick=()=>{if(!S.on)return;if(S.menu!==null){S.menu=(S.menu+1)%MENU.length;render();}else toast('Полное обновление экрана');};
 let holdT=0,held=false,hStart=0,raf=0;const zb=$('kZero'),bar=$('holdBar');
 function holdTick(){const p=Math.min(1,(performance.now()-hStart)/3000);bar.style.width=p*100+'%';if(p<1&&hStart)raf=requestAnimationFrame(holdTick);}
@@ -752,7 +758,7 @@ const BOOT=[['Мачта','связь есть'],['GPS','поиск спутни
 let bootT=0;$('kPow').onclick=()=>{S.on=!S.on;$('kPow').setAttribute('aria-pressed',String(S.on));$('kPow').textContent=S.on?'Тумблер: включён':'Тумблер: выключен';clearTimeout(bootT);if(S.on){S.boot=BOOT;render();bootT=setTimeout(()=>{S.boot=null;render();},1800);}else{S.boot=null;render();}};
 // сценарии
 let cur='norm',tackT=0;const SC=[
- ['norm','Норма',()=>{Object.assign(S,{boatV:12.7,resV:12.3,noWind:false,noGps:false,noHdg:false,sig:1,d:3,hdg:177,awa:Math.abs(S.awa)||28.5,light:0});S.base={'1':183,'-1':183};MENU[0].v=0;}],
+ ['norm','Норма',()=>{Object.assign(S,{boatV:12.7,resV:12.3,noWind:false,noGps:false,noHdg:false,sig:1,d:3,hdg:177,awa:Math.abs(S.awa)||28.5,light:0});S.base={'1':183,'-1':183};S.aim={'1':183,'-1':183};S.swing=0;settleEnd();MENU[0].v=0;}],
  ['up','Увал +6°',()=>{S.hdg=wrap(S.base[tack()]-tack()*6)+0;S.hdg=(S.hdg+360)%360;}],
  ['dn','Привод −4°',()=>{S.hdg=(wrap(S.base[tack()]+tack()*4)+360)%360;}],
  ['lift','Отход',()=>{S.sig=1;S.d=4;}],['head','Заход',()=>{S.sig=-1;S.d=5;}],['flat','Ветер ровный',()=>{S.sig=0;S.d=0;}],
@@ -760,7 +766,7 @@ let cur='norm',tackT=0;const SC=[
  ['nw','Нет мачты',()=>{S.noWind=true;S.noGps=false;S.noHdg=false;}],['ng','Нет GPS',()=>{S.noGps=true;S.noWind=false;S.noHdg=false;}],['nh','Нет компаса',()=>{S.noHdg=true;S.noWind=false;S.noGps=false;}]
 ];
 const sc=$('scn');SC.forEach(a=>{const b=document.createElement('button');b.type='button';b.className='btn';b.textContent=a[1];b.dataset.s=a[0];b.setAttribute('aria-pressed','false');b.onclick=()=>{cur=a[0];a[2]();S.menu=null;render();};sc.appendChild(b);});
-const tb=document.createElement('button');tb.type='button';tb.className='btn';tb.textContent='Поворот оверштаг';tb.onclick=()=>{cur='';const prev=tack();S.awa=-S.awa;S.hdg=(S.hdg+(prev>0?84:-84)+360)%360;S.base[tack()]=S.hdg;S.menu=null;toast('Поворот: новый базовый курс',1800);};sc.appendChild(tb);
+const tb=document.createElement('button');tb.type='button';tb.className='btn';tb.textContent='Поворот оверштаг';tb.onclick=()=>{cur='';turn();};sc.appendChild(tb);
 const SL=[['aws','Вымпельный',0,35,0.1,'уз'],['awa','Угол к ветру',-180,180,1,'°'],['hdg','Курс',0,359,1,'°'],['sog','Скорость',0,12,0.1,'уз'],['heel','Крен',-40,40,1,'°'],['pitch','Дифферент',-10,10,0.1,'°']];
 const slBox=$('sl'),inp={};SL.forEach(a=>{const l=document.createElement('label');l.className='sl';l.innerHTML=a[1]+'<input type="range" id="s_'+a[0]+'" min="'+a[2]+'" max="'+a[3]+'" step="'+a[4]+'"><output></output>';slBox.appendChild(l);const i=l.querySelector('input'),o=l.querySelector('output');inp[a[0]]={i,o,u:a[5]};i.addEventListener('input',()=>{S[a[0]]=+i.value;cur='';render();});});
 function syncSl(){SL.forEach(a=>{const r=inp[a[0]];r.i.value=S[a[0]];r.o.textContent=(a[4]<1?f1(S[a[0]]):Math.round(S[a[0]]))+' '+r.u;});}
@@ -773,10 +779,10 @@ fig('g1','Ветер','роза на весь экран, истинный и в
 fig('g1','Тактика','направление ветра за 10 минут, сдвиг, VMG',{mode:2});
 fig('g1','Лодка','крен и дифферент крупно',{mode:3});
 fig('g1','Табло','слева лодка, справа ветер: только цифры',{mode:4});
-fig('g2','Увал','+6° от базового',{dev:6,hdg:177});fig('g2','Привод','−4° от базового',{dev:-4,hdg:187});fig('g2','На базовом курсе','0°, сразу после нажатия ▲ или после поворота',{dev:0,hdg:183});
+fig('g2','Увал','+6° от базового',{dev:6,hdg:177});fig('g2','Привод','−4° от базового',{dev:-4,hdg:187});fig('g2','На базовом курсе','0°, сразу после того как курс запомнен',{dev:0,hdg:183});fig('g2','Ложимся на курс','вместо отклонения «…», курс ещё не запомнен',{settling:true,hdg:96});
 fig('g3','Отход','красная стрелка',{mode:2,sig:1,d:4});fig('g3','Заход','зелёная стрелка',{mode:2,sig:-1,d:5});fig('g3','Ветер ровный','стрелки погашены',{mode:2,sig:0,d:0});
 fig('g4','Норма','лодка 12,7 В, резерв 12,3 В',P(12.7,12.3));fig('g4','Разряд','лодка 11,9 В',P(11.9,12.3));fig('g4','Зарядка','работает двигатель или зарядное',P(13.8,12.3));fig('g4','На резерве','лодка 10,7 В',P(10.7,12.3));fig('g4','Резерв не подключён','показывается только лодка',P(12.7,null));
-fig('g5','Меню','▲ ▼ выбрать, МЕНЮ изменить',{menu:{i:0,rows:rows(12.7,12.3)}});fig('g5','Меню, выбрана строка «Питание»','только просмотр',{menu:{i:5,rows:rows(12.7,12.3)}});fig('g5','Загрузка','при включении, несколько секунд',{boot:BOOT});fig('g5','Подсказка','коротко после нажатия кнопки',{toast:'Базовый курс: ноль'});fig('g5','Ночной режим','подсветка красная',{},true);
+fig('g5','Меню','▲ ▼ выбрать, МЕНЮ изменить',{menu:{i:0,rows:rows(12.7,12.3)}});fig('g5','Меню, выбрана строка «Питание»','только просмотр',{menu:{i:5,rows:rows(12.7,12.3)}});fig('g5','Загрузка','при включении, несколько секунд',{boot:BOOT});fig('g5','Подсказка','коротко после нажатия кнопки',{toast:'Курс запомнен: 96°'});fig('g5','Ночной режим','подсветка красная',{},true);
 fig('g6','Нет данных с мачты','нет ветра, сдвига и VMG; курс, скорость и крен работают',{noWind:true});fig('g6','Нет GPS','нет скорости, VMG и истинного ветра',{noGps:true});fig('g6','Нет компаса','нет курса, отклонения, направления и сдвига ветра',{noHdg:true});fig('g6','Нет мачты, вид «Тактика»','вместо графика надпись',{mode:2,noWind:true});fig('g6','Нет GPS, вид «Табло»','вымпельный ветер и курс работают',{mode:4,noGps:true});
 
 // тестовый стенд: условия, гонка, расстояние, освещение
@@ -793,12 +799,15 @@ function marks(){document.querySelectorAll('[data-wx]').forEach(b=>b.setAttribut
 chips('wx',WX,setWx,'wx');chips('dist',DIST,setDist,'di');chips('amb',AMB,setAmb,'am');
 const render0=render;render=function(){render0();$('main').style.filter=ambF();};
 let raceT=0,rt=0;const rn=(a)=>(Math.random()-0.5)*2*a;
-function step(){rt++;const w=W0(),s=tack(),b=S.base[s];
+function turn(){const prev=tack(),n=(S.aim[prev]+(prev>0?84:-84)+360)%360;S.awa=-S.awa;S.heel=-S.heel;const s=tack();S.aim[s]=n;S.swing=-s*12;S.hdg=(n+S.swing+360)%360;settleStart();S.menu=null;toast('Поворот: ждём курс',1800);}
+function settleTick(){if(!sett||!S.on||S.noHdg)return;if(!raceT){S.swing*=0.72;S.hdg=(S.aim[tack()]+S.swing+rn(1)+360)%360;}sett.t++;if(sett.t>SETTLE.skip)sett.buf.push(S.hdg);const r=sett.buf.slice(-SETTLE.win);let src=null;if(r.length>=SETTLE.win&&spreadHdg(r)<=SETTLE.band)src=r;else if(sett.t>=SETTLE.max&&sett.buf.length)src=sett.buf.slice(-SETTLE.fall);if(src){S.base[tack()]=meanHdg(src);settleEnd();toast('Курс запомнен: '+Math.round(S.base[tack()])+'°',2200);}else render();}
+setInterval(settleTick,1000);
+function step(){rt++;const w=W0(),s=tack(),b=S.aim[s];
   S.aws=Math.max(0,w.aws+2*Math.sin(rt/5)+rn(0.6));S.awa=s*(w.awa+3*Math.sin(rt/7)+rn(1));S.sog=Math.max(0,w.sog+0.5*Math.sin(rt/6)+rn(0.15));
   S.heel=-s*(w.hl+4*Math.sin(rt/3)+rn(1.5));S.pitch=w.pi+1.2*Math.sin(rt/2.2)+rn(0.2);
-  const dv=5*Math.sin(rt/9)+rn(1.5);S.hdg=(wrap(b-s*dv)+360)%360;
+  S.swing*=0.72;const dv=5*Math.sin(rt/9)+rn(1.5);S.hdg=(wrap(b-s*dv+S.swing)+360)%360;
   const sh=6*Math.sin(rt/17);S.sig=sh>2?1:sh<-2?-1:0;S.d=Math.round(Math.abs(sh));
-  if(rt%40===0&&w.awa<60){S.awa=-S.awa;S.heel=-S.heel;const n=(b+(s>0?84:-84)+360)%360;S.hdg=n;S.base[tack()]=n;S.menu=null;toast('Поворот: новый базовый курс',1800);return;}
+  if(rt%40===0&&w.awa<60){turn();return;}
   render();}
 $('run').onclick=()=>{const on=!raceT;if(on){raceT=setInterval(step,1000);step();}else{clearInterval(raceT);raceT=0;}$('run').setAttribute('aria-pressed',String(on));$('run').textContent=on?'Остановить гонку':'Запустить гонку';};
 marks();setWx('mid');S.hdg=177;
