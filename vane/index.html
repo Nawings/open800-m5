@@ -741,7 +741,7 @@ function epd42(){const w=92,h=89.7,t=1.6,M='#141518',S='#e8e9ea',TIN='#c9cdd0';c
   const u=x=>0.33+4.375-x*1.25;g.userData.pins={};[['VCC'],['GND'],['DIN'],['CLK'],['CS'],['DC'],['RST'],['BUSY']].forEach((n,i)=>g.userData.pins[n[0]]=[u(i),18.1,-1.5]);
   return g;}
 
-// экран прибора 400 × 300, чёрно-белый. v: aws, awa (+ справа), hdg, sog, heel (+ на правый), pitch (+ на нос), sig, d, batt (заряд, %), chg (идёт зарядка), mode 0–3, cfg, menu
+// экран прибора 400 × 300, чёрно-белый. v: aws, awa (+ справа), hdg, sog, heel (+ на правый), pitch (+ на нос), sig, d, boat (напряжение, В), batt (заряд, %), chg (идёт зарядка), mode 0–3, cfg (src — лодка или резерв), menu
 function drawScreen(c,v){const INK='#17171b',PAP='#dcdad1',F='Arial, sans-serif',D=Math.PI/180,cfg=v.cfg||{},ms=cfg.unit==='м/с',U=ms?'м/с':'уз';
   const f1=x=>x.toFixed(1).replace('.',','),spd=x=>f1(ms?x*0.5144:x),side=a=>Math.abs(a)<0.5?'':(a<0?'Л':'П'),n360=a=>((Math.round(a)%360)+360)%360;
   const ar=v.awa*D,wx=v.aws*Math.sin(ar),wy=v.aws*Math.cos(ar)-v.sog,tws=Math.hypot(wx,wy),twa=Math.atan2(wx,wy)/D,twd=n360(v.hdg+twa),cog=n360(v.hdg+2),vmg=v.sog*Math.cos(twa*D);
@@ -749,7 +749,7 @@ function drawScreen(c,v){const INK='#17171b',PAP='#dcdad1',F='Arial, sans-serif'
   const H=(x,y,w,t)=>c.fillRect(x,y,w,t||1.5);
   c.save();c.fillStyle=PAP;c.fillRect(0,0,400,300);c.fillStyle=INK;c.strokeStyle=INK;c.lineJoin='round';c.lineCap='round';
   const mode=v.mode||0,names=['ОСНОВНОЙ','ВЕТЕР','ТАКТИКА','ЛОДКА'];
-  T('М5',6,15,13);T(v.menu?'МЕНЮ':names[mode],44,15,11);const bp=Math.max(0,Math.min(100,Math.round(v.batt||0))),low=bp<=15&&!v.chg;c.lineWidth=1.4;c.strokeRect(336.7,5.7,21,10.6);c.fillRect(357.7,8.6,2.4,4.8);if(v.chg){c.beginPath();c.moveTo(349,6.6);c.lineTo(343,11.6);c.lineTo(346.8,11.6);c.lineTo(345,15.4);c.lineTo(351.4,10);c.lineTo(347.6,10);c.closePath();c.fill();T('USB',398,15,12,700,'right');}else{c.fillRect(338.7,7.7,17*bp/100,6.6);T(bp+' %',398,15,12,700,'right');}T([v.chg?'зарядка':low?'ЗАРЯДИТЬ':'',cfg.wifi==='вкл'?'Wi-Fi':'',cfg.sd==='выкл'?'':'SD'].filter(Boolean).join(' · '),332,14,10.5,low?800:600,'right');H(0,20,400);
+  T('М5',6,15,13);T(v.menu?'МЕНЮ':names[mode],44,15,11);const bp=Math.max(0,Math.min(100,Math.round(v.batt||0))),low=bp<=25&&!v.chg;c.lineWidth=1.4;c.strokeRect(336.7,5.7,21,10.6);c.fillRect(357.7,8.6,2.4,4.8);if(v.chg){c.beginPath();c.moveTo(349,6.6);c.lineTo(343,11.6);c.lineTo(346.8,11.6);c.lineTo(345,15.4);c.lineTo(351.4,10);c.lineTo(347.6,10);c.closePath();c.fill();T('зар',398,15,12,700,'right');}else{c.fillRect(338.7,7.7,17*bp/100,6.6);T(bp+' %',398,15,12,700,'right');}T([v.chg?'зарядка':low?'РАЗРЯД':'',(cfg.src||'лодка')+' '+f1(v.boat||0)+' В',cfg.wifi==='вкл'?'Wi-Fi':'',cfg.sd==='выкл'?'':'SD'].filter(Boolean).join(' · '),332,14,10.5,low?800:600,'right');H(0,20,400);
   function rose(cx,cy,R){const k=R/60;c.lineWidth=1.5;c.beginPath();c.arc(cx,cy,R,0,7);c.stroke();
     for(let a=0;a<360;a+=30){const r=(a-90)*D,r0=R-(a%90?4:8)*Math.max(1,k*0.7);c.lineWidth=a%90?1:2;c.beginPath();c.moveTo(cx+Math.cos(r)*r0,cy+Math.sin(r)*r0);c.lineTo(cx+Math.cos(r)*R,cy+Math.sin(r)*R);c.stroke();}
     const nr=(-v.hdg-90)*D;T('С',cx+Math.cos(nr)*(R-16*k),cy+Math.sin(nr)*(R-16*k)+4.5*k,12*k,700,'center');
