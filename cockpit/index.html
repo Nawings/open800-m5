@@ -108,9 +108,10 @@ code{font-family:var(--f-mono);font-size:12px}
     <div class="card">
       <h3>Что показывает экран <button type="button" data-go="dsp">Показать</button></h3>
       <canvas id="epv" width="800" height="600" role="img" aria-label="Макет экрана: ветер, курс, скорости, крен и дифферент" style="width:100%;height:auto;aspect-ratio:4/3;border:1px solid var(--line);border-radius:4px;display:block"></canvas>
-      <div style="display:flex;flex-wrap:wrap;gap:6px"><button type="button" id="kMode">РЕЖИМ</button><button type="button" id="kMenu">МЕНЮ</button><button type="button" id="kUp">▲</button><button type="button" id="kDn">▼</button><button type="button" id="kBat">Лодка 12,7 В, резерв 12,3 В</button></div>
+      <div style="display:flex;flex-wrap:wrap;gap:6px"><button type="button" id="kMode">РЕЖИМ</button><button type="button" id="kMenu">МЕНЮ</button><button type="button" id="kUp">▲</button><button type="button" id="kDn">▼</button><button type="button" id="kBat">Лодка 12,7 В, резерв 12,3 В</button><button type="button" id="kDev">Увал +6°</button></div>
       <ul>
-        <li><b>Понажимайте кнопки выше:</b> РЕЖИМ листает 4 вида — основной, ветер, тактика, лодка. МЕНЮ открывает настройки, ▲ и ▼ выбирают пункт, МЕНЮ меняет значение.</li>
+        <li><b>Понажимайте кнопки выше:</b> РЕЖИМ листает 4 вида — основной, ветер, тактика, лодка. МЕНЮ открывает настройки, ▲ и ▼ выбирают пункт, МЕНЮ меняет значение. Вне меню ▲ ставит ноль базового курса.</li>
+        <li><b>Курс виден крупно на всех видах:</b> градусы по компасу и рядом отклонение от базового курса: увал +, привод −, на обоих галсах одинаково. После поворота или огибания знака прибор ждёт 30 секунд, пока лодка ляжет на курс, берёт средний курс за это время как новый базовый и дальше его не меняет, поэтому цифра сама не ползёт. Поворотом считается смена галса или изменение курса больше чем на 60° за минуту. Кнопка ▲ вне меню ставит ноль вручную в любой момент.</li>
         <li><b>Вверху справа — питание:</b> напряжение лодки и резерва, значок и проценты того источника, от которого прибор работает сейчас. При 25 % и меньше появляется слово РАЗРЯД, выше 13,2 В — «зарядка», при работе от резерва — НА РЕЗЕРВЕ. В меню есть строка «Питание». Кнопка с напряжениями на этой странице перебирает состояния.</li>
         <li><b>Роза ветра</b> с лодкой сверху, нос вверх: чёрная стрелка В — вымпельный ветер, светлая стрелка И — истинный, буква С — север.</li>
         <li><b>Цифры:</b> истинный ветер, его направление, вымпельный ветер, курс по компасу и по GPS, скорость, VMG.</li>
@@ -887,14 +888,14 @@ function epd42(){const w=92,h=89.7,t=1.6,M='#141518',S='#e8e9ea',TIN='#c9cdd0';c
   const u=x=>0.33+4.375-x*1.25;g.userData.pins={};[['VCC'],['GND'],['DIN'],['CLK'],['CS'],['DC'],['RST'],['BUSY']].forEach((n,i)=>g.userData.pins[n[0]]=[u(i),18.1,-1.5]);
   return g;}
 
-// экран прибора 400 × 300, чёрно-белый. v: aws, awa (+ справа), hdg, sog, heel (+ на правый), pitch (+ на нос), sig, d, boat и res (напряжения, В), onRes (работает от резерва), batt (заряд, %), chg (идёт зарядка), mode 0–3, cfg, menu
+// экран прибора 400 × 300, чёрно-белый. v: aws, awa (+ справа), hdg, sog, heel (+ на правый), pitch (+ на нос), sig, d, dev (отклонение от базового курса: увал +, привод −), boat и res (напряжения, В), onRes (работает от резерва), batt (заряд, %), chg (идёт зарядка), mode 0–3, cfg, menu
 function drawScreen(c,v){const INK='#17171b',PAP='#dcdad1',F='Arial, sans-serif',D=Math.PI/180,cfg=v.cfg||{},ms=cfg.unit==='м/с',U=ms?'м/с':'уз';
   const f1=x=>x.toFixed(1).replace('.',','),spd=x=>f1(ms?x*0.5144:x),side=a=>Math.abs(a)<0.5?'':(a<0?'Л':'П'),n360=a=>((Math.round(a)%360)+360)%360;
   const ar=v.awa*D,wx=v.aws*Math.sin(ar),wy=v.aws*Math.cos(ar)-v.sog,tws=Math.hypot(wx,wy),twa=Math.atan2(wx,wy)/D,twd=n360(v.hdg+twa),cog=n360(v.hdg+2),vmg=v.sog*Math.cos(twa*D);
   const T=(s,X,Y,sz,w,al)=>{c.font=(w||700)+' '+sz+'px '+F;c.textAlign=al||'left';c.textBaseline='alphabetic';c.fillText(s,X,Y);c.textAlign='left';};
   const H=(x,y,w,t)=>c.fillRect(x,y,w,t||1.5);
   c.save();c.fillStyle=PAP;c.fillRect(0,0,400,300);c.fillStyle=INK;c.strokeStyle=INK;c.lineJoin='round';c.lineCap='round';
-  const mode=v.mode||0,names=['ОСНОВНОЙ','ВЕТЕР','ТАКТИКА','ЛОДКА'];
+  const mode=v.mode||0,names=['ОСНОВНОЙ','ВЕТЕР','ТАКТИКА','ЛОДКА'],hs=n360(v.hdg)+'°',dr=v.dev==null?null:Math.round(v.dev),devS=dr==null?'':(dr>0?'+':dr<0?'−':'')+Math.abs(dr)+'°';
   T('М5',6,15,13);T(v.menu?'МЕНЮ':names[mode],44,15,11);const bp=Math.max(0,Math.min(100,Math.round(v.batt||0))),low=bp<=25&&!v.chg;c.lineWidth=1.4;c.strokeRect(336.7,5.7,21,10.6);c.fillRect(357.7,8.6,2.4,4.8);if(v.chg){c.beginPath();c.moveTo(349,6.6);c.lineTo(343,11.6);c.lineTo(346.8,11.6);c.lineTo(345,15.4);c.lineTo(351.4,10);c.lineTo(347.6,10);c.closePath();c.fill();T('зар',398,15,12,700,'right');}else{c.fillRect(338.7,7.7,17*bp/100,6.6);T(bp+' %',398,15,12,700,'right');}{const st=[v.chg?'зарядка':v.onRes?'НА РЕЗЕРВЕ':low?'РАЗРЯД':'','лодка '+f1(v.boat||0)+' В',v.res!=null?'резерв '+f1(v.res)+' В':'',cfg.wifi==='вкл'?'Wi-Fi':'',cfg.sd==='выкл'?'':'SD'].filter(Boolean).join(' · '),fw=(low||v.onRes)?800:600;let fz=10.5;c.font=fw+' '+fz+'px '+F;const sw=c.measureText(st).width,mx=215;if(sw>mx)fz*=mx/sw;T(st,332,14,fz,fw,'right');}H(0,20,400);
   function rose(cx,cy,R){const k=R/60;c.lineWidth=1.5;c.beginPath();c.arc(cx,cy,R,0,7);c.stroke();
     for(let a=0;a<360;a+=30){const r=(a-90)*D,r0=R-(a%90?4:8)*Math.max(1,k*0.7);c.lineWidth=a%90?1:2;c.beginPath();c.moveTo(cx+Math.cos(r)*r0,cy+Math.sin(r)*r0);c.lineTo(cx+Math.cos(r)*R,cy+Math.sin(r)*R);c.stroke();}
@@ -911,16 +912,16 @@ function drawScreen(c,v){const INK='#17171b',PAP='#dcdad1',F='Arial, sans-serif'
   else if(mode===1){rose(132,162,118);H(268,20,1.5,0);c.fillRect(268,20,1.5,280);
     T('ИСТИННЫЙ',278,44,11);T(spd(tws),278,84,38);T(U,278,100,13);T('угол '+Math.round(Math.abs(twa))+'° '+side(twa),278,118,12,600);H(268,128,132);
     T('ВЫМПЕЛЬНЫЙ',278,148,11);T(spd(v.aws),278,188,38);T(U,278,204,13);T('угол '+Math.round(Math.abs(v.awa))+'° '+side(v.awa),278,222,12,600);H(268,232,132);
-    T('ОТКУДА ДУЕТ',278,252,11);T(twd+'°',278,288,30);}
+    T('КУРС',278,248,11);T(hs,278,288,34);if(devS)T(devS,396,288,22,700,'right');}
   else if(mode===2){T('НАПРАВЛЕНИЕ ВЕТРА, 10 МИНУТ',10,38,11);c.lineWidth=1;c.setLineDash([3,3]);c.beginPath();c.moveTo(10,108);c.lineTo(390,108);c.stroke();c.setLineDash([]);T((twd+10)+'°',392,52,10,600,'right');T((twd-10)+'°',392,172,10,600,'right');
     c.lineWidth=2.2;c.beginPath();for(let i=0;i<=120;i++){const x=10+i*380/120,a=6*Math.sin(i/11+0.6)+2.6*Math.sin(i/4.3),y=108-a*6;i?c.lineTo(x,y):c.moveTo(x,y);}c.stroke();H(0,184,400);c.fillRect(133,184,1.5,116);c.fillRect(266,184,1.5,116);
-    T('СДВИГ ВЕТРА',8,202,10.5);shift(8,214);T('VMG',141,202,10.5);T(spd(vmg),141,250,36);T(U,141,270,13);T('УГОЛ ЛАВИРОВКИ',274,202,10.5);T(Math.round(Math.abs(twa)*2)+'°',274,250,36);T('по истинному',274,270,11,600);}
-  else if(mode===3){c.fillRect(200,20,1.5,280);T('КРЕН',10,42,13);T(heelS,100,92,42,700,'center');stern(100,205,1.6);T('ДИФФЕРЕНТ',210,42,13);T(pitchS,300,92,42,700,'center');prof(300,205,1.45);T('нос →',390,292,10,600,'right');}
+    T('СДВИГ ВЕТРА',8,202,10.5);shift(8,214);T('VMG',141,202,10.5);T(spd(vmg),141,250,36);T(U,141,270,13);T('КУРС',274,202,10.5);T(hs,274,250,38);if(devS)T(devS+' от базового',274,274,13);}
+  else if(mode===3){c.fillRect(200,20,1.5,238);T('КРЕН',10,42,13);T(heelS,100,92,42,700,'center');stern(100,205,1.6);T('ДИФФЕРЕНТ',210,42,13);T(pitchS,300,92,42,700,'center');prof(300,205,1.45);T('нос →',390,252,10,600,'right');H(0,258,400);T('КУРС',8,296,12);T(hs,200,296,36,700,'center');if(devS)T(devS,392,296,26,700,'right');}
   else{rose(70,108,60);
     const X1=146,X2=276,tile=(X,Y,t,val,unit,sub)=>{T(t,X,Y,10.5);T(val,X,Y+31,29);if(unit){c.font='700 29px '+F;const w=c.measureText(val).width;T(unit,X+w+3,Y+31,12);}if(sub)T(sub,X,Y+45,11,600);};
     c.fillRect(138,20,1.5,186);c.fillRect(268,20,1.5,186);
-    tile(X1,35,'ИСТИННЫЙ ВЕТЕР',spd(tws),U,'угол '+Math.round(Math.abs(twa))+'° '+side(twa));tile(X2,35,'НАПРАВЛЕНИЕ',twd+'°','','откуда дует');
-    tile(X1,96,'ВЫМПЕЛЬНЫЙ',spd(v.aws),U,'угол '+Math.round(Math.abs(v.awa))+'° '+side(v.awa));tile(X2,96,'КУРС',n360(v.hdg)+'°','','по GPS '+cog+'°');
+    tile(X1,35,'ИСТИННЫЙ ВЕТЕР',spd(tws),U,'угол '+Math.round(Math.abs(twa))+'° '+side(twa));T('КУРС',X2,33,10.5);T(hs,X2-3,82,52);if(devS)T(devS,X2,122,30);T('GPS '+cog+'° · ветер '+twd+'°',X2,141,9.5,600);
+    tile(X1,96,'ВЫМПЕЛЬНЫЙ',spd(v.aws),U,'угол '+Math.round(Math.abs(v.awa))+'° '+side(v.awa));
     tile(X1,157,'СКОРОСТЬ',spd(v.sog),U,'по GPS');tile(X2,157,'VMG',spd(vmg),U,'к ветру');
     H(0,206,400);c.fillRect(133,206,1.5,94);c.fillRect(266,206,1.5,94);
     T('КРЕН',8,221,10.5);T(heelS,126,223,19,700,'right');stern(66,262,1);T('ДИФФ',141,221,10.5);T(pitchS,259,223,19,700,'right');prof(199,265,1);T('нос →',259,296,9,600,'right');
@@ -1090,7 +1091,7 @@ STLS.forEach(([name,pos,how,col,ex,label])=>{
 
 // ---------- экран, стрелки, сенсор ----------
 const dc=document.createElement('canvas');dc.width=800;dc.height=600;const dctx=dc.getContext('2d');dctx.scale(2,2);const dtex=new THREE.CanvasTexture(dc);
-const SCR={aws:17.4,awa:28.5,hdg:183,sog:6.1,heel:-14,pitch:1.2,sig:1,d:3,v:12.7,r:12.3,mode:0,cfg:{unit:'узлы',wifi:'выкл',sd:'вкл'},menu:null};
+const SCR={aws:17.4,awa:28.5,hdg:177,dev:6,sog:6.1,heel:-14,pitch:1.2,sig:1,d:3,v:12.7,r:12.3,mode:0,cfg:{unit:'узлы',wifi:'выкл',sd:'вкл'},menu:null};
 const MENU=[{t:'Подсветка',k:'light',o:['выкл','30 %','60 %','100 %'],v:0},{t:'Скорость',k:'unit',o:['узлы','м/с'],v:0},{t:'Порог сдвига',k:'shift',o:['2°','3°','5°'],v:1},{t:'Wi-Fi',k:'wifi',o:['выкл','вкл'],v:0},{t:'Запись на карту',k:'sd',o:['вкл','выкл'],v:0},{t:'Питание',k:'pwr',ro:1},{t:'Выход',k:'exit'}];
 const RES_DROP=0.7,LD=[[11.8,0],[12,25],[12.2,50],[12.4,75],[12.7,100]],LI=[[9,0],[10.2,7],[10.8,22],[11.1,40],[11.4,58],[11.7,72],[12,83],[12.6,100]];
 function pct(v,t){if(v<=t[0][0])return 0;for(let i=1;i<t.length;i++)if(v<=t[i][0]){const a=t[i-1],c=t[i];return Math.round(a[1]+(c[1]-a[1])*(v-a[0])/(c[0]-a[0]));}return 100;}
@@ -1100,7 +1101,8 @@ function drawSCR(){const m=SCR.menu;PCBLIB.drawScreen(dctx,Object.assign({},SCR,
 drawSCR();
 $('kMode').addEventListener('click',()=>{if(SCR.menu===null){SCR.mode=(SCR.mode+1)%4;drawSCR();}});
 $('kMenu').addEventListener('click',()=>{if(SCR.menu===null){SCR.menu=0;}else{const r=MENU[SCR.menu];if(r.k==='exit')SCR.menu=null;else if(r.o){r.v=(r.v+1)%r.o.length;SCR.cfg[r.k]=r.o[r.v];}}drawSCR();});
-$('kUp').addEventListener('click',()=>{if(SCR.menu!==null){SCR.menu=(SCR.menu+MENU.length-1)%MENU.length;drawSCR();}});
+$('kUp').addEventListener('click',()=>{if(SCR.menu!==null){SCR.menu=(SCR.menu+MENU.length-1)%MENU.length;}else SCR.dev=0;drawSCR();});
+const DEV=[[6,'Увал +6°'],[-4,'Привод −4°'],[0,'На базовом курсе']];let dvi=0;$('kDev').addEventListener('click',()=>{dvi=(dvi+1)%DEV.length;SCR.dev=DEV[dvi][0];SCR.hdg=183-SCR.dev;$('kDev').textContent=DEV[dvi][1];drawSCR();});
 $('kDn').addEventListener('click',()=>{if(SCR.menu!==null){SCR.menu=(SCR.menu+1)%MENU.length;drawSCR();}});
 const BST=[[12.7,12.3],[12.3,12.3],[11.9,12.3],[13.8,12.3],[10.7,12.3],[12.7,null]];let bst=0;$('kBat').addEventListener('click',()=>{bst=(bst+1)%BST.length;SCR.v=BST[bst][0];SCR.r=BST[bst][1];const f=x=>x.toFixed(1).replace('.',',');$('kBat').textContent='Лодка '+f(SCR.v)+' В, '+(SCR.r==null?'резерв не подключён':'резерв '+f(SCR.r)+' В');drawSCR();});
 (function(){const g=new THREE.Group();
@@ -1164,7 +1166,7 @@ const PWR=new THREE.Group(),RES=new THREE.Group(),HX=-20,HY=-772.5,HZ=-1500;
   [-10.16,10.16].forEach(x=>{const st=cz(82+x,-31.2,61,64,1.4,brass,'латунная стойка 3 мм: винт М2,5 сквозь рамку',10);add(st,V(0,0,120),'',true);});
   const lh=new THREE.Group();add(lh,V(0,0,110),'',true);reg('LH','A',lh,57,24,57,[0,0,-1]);reg('LH','K',lh,59,24,57,[0,0,-1]);
   const ll=new THREE.Group();add(ll,V(0,0,110),'',true);reg('LL','A',ll,57,6,57,[0,0,-1]);reg('LL','K',ll,59,6,57,[0,0,-1]);
-  [['BK1','РЕЖИМ',33,'кнопка РЕЖИМ: переключает виды экрана'],['BK2','МЕНЮ',15,'кнопка МЕНЮ: открыть меню; в меню — изменить пункт'],['BK3','▲',-3,'кнопка ▲: вверх по меню'],['BK4','▼',-21,'кнопка ▼: вниз по меню']].forEach(q=>{const g=new THREE.Group();add(g,V(0,0,140),'',true);
+  [['BK1','РЕЖИМ',33,'кнопка РЕЖИМ: переключает виды экрана'],['BK2','МЕНЮ',15,'кнопка МЕНЮ: открыть меню; в меню — изменить пункт'],['BK3','▲',-3,'кнопка ▲: вверх по меню; вне меню — ноль базового курса'],['BK4','▼',-21,'кнопка ▼: вниз по меню']].forEach(q=>{const g=new THREE.Group();add(g,V(0,0,140),'',true);
     g.add(cz(36,q[2],55,73,6,steel,q[3],20),cz(36,q[2],66.5,70,8,M(0xb9c0c6,{metalness:0.7,roughness:0.35}),'гайка кнопки: изнутри крышки',6),cz(36,q[2],73,74.2,8,M(0xb9c0c6,{metalness:0.7,roughness:0.35}),q[3],24),cz(36,q[2],74.2,75.4,4.5,M(0xd7dbe0,{metalness:0.6,roughness:0.4}),q[3],20));
     const cv=document.createElement('canvas');cv.width=256;cv.height=96;const x=cv.getContext('2d');x.fillStyle='#17171b';x.font='700 62px Arial';x.textAlign='center';x.textBaseline='middle';x.fillText(q[1],128,50);const lt=new THREE.Mesh(new THREE.PlaneGeometry(20,7.5),new THREE.MeshBasicMaterial({map:new THREE.CanvasTexture(cv),transparent:true,depthWrite:false}));lt.position.set(19,q[2],73.05);g.add(lt);
     reg(q[0],'S',g,34.5,q[2],55,[0,0,-1]);reg(q[0],'G',g,37.5,q[2],55,[0,0,-1]);});
