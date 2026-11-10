@@ -487,15 +487,32 @@ function esp32s3(){const w=57,h=27.9,t=1.7,M='#17171a',S='#e6e7e8',TIN='#c9cdd0'
   px.forEach(x=>[-12.7,12.7].forEach(y=>{g.add(bx(x,y,-1.25,2.5,2.5,2.5,std(0xe2b21d,{roughness:0.5}),'жёлтая колодка штырей'));g.add(bx(x,y,-3.55,0.64,0.64,7.1,gold,'штырь: впаян в плату связи, снизу к нему припаян провод'));dome(g,x,y,t,1,0.5,'пайка');}));
   return g;}
 
-function sd3v3(){const w=24,h=20,t=1.6,M='#1a4f9e',S='#eef2f7',TIN='#c9cdd0';const s=rrect(w,h,[0.8,0.8,0.8,0.8]);
-  [-7,7].forEach(x=>hole(s,x,-7.2,2.7));const names=['3V3','GND','SCK','MOSI','MISO','CS'],pxs=names.map((n,i)=>-6.35+i*2.54),py=-3.2;pxs.forEach(x=>hole(s,x,py,0.95));
-  const f=sheet(w,h,768,M,front),b=sheet(w,h,768,M,backM);
-  [f,b].forEach(d=>pxs.forEach(x=>d.disc(x,py,0.82,TIN)));names.forEach((n,i)=>f.text(n,pxs[i],-5.8,0.9,S,90,'700 '));f.text('micro SD 3,3 В',0,-9,1.1,S,0,'600 ');
-  const g=base({w,h,t,shape:s,mask:0x1a4f9e,edge:0xb9b48a,top:f,bot:b,label:'модуль карты памяти micro-SD на 3,3 В: здесь пишутся данные гонок'});
-  const soc=bx(0,5.5,t+0.9,15,15.2,1.8,std(0xc7c9cb,{metalness:0.8,roughness:0.3}),'гнездо micro-SD: карта вставляется сверху, с щелчком');g.add(soc);
-  g.add(bx(0,8.2,t+2,11,15,0.7,std(0x1d1f24,{roughness:0.5}),'карта micro-SD 32 ГБ'));
-  g.add(bx(0,-0.6,t,6,1.4,1,std(0x1c2a5a),'конденсатор 100 мкФ: гасит всплески тока записи'));
-  g.userData.pins={};names.forEach((n,i)=>{g.userData.pins[n]=[pxs[i],py,-1.4];g.add(bx(pxs[i],py,-0.7,0.64,0.64,1.4,gold,'контакт '+n+': провод припаян'));dome(g,pxs[i],py,t,1,0.45);});
+function sd3v3(){const w=25,h=22,t=1.6,M='#17181c',S='#f0f0ec',TIN='#cfd2d4',L='модуль micro-SD 3 В типа Adafruit 4682, 25 × 22 мм: только гнездо, резисторы и конденсатор. Стабилизатора и буфера нет';const s=rrect(w,h,[2.2,2.2,2.2,2.2]);
+  const hx=10.16,hy=8.7;[-hx,hx].forEach(x=>hole(s,x,hy,2.7));
+  const names=['3V3','GND','SCK','MISO','MOSI','CS','D1','DAT2','DET'],pxs=names.map((n,i)=>-10.16+i*2.54),py=-8.4;pxs.forEach(x=>hole(s,x,py,1));
+  const f=sheet(w,h,1024,M,front),b=sheet(w,h,768,M,backM);
+  [f,b].forEach(d=>{pxs.forEach(x=>d.disc(x,py,0.8,TIN));[-hx,hx].forEach(x=>{d.disc(x,hy,1.9,TIN);});});
+  [-hx,hx].forEach(x=>f.ring(x,hy,2.15,S,0.14));
+  f.text('microSD SPI or SDIO',0,-5.45,2.05,S,0,'500 ');
+  [['3V',0],['CLK',2],['D0',3],['CMD',4],['D3',5],['D1',6],['DET',8]].forEach(a=>f.text(a[0],pxs[a[1]],-6.85,1.1,S,0,'500 '));
+  [['GND',1],['SO',3],['SI',4],['CS',5],['DAT2',7]].forEach(a=>f.text(a[0],pxs[a[1]],-10.05,1.1,S,0,'500 '));
+  f.ring(-10.6,3.6,0.95,S,0.16);f.text('B',-10.6,3.58,1.2,S,0,'700 ');f.disc(-11.2,6.1,0.55,'#c9a227');f.disc(8.6,-2.9,0.55,'#c9a227');
+  [-9.1,9.45].forEach(x=>{f.line([[x-1.5,2.7],[x-1.5,-1.3]],S,0.12);f.line([[x+1.5,2.7],[x+1.5,-1.3]],S,0.12);});
+  for(let i=0;i<5;i++){const a=(90+i*72)*Math.PI/180,cx=9.45+Math.cos(a)*0.85,cy2=4.8+Math.sin(a)*0.85;f.g.save();f.g.translate(cx,cy2);f.g.rotate(a);f.g.fillStyle=S;f.g.beginPath();f.g.ellipse(0,0,0.92,0.46,0,0,7);f.g.fill();f.g.restore();}f.disc(9.45,4.8,0.3,M);
+  ['microSD Breakout','Use with SPI or','SDIO. 3V power','and logic ONLY!'].forEach((x,i)=>b.text(x,0,2.6-i*2.2,1.85,S,0,'500 '));
+  const g=base({w,h,t,shape:s,mask:0x17181c,edge:0xc9c6a8,top:f,bot:b,label:L});
+  const SHL=std(0xc4c6c7,{metalness:0.8,roughness:0.32}),sx=0.2,sy=3.45,SW=14.2,SL=14.7,SH=1.9;
+  g.add(bx(sx,sy,t+SH/2,SW,SL,SH,SHL,'гнездо micro-SD: карта входит со стороны контактов модуля, с щелчком'));
+  const sh=sheet(SW,SL,768,'#c4c6c7',front),ox=-sx,oy=-sy,c0='#17181c';
+  [[-2.25,5.5,1.6,7.85],[2.2,5.5,6.2,7.85]].forEach(r=>{sh.rect(r[0]+ox,r[1]+oy,r[2]+ox,r[3]+oy,c0);for(let i=0;i<3;i++){const x=r[0]+0.75+i*((r[2]-r[0]-1.5)/2);sh.rect(x-0.2+ox,r[1]+0.15+oy,x+0.2+ox,r[3]-0.7+oy,'#d8c27a');}});
+  sh.line([[-6.55+ox,8+oy],[-6.55+ox,2.2+oy],[-4.55+ox,2.2+oy]],c0,0.5);sh.line([[-4.55+ox,2.2+oy],[-4.55+ox,4.6+oy]],c0,0.28);
+  [[-1.3,4.6,-1.3,-3.1],[-3.4,2.3,-2.6,1.4],[4.1,3.7,4.1,-3.1],[5.1,3.7,5.1,-3.1]].forEach(l=>sh.line([[l[0]+ox,l[1]+oy],[l[2]+ox,l[3]+oy]],c0,0.28));
+  const top=mesh(new T.PlaneGeometry(SW,SL),std(0xc8c8c8,{map:new T.CanvasTexture(sh.c),metalness:0.2,roughness:0.5}),'гнездо micro-SD: металлический корпус, карта внутри');top.position.set(sx,sy,t+SH+0.006);g.add(top);
+  g.add(bx(sx,-3.76,t+0.95,11,0.3,0.7,std(0x1d1f24,{roughness:0.5}),'карта micro-SD 32 ГБ: торец виден у входа в гнездо'));
+  [-9.1,9.45].forEach(x=>{g.add(bx(x,0.7,t+0.25,1.55,3.2,0.5,pkg,'сборка резисторов 47 кОм, код 473: подтяжка линий карты к 3 В'));[-1,1].forEach(q=>[-1.2,-0.4,0.4,1.2].forEach(d=>g.add(bx(x+q*0.92,0.7+d,t+0.15,0.4,0.42,0.3,tin))));});
+  g.add(bx(-9.3,-2.9,t+0.5,1.5,1.5,1,std(0x9a7755,{roughness:0.55}),'керамический конденсатор питания карты'));[-1,1].forEach(q=>g.add(bx(-9.3+q*0.85,-2.9,t+0.5,0.4,1.5,1,tin)));
+  smd(g,-8.1,5.7,t,1,true,'c','малый керамический конденсатор');
+  g.userData.pins={};names.forEach((n,i)=>{g.userData.pins[n]=[pxs[i],py,-1.4];g.add(bx(pxs[i],py,-0.7,0.64,0.64,1.4,tin,'контакт '+n+': провод припаян'));dome(g,pxs[i],py,t,1,0.45);});
   return g;}
 
 // QUESCAN AN181 (u-blox M10050): 18,25 × 18 × 6,78 мм по замеру, раскладка снята с фото. z=0 — сторона банки и разъёма, антенна сверху; +x — край с разъёмом
@@ -1106,7 +1123,7 @@ const dc=document.createElement('canvas');dc.width=800;dc.height=600;const dctx=
   const gps=board(0.01825,0.018,pcbB,[],'GPS QUESCAN AN181 (u-blox M10050), 18 × 18,25 × 6,78 мм: скорость и курс 10 раз/с. Антенной вверх');
   header(gps,'GPS',['GND','TX','RX','VCC'],0.0122,-0.0015,0,0.001,-1);det(gps,PCBLIB.an181(),'as');
   gps.position.set(0.005,0.047,-0.012);reg(gps,cpG,{s:11,e:[0,0.06,0.02]});
-  const sdb=board(0.024,0.02,0x1a4f9e,[],'модуль карты памяти micro-SD на 3,3 В: здесь пишутся данные гонок');header(sdb,'SD',['3V3','GND','SCK','MOSI','MISO','CS'],-0.00635,0.0032,P254,0,-1);det(sdb,PCBLIB.sd3v3(),'as');sdb.rotation.x=Math.PI/2;sdb.position.set(0.078,-0.024,0.022);reg(sdb,cpG,{s:12,e:[0.06,0,0.08]});
+  const sdb=board(0.025,0.022,0x17181c,[],'модуль micro-SD 3 В типа Adafruit 4682: здесь пишутся данные гонок');header(sdb,'SD',['3V3','GND','SCK','MISO','MOSI','CS','D1','DAT2','DET'],-0.01016,0.0084,P254,0,-1);det(sdb,PCBLIB.sd3v3(),'as');sdb.rotation.x=Math.PI/2;sdb.position.set(0.078,-0.024,0.022);reg(sdb,cpG,{s:12,e:[0.06,0,0.08]});
   // экран, стрелки, «ноль», крышка
   const disp=box(0.092,0.0897,0.0012,M(0x1c1c1c,{roughness:0.6,transparent:true,opacity:0.01,depthWrite:false}));disp.position.set(-0.036,0,0.0235);(function(){const e=PCBLIB.epd42();e.scale.setScalar(0.001);e.position.z=-0.0028;e.traverse(m=>{if(m.material&&m.material.isMaterial&&m.material.map)m.material.color.setScalar(0.55);});disp.add(e);})();
   const scr=new THREE.Mesh(new THREE.PlaneGeometry(0.0848,0.0636),new THREE.MeshBasicMaterial({map:dtex}));scr.position.set(-0.00033,0.0039,0.0002);disp.add(lab(scr,'экран 4,2″ e-paper, 400 × 300: перерисовываются только цифры'));
