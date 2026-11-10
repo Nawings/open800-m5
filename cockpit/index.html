@@ -924,19 +924,18 @@ function drawScreen(c,v){const INK='#17171b',PAP='#dcdad1',F='Arial, sans-serif'
     if(dn)T(nw?'нет данных с мачты':ng?'нет GPS':'нет компаса',200,114,18,700,'center');else{c.lineWidth=2.2;c.beginPath();for(let i=0;i<=120;i++){const x=10+i*380/120,a=6*Math.sin(i/11+0.6)+2.6*Math.sin(i/4.3),y=108-a*6;i?c.lineTo(x,y):c.moveTo(x,y);}c.stroke();}H(0,184,400);c.fillRect(133,184,1.5,116);c.fillRect(266,184,1.5,116);
     T('СДВИГ ВЕТРА',8,202,10.5);shift(8,214);T('VMG',141,202,10.5);T(VM(vmg),141,250,36);T(U,141,270,13);T('КУРС',274,202,10.5);T(hs,274,250,38);if(devS)T(devS+' от базового',274,274,13);}
   else if(mode===3){c.fillRect(200,20,1.5,238);T('КРЕН',10,42,13);T(heelS,100,92,42,700,'center');stern(100,205,1.6);T('ДИФФЕРЕНТ',210,42,13);T(pitchS,300,92,42,700,'center');prof(300,205,1.45);T('нос →',390,252,10,600,'right');H(0,258,400);T('КУРС',8,296,12);T(hs,200,296,36,700,'center');if(devS)T(devS,392,296,26,700,'right');}
-  else if(mode===4){const big=(X,Y,lb,val,un,sz,by)=>{T(lb,X,Y,11);T(val,X,by,sz);if(un){c.font='700 '+sz+'px '+F;const w=c.measureText(val).width;T(un,X+w+4,by,Math.max(14,sz*0.3));}},
-      cell=(X,lb,val,sub)=>{T(lb,X,214,10);T(val,X,260,40);if(sub)T(sub,X,284,13,600);},
-      deg=(a,no)=>no?NA:Math.round(Math.abs(a))+'°',sd=(a,no)=>no?'':side(a)==='Л'?'левый':side(a)==='П'?'правый':'';
-    c.fillRect(200,20,1.5,280);H(0,40,400);H(0,108,400);H(0,202,400);c.fillRect(100,202,1.5,98);c.fillRect(300,202,1.5,98);
-    T('ЛОДКА',100,36,15,800,'center');T('ВЕТЕР',300,36,15,800,'center');
-    big(8,55,'СКОРОСТЬ',GS(v.sog),ng?'':U,42,100);
-    big(208,55,'СКОРОСТЬ ВЫМ.',W(v.aws),nw?'':U,42,100);
-    big(8,123,'ГРАДУС К N',hs,'',68,192);
-    big(208,123,'ГРАДУС ВЫМ.',deg(v.awa,nw),nw?'':side(v.awa),68,192);
-    cell(8,'ГР. К ВЕТРУ',deg(twa,tn),sd(twa,tn));
-    cell(108,'+/− ОТ СР. ЗН.',devS||NA,dr==null?'':dr>0?'увал':dr<0?'привод':'на курсе');
-    cell(208,'V ИСТИН.',TW(tws),tn?'':U);
-    cell(308,'ГРАД. ИСТИН.',dn?NA:twd+'°',dn?'':'от севера');}
+  else if(mode===4){const val=(X,Y,lb,s,sz,by,tail,tz)=>{T(lb,X,Y,10.5);T(s,X,by,sz);if(tail){c.font='700 '+sz+'px '+F;const w=c.measureText(s).width;T(tail,X+w+4,by,tz||20);}},
+      deg=(a,no)=>no?NA:Math.round(Math.abs(a))+'°',L=7,R=207;
+    c.fillRect(200,20,1.5,280);H(0,34,400);H(0,99,400);H(0,176,400);H(0,240,400);
+    T('ЛОДКА',100,31,12.5,800,'center');T('ВЕТЕР',300,31,12.5,800,'center');
+    val(L,45,'СКОРОСТЬ, '+U,GS(v.sog),58,90);
+    val(R,45,'СКОРОСТЬ ВЫМ., '+U,W(v.aws),58,90);
+    val(L,110,'ГРАДУС К N',hs,80,172);
+    val(R,110,'ГРАДУС ВЫМ.',deg(v.awa,nw),80,172,nw?'':side(v.awa));
+    val(L,187,'ГР. К ВЕТРУ',deg(twa,tn),58,231,tn?'':side(twa));
+    val(R,187,'V ИСТИН., '+U,TW(tws),58,231);
+    val(L,251,'+/− ОТ СР. ЗН.',devS||NA,58,295,dr==null?'':dr>0?'увал':dr<0?'привод':'на курсе',13);
+    val(R,251,'ГРАД. ИСТИН., от севера',dn?NA:twd+'°',58,295);}
   else{rose(70,108,60);
     const X1=146,X2=276,tile=(X,Y,t,val,unit,sub)=>{T(t,X,Y,10.5);T(val,X,Y+31,29);if(unit){c.font='700 29px '+F;const w=c.measureText(val).width;T(unit,X+w+3,Y+31,12);}if(sub)T(sub,X,Y+45,11,600);};
     c.fillRect(138,20,1.5,186);c.fillRect(268,20,1.5,186);
