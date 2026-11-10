@@ -1,0 +1,778 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" href="data:,">
+<meta charset="utf-8">
+<title>Дисплей прибора М5</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500&family=Onest:wght@400;500;600&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Пульт на столе: живой прибор сверху, ниже все экраны как раскладка, затем таблицы управления. Стиль — общий для страниц проекта */
+:root{
+  --bg:#edf1f3; --surface:#ffffff; --ink:#14202b; --muted:#536373; --line:#d3dbe1; --accent:#0d6b78; --accent-bg:#e0eff1;
+  --abs:#c9cdc9; --abs2:#a9aeab; --abs-ink:#1c2228; --key:#b8bfc5; --key2:#7f878e; --dark:#141a20;
+  --f-display:"Unbounded","Arial Black",system-ui,sans-serif; --f-body:"Onest",system-ui,-apple-system,"Segoe UI",sans-serif; --f-mono:"JetBrains Mono",ui-monospace,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--bg:#0e151b;--surface:#162029;--ink:#e2e9ee;--muted:#93a3b0;--line:#27343f;--accent:#4db6c2;--accent-bg:#123238;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0e151b;--surface:#162029;--ink:#e2e9ee;--muted:#93a3b0;--line:#27343f;--accent:#4db6c2;--accent-bg:#123238;color-scheme:dark}
+[hidden]{display:none!important}
+body{background:var(--bg);color:var(--ink);font:15px/1.5 var(--f-body);margin:0}
+.wrap{max-width:1180px;margin:0 auto;padding-block:20px 56px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:grid;gap:36px}
+.stage{position:relative;display:grid;gap:18px;min-width:0}
+h1{font:500 26px/1.2 var(--f-display);margin:0;text-wrap:balance;padding-right:150px}
+h2{font:500 18px/1.3 var(--f-display);margin:0 0 4px;text-wrap:balance}
+.lead{margin:0;max-width:70ch;color:var(--muted)}
+.sim{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:20px;align-items:start}
+@media (max-width:980px){.sim{grid-template-columns:minmax(0,1fr)}}
+/* корпус прибора */
+.dev{background:linear-gradient(160deg,var(--abs),var(--abs2));border-radius:14px;padding:18px;display:grid;gap:14px;min-width:0;color:var(--abs-ink)}
+.face{display:grid;grid-template-columns:minmax(0,1fr) 92px;gap:14px;align-items:center}
+.scr{position:relative;background:var(--dark);border-radius:6px;padding:12px;min-width:0}
+.scr canvas{display:block;margin:0 auto;width:100%;max-width:100%;height:auto;transition:width .2s,filter .2s;aspect-ratio:4/3;border-radius:2px}
+.glow{position:absolute;left:12px;right:12px;height:8px;border-radius:4px;background:#e53935;opacity:0;transition:opacity .2s}
+.glow.t{top:2px}.glow.b{bottom:2px}
+.tint{position:absolute;inset:12px;background:#b3121a;mix-blend-mode:multiply;opacity:0;pointer-events:none;border-radius:2px;transition:opacity .2s}
+.off{position:absolute;inset:12px;display:grid;place-items:center;background:rgba(20,26,32,.55);color:#fff;font:600 14px var(--f-body);text-align:center;padding:12px}
+.side{display:grid;gap:10px;justify-items:center}
+.led{width:18px;height:18px;border-radius:50%;background:#3b4247;box-shadow:inset 0 0 3px #000}
+.led.g.on{background:#35d05a;box-shadow:0 0 12px #35d05a}.led.r.on{background:#ff4b3e;box-shadow:0 0 12px #ff4b3e}
+.ledrow{display:grid;grid-template-columns:18px auto;gap:6px;align-items:center;font:600 11px var(--f-body)}
+.key{width:58px;height:58px;border-radius:50%;border:3px solid var(--key2);background:radial-gradient(circle at 40% 35%,#e8ecef,var(--key));font:700 12px var(--f-body);color:var(--abs-ink);cursor:pointer;padding:0}
+.key:active{transform:translateY(1px);background:var(--key2);color:#fff}
+.key:focus-visible,.btn:focus-visible,.tog:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.bot{display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:center;border-top:1px solid rgba(0,0,0,.18);padding-top:12px;font:600 12px var(--f-body)}
+.tog{min-height:44px;padding:0 14px;border-radius:22px;border:2px solid var(--key2);background:#e8ecef;font:700 12px var(--f-body);color:var(--abs-ink);cursor:pointer}
+.tog[aria-pressed="false"]{background:#3b4247;color:#fff}
+.hold{position:relative;overflow:hidden}.hold i{position:absolute;left:0;bottom:0;height:4px;width:0;background:var(--accent)}
+/* пульт сценариев */
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:14px;display:grid;gap:12px;min-width:0}
+.hint{margin:0;font-size:12.5px;color:var(--muted)}
+.panel h3{margin:0;font:600 13px var(--f-body);color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.btn{min-height:36px;padding:0 10px;border-radius:4px;border:1px solid var(--line);background:var(--bg);color:var(--ink);font:500 13px var(--f-body);cursor:pointer}
+.btn[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-bg);color:var(--accent);font-weight:600}
+.sl{display:grid;grid-template-columns:96px minmax(0,1fr) 54px;gap:8px;align-items:center;font-size:13px}
+.sl input{width:100%;accent-color:var(--accent);min-width:0}
+.sl output{font:600 12px var(--f-mono);text-align:right;font-variant-numeric:tabular-nums}
+/* раскладка экранов */
+.grp{display:grid;gap:10px}
+.gal{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:14px}
+figure{margin:0;display:grid;gap:6px;min-width:0}
+figure canvas{display:block;width:100%;height:auto;aspect-ratio:4/3;border-radius:3px;border:1px solid var(--line)}
+figure.night canvas{filter:sepia(1) saturate(9) hue-rotate(-50deg) brightness(.72)}
+figcaption{font-size:13px;color:var(--muted)}figcaption b{color:var(--ink);font-weight:600}
+.tbl{overflow-x:auto;background:var(--surface);border:1px solid var(--line);border-radius:8px}
+table{border-collapse:collapse;width:100%;font-size:14px}
+th,td{padding:9px 12px;text-align:left;vertical-align:top;border-bottom:1px solid var(--line)}
+tr:last-child td{border-bottom:0}
+th{font:600 12px var(--f-body);color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
+.note{margin:0;color:var(--muted);font-size:14px;max-width:80ch}
+.note a{color:var(--accent)}
+.home{position:absolute;top:14px;right:16px;z-index:6;padding:8px 12px;border-radius:4px;border:1px solid var(--accent);background:var(--surface);color:var(--ink);font:600 13px var(--f-body);text-decoration:none}
+.home:hover,.home:focus-visible{background:var(--accent);color:var(--surface);outline:none}
+@media (max-width:900px){.home{top:10px;left:16px;right:auto}.badge{top:54px}.tools{top:114px}.views{top:116px}}
+</style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js" integrity="sha384-CI3ELBVUz9XQO+97x6nwMDPosPR5XvsxW2ua7N1Xeygeh1IxtgqtCkGfQY9WWdHu" crossorigin="anonymous"></script>
+<!--pcblib--><script>
+// Платы по фото: контур, сквозные отверстия, шелкография, дорожки, компоненты. Единицы — мм; z = 0 — низ платы, z = t — верх.
+const PCBLIB=(function(){
+const T=THREE;
+const std=(c,o)=>new T.MeshStandardMaterial(Object.assign({color:c,roughness:0.5},o||{}));
+const tin=std(0xd9dde0,{metalness:0.85,roughness:0.35}),gold=std(0xd4af37,{metalness:0.85,roughness:0.3}),pkg=std(0x17181b,{roughness:0.62}),blk=std(0x101114,{roughness:0.5});
+const mesh=(g,m,l)=>{const o=new T.Mesh(g,m);if(l)o.userData.label=l;return o;};
+const bx=(x,y,z,w,d,h,m,l)=>{const o=mesh(new T.BoxGeometry(w,d,h),m,l);o.position.set(x,y,z);return o;};
+const cy=(x,y,z,r0,r1,h,m,l,s)=>{const o=mesh(new T.CylinderGeometry(r1,r0,h,s||14),m,l);o.rotation.x=Math.PI/2;o.position.set(x,y,z);return o;};
+const circ=(p,x,y,r)=>{p.moveTo(x+r,y);p.absarc(x,y,r,0,Math.PI*2,true);return p;};
+function hole(s,x,y,d){s.holes.push(circ(new T.Path(),x,y,d/2));}
+function slot(s,x0,y0,x1,y1,d){const a=Math.atan2(y1-y0,x1-x0),r=d/2,p=new T.Path();p.absarc(x1,y1,r,a-Math.PI/2,a+Math.PI/2,false);p.absarc(x0,y0,r,a+Math.PI/2,a+Math.PI*1.5,false);p.closePath();s.holes.push(p);}
+function rrect(w,h,r){const s=new T.Shape(),x=w/2,y=h/2;s.moveTo(-x+r[3],-y);s.lineTo(x-r[2],-y);s.absarc(x-r[2],-y+r[2],r[2],-Math.PI/2,0,false);s.lineTo(x,y-r[1]);s.absarc(x-r[1],y-r[1],r[1],0,Math.PI/2,false);s.lineTo(-x+r[0],y);s.absarc(-x+r[0],y-r[0],r[0],Math.PI/2,Math.PI,false);s.lineTo(-x,-y+r[3]);s.absarc(-x+r[3],-y+r[3],r[3],Math.PI,Math.PI*1.5,false);return s;}
+// холст с координатами платы
+function sheet(w,h,res,mask,xf){const c=document.createElement('canvas'),k=res/Math.max(w,h);c.width=Math.ceil(w*k);c.height=Math.ceil(h*k);const g=c.getContext('2d');g.fillStyle=mask;g.fillRect(0,0,c.width,c.height);
+  xf(g,k,c.width/2,c.height/2);
+  const d={g,c,k,
+   rect(x0,y0,x1,y1,col){g.fillStyle=col;g.fillRect(x0,y0,x1-x0,y1-y0);return d;},
+   frame(x0,y0,x1,y1,col,lw){g.strokeStyle=col;g.lineWidth=lw||0.16;g.strokeRect(x0,y0,x1-x0,y1-y0);return d;},
+   disc(x,y,r,col){g.fillStyle=col;g.beginPath();g.arc(x,y,r,0,7);g.fill();return d;},
+   ring(x,y,r,col,lw){g.strokeStyle=col;g.lineWidth=lw||0.16;g.beginPath();g.arc(x,y,r,0,7);g.stroke();return d;},
+   line(p,col,lw){g.strokeStyle=col;g.lineWidth=lw||0.2;g.lineJoin='round';g.lineCap='round';g.beginPath();p.forEach((q,i)=>i?g.lineTo(q[0],q[1]):g.moveTo(q[0],q[1]));g.stroke();return d;},
+   text(s,x,y,size,col,rot,font){g.save();g.translate(x,y);g.rotate((rot||0)*Math.PI/180);g.scale(1,-1);g.fillStyle=col;g.font=(font||'600 ')+size+'px Arial, sans-serif';g.textAlign='center';g.textBaseline='middle';g.fillText(s,0,0);g.restore();return d;}};
+  return d;}
+const front=(g,k,cx,cy2)=>g.setTransform(k,0,0,-k,cx,cy2);
+const backM=(g,k,cx,cy2)=>g.setTransform(-k,0,0,-k,cx,cy2);        // вид снизу, зеркально: x зрителя = −x платы
+const backT=(g,k,cx,cy2)=>g.setTransform(0,-k,k,0,cx,cy2);         // вид снизу, повёрнут: (p, q) зрителя → x = q, y = p
+function tex(c,w,h){const t=new T.CanvasTexture(c);t.wrapS=t.wrapT=T.ClampToEdgeWrapping;t.repeat.set(1/w,1/h);t.offset.set(0.5,0.5);t.anisotropy=4;return t;}
+function base(o){const g=new T.Group(),t=o.t;
+  const edge=mesh(new T.ExtrudeGeometry(o.shape,{depth:t,bevelEnabled:false,curveSegments:20}),[std(o.mask,{roughness:0.45}),std(o.edge||0xb9b48a,{roughness:0.6})],o.label);g.add(edge);
+  const cap=new T.ShapeGeometry(o.shape,20);
+  const top=mesh(cap,std(0xffffff,{map:tex(o.top.c,o.w,o.h),roughness:o.gloss||0.42,side:T.DoubleSide}),o.label);top.position.z=t+0.006;g.add(top);
+  const bot=mesh(cap,std(0xffffff,{map:tex(o.bot.c,o.w,o.h),roughness:o.gloss||0.42,side:T.DoubleSide}),o.label);bot.position.z=-0.006;g.add(bot);
+  return g;}
+// компоненты: z0 — поверхность платы, up = +1 верх, −1 низ
+function smd(g,x,y,z0,up,vert,kind,l){const L=1.6,W=0.8,H=0.5,bodyC={r:0x15161a,c:0xa58a63,cb:0x8d6e52}[kind]||0x15161a,b=std(bodyC,{roughness:0.55});
+  const n=new T.Group();n.position.set(x,y,z0);if(vert)n.rotation.z=Math.PI/2;
+  n.add(bx(0,0,up*H/2,L*0.68,W,H,b,l));[-1,1].forEach(s=>n.add(bx(s*(L/2-0.15),0,up*H/2,0.32,W,H+0.02,tin,l)));g.add(n);}
+function led(g,x,y,z0,up,vert,l){const n=new T.Group();n.position.set(x,y,z0);if(vert)n.rotation.z=Math.PI/2;n.add(bx(0,0,up*0.25,1.2,0.8,0.5,std(0xf1efe2,{roughness:0.3}),l));n.add(bx(0,0,up*0.42,0.8,0.55,0.16,std(0xfff3b0,{roughness:0.15,transparent:true,opacity:0.9}),l));[-1,1].forEach(s=>n.add(bx(s*0.68,0,up*0.2,0.25,0.8,0.4,tin,l)));g.add(n);}
+function labelTop(lines,w,h,col){const c=document.createElement('canvas');c.width=256;c.height=Math.round(256*h/w);const g=c.getContext('2d');g.fillStyle='#17181b';g.fillRect(0,0,c.width,c.height);g.fillStyle=col||'#8e9196';g.textAlign='center';g.textBaseline='middle';const fs=c.height/(lines.length+1.3);g.font='600 '+fs+'px Arial, sans-serif';lines.forEach((s,i)=>g.fillText(s,c.width/2,c.height*(i+1)/(lines.length+1)));const t=new T.CanvasTexture(c);t.anisotropy=4;return std(0xffffff,{map:t,roughness:0.6});}
+function soic(g,x,y,z0,up,lines,l,dot){const n=new T.Group();n.position.set(x,y,z0);const H=1.75,lift=0.15;
+  n.add(bx(0,0,up*(lift+(H-lift)/2),4.9,3.9,H-lift,pkg,l));
+  if(lines){const p=mesh(new T.PlaneGeometry(4.7,3.7),labelTop(lines,4.7,3.7),l);p.position.z=up*(H+0.004);if(up<0)p.rotation.x=Math.PI;n.add(p);}
+  n.add(cy(dot?dot[0]:-1.9,dot?dot[1]:-1.3,up*(H+0.008),0.26,0.26,0.01,std(0x34363b,{roughness:0.8}),l,12));
+  [-1.905,-0.635,0.635,1.905].forEach(px=>[-1,1].forEach(s=>{n.add(bx(px,s*2.33,up*0.75,0.42,0.78,0.2,tin,l));n.add(bx(px,s*2.62,up*0.1,0.42,0.75,0.2,tin,l));n.add(bx(px,s*2.5,up*0.42,0.42,0.2,0.68,tin,l));}));g.add(n);}
+function hdr(g,xs,y,z0,dir,len,l){const n=new T.Group();xs.forEach(x=>{n.add(bx(x,y,z0+dir*1.25,2.42,2.42,2.5,blk,l));n.add(bx(x,y,z0+dir*len/2,0.64,0.64,len,gold,l));n.add(cy(x,y,z0-dir*0.28,0.85,0.25,0.56,tin,l,12));});g.add(n);}
+const dome=(g,x,y,z0,up,r,l)=>{const m=mesh(new T.SphereGeometry(r,12,8),tin,l);m.scale.z=0.55;m.position.set(x,y,z0);m.scale.z*=up;g.add(m);};
+
+function as5600(){const w=42,h=42,t=1.6,M='#0f6a49',D='#0d4b39',S='#e3ece6',C='#127a56',TIN='#c9cdd0';
+  const s=rrect(w,h,[1.6,1.6,1.6,1.6]);
+  const corners=[[1,1],[-1,1],[-1,-1],[1,-1]];
+  corners.forEach(q=>slot(s,q[0]*15.75,q[1]*15.75,q[0]*17.3,q[1]*17.3,3));
+  const ring=[[[-9.05,9],[-6.95,6.85],[-5.75,5.85]],[[8.8,8.95],[6.6,6.9]],[[-9.05,-8.9],[-6.95,-6.7]],[[8.8,-9],[6.65,-7],[5.35,-5.7]]];
+  ring.forEach(r=>{hole(s,r[0][0],r[0][1],2.9);if(r.length===3)slot(s,r[1][0],r[1][1],r[2][0],r[2][1],2.9);else hole(s,r[1][0],r[1][1],2.9);});
+  [[-2.83,11.17],[-0.29,11.17],[2.25,11.17]].forEach(p=>hole(s,p[0],p[1],0.95));
+  const px=[-4.21,-1.67,0.87,3.41],py=-10.93;px.forEach(x=>hole(s,x,py,0.95));
+  const f=sheet(w,h,1024,M,front),b=sheet(w,h,1024,M,backM);
+  [f,b].forEach((d,i)=>{const sx=i?-1:1;
+    corners.forEach(q=>{d.disc(sx*q[0]*15.75,q[1]*15.75,3.4,D);d.disc(sx*q[0]*17.3,q[1]*17.3,3.4,D);});
+    ring.forEach(r=>r.forEach(p=>d.disc(sx*p[0],p[1],3.4,D)));});
+  // дорожки лицевой стороны
+  f.line([[-2.83,11.17],[-2.83,9.8],[-0.9,7.8],[-0.9,3.1]],C,0.3).line([[-0.29,11.17],[-0.29,9.8],[1,8.5],[1,5.2]],C,0.3).line([[2.25,11.17],[2.25,9.6],[3.2,8.6],[3.2,5.2]],C,0.3);
+  f.line([[-4.21,-10.93],[-4.21,-8.2],[-2.2,-6.2],[-1,-5.2]],C,0.3).line([[-1.67,-10.93],[-1.67,-8],[0.5,-6],[0.5,-5.2]],C,0.3).line([[0.87,-10.93],[0.87,-8.2],[2,-6.6],[2,-5.2]],C,0.3);
+  // рамки разъёмов и подписи
+  f.frame(-4.25,9.9,3.75,12.45,S,0.2).line([[-1.65,9.9],[-1.65,12.45]],S,0.2).frame(-5.55,-12.3,4.75,-9.6,S,0.2).line([[-2.95,-12.3],[-2.95,-9.6]],S,0.2);
+  [[-2.83,11.17,1],[-0.29,11.17,0],[2.25,11.17,0]].forEach(p=>{if(p[2])f.rect(p[0]-0.85,p[1]-0.85,p[0]+0.85,p[1]+0.85,TIN);else f.disc(p[0],p[1],0.85,TIN);});
+  px.forEach((x,i)=>{if(!i)f.rect(x-0.85,py-0.85,x+0.85,py+0.85,TIN);else f.disc(x,py,0.85,TIN);});
+  f.text('Aout',-3.1,17.9,1.5,S,-90).text('VCC',-0.5,18.1,1.5,S,-90).text('GND',2,18.1,1.5,S,-90);
+  f.text('SDA',-3.9,-18.4,1.5,S,-90).text('SCL',-1.4,-18.4,1.5,S,-90).text('VCC',1.2,-18.4,1.5,S,-90).text('GND',3.7,-18.4,1.5,S,-90);
+  f.text('AS5600',-17.6,0.2,2.3,S,-90);
+  f.text('C2',0.2,6.3,0.95,S,-90).text('C1',1.65,6.3,0.95,S,-90).text('R1',3.15,6.3,0.95,S,-90).text('LD1',4.4,-1.1,0.95,S,-90).text('R3',-1,-6.5,0.95,S,-90).text('R2',0.5,-6.5,0.95,S,-90).text('R4',2,-6.5,0.95,S,-90);
+  f.frame(3.7,0.2,5,2.8,S,0.14);[[0.17,4.33],[1.67,4.33],[3.17,4.33]].forEach(p=>f.frame(p[0]-0.68,p[1]-1.25,p[0]+0.68,p[1]+1.25,S,0.12));[[-1,-4.67],[0.5,-4.67],[2,-4.67]].forEach(p=>f.frame(p[0]-0.68,p[1]-1.25,p[0]+0.68,p[1]+1.25,S,0.12));
+  [-1.905,-0.635,0.635,1.905].forEach(x=>[-1,1].forEach(q=>f.rect(x-0.33-0.33,0.17+q*2.75-0.6,x+0.33-0.33,0.17+q*2.75+0.6,TIN)));
+  // обратная сторона: координаты зрителя (u = −x)
+  [[2.83,11.17,1],[0.29,11.17,0],[-2.25,11.17,0]].forEach(p=>{if(p[2])b.rect(p[0]-0.8,p[1]-0.8,p[0]+0.8,p[1]+0.8,TIN);else b.disc(p[0],p[1],0.8,TIN);});
+  px.forEach(x=>b.disc(-x,py,0.8,TIN));
+  b.line([[-2.25,11.17],[-2.25,8],[-3.3,6.8],[-3.3,-6],[-3.41,-10.93]],C,0.3).line([[0.29,11.17],[0.29,9.3],[-1.1,7.9],[-1.1,-6],[-0.87,-10.93]],C,0.3).line([[1.67,-10.93],[1.67,-7.7],[-0.2,-5.4]],C,0.3);
+  b.text('GND',-2.25,8.6,1.4,S,90).text('VCC',0.29,8.6,1.4,S,90).text('Aout',2.83,8.3,1.4,S,90);
+  b.text('GND',-3.41,-7.6,1.4,S,90).text('VCC',-0.87,-7.6,1.4,S,90).text('SCL',1.67,-7.6,1.4,S,90).text('SDA',4.21,-7.6,1.4,S,90);
+  b.text('AS5600',-13.4,0.5,2,S,90).text('3.3-5V',-10.9,0.5,2,S,90);
+  const g=base({w,h,t,shape:s,mask:0x0f6a49,edge:0xb6ae86,top:f,bot:b,label:'плата AS5600 42 × 42 × 1,6'});
+  soic(g,-0.33,0.17,t,1,['AS5600','ams'],'микросхема AS5600: датчик угла, SOIC-8, магнит над ней');
+  [[0.17,4.33,'c','конденсатор C2'],[1.67,4.33,'c','конденсатор C1'],[3.17,4.33,'r','резистор R1'],[-1,-4.67,'r','резистор R3'],[0.5,-4.67,'r','резистор R2'],[2,-4.67,'r','резистор R4']].forEach(p=>smd(g,p[0],p[1],t,1,true,p[2],p[3]));
+  led(g,4.33,1.5,t,1,true,'светодиод LD1');
+  hdr(g,px,py,0,-1,5.5,'4 штыря вниз: SDA, SCL, VCC, GND; укорочены, провода припаяны');
+  g.userData.pins={SDA:[px[0],py,-5.5],SCL:[px[1],py,-5.5],VCC:[px[2],py,-5.5],GND:[px[3],py,-5.5]};
+  return g;}
+
+function mt6701(){const w=17.22,h=15.08,t=1.51,M='#0f1012',C='#1e2025',TIN='#c7c9cb',S='#e6e7e8';
+  const s=rrect(w,h,[3,3,2.2,0.5]);
+  hole(s,0.1,6.1,2.3);hole(s,0.1,-6.1,2.3);
+  const R=[4.1,2.1,0.1,-1.9,-3.9],Lf=[2.1,0.1,-1.9];R.forEach(y=>hole(s,6.65,y,0.9));Lf.forEach(y=>hole(s,-6.65,y,0.9));
+  const f=sheet(w,h,768,M,front),b=sheet(w,h,768,M,backT);
+  R.forEach(y=>f.disc(6.65,y,0.68,TIN));Lf.forEach(y=>f.disc(-6.65,y,0.68,TIN));
+  f.ring(0.1,6.1,1.3,'#26282c',0.22).ring(0.1,-6.1,1.3,'#26282c',0.22);
+  f.disc(-5.45,-5.35,1.42,'#7f7b4f').disc(-5.45,-5.35,0.48,'#d9d6c0');
+  f.line([[6.65,2.1],[2.9,2.1]],C,0.2).line([[6.65,0.1],[2.9,0.1]],C,0.2).line([[6.65,-1.9],[2.9,-1.9]],C,0.2).line([[-6.65,0.1],[-2.9,0.1]],C,0.2);
+  f.line([[-2.3,4],[-2.3,6],[-0.8,7]],C,0.18).line([[2.6,5],[2.6,3.2]],C,0.18);
+  f.disc(3.15,2.7,0.4,'#d4d6d8');
+  [-1.905,-0.635,0.635,1.905].forEach(x=>[-1,1].forEach(q=>f.rect(x-0.33,0.15+q*2.75-0.62,x+0.33,0.15+q*2.75+0.62,TIN)));
+  // обратная сторона в координатах зрителя (p, q): x = q, y = p
+  const pad=(p,q)=>b.rect(p-0.68,q-1.5,p+0.68,q+1.5,TIN);
+  R.forEach(y=>pad(y*-1*-1,6.9));[-2.05,0,2.05].forEach(p=>pad(p,-6.7));
+  b.disc(-5.35,-5.45,1.42,'#7f7b4f').disc(-5.35,-5.45,0.48,'#d9d6c0');
+  [['VCC',-4.1],['Z',-2],['B',0.1],['A',2.1],['GND',4.2]].forEach(a=>b.text(a[0],a[1],4.55,0.95,S,0,'700 '));
+  b.text('SCL',-0.3,2.6,0.85,S,90).text('SDA',0.6,2.6,0.85,S,90);
+  b.text('VCC',-2.1,-3.3,0.95,S,90).text('OUT',0,-3.3,0.95,S,90).text('GND',2.1,-3.3,0.95,S,90);
+  b.text('XinXuanSmart',-3,-1.75,1.05,S,0,'700 ').text('IIC',3.5,-5.6,0.85,S,90);
+  b.line([[3.6,-3.6],[4.3,-2.9]],S,0.14);
+  b.frame(4.5,2.8,7.3,3.8,S,0.14).frame(2.1,-2,3.8,-0.5,S,0.14).frame(5,-6.1,6.1,-3,S,0.14);
+  b.rect(2.5,-1.6,3.4,-0.9,TIN);b.disc(2.9,2.75,0.62,TIN);
+  const g=base({w,h,t,shape:s,mask:0x0f1012,edge:0x2a2b2e,top:f,bot:b,label:'плата MT6701 17,22 × 15,08 × 1,51, чёрная, XinXuanSmart',gloss:0.5});
+  soic(g,-0.05,0.15,t,1,null,'микросхема MT6701: датчик угла, SOIC-8, магнит под ней, стоит по центру платы',[1.45,1.05]);
+  smd(g,3.3,5.9,0,-1,false,'r','резистор на обратной стороне');smd(g,-4.5,5.6,0,-1,true,'r','резистор на обратной стороне');
+  R.forEach(y=>dome(g,6.65,y,t,1,0.4));Lf.forEach(y=>dome(g,-6.65,y,t,1,0.4));
+  g.userData.pins={VCC:[6.65,-3.9,-0.3],SCL:[6.65,0.1,-0.3],SDA:[6.65,2.1,-0.3],GND:[6.65,4.1,-0.3]};
+  return g;}
+
+function gy50(){const w=24,h=23.6,t=1.6,M='#0f4fb0',C='#0a3b8c',TIN='#d3d7da',S='#f3f6fb';
+  const s=rrect(w,h,[0.4,0.4,0.4,0.4]);[[1,1],[-1,1],[-1,-1],[1,-1]].forEach(q=>hole(s,q[0]*9,q[1]*9,3.4));
+  const Lc=[3.55,1.01,-1.53,-4.07],xl=-9.8,xr=9.8;Lc.forEach(y=>{hole(s,xl,y,1);hole(s,xr,y,1);});
+  const f=sheet(w,h,1024,M,front),b=sheet(w,h,1024,M,backM);
+  [f,b].forEach(d=>Lc.forEach(y=>{d.disc(xl,y,0.85,TIN);d.disc(xr,y,0.85,TIN);}));
+  f.line([[-9.8,3.55],[-7.8,2.4],[-5.2,2.4]],C,0.22).line([[-9.8,1.01],[-2,1.01]],C,0.22).line([[-9.8,-1.53],[-7.6,0.2],[-2,0.2]],C,0.22).line([[-9.8,-4.07],[-7.5,-0.6],[-2,-0.6]],C,0.22);
+  f.line([[-0.3,6.6],[1,5.1],[4.2,5.1],[5.5,3]],C,0.22).line([[7.25,6.6],[8.2,4],[9.8,3.55]],C,0.22).line([[1.6,2.2],[1.6,3.4],[4,3.4],[4.8,2.2]],C,0.22);
+  f.line([[3,-1.5],[4,-3.6],[3.5,-5.5]],C,0.22).line([[6.9,-1],[8,-0.6],[9.8,1.01]],C,0.22).line([[6.9,-3.4],[8,-3],[9.8,-1.53]],C,0.22).line([[5.3,-3.4],[7.6,-4.2],[9.8,-4.07]],C,0.22);
+  [['SDO',3.55],['CS',1.01],['DR',-1.53],['INT',-4.07]].forEach(a=>f.text(a[0],-11.1,a[1],1.1,S,-90,'700 '));
+  [['VCC',3.55],['SCL',1.01],['SDA',-1.53],['GND',-4.07]].forEach(a=>f.text(a[0],11.2,a[1],1.05,S,-90,'700 '));
+  f.text('L3G4200D°',0,-10.1,2.2,S,0,'700 ');
+  [['C2',-0.3,6.2],['C5',7.1,6.2],['R1',-5.6,1.4],['R2',-4,1.4],['R5',5.4,3.3],['R7',7.3,3.3],['R4',5.2,-4.3],['R6',6.9,-4.3],['R3',-1,-7.3],['C9',0.75,-7.3],['C4',2.5,-7.3]].forEach(a=>f.text(a[0],a[1],a[2],0.95,S,0,'700 '));
+  f.line([[-3.6,5.4],[-1.8,5.4]],S,0.14).line([[2.5,6.6],[4.2,6.6]],S,0.14);
+  const ax=-5.45,ay=-4.6;f.ring(ax,ay,0.75,S,0.16).line([[ax-0.5,ay-0.5],[ax+0.5,ay+0.5]],S,0.12).line([[ax-0.5,ay+0.5],[ax+0.5,ay-0.5]],S,0.12);
+  f.line([[ax+0.75,ay],[ax+2.8,ay]],S,0.16).line([[ax+2.3,ay+0.4],[ax+2.8,ay],[ax+2.3,ay-0.4]],S,0.14).text('Y',ax+2.4,ay+1,0.9,S,0);
+  f.line([[ax,ay-0.75],[ax,ay-2.6]],S,0.16).line([[ax-0.4,ay-2.1],[ax,ay-2.6],[ax+0.4,ay-2.1]],S,0.14).text('X',ax+1.2,ay-2.4,0.9,S,0).text('Z',ax-0.5,ay+2,0.9,S,0);
+  [[-1.9],[0.9]].forEach(()=>{});
+  const g=base({w,h,t,shape:s,mask:0x0f4fb0,edge:0xb9b48a,top:f,bot:b,label:'гироскоп GY-50, плата 24 × 23,6: нарисована по картинке продавца'});
+  const m=new T.Group();m.position.set(0.3,-0.15,t);
+  m.add(bx(0,0,0.55,4,4,1.1,pkg,'L3G4200D: трёхосевой гироскоп, корпус LGA-16 4 × 4 мм'));
+  const pl=mesh(new T.PlaneGeometry(3.7,3.7),labelTop(['L3G','4200D'],3.7,3.7),'L3G4200D: трёхосевой гироскоп, корпус LGA-16 4 × 4 мм');pl.position.z=1.104;m.add(pl);
+  m.add(cy(1.4,1.4,1.11,0.22,0.22,0.01,std(0x34363b,{roughness:0.8}),'',12));
+  [-1.5,-0.5,0.5,1.5].forEach(p=>{m.add(bx(p,2.08,0.06,0.3,0.25,0.12,tin));m.add(bx(p,-2.08,0.06,0.3,0.25,0.12,tin));m.add(bx(2.08,p,0.06,0.25,0.3,0.12,tin));m.add(bx(-2.08,p,0.06,0.25,0.3,0.12,tin));});g.add(m);
+  // тантал
+  const ta=new T.Group();ta.position.set(-2.75,8.5,t);ta.add(bx(0,0.2,0.95,2.6,3,1.9,std(0xe2a02c,{roughness:0.4}),'танталовый конденсатор, жёлтый корпус'));ta.add(bx(0,1.55,0.96,2.6,0.34,1.92,std(0x8d5a19,{roughness:0.4}),'танталовый конденсатор: полоса плюса'));[-1,1].forEach(q=>ta.add(bx(0,q*1.75,0.3,2,0.6,0.6,tin)));g.add(ta);
+  // стабилизатор
+  const rg=new T.Group();rg.position.set(3.3,8.8,t);rg.add(bx(0,0,0.55,1.7,3,1.1,pkg,'стабилизатор 3,3 В, корпус SOT-23-5'));[[-1.35,0.95],[-1.35,-0.95],[1.35,0.95],[1.35,0],[1.35,-0.95]].forEach(p=>rg.add(bx(p[0],p[1],0.12,1.2,0.42,0.24,tin)));g.add(rg);
+  [[-0.3,8.3,'c','конденсатор C2'],[7.25,8.3,'cb','конденсатор C5'],[-5.6,3.4,'r','резистор R1'],[-4,3.4,'r','резистор R2'],[5.4,1.5,'r','резистор R5'],[7.25,1.5,'r','резистор R7'],[5.2,-2.3,'r','резистор R4'],[6.9,-2.3,'r','резистор R6'],[-1,-5.45,'r','резистор R3'],[0.75,-5.45,'c','конденсатор C9'],[2.5,-5.45,'c','конденсатор C4']].forEach(p=>smd(g,p[0],p[1],t,1,true,p[2],p[3]));
+  ['VCC','SCL','SDA','GND'].forEach((n,i)=>{dome(g,xr,Lc[i],t,1,0.5,'контакт '+n+': провод припаять');});
+  g.userData.pins={VCC:[xr,Lc[0],2.1],SCL:[xr,Lc[1],2.1],SDA:[xr,Lc[2],2.1],GND:[xr,Lc[3],2.1],SDO:[xl,Lc[0],2.1],CS:[xl,Lc[1],2.1]};
+  return g;}
+
+function bno08x(){const w=25.65,h=15.55,t=1.6,M='#57207a',C='#6a2c92',S='#e9e4f0',GOLD='#c8a14a',TIN='#c9cdd0';
+  const s=rrect(w,h,[0.5,0.5,0.5,0.5]);const hx=10.35,hy=5.1;[-1,1].forEach(q=>hole(s,q*hx,hy,3.1));
+  const names=['VCC','GND','SCL','SDA','ADO','CS','INT','RST','PS1','PS0'],py=-6.5,pxs=names.map((n,i)=>-11.43+i*2.54);pxs.forEach(x=>hole(s,x,py,0.95));
+  hole(s,7.41,1.79,0.7);
+  const f=sheet(w,h,1024,M,front),b=sheet(w,h,1024,M,backM);
+  const hatch=(d,x0,y0,x1,y1)=>{d.g.save();d.g.beginPath();d.g.rect(x0,y0,x1-x0,y1-y0);d.g.clip();for(let k=-40;k<40;k+=0.85)d.line([[k,y0-1],[k+(y1-y0+2),y1+1]],C,0.16);d.g.restore();};
+  hatch(f,-12.8,-7.7,12.8,-3.2);hatch(b,-12.8,-1,-4,7.7);
+  [f,b].forEach((d,i)=>{const sx=i?-1:1;[-1,1].forEach(q=>{d.disc(sx*q*hx,hy,2.05,GOLD);d.disc(sx*q*hx,hy,1.55,'#2a0f3a');});
+    pxs.forEach(x=>d.disc(sx*x,py,0.82,TIN));d.disc(sx*7.41,1.79,0.78,GOLD);d.disc(sx*7.41,1.79,0.36,'#2a0f3a');
+    d.disc(-12.2*sx,7.05,0.32,TIN);d.disc(12.2*sx,6.9,0.32,TIN);});
+  f.line([[-7.4,0.6],[-7.4,2.2],[-3.6,3.4]],C,0.2).line([[-5.6,0.6],[-5.6,1.8],[-2.9,2.2]],C,0.2).line([[3.6,0.6],[3.6,1.6],[2.7,2.6]],C,0.2).line([[5.5,0.6],[5.5,2],[2.7,3.6]],C,0.2);
+  f.text('GY-BNO08X',-0.1,6.72,1.25,S,0,'700 ');f.text('←BOOT',7.6,4.6,0.95,S,90,'700 ');
+  names.forEach((n,i)=>f.text(n,pxs[i]+0.15,-3.9,1.05,S,90,'700 '));
+  [[-0.11,3.42]].forEach(p=>{for(let k=-2.4;k<=2.4;k+=0.5){f.rect(p[0]+k-0.1,p[1]+1.96,p[0]+k+0.1,p[1]+2.28,TIN);f.rect(p[0]+k-0.1,p[1]-2.28,p[0]+k+0.1,p[1]-1.96,TIN);}for(let k=-1.5;k<=1.5;k+=0.5){f.rect(p[0]-2.92,p[1]+k-0.1,p[0]-2.6,p[1]+k+0.1,TIN);f.rect(p[0]+2.6,p[1]+k-0.1,p[0]+2.92,p[1]+k+0.1,TIN);}});
+  f.disc(3.1,1.4,0.42,TIN);
+  // обратная сторона: u = −x
+  [['VCC_3V3',-1.7],['GND',-3.4],['SCL/SCK/RX',-0.7],['SDA/MISO/TX',-0.1],['ADDR/MOSI',-0.8],['CS',-3.9],['INT',-3.6],['RST',-3.6],['PS1',-3.2],['PS0',-3.2]].forEach((a,i)=>b.text(a[0],-pxs[i],a[1],1.02,S,90,'700 '));
+  [[8.89],[11.43]].forEach(a=>{const u=-a[0];b.rect(u-0.75,-0.75,u-0.08,0.75,GOLD);b.rect(u+0.08,-0.75,u+0.75,0.75,GOLD);b.frame(u-1,-1,u+1,1,S,0.1);});
+  const ax=-4.3,ay=1.3;b.ring(ax,ay,0.7,S,0.14).line([[ax-0.5,ay-0.5],[ax+0.5,ay+0.5]],S,0.1).line([[ax-0.5,ay+0.5],[ax+0.5,ay-0.5]],S,0.1);
+  b.line([[ax+0.7,ay],[ax+2.8,ay]],S,0.14).line([[ax+2.3,ay+0.4],[ax+2.8,ay],[ax+2.3,ay-0.4]],S,0.12).text('X',ax+3.5,ay,0.95,S,0,'700 ');
+  b.line([[ax,ay-0.7],[ax,ay-2.8]],S,0.14).line([[ax-0.4,ay-2.3],[ax,ay-2.8],[ax+0.4,ay-2.3]],S,0.12).text('Y',ax+0.9,ay-2.9,0.95,S,0,'700 ').text('Z',ax-1.5,ay+0.2,0.95,S,0,'700 ');
+  b.rect(-3.8,3.2,-0.7,5.6,'#1b0b26');
+  const g=base({w,h,t,shape:s,mask:0x57207a,edge:0xb9b48a,top:f,bot:b,label:'GY-BNO08X (BNO085), 25,65 × 15,55 × 1,6: крен, дифферент, курс'});
+  const ch=new T.Group();ch.position.set(-0.11,3.42,t);ch.add(bx(0,0,0.55,5.2,3.8,1.1,pkg,'BNO085: датчик в корпусе LGA 5,2 × 3,8 мм'));
+  ch.add(cy(-2.2,-1.5,1.108,0.2,0.2,0.01,std(0x34363b,{roughness:0.8}),'',10));g.add(ch);
+  g.add(bx(-0.11-1.6,-1.31-0.6,t,-0.11+1.6,-1.31+0.6,t+0.9,std(0x3a3a33,{roughness:0.5}),'кварц 32,768 кГц'));
+  [-1,1].forEach(q=>g.add(bx(-0.11+q*1.75-0.2,-1.31-0.55,t,-0.11+q*1.75+0.2,-1.31+0.55,t+0.5,tin)));
+  [[-10.94,-0.55,'c','конденсатор'],[-9.21,-0.55,'r','резистор'],[-7.4,-0.55,'r','резистор'],[-5.61,-0.55,'r','резистор'],[-3.87,-0.55,'c','конденсатор'],[3.64,-0.55,'c','конденсатор'],[5.51,-0.55,'c','конденсатор'],[7.37,-0.55,'r','резистор'],[9.24,-0.55,'r','резистор'],[11.06,-0.55,'r','резистор'],[-5.29,4.3,'r','резистор'],[5.2,3.98,'c','конденсатор']].forEach(p=>smd(g,p[0],p[1],t,1,true,p[2],p[3]));
+  hdr(g,pxs,py,0,-1,5.5,'гребёнка 10 контактов вниз: штыри укорочены, провода припаяны');
+  g.userData.pins={};names.forEach((n,i)=>g.userData.pins[n]=[pxs[i],py,-5.5]);
+  return g;}
+
+// провода между контактами: pins[имя] = {o: Object3D, n: [x,y,z] в системе o}; list = [от, до, ключ цвета, подпись]
+function wires(root,list,pins,colors,rad){const grp=new T.Group();root.add(grp);const mats={};
+  const mat=k=>mats[k]||(mats[k]=std(new T.Color((colors[k]||['',  '#888888'])[1]).getHex(),{roughness:0.6}));
+  const shown=o=>{while(o){if(!o.visible)return false;o=o.parent;}return true;};
+  function build(){while(grp.children.length){const c=grp.children.pop();c.geometry.dispose();}
+    root.updateMatrixWorld(true);const q=new T.Quaternion();root.getWorldQuaternion(q);const qi=q.clone().invert();const miss=[];
+    const W=o=>o.getWorldPosition(new T.Vector3()),toR=v=>root.worldToLocal(v.clone());
+    function end(P){const w=W(P.o);const q2=new T.Quaternion();P.o.getWorldQuaternion(q2);return {w,p:toR(w),n:new T.Vector3().fromArray(P.n||[0,0,1]).applyQuaternion(q2).applyQuaternion(qi).normalize(),pl:P.pl};}
+    function exitPts(a,targetW){const pl=a.pl,l=pl.par.worldToLocal(a.w.clone()),t=pl.par.worldToLocal(targetW.clone()),r=pl.r,z=pl.z,cl=(v,lo,hi)=>Math.min(hi,Math.max(lo,v));
+      const c=[[r[0]-3,cl(l.y,r[1],r[3])],[r[2]+3,cl(l.y,r[1],r[3])],[cl(l.x,r[0],r[2]),r[1]-3],[cl(l.x,r[0],r[2]),r[3]+3]];let best=null,bc=1e9;
+      c.forEach(e=>{const d=Math.hypot(e[0]-l.x,e[1]-l.y)+Math.hypot(e[0]-t.x,e[1]-t.y);if(d<bc){bc=d;best=e;}});
+      return [toR(pl.par.localToWorld(new T.Vector3(l.x,l.y,z))),toR(pl.par.localToWorld(new T.Vector3(best[0],best[1],z)))];}
+    list.forEach((w,i)=>{const A=pins[w[0]],B=pins[w[1]];if(!A||!B){miss.push(w[0]+'>'+w[1]);return;}if(!shown(A.o)||!shown(B.o))return;
+      const a=end(A),b=end(B),pts=[a.p];const shift=(i%6-2.5)*0.28;
+      const stub=(e,L)=>e.p.clone().addScaledVector(e.n,L);
+      if(a.pl&&b.pl&&a.pl.par===b.pl.par){const z=a.pl.z;const gp=e=>{const l=e.pl.par.worldToLocal(e.w.clone());return toR(e.pl.par.localToWorld(new T.Vector3(l.x,l.y,z+shift)));};pts.push(gp(a),gp(b),b.p);}
+      else{let tail=[];if(a.pl){const x=exitPts(a,b.w);pts.push(x[0],x[1]);}else pts.push(stub(a,4+(i%4)));
+        if(b.pl){const x=exitPts(b,a.w);tail=[x[1],x[0],b.p];}else tail=[stub(b,4+(i%4)),b.p];
+        const p1=pts[pts.length-1],p2=tail[0],d=p1.distanceTo(p2);if(d>14){const m=p1.clone().add(p2).multiplyScalar(0.5);m.addScaledVector(a.n.clone().add(b.n).normalize(),Math.min(d*0.06,7)+shift);pts.push(m);}
+        pts.push(...tail);}
+      const clean=pts.filter((p,k)=>k===0||p.distanceTo(pts[k-1])>0.05);
+      const curve=new T.CatmullRomCurve3(clean,false,'centripetal');
+      const o=new T.Mesh(new T.TubeGeometry(curve,Math.min(60,10+clean.length*8),rad||0.32,6,false),mat(w[2]));o.userData.label=w[3]||'';grp.add(o);});
+    if(miss.length)console.warn('нет контакта',miss.join(' '));}
+  return {group:grp,build};}
+
+function esp32s3(){const w=57,h=27.9,t=1.7,M='#17171a',S='#e6e7e8',TIN='#c9cdd0';
+  const s=rrect(w,h,[0.7,0.7,0.7,0.7]);const px=[];for(let i=0;i<22;i++)px.push(-26.67+i*2.54);
+  [-12.7,12.7].forEach(y=>px.forEach(x=>hole(s,x,y,0.95)));
+  const f=sheet(w,h,1280,M,front),b=sheet(w,h,1280,M,backM);
+  [f,b].forEach(d=>[-12.7,12.7].forEach(y=>px.forEach(x=>d.disc(x,y,0.82,TIN))));
+  const J3=['GND','TX','RX','1','2','42','41','40','39','38','37','36','35','0','45','48','47','21','20','19','GND','GND'],J1=['3V3','3V3','RST','4','5','6','7','15','16','17','18','8','3','46','9','10','11','12','13','14','IN-OUT','GND'];
+  J3.forEach((n,i)=>f.text(n,px[i],10.7,1.05,S,0,'600 '));J1.forEach((n,i)=>f.text(n,px[i],-10.8,n==='IN-OUT'?0.72:1.05,S,0,'600 '));
+  f.text('RST',-4.9,8.7,1.5,S,0,'600 ');f.text('BOOT',0.3,8.7,1.5,S,0,'600 ');
+  for(let k=0;k<15;k++){const x=-27.6+k*1.27;f.rect(x-0.42,8.1,x+0.42,9.1,TIN);f.rect(x-0.42,-10.0,x+0.42,-9,TIN);}
+  for(let k=0;k<10;k++){const y=6.7-k*1.27;f.rect(-9.8,y-0.42,-8.8,y+0.42,TIN);}
+  [[8.6,8.3],[8.6,5.5],[8.6,2.9]].forEach(p=>f.frame(p[0]-1.6,p[1]-0.75,p[0]+1.6,p[1]+0.75,S,0.12));
+  f.frame(-6.1,-8.1,-3.6,-2.2,S,0.12).frame(4.1,-8,6.6,-2.2,S,0.12);
+  const g=base({w,h,t,shape:s,mask:0x17171a,edge:0x2a2b2e,top:f,bot:b,label:'ESP32-S3 N16R8, плата 57 × 27,9 × 1,7: главный — вычитает качку, считает истинный ветер и заходы, рисует экран, отдаёт NMEA; штыри впаяны в плату связи',gloss:0.5});
+  const sil=std(0xb5b3a6,{metalness:0.75,roughness:0.42});
+  g.add(bx(-22.4,-0.47,t+0.4,25.6,18,0.8,std(0x151516,{roughness:0.6}),'модуль ESP32-S3-WROOM-1 N16R8'));
+  g.add(bx(-19.2,-0.47,t+2.05,18.4,16.2,2.5,sil,'металлическая крышка модуля: под ней процессор и память 16 МБ + 8 МБ'));
+  g.add(cy(-11.9,-6.3,t+3.31,0.45,0.45,0.02,std(0x18181a),'',14));
+  g.add(cy(-30.6,2.5,t+0.82,0.32,0.32,0.02,std(0xd9d9d9),'',10));g.add(cy(-30.6,-0.5,t+0.82,0.32,0.32,0.02,std(0xd9d9d9),'',10));
+  const btn=(x,y,l)=>{g.add(bx(x,y,t+0.8,3.3,4.7,1.6,std(0xcfd2d6,{metalness:0.6,roughness:0.4}),l));g.add(cy(x,y,t+1.75,0.95,0.95,0.3,std(0x18181a),l,18));};
+  btn(-4.75,4.86,'кнопка RST');btn(0.47,4.86,'кнопка BOOT');
+  g.add(bx(-4.87,-5.14,t+0.75,2.4,5.2,1.5,std(0xb08b5c),'конденсатор'));g.add(bx(5.36,-4.85,t+0.65,2.2,5,1.3,std(0x3a3a3c),'конденсатор'));
+  g.add(bx(0.25,-5,t+0.8,6.5,3.6,1.6,pkg,'стабилизатор 3,3 В, SOT-223'));g.add(bx(0.25,-2.25,t+0.1,3.3,1.5,0.2,tin));[-2.25,0.25,2.75].forEach(x=>g.add(bx(x,-7.9,t+0.1,0.9,1.9,0.2,tin)));
+  g.add(bx(10.5,-4.86,t+0.8,5,5,1.6,std(0xe9e8df,{roughness:0.35}),'цветной светодиод: сидит на IO38 или IO48'));g.add(cy(10.5,-4.86,t+1.61,1.5,1.5,0.02,std(0xc9c7ba),'',18));
+  [[8.6,8.3],[8.6,5.5],[8.6,2.9]].forEach((p,i)=>{g.add(bx(p[0],p[1],t+0.3,2.2,1,0.6,std(0xf0ecdc,{roughness:0.3}),'светодиод питания '+(i+1)));});
+  g.add(bx(15.4,7,t+0.5,4.2,4.2,1,pkg,'мост USB — UART'));[-2.4,-5,-7.8].forEach(y=>g.add(bx(15.9,y,t+0.45,3,1.7,0.9,pkg,'защита линий USB')));
+  [[6.8,'USB-C левый'],[-5.85,'USB-C правый']].forEach(u=>{g.add(bx(25.4,u[0],t+1.65,8.6,8.8,3.3,std(0xc4c6c8,{metalness:0.85,roughness:0.3}),u[1]+': питание и прошивка'));});
+  px.forEach(x=>[-12.7,12.7].forEach(y=>{g.add(bx(x,y,-1.25,2.5,2.5,2.5,std(0xe2b21d,{roughness:0.5}),'жёлтая колодка штырей'));g.add(bx(x,y,-3.55,0.64,0.64,7.1,gold,'штырь: впаян в плату связи, снизу к нему припаян провод'));dome(g,x,y,t,1,0.5,'пайка');}));
+  return g;}
+
+function sd3v3(){const w=25,h=22,t=1.6,M='#17181c',S='#f0f0ec',TIN='#cfd2d4',L='модуль micro-SD 3 В типа Adafruit 4682, 25 × 22 мм: только гнездо, резисторы и конденсатор. Стабилизатора и буфера нет';const s=rrect(w,h,[2.2,2.2,2.2,2.2]);
+  const hx=10.16,hy=8.7;[-hx,hx].forEach(x=>hole(s,x,hy,2.7));
+  const names=['3V3','GND','SCK','MISO','MOSI','CS','D1','DAT2','DET'],pxs=names.map((n,i)=>-10.16+i*2.54),py=-8.4;pxs.forEach(x=>hole(s,x,py,1));
+  const f=sheet(w,h,1024,M,front),b=sheet(w,h,768,M,backM);
+  [f,b].forEach(d=>{pxs.forEach(x=>d.disc(x,py,0.8,TIN));[-hx,hx].forEach(x=>{d.disc(x,hy,1.9,TIN);});});
+  [-hx,hx].forEach(x=>f.ring(x,hy,2.15,S,0.14));
+  f.text('microSD SPI or SDIO',0,-5.45,2.05,S,0,'500 ');
+  [['3V',0],['CLK',2],['D0',3],['CMD',4],['D3',5],['D1',6],['DET',8]].forEach(a=>f.text(a[0],pxs[a[1]],-6.85,1.1,S,0,'500 '));
+  [['GND',1],['SO',3],['SI',4],['CS',5],['DAT2',7]].forEach(a=>f.text(a[0],pxs[a[1]],-10.05,1.1,S,0,'500 '));
+  f.ring(-10.6,3.6,0.95,S,0.16);f.text('B',-10.6,3.58,1.2,S,0,'700 ');f.disc(-11.2,6.1,0.55,'#c9a227');f.disc(8.6,-2.9,0.55,'#c9a227');
+  [-9.1,9.45].forEach(x=>{f.line([[x-1.5,2.7],[x-1.5,-1.3]],S,0.12);f.line([[x+1.5,2.7],[x+1.5,-1.3]],S,0.12);});
+  for(let i=0;i<5;i++){const a=(90+i*72)*Math.PI/180,cx=9.45+Math.cos(a)*0.85,cy2=4.8+Math.sin(a)*0.85;f.g.save();f.g.translate(cx,cy2);f.g.rotate(a);f.g.fillStyle=S;f.g.beginPath();f.g.ellipse(0,0,0.92,0.46,0,0,7);f.g.fill();f.g.restore();}f.disc(9.45,4.8,0.3,M);
+  ['microSD Breakout','Use with SPI or','SDIO. 3V power','and logic ONLY!'].forEach((x,i)=>b.text(x,0,2.6-i*2.2,1.85,S,0,'500 '));
+  const g=base({w,h,t,shape:s,mask:0x17181c,edge:0xc9c6a8,top:f,bot:b,label:L});
+  const SHL=std(0xc4c6c7,{metalness:0.8,roughness:0.32}),sx=0.2,sy=3.45,SW=14.2,SL=14.7,SH=1.9;
+  g.add(bx(sx,sy,t+SH/2,SW,SL,SH,SHL,'гнездо micro-SD: карта входит со стороны контактов модуля, с щелчком'));
+  const sh=sheet(SW,SL,768,'#c4c6c7',front),ox=-sx,oy=-sy,c0='#17181c';
+  [[-2.25,5.5,1.6,7.85],[2.2,5.5,6.2,7.85]].forEach(r=>{sh.rect(r[0]+ox,r[1]+oy,r[2]+ox,r[3]+oy,c0);for(let i=0;i<3;i++){const x=r[0]+0.75+i*((r[2]-r[0]-1.5)/2);sh.rect(x-0.2+ox,r[1]+0.15+oy,x+0.2+ox,r[3]-0.7+oy,'#d8c27a');}});
+  sh.line([[-6.55+ox,8+oy],[-6.55+ox,2.2+oy],[-4.55+ox,2.2+oy]],c0,0.5);sh.line([[-4.55+ox,2.2+oy],[-4.55+ox,4.6+oy]],c0,0.28);
+  [[-1.3,4.6,-1.3,-3.1],[-3.4,2.3,-2.6,1.4],[4.1,3.7,4.1,-3.1],[5.1,3.7,5.1,-3.1]].forEach(l=>sh.line([[l[0]+ox,l[1]+oy],[l[2]+ox,l[3]+oy]],c0,0.28));
+  const top=mesh(new T.PlaneGeometry(SW,SL),std(0xc8c8c8,{map:new T.CanvasTexture(sh.c),metalness:0.2,roughness:0.5}),'гнездо micro-SD: металлический корпус, карта внутри');top.position.set(sx,sy,t+SH+0.006);g.add(top);
+  g.add(bx(sx,-3.76,t+0.95,11,0.3,0.7,std(0x1d1f24,{roughness:0.5}),'карта micro-SD 32 ГБ: торец виден у входа в гнездо'));
+  [-9.1,9.45].forEach(x=>{g.add(bx(x,0.7,t+0.25,1.55,3.2,0.5,pkg,'сборка резисторов 47 кОм, код 473: подтяжка линий карты к 3 В'));[-1,1].forEach(q=>[-1.2,-0.4,0.4,1.2].forEach(d=>g.add(bx(x+q*0.92,0.7+d,t+0.15,0.4,0.42,0.3,tin))));});
+  g.add(bx(-9.3,-2.9,t+0.5,1.5,1.5,1,std(0x9a7755,{roughness:0.55}),'керамический конденсатор питания карты'));[-1,1].forEach(q=>g.add(bx(-9.3+q*0.85,-2.9,t+0.5,0.4,1.5,1,tin)));
+  smd(g,-8.1,5.7,t,1,true,'c','малый керамический конденсатор');
+  g.userData.pins={};names.forEach((n,i)=>{g.userData.pins[n]=[pxs[i],py,-1.4];g.add(bx(pxs[i],py,-0.7,0.64,0.64,1.4,tin,'контакт '+n+': провод припаян'));dome(g,pxs[i],py,t,1,0.45);});
+  return g;}
+
+// резервный блок: узел между аккумулятором лодки, мачтой и прибором. Единицы — мм, центр коробки в нуле, z — вверх. +x — стена с входом от аккумулятора, −x — выход к прибору, +y — разъём мачты и Type-C
+function reserveBlock(){const g=new T.Group(),W=120,D=80,H=55,tw=3;
+  const glass=std(0xd9dcd6,{transparent:true,opacity:0.2,roughness:0.6,depthWrite:false,side:T.DoubleSide}),lidM=std(0xd6ecf2,{transparent:true,opacity:0.12,roughness:0.1,depthWrite:false,side:T.DoubleSide});
+  const SHL='коробка резервного блока: ABS IP67 ≈ 120 × 80 × 55 мм, размер уточнить по купленной';
+  [[0,0,-H/2+tw/2,W,D,tw],[0,D/2-tw/2,0,W,tw,H-2*tw],[0,-D/2+tw/2,0,W,tw,H-2*tw],[W/2-tw/2,0,0,tw,D-2*tw,H-2*tw],[-W/2+tw/2,0,0,tw,D-2*tw,H-2*tw]].forEach(a=>g.add(bx(a[0],a[1],a[2],a[3],a[4],a[5],glass,SHL)));
+  g.add(bx(0,0,H/2-tw/2,W,D,tw,lidM,'прозрачная крышка коробки: 4 винта в углах, прокладка по кругу'));
+  [[-1,-1],[-1,1],[1,-1],[1,1]].forEach(q=>g.add(cy(q[0]*(W/2-7),q[1]*(D/2-7),0,4,4,H-2*tw,glass,'колонна винта крышки',14)));
+  const dark=std(0x3a3e45,{roughness:0.6}),nick=std(0xd7dbe0,{metalness:0.8,roughness:0.3}),blkM=std(0x17181b,{roughness:0.6}),rub=std(0x22252a,{roughness:0.9});
+  const X=(m,l,r,len,x,y,z)=>{const o=mesh(new T.CylinderGeometry(r,r,len,20),m,l);o.rotation.z=Math.PI/2;o.position.set(x,y,z);g.add(o);return o;};
+  const Y=(m,l,r,len,x,y,z)=>{const o=mesh(new T.CylinderGeometry(r,r,len,20),m,l);o.position.set(x,y,z);g.add(o);return o;};
+  // лоток и элементы
+  g.add(bx(-14,0,-23.5,74,70,2,dark,'печатный лоток: вид условный, размеры уточнятся после замера коробки'));
+  [-10.5,10.5].forEach(y=>g.add(bx(-14,y,-20,66,1.6,6,dark,'перегородка лотка между элементами')));
+  const cc=document.createElement('canvas');cc.width=1024;cc.height=512;const q=cc.getContext('2d');q.fillStyle='#d98bb0';q.fillRect(0,0,1024,512);q.fillStyle='#2a2028';q.font='700 62px Arial';q.textAlign='center';q.save();q.translate(512,256);q.rotate(-Math.PI/2);q.fillText('INR18650-30Q',0,-30);q.font='600 44px Arial';q.fillText('3000 mAh',0,40);q.restore();
+  const cM=std(0xffffff,{map:new T.CanvasTexture(cc),roughness:0.35}),cap=std(0xc4c6c8,{metalness:0.8,roughness:0.3});
+  [[-21,1,'№1'],[0,-1,'№2'],[21,1,'№3']].forEach(c=>{const m=new T.Mesh(new T.CylinderGeometry(9.2,9.2,65,28),[cM,cap,cap]);m.rotation.z=Math.PI/2;m.position.set(-14,c[0],-11.5);m.userData.label='Samsung INR18650-30Q '+c[2]+': 3 элемента последовательно, 10,8 В. Вынимается и заряжается отдельно';g.add(m);
+    X(cap,'плюс элемента',2.6,1.4,-14+c[1]*33,c[0],-11.5);
+    [[-48.2,-1],[20.2,1]].forEach(e=>{g.add(bx(e[0],c[0],-11.5,0.6,14,14,nick,e[1]===c[1]?'плоский контакт: плюс элемента':'контакт с пружиной: минус элемента'));});});
+  g.add(bx(20.8,-10.5,-11.5,0.4,24,6,nick,'никелевая перемычка: плюс №1 с минусом №2'),bx(-48.8,10.5,-11.5,0.4,24,6,nick,'никелевая перемычка: плюс №2 с минусом №3'));
+  [-37,9].forEach(x=>{g.add(bx(x,0,-1,8,70,2.4,dark,'печатный прижим элементов: 2 винта М3, условно'));[-33.5,33.5].forEach(y=>g.add(cy(x,y,0.8,2.4,2.4,1.4,nick,'винт прижима',10)));});
+  // плата защиты BMS 3S, стоит вертикально
+  const bW=45,bH=20,bT=1.6,bs=rrect(bW,bH,[0.8,0.8,0.8,0.8]),bf=sheet(bW,bH,768,'#16306e',front),bb=sheet(bW,bH,256,'#16306e',backM),pn=[['B−',-18],['B1',-9],['B2',0],['B+',9],['P−',18]];
+  pn.forEach(p=>{bf.rect(p[1]-2.2,6.4,p[1]+2.2,9.4,'#cfd2d5');bf.text(p[0],p[1],4.8,1.9,'#eef2f7',0,'700 ');});bf.text('BMS 3S 12,6 V',-8,-7.4,2.3,'#eef2f7',0,'700 ');
+  const bms=base({w:bW,h:bH,t:bT,shape:bs,mask:0x16306e,edge:0xb9b48a,top:bf,bot:bb,label:'плата защиты BMS 3S: отключает при переразряде и коротком замыкании. Вид условный: размер снять с купленной'});
+  [-14,-8,-2,4,10,16].forEach(x=>bms.add(bx(x,-1,bT+0.6,3.4,3,1.2,pkg,'силовой ключ защиты')));bms.add(bx(-12,-7,bT+0.5,5,4,1,pkg,'микросхема защиты'));
+  bms.quaternion.setFromRotationMatrix(new T.Matrix4().makeBasis(new T.Vector3(0,1,0),new T.Vector3(0,0,1),new T.Vector3(1,0,0)));bms.position.set(28.4,0,-12.4);g.add(bms);
+  // диодная плата
+  const pW=22,pH=30,ps=rrect(pW,pH,[0.6,0.6,0.6,0.6]),pf=sheet(pW,pH,640,'#c2b280',front),pb=sheet(pW,pH,256,'#c2b280',backM);for(let i=-4;i<=4;i++)for(let j=-5;j<=5;j++)pf.disc(i*2.54,j*2.54,0.42,'#d6c98f');
+  const rows=[['D1','лодка → выход',12],['D2','элементы → шина',7],['D3','пауэрбанк → шина',2],['D4','1N4007',-3],['D5','шина → выход',-8]];
+  rows.forEach(r=>pf.text(r[0],-8.4,r[2],1.8,'#3a3024',0,'700 '));pf.text('R1',8.2,12,1.5,'#3a3024',0,'700 ');pf.text('R2',8.2,3,1.5,'#3a3024',0,'700 ');
+  const pcb=base({w:pW,h:pH,t:1.6,shape:ps,mask:0xc2b280,edge:0xb39d63,top:pf,bot:pb,label:'диодная плата: макетная, 22 × 30 мм, 2 винта М3 в стойки лотка'});pcb.position.set(46,20,-22.4);g.add(pcb);
+  const dmk=(x,y,c,l)=>{const o=mesh(new T.CylinderGeometry(1.35,1.35,5.2,14),std(c,{roughness:0.5}),l);o.rotation.z=Math.PI/2;o.position.set(x,y,-19.2);g.add(o);const b=mesh(new T.CylinderGeometry(1.4,1.4,0.8,14),std(0xd0d4d8),l);b.rotation.z=Math.PI/2;b.position.set(x+1.8,y,-19.2);g.add(b);[-1,1].forEach(s=>g.add(bx(x+s*3.9,y,-20.2,2.6,0.5,0.5,tin)));};
+  dmk(44,32,0x17181b,'D1, SS34: от аккумулятора лодки на выход. Защищает от переполюсовки');dmk(44,27,0x17181b,'D2, SS34: от элементов на шину резерва, пауэрбанк их не заряжает');dmk(44,22,0x17181b,'D3, SS34: от пауэрбанка на шину резерва');dmk(44,17,0x3a3e45,'D4, 1N5404: занижает резерв на 0,7 В, лодка важнее');dmk(44,12,0x17181b,'D5, SS34: шина резерва на выход, обратно ток не идёт');
+  [[54,32,'R1, 100 кОм: верх делителя напряжения лодки, идёт на жилу «лодка»'],[54,23,'R2, 100 кОм: верх делителя напряжения резерва, идёт на жилу «резерв»']].forEach(r=>{g.add(bx(r[0],r[1],-20,1.6,5,1.6,std(0xc9b48a,{roughness:0.5}),r[2]));});
+  // пауэрбанк → 13 В
+  const mt=mt3608('MT3608: 5 В пауэрбанка → 13,0 В. Выставить до подключения');mt.rotation.z=Math.PI/2;mt.position.set(44.5,-15.5,-21.2);g.add(mt);
+  [[37.5,-33],[51.5,2]].forEach(p=>g.add(cy(p[0],p[1],-23.2,1.6,1.6,2,std(0xc9a227,{metalness:0.8,roughness:0.3}),'стойка MT3608',10)));
+  // предохранитель на выходе элементов
+  Y(rub,'предохранитель 3 А в держателе: на выходе платы защиты',3.6,24,55,-14,-7);
+  // разъёмы
+  Y(blkM,'SP13 на 5 контактов, гнездо на панель: кабель мачты, снимается рукой',8,20,27,29,10);Y(nick,'гайка SP13',10,3,27,41.5,10);Y(blkM,'SP13: посадочная часть',7,8,27,47,10);Y(rub,'вилка SP13 на 5 контактов с кабелем мачты',7.5,14,27,58,10);
+  g.add(bx(46,32,12,14,16,12,blkM,'разъём Type-C на панель: вход 5 В для пауэрбанка, резисторы 5,1 кОм на CC1 и CC2'));g.add(bx(46,42,12,12,4,10,rub,'колпачок Type-C на шнурке: снимается только для пауэрбанка'));
+  X(blkM,'гермоввод PG7: провода от аккумулятора лодки',6.5,14,59,0,8);X(rub,'гайка гермоввода',7.5,4,68,0,8);
+  X(blkM,'гермоввод PG9: один кабель к прибору',7.5,14,-59,0,10);X(rub,'гайка гермоввода',8.5,4,-68,0,10);
+  // внутренняя проводка
+  const w=(pts,r,c,l)=>{g.add(mesh(new T.TubeGeometry(new T.CatmullRomCurve3(pts.map(p=>new T.Vector3(p[0],p[1],p[2]))),36,r,8,false),std(c,{roughness:0.7}),l));};
+  const RED=0xc0392b,BK=0x1a1b1f,GR=0x8a9099,OR=0xe67e22;
+  w([[52,1.4,8],[46,6,0],[39,31,-16],[40.2,32,-19.5]],0.55,RED,'плюс аккумулятора лодки на диод D1');w([[52,-1.4,8],[46,-3,2],[30,-6,-1],[29.8,18,-2.4]],0.55,BK,'минус аккумулятора лодки на общий минус (P−)');
+  w([[-48.6,-21,-4],[-50,-32,4],[-20,-33,6],[20,-33,4],[30,-18,-2.4]],0.45,BK,'B− платы защиты: минус элемента №1');w([[20.8,-10.5,-8],[24,-9,-1],[30,-9,-2.4]],0.45,0x2f7fe0,'B1 платы защиты: между элементами №1 и №2');
+  w([[-48.8,10.5,-8],[-51,20,4],[-20,33,6],[20,32,3],[30,0,-2.4]],0.45,0xf2d024,'B2 платы защиты: между элементами №2 и №3');w([[20.6,21,-8],[24,18,-1],[30,9,-2.4]],0.45,RED,'B+ платы защиты: плюс элемента №3');
+  w([[30,12,-2.4],[44,6,-1],[55,-2,-4],[55,-2,-7]],0.5,RED,'P+ на предохранитель 3 А');w([[55,-26,-7],[59,-20,-14],[58,10,-16],[39.8,27,-19.5]],0.5,RED,'от предохранителя на диод D2');
+  w([[46,24,8],[56,18,0],[57,-30,-8],[47.8,-31.6,-18]],0.45,OR,'5 В от Type-C на вход MT3608');w([[43,24,8],[37,10,0],[36,-30,-10],[40.9,-31.6,-18]],0.45,BK,'земля Type-C на вход MT3608');
+  w([[47.3,-0.1,-18],[44,10,-14],[38,22,-16],[39.8,22,-19.5]],0.45,RED,'13 В от MT3608 на диод D3');
+  w([[-52,0,10],[-44,33,15],[10,34,16],[22,34,14]],2.1,GR,'кабель 8 жил к прибору: питание, 2 жилы измерения, 5 В мачты, данные, экран');
+  w([[22,34,14],[25,28,12],[27,20,10]],1.1,0x4a505a,'5 жил кабеля на разъём мачты: +5 В, земля, A, B, экран');w([[22,34,14],[34,35,4],[36,33,-14],[39,28,-19]],1.1,RED,'4 жилы кабеля на диодную плату: +12 В, минус, «лодка», «резерв»');
+  g.userData.ports={bat:[75,0,8],out:[-75,0,10],mast:[27,66,10]};
+  return g;}
+
+// QUESCAN AN181 (u-blox M10050): 18,25 × 18 × 6,78 мм по замеру, раскладка снята с фото. z=0 — сторона банки и разъёма, антенна сверху; +x — край с разъёмом
+function an181(){const w=18.25,h=18,t=0.8,M='#121317',S='#e8e9ea',G='#c8a14a',INK='#1a1a1c';const s=rrect(w,h,[0.5,0.5,0.5,0.5]);
+  const backP=(g,k,cx,cy2)=>g.setTransform(0,k,-k,0,cx,cy2);   // как на фото: разъём внизу; (вправо, вверх) → x = −вверх, y = −вправо
+  const f=sheet(w,h,256,M,front),b=sheet(w,h,768,M,backP);
+  const oval=(x,y)=>{b.g.fillStyle=G;b.g.beginPath();b.g.ellipse(x,y,0.55,0.8,0,0,7);b.g.fill();};
+  [['T',-7.9],['R',-6.2],['P',-4.5]].forEach(a=>{b.text(a[0],a[1],-3.7,1.05,S,0,'700 ');oval(a[1],-5.1);});
+  [['G',-7.9],['V',-4.5]].forEach(a=>{b.text(a[0],a[1],-6.7,1.05,S,0,'700 ');oval(a[1],-8.2);});
+  b.frame(3.9,-4.2,9,-2.9,S,0.1);['G','T','R','V'].forEach((n,i)=>b.text(n,4.5+i*1.3,-3.55,0.95,S,0,'700 '));
+  [['Pwr',5.6],['PPS',8.2]].forEach(a=>{b.rect(a[1]-1.2,-8.2,a[1]+1.2,-7,S);b.text(a[0],a[1],-7.6,0.85,M,0,'700 ');});
+  const g=base({w,h,t,shape:s,mask:0x121317,edge:0x2a2b2e,top:f,bot:b,label:'GPS QUESCAN AN181 (u-blox M10050), 18 × 18,25 × 6,78 мм: скорость и курс 10 раз в секунду'});
+  g.add(bx(-3.1,0,-0.7,11.8,17.7,1.4,std(0xb8bbbe,{metalness:0.75,roughness:0.35}),'металлический экран приёмника под наклейкой'));
+  const l=sheet(11.2,16.6,768,'#f1efe6',backP);
+  l.text('QUESCAN',-0.2,3.7,1.9,INK,0,'italic 800 ');l.text('AN181',-2.9,0.3,2.1,INK,0,'800 ');l.text('UB-M10050',-3.1,-1.8,1.15,INK,0,'700 ');l.text('GND  TX  RX  VCC',-1.4,-3.6,1.05,INK,0,'700 ');
+  const qx=2.3,qy=-2.1,c=0.3;for(let i=0;i<13;i++)for(let j=0;j<13;j++){const fnd=(a,b)=>a>=0&&a<4&&b>=0&&b<4;const inF=fnd(i,j)||fnd(i-9,j)||fnd(i,j-9);const on=inF?(Math.max(Math.abs(((i>8?i-9:i))-1.5),Math.abs(((j>8?j-9:j))-1.5))>1||Math.max(Math.abs(((i>8?i-9:i))-1.5),Math.abs(((j>8?j-9:j))-1.5))<0.8):((i*7+j*5+i*j)%3===0);if(on)l.rect(qx+i*c,qy+j*c,qx+(i+1)*c,qy+(j+1)*c,INK);}
+  const lm=mesh(new T.ShapeGeometry(rrect(11.2,16.6,[0.4,0.4,0.4,0.4]),8),std(0xffffff,{map:tex(l.c,11.2,16.6),roughness:0.6,side:T.DoubleSide}),'наклейка модуля');lm.position.set(-3.1,0,-1.406);g.add(lm);
+  g.add(bx(-0.125,0,t+1.6,18,18,3.2,std(0x8b5233,{roughness:0.6}),'керамическая антенна 18 × 18 мм: смотрит вверх, на небо'));
+  const p=sheet(18,18,512,'#8b5233',front),e=7.85,ch=1.5;p.g.fillStyle='#e9e6dc';p.g.beginPath();[[-e+ch,e],[e,e],[e,-e+ch],[e-ch,-e],[-e,-e],[-e,e-ch]].forEach((q,i)=>i?p.g.lineTo(q[0],q[1]):p.g.moveTo(q[0],q[1]));p.g.closePath();p.g.fill();p.disc(-1.1,-1.1,1.7,'#b4b8bb').disc(-1.1,-1.1,1.0,'#dfe2e4');
+  const pm=mesh(new T.ShapeGeometry(rrect(18,18,[0.7,0.7,0.7,0.7]),8),std(0xffffff,{map:tex(p.c,18,18),roughness:0.5,side:T.DoubleSide}),'керамическая антенна 18 × 18 мм: смотрит вверх, на небо');pm.position.set(-0.125,0,t+3.206);g.add(pm);
+  dome(g,-1.225,-1.1,t+3.2,1,0.6);
+  g.add(bx(6.05,0,-1.39,5.9,6.1,2.78,std(0xece7d6,{roughness:0.55}),'штатный разъём модуля: 4 контакта с шагом 1 мм, GND, TX, RX, VCC'));
+  g.add(bx(10.6,0,-1.39,3.6,5.1,2.1,std(0xf4f1e6,{roughness:0.5}),'вилка с проводами: вставляется в разъём модуля, снимается без паяльника'));
+  led(g,6.2,-5.6,0,-1,false,'светодиод питания Pwr');led(g,6.2,-8.2,0,-1,false,'светодиод PPS: мигает, когда GPS поймал спутники');
+  g.userData.pins={};[['GND',1.5],['TX',0.5],['RX',-0.5],['VCC',-1.5]].forEach(a=>{g.userData.pins[a[0]]=[12.7,a[1],-1.39];g.add(bx(12.5,a[1],-1.39,0.4,0.5,0.5,gold,'провод '+a[0]));});
+  return g;}
+
+// TP4056 TZT с защитой: 18 × 14 × 4,36 мм, с USB-C 19,53 мм — замер; раскладка снята с фото. −x — край с USB-C, +x — контакты аккумулятора и нагрузки
+function tp4056(){const w=18,h=14,t=1.1,M='#101114',S='#e9eaec',TIN='#cfd2d5',TI=[['N+',-6.25,6],['N-',-6.25,-6]],OU=[['+',8,5.7],['+',8,3.3],['B-',8,-3.6],['OUT-',8,-5.9]];
+  const s=rrect(w,h,[0.3,0.3,0.3,0.3]);TI.concat(OU).forEach(p=>hole(s,p[1],p[2],1));
+  const backP=(g,k,cx,cy2)=>g.setTransform(0,k,-k,0,cx,cy2);   // как на фото снизу: USB-C вверху; (вправо, вверх) → x = −вверх, y = −вправо
+  const f=sheet(w,h,768,M,front),b=sheet(w,h,768,M,backP);
+  TI.forEach(p=>{f.disc(p[1],p[2],1.05,TIN);b.disc(-p[2],-p[1],1.05,TIN);});OU.forEach(p=>{f.rect(p[1]-0.95,p[2]-0.95,p[1]+0.95,p[2]+0.95,TIN);b.rect(-p[2]-0.95,-p[1]-0.95,-p[2]+0.95,-p[1]+0.95,TIN);});
+  f.text('N+',-3.3,6.15,1.5,S,0,'700 ');f.text('N−',-3.75,-6.2,1.5,S,0,'700 ');f.text('+',6.1,5.9,1.5,S,0,'700 ');f.text('B−',6,-3.9,1.3,S,0,'700 ');f.text('OUT−',5.2,-6.3,1.25,S,0,'700 ');f.text('51021G',1.4,-5.6,0.72,S,0,'600 ');f.line([[4.75,-3],[4.75,-4.8]],S,0.1);
+  for(let i=0;i<8;i++)f.rect(-3.9,4.2-i*1.05-0.3,-3,4.2-i*1.05+0.3,TIN);
+  [-1,1].forEach(q=>[-1.905,-0.635,0.635,1.905].forEach(u=>f.rect(1.95+u-0.3,q*2.6-0.55,1.95+u+0.3,q*2.6+0.55,TIN)));
+  b.text('V1008',-3,-1.4,1.25,S,0,'700 ');b.text('Voltage: 4.2V',0.7,-3.7,1.2,S,0,'600 ');b.text('Current: 1A',-0.2,-5.4,1.2,S,0,'600 ');
+  [-1,1].forEach(q=>{b.g.fillStyle=TIN;b.g.beginPath();b.g.ellipse(q*4.45,4.3,0.7,1.25,0,0,7);b.g.fill();});
+  const g=base({w,h,t,shape:s,mask:0x101114,edge:0x24252a,top:f,bot:b,label:'TP4056 TZT с защитой: 14 × 18 × 4,36 мм, с USB-C 19,53 мм; на плате напечатано 4,2 В, 1 А'});
+  const dark=std(0x17181b,{roughness:0.5});
+  g.add(bx(1.95,0,t+0.75,4.7,3.9,1.5,dark,'TP4056: линейная зарядка, ток задаёт один резистор'));
+  [-1,1].forEach(q=>[-1.905,-0.635,0.635,1.905].forEach(u=>g.add(bx(1.95+u,q*2.45,t+0.2,0.42,0.8,0.3,tin))));
+  g.add(bx(6.9,0.8,t+0.5,1.6,2.9,1,dark,'микросхема защиты аккумулятора'));[-1,1].forEach(q=>[-0.95,0,0.95].forEach(u=>g.add(bx(6.9+q*1.05,0.8+u,t+0.15,0.5,0.4,0.25,tin))));
+  smd(g,5.7,3.6,t,1,false,'c','конденсатор');smd(g,-2.2,1.4,t,1,true,'c','конденсатор');[[-0.25,4.7,true],[-2,5.2,false],[-2,3.9,false],[-2.4,-1.2,true],[-2.4,-2.9,true]].forEach(a=>smd(g,a[0],a[1],t,1,a[2],'r','резистор'));
+  led(g,1.4,4.7,t,1,true,'светодиод зарядки');led(g,3.1,4.7,t,1,true,'светодиод «заряжено»');
+  const shell=std(0xb9bcbf,{metalness:0.75,roughness:0.32});const us=mesh(new T.ExtrudeGeometry(rrect(8.94,3.26,[1.6,1.6,1.6,1.6]),{depth:6.58,bevelEnabled:false,curveSegments:12}),shell,'USB-C модуля: в блоке не используется, питание зарядки приходит на N+ и N−');
+  us.quaternion.setFromRotationMatrix(new T.Matrix4().makeBasis(new T.Vector3(0,1,0),new T.Vector3(0,0,1),new T.Vector3(1,0,0)));us.position.set(-10.53,0,t+1.63);g.add(us);
+  g.add(bx(-10.54,0,t+1.63,0.02,8.1,2.5,std(0x0c0d10)));g.add(bx(-10.55,0,t+1.63,0.02,6.6,0.7,std(0x2a2c30)));g.add(bx(-5,0.5,4.365,1.6,4.2,0.02,std(0x74777b)));
+  return g;}
+
+// TPS63020: плата 33,47 × 24,3 × 1,5 мм по замеру, катушка выступает за край на 1,65 мм; раскладка снята с фото. +y — край с VIN и VOUT, −y — край с катушкой и GND, +x — EN, PS, PG
+function tps63020(){const w=33.47,h=24.3,t=1.5,M='#101114',S='#e9eaec',TIN='#cfd2d5',V_='#34363c';const s=rrect(w,h,[0.5,0.5,0.5,0.5]);
+  const TH=[[-9.5,10.8,1],[-6.9,10.8,0],[5.9,10.8,1],[8.76,10.8,0],[-9.5,-10.7,1],[-6.9,-10.7,0],[6.7,-10.7,1],[9.2,-10.7,0],[15.7,5.4,0],[15.7,8,0],[15.7,10.8,1]];TH.forEach(p=>hole(s,p[0],p[1],1));
+  const f=sheet(w,h,1024,M,front),b=sheet(w,h,1024,M,backM);
+  [f,b].forEach((d,i)=>{const q=i?-1:1;TH.forEach(p=>{if(p[2])d.rect(q*p[0]-0.95,p[1]-0.95,q*p[0]+0.95,p[1]+0.95,TIN);else d.disc(q*p[0],p[1],0.98,TIN);});
+    [[-15.7,-11.2,-11.5,-1.5],[11.5,-11.2,15.8,-1.5]].forEach(r=>{for(let x=r[0];x<=r[2];x+=0.9)for(let y=r[1];y<=r[3];y+=0.9)d.disc(q*x,y,0.15,V_);});});
+  [[-15.7,8],[15.4,-8.9]].forEach(p=>f.disc(p[0],p[1],0.75,TIN));
+  [['GND',-8.2,-8.2],['GND',8.4,-8.3]].forEach(a=>f.text(a[0],a[1],a[2],1.7,S,0,'700 '));f.text('VIN',3.5,10.8,1.7,S,180,'700 ');f.text('VOUT',-3.9,10.8,1.7,S,180,'700 ');
+  [['P2',-12,-11.2],['P1',11.8,-11.6],['P3',15.7,3.3],['P4',12.8,10.8],['U1',2.7,0.6],['C2',-14.8,10.8],['C1',13.4,6],['C3',-4.3,-5],['C8',-9.2,-5.2],['C7',9.2,-5.2],['C4',4.3,-5],['T1',-7.8,2.6],['T2',-7.6,7],['T3',6.6,2.1],['R3',-3.8,5.3],['R4',-0.2,7.1],['R5',-3.8,3.5],['R6',-0.2,9]].forEach(a=>f.text(a[0],a[1],a[2],0.9,S,0,'600 '));
+  for(let i=0;i<3;i++)f.line([[3.3-0.9+i*0.9,5.2],[3.3+i*0.9,6.1]],S,0.32);
+  [[15,5.4],[15,8],[15,10.8]].forEach((p,i)=>b.line([[-p[0],p[1]],[-11,p[1]-i*0.2],[-3.4+i*0.6,-0.6+i*0.7]],V_,0.16));
+  [['EN',5.4],['PS',8],['PG',10.8]].forEach(a=>b.text(a[0],-13,a[1],1.45,S,90,'700 '));
+  const g=base({w,h,t,shape:s,mask:0x101114,edge:0x24252a,top:f,bot:b,label:'TPS63020: 33,47 × 24,3 × 1,5 мм, даёт 3,3 В и когда аккумулятор выше 3,3 В, и когда ниже'});
+  const tanL=sheet(5.6,4,256,'#e2a02c',front);tanL.text('▲107C',0.4,0.75,1.1,'#5a3a10',0,'700 ').text('813B2',0.4,-0.8,1.0,'#5a3a10',0,'600 ');
+  [[-11.5,2.6],[-11.1,7.1],[10.2,2.1]].forEach(c=>{g.add(bx(c[0],c[1],t+1.3,5.9,4.3,2.6,std(0xe2a02c,{roughness:0.42}),'танталовый конденсатор 100 мкФ, код 107C'));[-1,1].forEach(q=>g.add(bx(c[0]+q*3,c[1],t+0.1,0.5,2.8,0.2,tin)));g.add(bx(c[0]-2.55,c[1],t+1.3,0.42,4.32,2.62,std(0x8d5a19,{roughness:0.4}),'полоса: плюс'));const m=mesh(new T.ShapeGeometry(rrect(5.6,4,[0.3,0.3,0.3,0.3]),4),std(0xffffff,{map:tex(tanL.c,5.6,4),roughness:0.45,side:T.DoubleSide}),'танталовый конденсатор 100 мкФ, код 107C');m.position.set(c[0],c[1],t+2.606);g.add(m);});
+  const ind=std(0x6e7072,{metalness:0.35,roughness:0.5});g.add(bx(-0.1,-9.5,t+1.5,6.8,8.5,3,ind,'катушка 2,2 мкГн, код 2R2: выступает за край платы на 1,65 мм'));const il=sheet(6.8,8.5,512,'#6e7072',front);il.text('2R2',0,0,3,'#1c1c1e',0,'700 ');const im=mesh(new T.ShapeGeometry(rrect(6.8,8.5,[0.3,0.3,0.3,0.3]),4),std(0xffffff,{map:tex(il.c,6.8,8.5),roughness:0.5,side:T.DoubleSide}),'катушка 2,2 мкГн, код 2R2');im.position.set(-0.1,-9.5,t+3.006);g.add(im);
+  const dark=std(0x17181b,{roughness:0.5});g.add(bx(-0.4,-2.4,t+0.4,3.3,4.5,0.8,dark,'TPS63020: повышающе-понижающий преобразователь'));
+  const tanC=std(0xa58a63,{roughness:0.55});[[-6.4,-1.9,1],[-7.9,-4,1],[6.4,-1.9,-1],[7.9,-4,-1]].forEach((c,i)=>{const n=new T.Group();n.position.set(c[0],c[1],t);n.rotation.z=c[2]*Math.PI/4;const big=i%2===0;n.add(bx(0,0,big?0.8:0.45,big?3.2:2,big?2.5:1.25,big?1.6:0.9,tanC,'керамический конденсатор'));[-1,1].forEach(q=>n.add(bx(q*(big?1.6:1),0,big?0.8:0.45,0.3,big?2.5:1.25,big?1.62:0.92,tin)));g.add(n);});
+  smd(g,-12.9,10.8,t,1,true,'c','конденсатор');smd(g,11.8,7.1,t,1,true,'c','конденсатор');[3.5,5.3,7.1,9].forEach(y=>smd(g,-1.7,y,t,1,true,'r','резистор'));[7.1,8.4].forEach(y=>smd(g,-4.8,y,t,1,false,'r','резистор'));
+  return g;}
+
+// MT3608: плата 37,2 × 16,55 × 1,15 мм по замеру, раскладка снята с фото. −x — вход, +x — выход
+function mt3608(label){const w=37.2,h=16.55,t=1.15,M='#16306e',S='#e9eaec',TIN='#cfd2d5',INK='#17171b';const s=rrect(w,h,[0.5,0.5,0.5,0.5]);
+  const P=[[-15.4,3.6,-16.1],[-15.6,-3.3,-16.1],[15.5,3.8,15.4],[15.7,-2.8,15.4]],TR=[4.5,6.9,9.2];P.forEach(p=>hole(s,p[2],p[1],1.2));TR.forEach(x=>hole(s,x,-2.1,0.8));
+  const backF=(g,k,cx,cy2)=>g.setTransform(k,0,0,k,cx,cy2);   // как на фото снизу: (вправо, вверх) → x = вправо, y = −вверх
+  const f=sheet(w,h,1024,M,front),b=sheet(w,h,1024,M,backF);
+  P.forEach(p=>{f.rect(p[0]-2.7,p[1]-1.5,p[0]+2.7,p[1]+1.5,TIN);b.rect(p[0]-2.7,-p[1]-1.5,p[0]+2.7,-p[1]+1.5,TIN);});TR.forEach(x=>b.disc(x,2.1,0.8,TIN));
+  [['VN−',-15.7,6.4],['VN+',-16.2,-6],['VOUT−',15.2,6.5],['VOUT+',15.5,-5.9]].forEach(a=>f.text(a[0],a[1],a[2],1.5,S,180,'700 '));
+  f.frame(-11,-7.4,-0.4,2.6,S,0.14);f.frame(1.8,-7,11.2,-4.1,S,0.14);f.frame(-9.2,3.4,-4.2,8,S,0.14);
+  [[-12.4,0],[-11.9,0.8],[12.6,0],[13.2,0.8]].forEach(p=>f.disc(p[0],p[1],0.17,'#2a4b96'));
+  b.text('ICSA004A',-14.4,5.6,1.1,S,0,'700 ');b.text('MT3608',5.6,-2.1,2.6,S,0,'600 ');b.text('Y7412',5.8,-5.1,2.2,S,0,'600 ');
+  const G=b.g;G.fillStyle=S;for(let i=0;i<8;i++){const a=i*Math.PI/4;G.save();G.translate(-5+Math.cos(a)*3.9,2.7+Math.sin(a)*3.9);G.rotate(a);G.fillRect(-0.6,-0.6,1.2,1.2);G.restore();}b.ring(-5,2.7,3.3,S,1.0);b.text('IS',-5,2.7,2.6,S,0,'800 ');
+  const g=base({w,h,t,shape:s,mask:0x16306e,edge:0x24252a,top:f,bot:b,label:label||'MT3608, 37,2 × 16,55 × 1,15 мм'});
+  const dark=std(0x17181b,{roughness:0.5}),lbl=label||'MT3608';
+  g.add(bx(-5.7,-2.4,t+2,9.6,9.7,4,dark,'катушка 22 мкГн, код 220'));[-1,1].forEach(q=>g.add(bx(-5.7+q*4.95,-2.4,t+0.9,1,3.4,1.8,tin)));
+  const il=sheet(9.6,9.7,512,'#121216',front);il.ring(0,0,4.2,'#2a2b2f',0.5);il.text('220',0,0,2.8,'#b9bcc0',180,'700 ');const im=mesh(new T.ShapeGeometry(rrect(9.6,9.7,[2.6,2.6,2.6,2.6]),10),std(0xffffff,{map:tex(il.c,9.6,9.7),roughness:0.6,side:T.DoubleSide}),'катушка 22 мкГн, код 220');im.position.set(-5.7,-2.4,t+4.006);g.add(im);
+  g.add(bx(6.5,3.8,t+2.4,9.6,9.5,4.8,std(0x2f6fb0,{roughness:0.45}),'подстроечник 3296: выставить 5,0 В мультиметром до установки и залить лаком'));
+  const tl=sheet(9.2,9.2,512,'#2f6fb0',front);tl.text('BAOTER',0,2.6,1.5,'#123',0,'800 ').text('3296',0,0.3,1.9,'#123',0,'800 ').text('103',0,-2,1.4,'#123',0,'700 ');const tm=mesh(new T.ShapeGeometry(rrect(9.2,9.2,[0.2,0.2,0.2,0.2]),2),std(0xffffff,{map:tex(tl.c,9.2,9.2),roughness:0.5,side:T.DoubleSide}),'подстроечник 3296');tm.position.set(6.5,3.8,t+4.806);g.add(tm);
+  const scr=mesh(new T.CylinderGeometry(1,1,1.7,12),gold,'винт подстроечника');scr.position.set(8.7,9.3,t+3.5);g.add(scr);
+  TR.forEach(x=>{g.add(bx(x,-1.5,t+0.6,0.5,2,0.5,tin));dome(g,x,-2.1,t,1,0.45);});
+  g.add(bx(-7.1,5.9,t+0.5,2.9,1.6,1,dark,'микросхема MT3608'));[-1,1].forEach(q=>[-0.95,0,0.95].forEach(u=>g.add(bx(-7.1+u,5.9+q*1.05,t+0.15,0.4,0.5,0.25,tin))));
+  smd(g,-10.6,5.4,t,1,true,'c','конденсатор');smd(g,-1.8,5.4,t,1,true,'c','конденсатор');smd(g,12,-5.1,t,1,true,'r','резистор');
+  g.add(bx(6.6,-5.6,t+1,4.3,2.6,2,dark,'диод Шоттки'));g.add(bx(8.4,-5.6,t+1,0.5,2.62,2.02,std(0x8f9296)));[-1,1].forEach(q=>g.add(bx(6.6+q*2.5,-5.6,t+0.2,0.9,1.5,0.3,tin)));
+  return g;}
+
+// ESP32-C3 SuperMini (TENSTAR ROBOT): 17,81 × 22,66 × 1,06 мм, с выносом USB 24,1 мм — замер; раскладка снята с фото. +y — USB-C. Ряды контактов ±7,62, шаг 2,54
+function esp32c3(){const w=17.81,h=22.66,t=1.06,M='#101114',S='#e9eaec',GOLD='#c8a14a',INK='#111';const s=rrect(w,h,[0.6,0.6,0.6,0.6]);
+  const Y=[0,1,2,3,4,5,6,7].map(i=>9.96-i*2.54);Y.forEach(y=>[-7.62,7.62].forEach(x=>hole(s,x,y,0.9)));[-4.2,4.2].forEach(x=>[10.3,6.2].forEach(y=>hole(s,x,y,0.7)));
+  const f=sheet(w,h,1024,M,front),b=sheet(w,h,1024,M,backM);
+  const pad=(d,x,y)=>{d.g.fillStyle=GOLD;d.g.beginPath();d.g.ellipse(x,y,1.25,0.85,0,0,7);d.g.fill();};
+  Y.forEach(y=>[-1,1].forEach(q=>{pad(f,q*8,y);pad(b,q*8,y);f.disc(q*7.62,y,0.42,'#3a2f18');b.disc(q*7.62,y,0.42,'#3a2f18');}));
+  [['5V',5.9,10.2],['G',6.2,7.7],['3.3',5.6,4.8],['PW',-5.4,5],['21',-6.4,-9.9],['0',6.6,-9.9],['8',5,-0.2]].forEach(a=>f.text(a[0],a[1],a[2],1.1,S,0,'700 '));f.text('BOOT',-5.4,2.4,1,S,90,'700 ');f.text('RST.',5.8,2.4,1,S,90,'700 ');
+  ['5V','G','3.3','4','3','2','1','0'].forEach((n,i)=>b.text(n,-5.3,Y[i],1.15,S,0,'700 '));['5','6','7','8','9','10','20','21'].forEach((n,i)=>b.text(n,5.3,Y[i],1.15,S,0,'700 '));
+  [['TENSTAR',2.3],['ROBOT',-0.2],['ESP32-C3',-2.9],['Super Mini',-5.5]].forEach(a=>{b.rect(-4.75,a[1]-1.15,4.75,a[1]+1.15,S);b.text(a[0],0,a[1],1.45,INK,0,'700 ');});
+  [[-4.2,10.3],[4.2,10.3],[-4.2,6.2],[4.2,6.2]].forEach(p=>{b.g.fillStyle=GOLD;b.g.beginPath();b.g.ellipse(p[0],p[1],0.65,1.15,0,0,7);b.g.fill();});
+  const g=base({w,h,t,shape:s,mask:0x101114,edge:0x24252a,top:f,bot:b,label:'ESP32-C3 SuperMini, 17,81 × 22,66 × 1,06 мм, с выносом USB 24,1 мм: контроллер на топе мачты'});
+  const dark=std(0x17181b,{roughness:0.5}),shell=std(0xbfc2c5,{metalness:0.75,roughness:0.3});
+  const us=mesh(new T.ExtrudeGeometry(rrect(8.5,3.2,[1.55,1.55,1.55,1.55]),{depth:7.37,bevelEnabled:false,curveSegments:12}),shell,'разъём USB-C: для прошивки');us.quaternion.setFromRotationMatrix(new T.Matrix4().makeBasis(new T.Vector3(1,0,0),new T.Vector3(0,0,1),new T.Vector3(0,-1,0)));us.position.set(0,12.77,t+1.6);g.add(us);g.add(bx(0,12.78,t+1.6,7.7,0.02,2.4,std(0x0c0d10)));g.add(bx(0,12.79,t+1.6,6.2,0.02,0.65,std(0x2a2c30)));
+  [[-2.8,3.2,'кнопка BOOT'],[2.7,3.2,'кнопка RST']].forEach(a=>{g.add(bx(a[0],a[1],t+0.5,3.2,2.8,1,std(0x8f9296,{metalness:0.5,roughness:0.4}),a[2]));const p=mesh(new T.CylinderGeometry(0.7,0.7,0.5,14),dark,a[2]);p.rotation.x=Math.PI/2;p.position.set(a[0],a[1],t+1.2);g.add(p);[-1,1].forEach(q=>g.add(bx(a[0],a[1]+q*1.65,t+0.15,1.8,0.5,0.3,tin)));});
+  const q=new T.Group();q.position.set(1.4,-2.7,t);q.rotation.z=Math.PI/4;q.add(bx(0,0,0.4,5,5,0.8,dark,'микросхема ESP32-C3'));[-1,1].forEach(a=>{for(let i=0;i<8;i++){q.add(bx(-2.1+i*0.6,a*2.6,0.1,0.25,0.4,0.18,tin));q.add(bx(a*2.6,-2.1+i*0.6,0.1,0.4,0.25,0.18,tin));}});g.add(q);
+  g.add(bx(-4.1,-6.1,t+0.4,3.2,2.5,0.8,std(0xc9c0a4,{metalness:0.5,roughness:0.4}),'кварц 40 МГц'));g.add(bx(-4.9,-1.1,t+0.5,1.6,2.9,1,dark,'стабилизатор 3,3 В'));
+  g.add(bx(0.1,-9.7,t+0.5,6.8,2.3,1,std(0xc8202a,{roughness:0.5}),'керамическая антенна Wi-Fi'));[-1,1].forEach(a=>g.add(bx(0.1+a*3.5,-9.7,t+0.5,0.6,2.32,1.02,tin)));const al=sheet(4.5,2.2,256,'#c8202a',front);al.text('C3',0,0,1.5,'#f2f2f2',0,'800 ');const am=mesh(new T.PlaneGeometry(4.5,2.2),std(0xffffff,{map:new T.CanvasTexture(al.c),roughness:0.5}),'керамическая антенна Wi-Fi');am.position.set(0.1,-9.7,t+1.006);g.add(am);
+  [[-3.5,-3.2,false],[-2.9,-4.3,true],[3.6,-6.8,false],[5.6,-5.4,true],[-5.5,-4.2,true],[-1.4,0.8,false],[1.8,0.9,false],[5.1,5.8,false],[-5.2,8.6,true]].forEach((a,i)=>smd(g,a[0],a[1],t,1,a[2],i%2?'c':'r',i%2?'конденсатор':'резистор'));led(g,5,0.9,t,1,false,'светодиод питания');
+  return g;}
+
+// MAX3485 (SOP-8) на переходнике SOP8 → DIP8: 11,5 × 11,5 мм, ряды 7,62, шаг 2,54. Контакты 1–4 слева сверху вниз, 5–8 справа снизу вверх
+function max3485s(label){const w=11.5,h=11.5,t=1.6,M='#1a7a3c',S='#eef5ee',TIN='#cfd2d5';const s=rrect(w,h,[0.3,0.3,0.3,0.3]);
+  const P=[[-3.81,3.81],[-3.81,1.27],[-3.81,-1.27],[-3.81,-3.81],[3.81,-3.81],[3.81,-1.27],[3.81,1.27],[3.81,3.81]];P.forEach(p=>hole(s,p[0],p[1],0.9));
+  const f=sheet(w,h,512,M,front),b=sheet(w,h,512,M,backM);
+  P.forEach((p,i)=>{[f,b].forEach((d,k)=>{const q=k?-1:1;if(i===0)d.rect(q*p[0]-0.8,p[1]-0.8,q*p[0]+0.8,p[1]+0.8,TIN);else d.disc(q*p[0],p[1],0.8,TIN);});f.text(String(i+1),p[0]+(p[0]<0?-1.25:1.25),p[1],1.15,S,0,'700 ');});
+  [-1.905,-0.635,0.635,1.905].forEach(u=>[-1,1].forEach(q=>f.rect(u-0.3,q*3.4-1.3,u+0.3,q*3.4+1.3,TIN)));f.frame(-2.5,-1,2.5,1,S,0.13);f.disc(-1.95,-0.5,0.2,S);
+  b.text('1,27',0,0,1.5,S,0,'700 ');
+  const g=base({w,h,t,shape:s,mask:0x1a7a3c,edge:0xb9b48a,top:f,bot:b,label:label||'MAX3485 на переходнике SOP-8'});
+  g.add(bx(0,0,t+0.8,4.9,3.9,1.5,std(0x17181b,{roughness:0.5}),'микросхема MAX3485EESA, корпус SOP-8'));[-1,1].forEach(q=>[-1.905,-0.635,0.635,1.905].forEach(u=>g.add(bx(u,q*2.45,t+0.15,0.42,1,0.3,tin))));
+  g.add(bx(5.2,0,-0.5,1.2,2,1,std(0xa58a63,{roughness:0.55}),'конденсатор 100 нФ: между контактами 8 и 5, как можно ближе к микросхеме'));
+  P.forEach(p=>g.add(bx(p[0],p[1],-1.25,0.5,0.5,2.5,gold,'штырь в цанговое гнездо')));
+  return g;}
+
+function epd42(){const w=92,h=89.7,t=1.6,M='#141518',S='#e8e9ea',TIN='#c9cdd0';const s=rrect(w,h,[1.2,1.2,1.2,1.2]);
+  const hs=[[-43.6,42.55],[43.6,42.55],[-43.6,-42.55],[43.6,-42.55]];hs.forEach(p=>hole(s,p[0],p[1],3.2));
+  const hx=[-4.33,-1.79,0.75,3.29],hy=[43.75,41.21];hx.forEach(x=>hy.forEach(y=>hole(s,x,y,0.95)));
+  const f=sheet(w,h,1024,M,front),b=sheet(w,h,1024,M,backM);
+  [f,b].forEach((d,i)=>{const sx=i?-1:1;hs.forEach(p=>d.disc(sx*p[0],p[1],2.4,'#b7925a'));hx.forEach(x=>hy.forEach(y=>d.disc(sx*x,y,0.85,TIN)));});
+  b.frame(-8.4,38,7.6,32.4,S,0.16).line([[-8.4,35.2],[7.6,35.2]],S,0.14);[-4.4,-0.4,3.6].forEach(u=>b.line([[u,38],[u,32.4]],S,0.14));
+  [['GND',-6.4,36.6],['SCL',-2.4,36.6],['D/C',1.6,36.6],['BUSY',5.6,36.6],['VCC',-6.4,33.8],['SDA',-2.4,33.8],['CS',1.6,33.8],['RES',5.6,33.8]].forEach(a=>b.text(a[0],a[1],a[2],1,S,0,'700 '));
+  b.text('7',-6.8,43.8,1,S,0,'700 ');b.text('1',5.8,43.8,1,S,0,'700 ');b.text('8',-6.8,41.2,1,S,0,'700 ');b.text('2',5.8,41.2,1,S,0,'700 ');
+  b.frame(-8.9,29.8,8.1,26,S,0.16);['VCC','GND','SDA','SCL','CS','D/C','RES','BUSY'].forEach((n,i)=>{const u=-6.9+i*2.14;if(i)b.line([[u-1.07,29.8],[u-1.07,26]],S,0.12);b.text(n,u,27.9,0.92,S,90,'700 ');});
+  b.text('4.2" Epaper Module',-21.8,35,2.05,S,0,'700 ');b.frame(-38.6,33.8,-33.4,29.4,'#c9a13b',0.14);b.text('WeAct',-36,32.8,0.85,'#c9a13b',0,'700 ');b.text('Studio',-36,30.6,0.85,S,0,'700 ');
+  [['400 x 300 resolution',32.3],['Designed By WeAct Studio',30.2],['VCC: 3.3-5V (SB4+SB5)',28.2],['VCC: 3.3V Only (SB3)',26],['I/O: 3.3V',24]].forEach((a,i)=>b.text(a[0],-20.3,a[1],1,S,0,'600 '));
+  b.text('SB5 SB3',20,-2.1,0.9,S,0,'700 ');b.text('SB4',21.4,-7,0.9,S,0,'700 ');b.text('3-Lines SPI',30.9,-11.7,0.95,S,0,'700 ');b.text('4-Lines SPI',30.9,-13.1,0.95,S,0,'700 ');
+  [[36.7,31.8],[-14.6,-32.3]].forEach(p=>b.disc(p[0],p[1],0.55,TIN));
+  const g=base({w,h,t,shape:s,mask:0x141518,edge:0x2a2b2e,top:f,bot:b,label:'экран WeAct 4,2″, 92 × 89,7 × 2,84: 400 × 300 точек',gloss:0.5});
+  // стекло
+  const gl=document.createElement('canvas'),K=11;gl.width=Math.round(91.7*K);gl.height=Math.round(78.3*K);const c=gl.getContext('2d');c.fillStyle='#d7d8d2';c.fillRect(0,0,gl.width,gl.height);
+  const px=x=>(x+45.85)*K,py=y=>(39.4-y)*K;
+  c.fillStyle='#e1e2dd';c.fillRect(px(-43.7),py(36.8),86.7*K,65.7*K);c.strokeStyle='#a8aaa5';c.lineWidth=2;c.strokeRect(px(-43.7),py(36.8),86.7*K,65.7*K);
+  c.fillStyle='#ecebe6';c.fillRect(px(-38.6),py(-31),76.5*K,8*K);c.fillStyle='#8f9091';c.fillRect(px(-7.7),py(-36.1),13.6*K,1.2*K);
+  [[-43.8,-29.7],[39.7,-30.2]].forEach(p=>{c.fillStyle='#a4a6a8';c.fillRect(px(p[0]),py(p[1]),4.3*K,3.1*K);c.fillStyle='#e8e8e6';c.beginPath();c.arc(px(p[0]+2.1),py(p[1]-1.5),0.85*K,0,7);c.fill();});
+  const gt=new T.CanvasTexture(gl);gt.anisotropy=4;const gm=[std(0xd7d8d2,{roughness:0.3}),std(0xd7d8d2,{roughness:0.3}),std(0xd7d8d2,{roughness:0.3}),std(0xd7d8d2,{roughness:0.3}),std(0xffffff,{map:gt,roughness:0.35}),std(0xd7d8d2,{roughness:0.3})];
+  g.add((()=>{const o=mesh(new T.BoxGeometry(91.7,78.3,1.24),gm,'стекло экрана: активное поле 84,8 × 63,6 смещено вверх на 3,9 мм');o.position.set(0,0.25,t+0.62);return o;})());
+  // обратная сторона: u = −x, z < 0
+  const con=new T.Group();con.position.set(0.33,21.9,0);con.add(bx(0,0,-1.5,16.2,7.3,3,std(0xf0ece0,{roughness:0.5}),'штатный разъём экрана на 8 проводов: шаг 1,25 мм, провода выходят вбок и снимаются'));con.add(bx(-7.4,1.9,-1.5,1.6,3.3,3,std(0xe2ded2)));con.add(bx(7.4,1.9,-1.5,1.6,3.3,3,std(0xe2ded2)));g.add(con);
+  g.add(cy(-19,-12.4,-1,2.5,2.5,2,std(0x1b1c1e,{roughness:0.5}),'катушка 47 мкГн: преобразователь напряжения экрана',20));
+  [[-15.6,-13,2.2,1.2],[-22.4,-13,2.2,1.2],[-19,-7.5,3.2,1.5],[-15.2,-2.9,1.6,1],[-21.4,-3.2,1.6,1],[-16.9,-17.5,3,1.5],[-20.2,-18.7,1.6,0.9],[-23.1,-18.7,1.6,0.9],[-26.3,-18.7,1.6,0.9],[-30.5,-14.7,1.6,0.9]].forEach(p=>g.add(bx(p[0],p[1],-0.4,p[2],p[3],0.8,pkg)));
+  [[-11.6,-18.7],[-12.9,-18.7],[-14.2,-18.7],[-15.5,-18.7],[-22.9,-13.4],[-21.8,-11.2]].forEach(p=>g.add(bx(p[0],p[1],-0.3,0.95,0.6,0.5,tin)));
+  g.add(bx(-22.9,-25.3,-1,14.3,2.8,2,std(0x8e9193,{metalness:0.6,roughness:0.4}),'разъём шлейфа стекла'));
+  const fx=std(0xc98a2d,{roughness:0.55});g.add(bx(-22.9,-30.7,-0.1,12.8,8.2,0.2,fx,'шлейф стекла HINK-E042A07-A3'));g.add(bx(-4,-38,-0.1,37.5,6.6,0.2,fx,'шлейф стекла HINK-E042A07-A3'));
+  const qc=document.createElement('canvas');qc.width=qc.height=128;const q2=qc.getContext('2d');q2.fillStyle='#f2f2f0';q2.fillRect(0,0,128,128);q2.fillStyle='#1a1a1a';for(let i=0;i<9;i++)for(let j=0;j<9;j++)if((i*7+j*13+i*j)%3===0)q2.fillRect(14+i*11,12+j*9,10,8);
+  const qm=mesh(new T.PlaneGeometry(8.2,8.4),std(0xffffff,{map:new T.CanvasTexture(qc),roughness:0.6}),'наклейка с номером стекла');qm.rotation.y=Math.PI;qm.position.set(-24.5,-36,-0.22);g.add(qm);
+  const u=x=>0.33+4.375-x*1.25;g.userData.pins={};[['VCC'],['GND'],['DIN'],['CLK'],['CS'],['DC'],['RST'],['BUSY']].forEach((n,i)=>g.userData.pins[n[0]]=[u(i),18.1,-1.5]);
+  return g;}
+
+// экран прибора 400 × 300, чёрно-белый. v: aws, awa (+ справа), hdg, sog, heel (+ на правый), pitch (+ на нос), sig, d, dev (отклонение от базового курса: увал +, привод −), boat и res (напряжения, В), onRes (работает от резерва), batt (заряд, %), chg (идёт зарядка), mode 0–3, cfg, menu
+function drawScreen(c,v){const INK='#17171b',PAP='#dcdad1',F='Arial, sans-serif',D=Math.PI/180,cfg=v.cfg||{},ms=cfg.unit==='м/с',U=ms?'м/с':'уз';
+  const f1=x=>x.toFixed(1).replace('.',','),spd=x=>f1(ms?x*0.5144:x),side=a=>Math.abs(a)<0.5?'':(a<0?'Л':'П'),n360=a=>((Math.round(a)%360)+360)%360;
+  const ar=v.awa*D,wx=v.aws*Math.sin(ar),wy=v.aws*Math.cos(ar)-v.sog,tws=Math.hypot(wx,wy),twa=Math.atan2(wx,wy)/D,twd=n360(v.hdg+twa),cog=n360(v.hdg+2),vmg=v.sog*Math.cos(twa*D);
+  const T=(s,X,Y,sz,w,al)=>{c.font=(w||700)+' '+sz+'px '+F;c.textAlign=al||'left';c.textBaseline='alphabetic';c.fillText(s,X,Y);c.textAlign='left';};
+  const H=(x,y,w,t)=>c.fillRect(x,y,w,t||1.5);
+  c.save();c.fillStyle=PAP;c.fillRect(0,0,400,300);c.fillStyle=INK;c.strokeStyle=INK;c.lineJoin='round';c.lineCap='round';
+  const mode=v.mode||0,names=['ОСНОВНОЙ','ВЕТЕР','ТАКТИКА','ЛОДКА'],nw=!!v.noWind,ng=!!v.noGps,NA='—',W=x=>nw?NA:spd(x),GS=x=>ng?NA:spd(x),VM=x=>(nw||ng)?NA:spd(x),AU=a=>nw?'угол —':'угол '+Math.round(Math.abs(a))+'° '+side(a),hs=v.noHdg?NA:n360(v.hdg)+'°',dr=(v.dev==null||v.noHdg)?null:Math.round(v.dev),devS=dr==null?'':(dr>0?'+':dr<0?'−':'')+Math.abs(dr)+'°';
+  if(v.boot){T('М5',200,104,70,700,'center');T('Open 800 · RUS 4223',200,136,16,600,'center');H(70,152,260);v.boot.forEach((r,i)=>{T(r[0],78,182+i*26,15,700);T(r[1],322,182+i*26,15,600,'right');});c.restore();return;}
+  T('М5',6,15,13);T(v.menu?'МЕНЮ':names[mode],44,15,11);const bp=Math.max(0,Math.min(100,Math.round(v.batt||0))),low=bp<=25&&!v.chg;c.lineWidth=1.4;c.strokeRect(336.7,5.7,21,10.6);c.fillRect(357.7,8.6,2.4,4.8);if(v.chg){c.beginPath();c.moveTo(349,6.6);c.lineTo(343,11.6);c.lineTo(346.8,11.6);c.lineTo(345,15.4);c.lineTo(351.4,10);c.lineTo(347.6,10);c.closePath();c.fill();T('зар',398,15,12,700,'right');}else{c.fillRect(338.7,7.7,17*bp/100,6.6);T(bp+' %',398,15,12,700,'right');}{const st=[v.chg?'зарядка':v.onRes?'НА РЕЗЕРВЕ':low?'РАЗРЯД':'','лодка '+f1(v.boat||0)+' В',v.res!=null?'резерв '+f1(v.res)+' В':'',cfg.wifi==='вкл'?'Wi-Fi':'',cfg.sd==='выкл'?'':'SD'].filter(Boolean).join(' · '),fw=(low||v.onRes)?800:600;let fz=10.5;c.font=fw+' '+fz+'px '+F;const sw=c.measureText(st).width,mx=215;if(sw>mx)fz*=mx/sw;T(st,332,14,fz,fw,'right');}H(0,20,400);
+  function rose(cx,cy,R){const k=R/60;c.lineWidth=1.5;c.beginPath();c.arc(cx,cy,R,0,7);c.stroke();
+    for(let a=0;a<360;a+=30){const r=(a-90)*D,r0=R-(a%90?4:8)*Math.max(1,k*0.7);c.lineWidth=a%90?1:2;c.beginPath();c.moveTo(cx+Math.cos(r)*r0,cy+Math.sin(r)*r0);c.lineTo(cx+Math.cos(r)*R,cy+Math.sin(r)*R);c.stroke();}
+    const nr=(-v.hdg-90)*D;T('С',cx+Math.cos(nr)*(R-16*k),cy+Math.sin(nr)*(R-16*k)+4.5*k,12*k,700,'center');
+    c.save();c.translate(cx,cy);c.scale(k,k);c.lineWidth=2;c.beginPath();c.moveTo(0,-31);c.bezierCurveTo(13,-14,12,16,8,27);c.lineTo(-8,27);c.bezierCurveTo(-12,16,-13,-14,0,-31);c.closePath();c.stroke();c.beginPath();c.arc(0,-8,2.4,0,7);c.fill();c.lineWidth=1.6;const hb=(v.awa<0?-1:1)*18*D;c.save();c.translate(0,-8);c.rotate(hb+Math.PI);c.beginPath();c.moveTo(0,0);c.lineTo(0,-30);c.stroke();c.restore();c.restore();
+    const arrow=(a,fill,lb)=>{const r=(a-90)*D,ca=Math.cos(r),sa=Math.sin(r),nx=-sa,ny=ca,P=t=>[cx+ca*t,cy+sa*t];const o=P(R+1),i=P(R-27*k),b=P(R-16*k),tip=P(R-33*k);c.lineWidth=(fill?3:1.8)*Math.max(1,k*0.8);c.beginPath();c.moveTo(o[0],o[1]);c.lineTo(b[0],b[1]);c.stroke();c.beginPath();c.moveTo(tip[0],tip[1]);c.lineTo(b[0]+nx*6*k,b[1]+ny*6*k);c.lineTo(b[0]-nx*6*k,b[1]-ny*6*k);c.closePath();if(fill)c.fill();else{c.save();c.fillStyle=PAP;c.fill();c.restore();c.lineWidth=1.6;c.stroke();}const l=P(R+10*Math.min(k,1.2));T(lb,l[0],l[1]+4,10.5*Math.min(k,1.3),700,'center');};
+    if(!nw){arrow(twa,false,'И');arrow(v.awa,true,'В');}}
+  function stern(x,y,k){c.save();c.translate(x,y);c.lineWidth=1;c.setLineDash([3,3]);c.beginPath();c.moveTo(-58*k,4*k);c.lineTo(58*k,4*k);c.stroke();c.setLineDash([]);c.rotate(v.heel*D);c.lineWidth=2.4;c.beginPath();c.moveTo(-30*k,0);c.quadraticCurveTo(0,20*k,30*k,0);c.closePath();c.stroke();c.beginPath();c.moveTo(0,-2*k);c.lineTo(0,-36*k);c.stroke();c.lineWidth=3;c.beginPath();c.moveTo(0,10*k);c.lineTo(0,31*k);c.stroke();c.restore();}
+  function prof(x,y,k){c.save();c.translate(x,y);c.lineWidth=1;c.setLineDash([3,3]);c.beginPath();c.moveTo(-58*k,3*k);c.lineTo(58*k,3*k);c.stroke();c.setLineDash([]);c.rotate(v.pitch*3*D);c.lineWidth=2.4;c.beginPath();c.moveTo(-46*k,-4*k);c.lineTo(48*k,-4*k);c.quadraticCurveTo(38*k,10*k,20*k,11*k);c.lineTo(-38*k,11*k);c.closePath();c.stroke();c.beginPath();c.moveTo(4*k,-5*k);c.lineTo(4*k,-33*k);c.stroke();c.lineWidth=3;c.beginPath();c.moveTo(0,11*k);c.lineTo(-5*k,27*k);c.stroke();c.restore();}
+  const heelS=Math.round(Math.abs(v.heel))+'° '+side(v.heel),pitchS=Math.abs(v.pitch)<0.05?'0,0°':(v.pitch>0?'+':'−')+f1(Math.abs(v.pitch))+'°';
+  function shift(X,Y){if(nw){T('нет данных',X+59,Y+44,14,700,'center');}else if(v.sig){const up=v.sig>0,ax=X+26,ay=Y+41;c.beginPath();if(up){c.moveTo(ax,ay-22);c.lineTo(ax+18,ay+4);c.lineTo(ax-18,ay+4);}else{c.moveTo(ax,ay+22);c.lineTo(ax+18,ay-4);c.lineTo(ax-18,ay-4);}c.closePath();c.fill();T(up?'ОТХОД':'ЗАХОД',X+52,Y+34,12.5,700);T(Math.round(v.d)+'°',X+52,Y+59,23,700);}else T('ровный',X+59,Y+44,17,700,'center');}
+  function menu(){const rows=v.menu.rows,sel=v.menu.i;rows.forEach((r,i)=>{const y=28+i*34;if(i===sel){c.fillRect(8,y,384,30);c.fillStyle=PAP;}T(r.t,20,y+21,16,700);if(r.v)T(r.v,380,y+21,16,700,'right');c.fillStyle=INK;});H(0,272);T('▲ ▼ выбрать · МЕНЮ — изменить',200,291,12,600,'center');}
+  if(v.menu){menu();}
+  else if(mode===1){rose(132,162,118);H(268,20,1.5,0);c.fillRect(268,20,1.5,280);
+    T('ИСТИННЫЙ',278,44,11);T(W(tws),278,84,38);T(U,278,100,13);T(AU(twa),278,118,12,600);H(268,128,132);
+    T('ВЫМПЕЛЬНЫЙ',278,148,11);T(W(v.aws),278,188,38);T(U,278,204,13);T(AU(v.awa),278,222,12,600);H(268,232,132);
+    T('КУРС',278,248,11);T(hs,278,288,34);if(devS)T(devS,396,288,22,700,'right');}
+  else if(mode===2){T('НАПРАВЛЕНИЕ ВЕТРА, 10 МИНУТ',10,38,11);c.lineWidth=1;c.setLineDash([3,3]);c.beginPath();c.moveTo(10,108);c.lineTo(390,108);c.stroke();c.setLineDash([]);if(!nw){T((twd+10)+'°',392,52,10,600,'right');T((twd-10)+'°',392,172,10,600,'right');}
+    if(nw)T('нет данных с мачты',200,114,18,700,'center');else{c.lineWidth=2.2;c.beginPath();for(let i=0;i<=120;i++){const x=10+i*380/120,a=6*Math.sin(i/11+0.6)+2.6*Math.sin(i/4.3),y=108-a*6;i?c.lineTo(x,y):c.moveTo(x,y);}c.stroke();}H(0,184,400);c.fillRect(133,184,1.5,116);c.fillRect(266,184,1.5,116);
+    T('СДВИГ ВЕТРА',8,202,10.5);shift(8,214);T('VMG',141,202,10.5);T(VM(vmg),141,250,36);T(U,141,270,13);T('КУРС',274,202,10.5);T(hs,274,250,38);if(devS)T(devS+' от базового',274,274,13);}
+  else if(mode===3){c.fillRect(200,20,1.5,238);T('КРЕН',10,42,13);T(heelS,100,92,42,700,'center');stern(100,205,1.6);T('ДИФФЕРЕНТ',210,42,13);T(pitchS,300,92,42,700,'center');prof(300,205,1.45);T('нос →',390,252,10,600,'right');H(0,258,400);T('КУРС',8,296,12);T(hs,200,296,36,700,'center');if(devS)T(devS,392,296,26,700,'right');}
+  else{rose(70,108,60);
+    const X1=146,X2=276,tile=(X,Y,t,val,unit,sub)=>{T(t,X,Y,10.5);T(val,X,Y+31,29);if(unit){c.font='700 29px '+F;const w=c.measureText(val).width;T(unit,X+w+3,Y+31,12);}if(sub)T(sub,X,Y+45,11,600);};
+    c.fillRect(138,20,1.5,186);c.fillRect(268,20,1.5,186);
+    tile(X1,35,'ИСТИННЫЙ ВЕТЕР',W(tws),U,AU(twa));T('КУРС',X2,33,10.5);T(hs,X2-3,82,52);if(devS)T(devS,X2,122,30);T((ng?'GPS —':'GPS '+cog+'°')+' · ветер '+(nw?NA:twd+'°'),X2,141,9.5,600);
+    tile(X1,96,'ВЫМПЕЛЬНЫЙ',W(v.aws),U,AU(v.awa));
+    tile(X1,157,'СКОРОСТЬ',GS(v.sog),U,ng?'нет GPS':'по GPS');tile(X2,157,'VMG',VM(vmg),U,'к ветру');
+    H(0,206,400);c.fillRect(133,206,1.5,94);c.fillRect(266,206,1.5,94);
+    T('КРЕН',8,221,10.5);T(heelS,126,223,19,700,'right');stern(66,262,1);T('ДИФФ',141,221,10.5);T(pitchS,259,223,19,700,'right');prof(199,265,1);T('нос →',259,296,9,600,'right');
+    T('СДВИГ ВЕТРА',274,221,10.5);shift(274,221);}
+  if(v.toast){c.font='700 15px '+F;const tw=c.measureText(v.toast).width+28;c.fillStyle=INK;c.fillRect(200-tw/2,128,tw,44);c.fillStyle=PAP;T(v.toast,200,156,15,700,'center');c.fillStyle=INK;}
+  c.restore();}
+return {reserveBlock,as5600,mt6701,gy50,bno08x,esp32s3,sd3v3,epd42,an181,tp4056,tps63020,mt3608,max3485s,esp32c3,wires,drawScreen};
+})();
+</script><!--/pcblib-->
+
+<div class="wrap">
+  <div class="stage" id="stage">
+    <a class="home" href="../">← Главное меню</a>
+    <h1>Дисплей прибора М5</h1>
+    <p class="lead">Тестовый стенд для рулевого: выберите условия, запустите имитацию гонки и посмотрите на экран с того расстояния, с какого будете смотреть в кокпите. Кнопки на корпусе работают как настоящие. Экран 400 × 300 точек, чёрно-белый e-paper. Цифры придуманные, прибор ещё не собран и прошивки нет.</p>
+    <div class="sim">
+      <div class="dev">
+        <div class="face">
+          <div class="scr"><div class="glow t" id="gT"></div><canvas id="main" width="800" height="600" role="img" aria-label="Экран прибора"></canvas><div class="tint" id="tint"></div><div class="off" id="off" hidden>Тумблер выключен. На e-paper остаётся последний кадр, подсветка и стрелки погашены.</div><div class="glow b" id="gB"></div></div>
+          <div class="side">
+            <div class="ledrow"><span class="led g" id="ledG"></span>заход</div>
+            <div class="ledrow"><span class="led r" id="ledR"></span>отход</div>
+            <button type="button" class="key" id="kMode">РЕЖИМ</button>
+            <button type="button" class="key" id="kMenu">МЕНЮ</button>
+            <button type="button" class="key" id="kUp" aria-label="Вверх, вне меню ноль базового курса">▲</button>
+            <button type="button" class="key" id="kDn" aria-label="Вниз">▼</button>
+          </div>
+        </div>
+        <div class="bot">
+          <button type="button" class="tog hold" id="kZero">Кнопка: подсветка, держать 3 с — ноль<i id="holdBar"></i></button>
+          <button type="button" class="tog" id="kPow" aria-pressed="true">Тумблер: включён</button>
+        </div>
+      </div>
+      <div class="panel">
+        <h3>Условия</h3>
+        <div class="chips" id="wx"></div>
+        <h3>Имитация гонки</h3>
+        <div class="chips"><button type="button" class="btn" id="run" aria-pressed="false">Запустить гонку</button></div>
+        <p class="hint" id="runTxt">Цифры меняются раз в секунду, лодку качает, ветер смещается, каждые 40 секунд поворот.</p>
+        <h3>Откуда смотрит рулевой</h3>
+        <div class="chips" id="dist"></div>
+        <p class="hint">Размер посчитан для экрана 85 мм, если вы сидите в 60 см от монитора.</p>
+        <h3>Освещение</h3>
+        <div class="chips" id="amb"></div>
+        <h3>События</h3>
+        <div class="chips" id="scn"></div>
+        <h3>Значения</h3>
+        <div id="sl" style="display:grid;gap:6px"></div>
+      </div>
+    </div>
+  </div>
+  <section class="grp"><h2>На что смотреть на стенде</h2><div class="tbl"><table>
+    <tr><th>Вопрос</th><th>Как проверить</th></tr>
+    <tr><td><b>Читается ли курс с места рулевого?</b></td><td>Поставьте «1,5 м» и «2,5 м», запустите гонку</td></tr>
+    <tr><td><b>Понятен ли знак отклонения?</b></td><td>Нажмите «Увал» и «Привод», сделайте поворот оверштаг: знак не должен путаться на другом галсе</td></tr>
+    <tr><td><b>Какой вид нужен на старте, на лавировке, на попутном?</b></td><td>Листайте РЕЖИМ при разных условиях</td></tr>
+    <tr><td><b>Хватает ли стрелок заход и отход?</b></td><td>Запустите гонку и смотрите только на стрелки</td></tr>
+    <tr><td><b>Удобно ли ночью и на солнце?</b></td><td>Меняйте освещение и подсветку кнопкой снизу</td></tr>
+    <tr><td><b>Чего не хватает и что лишнее?</b></td><td>Напишите, что убрать или укрупнить: экран легко перестроить</td></tr>
+  </table></div></section>
+  <section class="grp"><h2>Четыре вида экрана</h2><p class="note">Листаются кнопкой РЕЖИМ по кругу. Курс и отклонение от базового видны на каждом виде.</p><div class="gal" id="g1"></div></section>
+  <section class="grp"><h2>Курс и базовый курс</h2><p class="note">Большое число — курс по компасу, относительно севера. Рядом отклонение от базового: увал +, привод −, на обоих галсах одинаково. После поворота прибор 30 секунд ждёт, пока лодка ляжет на курс, берёт средний курс за это время как новый базовый и дальше его не меняет.</p><div class="gal" id="g2"></div></section>
+  <section class="grp"><h2>Сдвиг ветра</h2><p class="note">Сравнивается направление истинного ветра со средним за последние минуты. Порог задаётся в меню. Отход — ветер повернул в вашу пользу, заход — против.</p><div class="gal" id="g3"></div></section>
+  <section class="grp"><h2>Питание</h2><p class="note">Значок и проценты показывают источник, от которого прибор работает сейчас. Рядом напряжение лодки и резерва.</p><div class="gal" id="g4"></div></section>
+  <section class="grp"><h2>Меню и системные экраны</h2><div class="gal" id="g5"></div></section>
+  <section class="grp"><h2>Когда нет данных</h2><p class="note">Вместо цифры прочерк: прибор не показывает старое значение как текущее. Остальные данные работают.</p><div class="gal" id="g6"></div></section>
+  <section class="grp"><h2>Кнопки</h2><div class="tbl"><table>
+    <tr><th>Кнопка</th><th>Вне меню</th><th>В меню</th></tr>
+    <tr><td><b>РЕЖИМ</b></td><td>следующий вид экрана</td><td>нет действия</td></tr>
+    <tr><td><b>МЕНЮ</b></td><td>открыть меню</td><td>изменить значение пункта; на пункте «Выход» — закрыть меню</td></tr>
+    <tr><td><b>▲</b></td><td>поставить ноль базового курса вручную</td><td>пункт выше</td></tr>
+    <tr><td><b>▼</b></td><td>полное обновление экрана, убирает следы старых кадров e-paper</td><td>пункт ниже</td></tr>
+    <tr><td><b>Кнопка снизу</b></td><td>коротко: подсветка, по кругу выключена, 30, 60, 100 %. Держать 3 с: ноль крена и дифферента</td><td>то же</td></tr>
+    <tr><td><b>Тумблер снизу</b></td><td>включает и выключает прибор</td><td>то же</td></tr>
+  </table></div></section>
+  <section class="grp"><h2>Стрелки и подсветка</h2><div class="tbl"><table>
+    <tr><th>Что</th><th>Как выглядит</th><th>Когда</th></tr>
+    <tr><td><b>Зелёная стрелка</b></td><td>горит</td><td>заход: ветер повернул против, сдвиг больше порога</td></tr>
+    <tr><td><b>Красная стрелка</b></td><td>горит</td><td>отход: ветер повернул в вашу пользу, сдвиг больше порога</td></tr>
+    <tr><td><b>Обе погашены</b></td><td>—</td><td>ветер ровный, или нет данных с мачты</td></tr>
+    <tr><td><b>Подсветка</b></td><td>2 планки красных светодиодов над и под экраном</td><td>по кнопке снизу или в меню. Красный не слепит ночью</td></tr>
+  </table></div></section>
+  <section class="grp"><h2>Строка состояния и меню</h2><div class="tbl"><table>
+    <tr><th>Элемент</th><th>Что показывает</th></tr>
+    <tr><td><b>Слева</b></td><td>имя лодки и текущий вид</td></tr>
+    <tr><td><b>Справа</b></td><td>напряжение лодки и резерва, Wi-Fi, запись на карту, значок и проценты источника</td></tr>
+    <tr><td><b>РАЗРЯД</b></td><td>заряд источника 25 % и меньше</td></tr>
+    <tr><td><b>зарядка</b></td><td>напряжение лодки выше 13,2 В</td></tr>
+    <tr><td><b>НА РЕЗЕРВЕ</b></td><td>лодка ниже напряжения резерва минус 0,7 В</td></tr>
+    <tr><td><b>Меню: Подсветка</b></td><td>выключена, 30, 60, 100 %</td></tr>
+    <tr><td><b>Меню: Скорость</b></td><td>узлы или м/с</td></tr>
+    <tr><td><b>Меню: Порог сдвига</b></td><td>2, 3 или 5°</td></tr>
+    <tr><td><b>Меню: Wi-Fi</b></td><td>выключен или включён, прибавляет к расходу около 34 мА</td></tr>
+    <tr><td><b>Меню: Запись на карту</b></td><td>включена или выключена</td></tr>
+    <tr><td><b>Меню: Питание</b></td><td>напряжение лодки и резерва, только просмотр</td></tr>
+  </table></div></section>
+  <p class="note">Это проект интерфейса. Скорость обновления e-paper и читаемость на солнце можно оценить только на настоящем экране. Как устроен сам прибор: <a href="../cockpit/">«Блок в кокпите»</a>.</p>
+</div>
+<script>
+(function(){
+const $=id=>document.getElementById(id),D=PCBLIB.drawScreen;
+const LD=[[11.8,0],[12,25],[12.2,50],[12.4,75],[12.7,100]],LI=[[9,0],[10.2,7],[10.8,22],[11.1,40],[11.4,58],[11.7,72],[12,83],[12.6,100]];
+function pct(v,t){if(v<=t[0][0])return 0;for(let i=1;i<t.length;i++)if(v<=t[i][0]){const a=t[i-1],c=t[i];return Math.round(a[1]+(c[1]-a[1])*(v-a[0])/(c[0]-a[0]));}return 100;}
+const pw=(b,r)=>{const onRes=r!=null&&b<r-0.7;return {boat:b,res:r,onRes,chg:b>=13.2,batt:onRes?pct(r+0.3,LI):pct(b,LD)};};
+const CFG={unit:'узлы',wifi:'выкл',sd:'вкл'},MENU=[{t:'Подсветка',k:'light',o:['выкл','30 %','60 %','100 %'],v:0},{t:'Скорость',k:'unit',o:['узлы','м/с'],v:0},{t:'Порог сдвига',k:'shift',o:['2°','3°','5°'],v:1},{t:'Wi-Fi',k:'wifi',o:['выкл','вкл'],v:0},{t:'Запись на карту',k:'sd',o:['вкл','выкл'],v:0},{t:'Питание',k:'pwr',ro:1},{t:'Выход',k:'exit'}];
+const f1=x=>x.toFixed(1).replace('.',',');
+const pwTxt=(b,r)=>'лодка '+f1(b)+(r!=null?' · резерв '+f1(r):'')+' В';
+const rows=(b,r)=>MENU.map(m=>({t:m.t,v:m.ro?pwTxt(b,r):m.o?m.o[m.v]:''}));
+const S={aws:17.4,awa:28.5,hdg:177,sog:6.1,heel:-14,pitch:1.2,sig:1,d:3,boatV:12.7,resV:12.3,mode:0,menu:null,noWind:false,noGps:false,noHdg:false,toast:null,boot:null,on:true,light:0,base:{'1':183,'-1':183}};
+const tack=()=>S.awa<0?-1:1;
+function wrap(a){return ((a+540)%360)-180;}
+const dev=()=>tack()*wrap(S.base[tack()]-S.hdg);
+const ctx=$('main').getContext('2d');ctx.scale(2,2);
+function view(){const m=S.menu;return Object.assign({aws:S.aws,awa:S.awa,hdg:S.hdg,sog:S.sog,heel:S.heel,pitch:S.pitch,sig:S.sig,d:S.d,dev:dev(),mode:S.mode,cfg:CFG,noWind:S.noWind,noGps:S.noGps,noHdg:S.noHdg,toast:S.toast,boot:S.boot,menu:m===null?null:{i:m,rows:rows(S.boatV,S.resV)}},pw(S.boatV,S.resV));}
+let render=function(){D(ctx,view());
+  const L=S.on?S.light:0,o=[0,0.35,0.65,1][L];$('gT').style.opacity=o;$('gB').style.opacity=o;$('tint').style.opacity=o?0.25+o*0.45:0;
+  const nw=S.noWind||!S.on;$('ledG').classList.toggle('on',!nw&&S.sig<0);$('ledR').classList.toggle('on',!nw&&S.sig>0);$('off').hidden=S.on;
+  document.querySelectorAll('[data-s]').forEach(b=>{const k=b.dataset.s;b.setAttribute('aria-pressed',String(cur===k));});syncSl();};
+let toastT=0;function toast(s,ms){S.toast=s;clearTimeout(toastT);render();toastT=setTimeout(()=>{S.toast=null;render();},ms||1500);}
+$('kMode').onclick=()=>{if(!S.on||S.menu!==null)return;S.mode=(S.mode+1)%4;render();};
+$('kMenu').onclick=()=>{if(!S.on)return;if(S.menu===null){S.menu=0;}else{const r=MENU[S.menu];if(r.k==='exit')S.menu=null;else if(r.o){r.v=(r.v+1)%r.o.length;if(r.k==='light')S.light=r.v;else CFG[r.k]=r.o[r.v];}}render();};
+$('kUp').onclick=()=>{if(!S.on)return;if(S.menu!==null){S.menu=(S.menu+MENU.length-1)%MENU.length;render();}else{S.base[tack()]=S.hdg;toast('Базовый курс: ноль');}};
+$('kDn').onclick=()=>{if(!S.on)return;if(S.menu!==null){S.menu=(S.menu+1)%MENU.length;render();}else toast('Полное обновление экрана');};
+let holdT=0,held=false,hStart=0,raf=0;const zb=$('kZero'),bar=$('holdBar');
+function holdTick(){const p=Math.min(1,(performance.now()-hStart)/3000);bar.style.width=p*100+'%';if(p<1&&hStart)raf=requestAnimationFrame(holdTick);}
+function hDown(){if(!S.on)return;held=false;hStart=performance.now();raf=requestAnimationFrame(holdTick);holdT=setTimeout(()=>{held=true;S.heel=0;S.pitch=0;toast('Крен и дифферент: ноль');},3000);}
+function hUp(){if(!hStart)return;clearTimeout(holdT);cancelAnimationFrame(raf);hStart=0;bar.style.width='0';if(!held){S.light=(S.light+1)%4;MENU[0].v=S.light;render();}}
+zb.addEventListener('pointerdown',hDown);zb.addEventListener('pointerup',hUp);zb.addEventListener('pointerleave',()=>{if(hStart){clearTimeout(holdT);cancelAnimationFrame(raf);hStart=0;bar.style.width='0';}});
+zb.addEventListener('keydown',e=>{if((e.key===' '||e.key==='Enter')&&!e.repeat){e.preventDefault();hDown();}});zb.addEventListener('keyup',e=>{if(e.key===' '||e.key==='Enter'){e.preventDefault();hUp();}});
+const BOOT=[['Мачта','связь есть'],['GPS','поиск спутников'],['Компас','калибровка'],['Питание','лодка 12,7 В']];
+let bootT=0;$('kPow').onclick=()=>{S.on=!S.on;$('kPow').setAttribute('aria-pressed',String(S.on));$('kPow').textContent=S.on?'Тумблер: включён':'Тумблер: выключен';clearTimeout(bootT);if(S.on){S.boot=BOOT;render();bootT=setTimeout(()=>{S.boot=null;render();},1800);}else{S.boot=null;render();}};
+// сценарии
+let cur='norm',tackT=0;const SC=[
+ ['norm','Норма',()=>{Object.assign(S,{boatV:12.7,resV:12.3,noWind:false,noGps:false,noHdg:false,sig:1,d:3,hdg:177,awa:Math.abs(S.awa)||28.5,light:0});S.base={'1':183,'-1':183};MENU[0].v=0;}],
+ ['up','Увал +6°',()=>{S.hdg=wrap(S.base[tack()]-tack()*6)+0;S.hdg=(S.hdg+360)%360;}],
+ ['dn','Привод −4°',()=>{S.hdg=(wrap(S.base[tack()]+tack()*4)+360)%360;}],
+ ['lift','Отход',()=>{S.sig=1;S.d=4;}],['head','Заход',()=>{S.sig=-1;S.d=5;}],['flat','Ветер ровный',()=>{S.sig=0;S.d=0;}],
+ ['low','Разряд',()=>{S.boatV=11.9;}],['chg','Зарядка',()=>{S.boatV=13.8;}],['res','На резерве',()=>{S.boatV=10.7;}],['nores','Без резерва',()=>{S.resV=null;S.boatV=12.7;}],
+ ['nw','Нет мачты',()=>{S.noWind=true;S.noGps=false;S.noHdg=false;}],['ng','Нет GPS',()=>{S.noGps=true;S.noWind=false;S.noHdg=false;}],['nh','Нет компаса',()=>{S.noHdg=true;S.noWind=false;S.noGps=false;}]
+];
+const sc=$('scn');SC.forEach(a=>{const b=document.createElement('button');b.type='button';b.className='btn';b.textContent=a[1];b.dataset.s=a[0];b.setAttribute('aria-pressed','false');b.onclick=()=>{cur=a[0];a[2]();S.menu=null;render();};sc.appendChild(b);});
+const tb=document.createElement('button');tb.type='button';tb.className='btn';tb.textContent='Поворот оверштаг';tb.onclick=()=>{cur='';const prev=tack();S.awa=-S.awa;S.hdg=(S.hdg+(prev>0?84:-84)+360)%360;S.base[tack()]=S.hdg;S.menu=null;toast('Поворот: новый базовый курс',1800);};sc.appendChild(tb);
+const SL=[['aws','Вымпельный',0,35,0.1,'уз'],['awa','Угол к ветру',-180,180,1,'°'],['hdg','Курс',0,359,1,'°'],['sog','Скорость',0,12,0.1,'уз'],['heel','Крен',-40,40,1,'°'],['pitch','Дифферент',-10,10,0.1,'°']];
+const slBox=$('sl'),inp={};SL.forEach(a=>{const l=document.createElement('label');l.className='sl';l.innerHTML=a[1]+'<input type="range" id="s_'+a[0]+'" min="'+a[2]+'" max="'+a[3]+'" step="'+a[4]+'"><output></output>';slBox.appendChild(l);const i=l.querySelector('input'),o=l.querySelector('output');inp[a[0]]={i,o,u:a[5]};i.addEventListener('input',()=>{S[a[0]]=+i.value;cur='';render();});});
+function syncSl(){SL.forEach(a=>{const r=inp[a[0]];r.i.value=S[a[0]];r.o.textContent=(a[4]<1?f1(S[a[0]]):Math.round(S[a[0]]))+' '+r.u;});}
+// раскладка всех экранов
+const B={aws:17.4,awa:28.5,hdg:177,sog:6.1,heel:-14,pitch:1.2,sig:1,d:3,dev:6,cfg:CFG,boat:12.7,res:12.3,batt:100,chg:false,onRes:false,mode:0};
+const P=(b,r)=>pw(b,r);
+function fig(box,cap,txt,o,night){const f=document.createElement('figure');if(night)f.className='night';const c=document.createElement('canvas');c.width=800;c.height=600;c.setAttribute('role','img');c.setAttribute('aria-label',cap);f.appendChild(c);const fc=document.createElement('figcaption');fc.innerHTML='<b>'+cap+'</b>'+(txt?'. '+txt:'');f.appendChild(fc);$(box).appendChild(f);const x=c.getContext('2d');x.scale(2,2);D(x,Object.assign({},B,o));}
+fig('g1','Основной','ветер, курс, скорость, VMG, крен, дифферент, сдвиг',{mode:0});
+fig('g1','Ветер','роза на весь экран, истинный и вымпельный',{mode:1});
+fig('g1','Тактика','направление ветра за 10 минут, сдвиг, VMG',{mode:2});
+fig('g1','Лодка','крен и дифферент крупно',{mode:3});
+fig('g2','Увал','+6° от базового',{dev:6,hdg:177});fig('g2','Привод','−4° от базового',{dev:-4,hdg:187});fig('g2','На базовом курсе','0°, сразу после нажатия ▲ или после поворота',{dev:0,hdg:183});
+fig('g3','Отход','красная стрелка',{mode:2,sig:1,d:4});fig('g3','Заход','зелёная стрелка',{mode:2,sig:-1,d:5});fig('g3','Ветер ровный','стрелки погашены',{mode:2,sig:0,d:0});
+fig('g4','Норма','лодка 12,7 В, резерв 12,3 В',P(12.7,12.3));fig('g4','Разряд','лодка 11,9 В',P(11.9,12.3));fig('g4','Зарядка','работает двигатель или зарядное',P(13.8,12.3));fig('g4','На резерве','лодка 10,7 В',P(10.7,12.3));fig('g4','Резерв не подключён','показывается только лодка',P(12.7,null));
+fig('g5','Меню','▲ ▼ выбрать, МЕНЮ изменить',{menu:{i:0,rows:rows(12.7,12.3)}});fig('g5','Меню, выбрана строка «Питание»','только просмотр',{menu:{i:5,rows:rows(12.7,12.3)}});fig('g5','Загрузка','при включении, несколько секунд',{boot:BOOT});fig('g5','Подсказка','коротко после нажатия кнопки',{toast:'Базовый курс: ноль'});fig('g5','Ночной режим','подсветка красная',{},true);
+fig('g6','Нет данных с мачты','нет ветра, сдвига и VMG; курс, скорость и крен работают',{noWind:true});fig('g6','Нет GPS','нет скорости и VMG',{noGps:true});fig('g6','Нет компаса','нет курса и отклонения',{noHdg:true});fig('g6','Нет мачты, вид «Тактика»','вместо графика надпись',{mode:2,noWind:true});
+
+// тестовый стенд: условия, гонка, расстояние, освещение
+const WX=[['calm','Штиль, 5 уз',{aws:5,awa:48,sog:2.8,hl:5,pi:0.4}],['mid','Умеренно, 12 уз',{aws:12,awa:34,sog:5.4,hl:14,pi:1}],['fresh','Свежо, 20 уз',{aws:20,awa:29,sog:6.8,hl:22,pi:1.6}],['squall','Шквал, 30 уз',{aws:30,awa:32,sog:7.4,hl:34,pi:2.6}],['reach','Галфвинд',{aws:15,awa:90,sog:8.2,hl:18,pi:0.6}],['broad','Бакштаг',{aws:13,awa:135,sog:9.6,hl:8,pi:-1.4}],['dw','Фордевинд',{aws:9,awa:172,sog:6.4,hl:3,pi:-1}]];
+let wx='mid';const W0=()=>WX.find(a=>a[0]===wx)[2];
+function setWx(k){wx=k;const w=W0(),s=tack();S.aws=w.aws;S.awa=s*w.awa;S.sog=w.sog;S.heel=-s*w.hl;S.pitch=w.pi;S.noWind=false;S.menu=null;marks();render();}
+function chips(id,arr,cb,attr){const box=$(id);arr.forEach(a=>{const b=document.createElement('button');b.type='button';b.className='btn';b.textContent=a[1];b.dataset[attr]=a[0];b.setAttribute('aria-pressed','false');b.onclick=()=>cb(a[0]);box.appendChild(b);});}
+const DIST=[['full','Крупно',''],['d06','Рядом, 60 см','321px'],['d15','1,5 м','128px'],['d25','2,5 м','77px']];let dist='full';
+function setDist(k){dist=k;$('main').style.width=DIST.find(a=>a[0]===k)[2]||'';marks();}
+const AMB=[['day','День'],['sun','Яркое солнце'],['dusk','Сумерки'],['night','Ночь']];let amb='day';
+function ambF(){const o=[0,0.35,0.65,1][S.on?S.light:0];return amb==='sun'?'brightness(1.12) contrast(.82)':amb==='dusk'?'brightness('+(0.5+o*0.4)+')':amb==='night'?'brightness('+(0.08+o*0.82)+')':'';}
+function setAmb(k){amb=k;if(k==='night'&&!S.light){S.light=3;MENU[0].v=3;}marks();render();}
+function marks(){document.querySelectorAll('[data-wx]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.wx===wx)));document.querySelectorAll('[data-di]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.di===dist)));document.querySelectorAll('[data-am]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.am===amb)));}
+chips('wx',WX,setWx,'wx');chips('dist',DIST,setDist,'di');chips('amb',AMB,setAmb,'am');
+const render0=render;render=function(){render0();$('main').style.filter=ambF();};
+let raceT=0,rt=0;const rn=(a)=>(Math.random()-0.5)*2*a;
+function step(){rt++;const w=W0(),s=tack(),b=S.base[s];
+  S.aws=Math.max(0,w.aws+2*Math.sin(rt/5)+rn(0.6));S.awa=s*(w.awa+3*Math.sin(rt/7)+rn(1));S.sog=Math.max(0,w.sog+0.5*Math.sin(rt/6)+rn(0.15));
+  S.heel=-s*(w.hl+4*Math.sin(rt/3)+rn(1.5));S.pitch=w.pi+1.2*Math.sin(rt/2.2)+rn(0.2);
+  const dv=5*Math.sin(rt/9)+rn(1.5);S.hdg=(wrap(b-s*dv)+360)%360;
+  const sh=6*Math.sin(rt/17);S.sig=sh>2?1:sh<-2?-1:0;S.d=Math.round(Math.abs(sh));
+  if(rt%40===0&&w.awa<60){S.awa=-S.awa;S.heel=-S.heel;const n=(b+(s>0?84:-84)+360)%360;S.hdg=n;S.base[tack()]=n;S.menu=null;toast('Поворот: новый базовый курс',1800);return;}
+  render();}
+$('run').onclick=()=>{const on=!raceT;if(on){raceT=setInterval(step,1000);step();}else{clearInterval(raceT);raceT=0;}$('run').setAttribute('aria-pressed',String(on));$('run').textContent=on?'Остановить гонку':'Запустить гонку';};
+marks();setWx('mid');S.hdg=177;
+render();
+})();
+</script>

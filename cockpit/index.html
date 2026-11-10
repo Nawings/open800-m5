@@ -111,6 +111,7 @@ code{font-family:var(--f-mono);font-size:12px}
       <div style="display:flex;flex-wrap:wrap;gap:6px"><button type="button" id="kMode">РЕЖИМ</button><button type="button" id="kMenu">МЕНЮ</button><button type="button" id="kUp">▲</button><button type="button" id="kDn">▼</button><button type="button" id="kBat">Лодка 12,7 В, резерв 12,3 В</button><button type="button" id="kDev">Увал +6°</button></div>
       <ul>
         <li><b>Понажимайте кнопки выше:</b> РЕЖИМ листает 4 вида — основной, ветер, тактика, лодка. МЕНЮ открывает настройки, ▲ и ▼ выбирают пункт, МЕНЮ меняет значение. Вне меню ▲ ставит ноль базового курса.</li>
+        <li><b>Все экраны и тестовый стенд для рулевого:</b> <a href="../display/">«Дисплей»</a>.</li>
         <li><b>Курс виден крупно на всех видах:</b> градусы по компасу и рядом отклонение от базового курса: увал +, привод −, на обоих галсах одинаково. После поворота или огибания знака прибор ждёт 30 секунд, пока лодка ляжет на курс, берёт средний курс за это время как новый базовый и дальше его не меняет, поэтому цифра сама не ползёт. Поворотом считается смена галса или изменение курса больше чем на 60° за минуту. Кнопка ▲ вне меню ставит ноль вручную в любой момент.</li>
         <li><b>Вверху справа — питание:</b> напряжение лодки и резерва, значок и проценты того источника, от которого прибор работает сейчас. При 25 % и меньше появляется слово РАЗРЯД, выше 13,2 В — «зарядка», при работе от резерва — НА РЕЗЕРВЕ. В меню есть строка «Питание». Кнопка с напряжениями на этой странице перебирает состояния.</li>
         <li><b>Роза ветра</b> с лодкой сверху, нос вверх: чёрная стрелка В — вымпельный ветер, светлая стрелка И — истинный, буква С — север.</li>
@@ -895,37 +896,39 @@ function drawScreen(c,v){const INK='#17171b',PAP='#dcdad1',F='Arial, sans-serif'
   const T=(s,X,Y,sz,w,al)=>{c.font=(w||700)+' '+sz+'px '+F;c.textAlign=al||'left';c.textBaseline='alphabetic';c.fillText(s,X,Y);c.textAlign='left';};
   const H=(x,y,w,t)=>c.fillRect(x,y,w,t||1.5);
   c.save();c.fillStyle=PAP;c.fillRect(0,0,400,300);c.fillStyle=INK;c.strokeStyle=INK;c.lineJoin='round';c.lineCap='round';
-  const mode=v.mode||0,names=['ОСНОВНОЙ','ВЕТЕР','ТАКТИКА','ЛОДКА'],hs=n360(v.hdg)+'°',dr=v.dev==null?null:Math.round(v.dev),devS=dr==null?'':(dr>0?'+':dr<0?'−':'')+Math.abs(dr)+'°';
+  const mode=v.mode||0,names=['ОСНОВНОЙ','ВЕТЕР','ТАКТИКА','ЛОДКА'],nw=!!v.noWind,ng=!!v.noGps,NA='—',W=x=>nw?NA:spd(x),GS=x=>ng?NA:spd(x),VM=x=>(nw||ng)?NA:spd(x),AU=a=>nw?'угол —':'угол '+Math.round(Math.abs(a))+'° '+side(a),hs=v.noHdg?NA:n360(v.hdg)+'°',dr=(v.dev==null||v.noHdg)?null:Math.round(v.dev),devS=dr==null?'':(dr>0?'+':dr<0?'−':'')+Math.abs(dr)+'°';
+  if(v.boot){T('М5',200,104,70,700,'center');T('Open 800 · RUS 4223',200,136,16,600,'center');H(70,152,260);v.boot.forEach((r,i)=>{T(r[0],78,182+i*26,15,700);T(r[1],322,182+i*26,15,600,'right');});c.restore();return;}
   T('М5',6,15,13);T(v.menu?'МЕНЮ':names[mode],44,15,11);const bp=Math.max(0,Math.min(100,Math.round(v.batt||0))),low=bp<=25&&!v.chg;c.lineWidth=1.4;c.strokeRect(336.7,5.7,21,10.6);c.fillRect(357.7,8.6,2.4,4.8);if(v.chg){c.beginPath();c.moveTo(349,6.6);c.lineTo(343,11.6);c.lineTo(346.8,11.6);c.lineTo(345,15.4);c.lineTo(351.4,10);c.lineTo(347.6,10);c.closePath();c.fill();T('зар',398,15,12,700,'right');}else{c.fillRect(338.7,7.7,17*bp/100,6.6);T(bp+' %',398,15,12,700,'right');}{const st=[v.chg?'зарядка':v.onRes?'НА РЕЗЕРВЕ':low?'РАЗРЯД':'','лодка '+f1(v.boat||0)+' В',v.res!=null?'резерв '+f1(v.res)+' В':'',cfg.wifi==='вкл'?'Wi-Fi':'',cfg.sd==='выкл'?'':'SD'].filter(Boolean).join(' · '),fw=(low||v.onRes)?800:600;let fz=10.5;c.font=fw+' '+fz+'px '+F;const sw=c.measureText(st).width,mx=215;if(sw>mx)fz*=mx/sw;T(st,332,14,fz,fw,'right');}H(0,20,400);
   function rose(cx,cy,R){const k=R/60;c.lineWidth=1.5;c.beginPath();c.arc(cx,cy,R,0,7);c.stroke();
     for(let a=0;a<360;a+=30){const r=(a-90)*D,r0=R-(a%90?4:8)*Math.max(1,k*0.7);c.lineWidth=a%90?1:2;c.beginPath();c.moveTo(cx+Math.cos(r)*r0,cy+Math.sin(r)*r0);c.lineTo(cx+Math.cos(r)*R,cy+Math.sin(r)*R);c.stroke();}
     const nr=(-v.hdg-90)*D;T('С',cx+Math.cos(nr)*(R-16*k),cy+Math.sin(nr)*(R-16*k)+4.5*k,12*k,700,'center');
     c.save();c.translate(cx,cy);c.scale(k,k);c.lineWidth=2;c.beginPath();c.moveTo(0,-31);c.bezierCurveTo(13,-14,12,16,8,27);c.lineTo(-8,27);c.bezierCurveTo(-12,16,-13,-14,0,-31);c.closePath();c.stroke();c.beginPath();c.arc(0,-8,2.4,0,7);c.fill();c.lineWidth=1.6;const hb=(v.awa<0?-1:1)*18*D;c.save();c.translate(0,-8);c.rotate(hb+Math.PI);c.beginPath();c.moveTo(0,0);c.lineTo(0,-30);c.stroke();c.restore();c.restore();
     const arrow=(a,fill,lb)=>{const r=(a-90)*D,ca=Math.cos(r),sa=Math.sin(r),nx=-sa,ny=ca,P=t=>[cx+ca*t,cy+sa*t];const o=P(R+1),i=P(R-27*k),b=P(R-16*k),tip=P(R-33*k);c.lineWidth=(fill?3:1.8)*Math.max(1,k*0.8);c.beginPath();c.moveTo(o[0],o[1]);c.lineTo(b[0],b[1]);c.stroke();c.beginPath();c.moveTo(tip[0],tip[1]);c.lineTo(b[0]+nx*6*k,b[1]+ny*6*k);c.lineTo(b[0]-nx*6*k,b[1]-ny*6*k);c.closePath();if(fill)c.fill();else{c.save();c.fillStyle=PAP;c.fill();c.restore();c.lineWidth=1.6;c.stroke();}const l=P(R+10*Math.min(k,1.2));T(lb,l[0],l[1]+4,10.5*Math.min(k,1.3),700,'center');};
-    arrow(twa,false,'И');arrow(v.awa,true,'В');}
+    if(!nw){arrow(twa,false,'И');arrow(v.awa,true,'В');}}
   function stern(x,y,k){c.save();c.translate(x,y);c.lineWidth=1;c.setLineDash([3,3]);c.beginPath();c.moveTo(-58*k,4*k);c.lineTo(58*k,4*k);c.stroke();c.setLineDash([]);c.rotate(v.heel*D);c.lineWidth=2.4;c.beginPath();c.moveTo(-30*k,0);c.quadraticCurveTo(0,20*k,30*k,0);c.closePath();c.stroke();c.beginPath();c.moveTo(0,-2*k);c.lineTo(0,-36*k);c.stroke();c.lineWidth=3;c.beginPath();c.moveTo(0,10*k);c.lineTo(0,31*k);c.stroke();c.restore();}
   function prof(x,y,k){c.save();c.translate(x,y);c.lineWidth=1;c.setLineDash([3,3]);c.beginPath();c.moveTo(-58*k,3*k);c.lineTo(58*k,3*k);c.stroke();c.setLineDash([]);c.rotate(v.pitch*3*D);c.lineWidth=2.4;c.beginPath();c.moveTo(-46*k,-4*k);c.lineTo(48*k,-4*k);c.quadraticCurveTo(38*k,10*k,20*k,11*k);c.lineTo(-38*k,11*k);c.closePath();c.stroke();c.beginPath();c.moveTo(4*k,-5*k);c.lineTo(4*k,-33*k);c.stroke();c.lineWidth=3;c.beginPath();c.moveTo(0,11*k);c.lineTo(-5*k,27*k);c.stroke();c.restore();}
   const heelS=Math.round(Math.abs(v.heel))+'° '+side(v.heel),pitchS=Math.abs(v.pitch)<0.05?'0,0°':(v.pitch>0?'+':'−')+f1(Math.abs(v.pitch))+'°';
-  function shift(X,Y){if(v.sig){const up=v.sig>0,ax=X+26,ay=Y+41;c.beginPath();if(up){c.moveTo(ax,ay-22);c.lineTo(ax+18,ay+4);c.lineTo(ax-18,ay+4);}else{c.moveTo(ax,ay+22);c.lineTo(ax+18,ay-4);c.lineTo(ax-18,ay-4);}c.closePath();c.fill();T(up?'ОТХОД':'ЗАХОД',X+52,Y+34,12.5,700);T(Math.round(v.d)+'°',X+52,Y+59,23,700);}else T('ровный',X+59,Y+44,17,700,'center');}
+  function shift(X,Y){if(nw){T('нет данных',X+59,Y+44,14,700,'center');}else if(v.sig){const up=v.sig>0,ax=X+26,ay=Y+41;c.beginPath();if(up){c.moveTo(ax,ay-22);c.lineTo(ax+18,ay+4);c.lineTo(ax-18,ay+4);}else{c.moveTo(ax,ay+22);c.lineTo(ax+18,ay-4);c.lineTo(ax-18,ay-4);}c.closePath();c.fill();T(up?'ОТХОД':'ЗАХОД',X+52,Y+34,12.5,700);T(Math.round(v.d)+'°',X+52,Y+59,23,700);}else T('ровный',X+59,Y+44,17,700,'center');}
   function menu(){const rows=v.menu.rows,sel=v.menu.i;rows.forEach((r,i)=>{const y=28+i*34;if(i===sel){c.fillRect(8,y,384,30);c.fillStyle=PAP;}T(r.t,20,y+21,16,700);if(r.v)T(r.v,380,y+21,16,700,'right');c.fillStyle=INK;});H(0,272);T('▲ ▼ выбрать · МЕНЮ — изменить',200,291,12,600,'center');}
   if(v.menu){menu();}
   else if(mode===1){rose(132,162,118);H(268,20,1.5,0);c.fillRect(268,20,1.5,280);
-    T('ИСТИННЫЙ',278,44,11);T(spd(tws),278,84,38);T(U,278,100,13);T('угол '+Math.round(Math.abs(twa))+'° '+side(twa),278,118,12,600);H(268,128,132);
-    T('ВЫМПЕЛЬНЫЙ',278,148,11);T(spd(v.aws),278,188,38);T(U,278,204,13);T('угол '+Math.round(Math.abs(v.awa))+'° '+side(v.awa),278,222,12,600);H(268,232,132);
+    T('ИСТИННЫЙ',278,44,11);T(W(tws),278,84,38);T(U,278,100,13);T(AU(twa),278,118,12,600);H(268,128,132);
+    T('ВЫМПЕЛЬНЫЙ',278,148,11);T(W(v.aws),278,188,38);T(U,278,204,13);T(AU(v.awa),278,222,12,600);H(268,232,132);
     T('КУРС',278,248,11);T(hs,278,288,34);if(devS)T(devS,396,288,22,700,'right');}
-  else if(mode===2){T('НАПРАВЛЕНИЕ ВЕТРА, 10 МИНУТ',10,38,11);c.lineWidth=1;c.setLineDash([3,3]);c.beginPath();c.moveTo(10,108);c.lineTo(390,108);c.stroke();c.setLineDash([]);T((twd+10)+'°',392,52,10,600,'right');T((twd-10)+'°',392,172,10,600,'right');
-    c.lineWidth=2.2;c.beginPath();for(let i=0;i<=120;i++){const x=10+i*380/120,a=6*Math.sin(i/11+0.6)+2.6*Math.sin(i/4.3),y=108-a*6;i?c.lineTo(x,y):c.moveTo(x,y);}c.stroke();H(0,184,400);c.fillRect(133,184,1.5,116);c.fillRect(266,184,1.5,116);
-    T('СДВИГ ВЕТРА',8,202,10.5);shift(8,214);T('VMG',141,202,10.5);T(spd(vmg),141,250,36);T(U,141,270,13);T('КУРС',274,202,10.5);T(hs,274,250,38);if(devS)T(devS+' от базового',274,274,13);}
+  else if(mode===2){T('НАПРАВЛЕНИЕ ВЕТРА, 10 МИНУТ',10,38,11);c.lineWidth=1;c.setLineDash([3,3]);c.beginPath();c.moveTo(10,108);c.lineTo(390,108);c.stroke();c.setLineDash([]);if(!nw){T((twd+10)+'°',392,52,10,600,'right');T((twd-10)+'°',392,172,10,600,'right');}
+    if(nw)T('нет данных с мачты',200,114,18,700,'center');else{c.lineWidth=2.2;c.beginPath();for(let i=0;i<=120;i++){const x=10+i*380/120,a=6*Math.sin(i/11+0.6)+2.6*Math.sin(i/4.3),y=108-a*6;i?c.lineTo(x,y):c.moveTo(x,y);}c.stroke();}H(0,184,400);c.fillRect(133,184,1.5,116);c.fillRect(266,184,1.5,116);
+    T('СДВИГ ВЕТРА',8,202,10.5);shift(8,214);T('VMG',141,202,10.5);T(VM(vmg),141,250,36);T(U,141,270,13);T('КУРС',274,202,10.5);T(hs,274,250,38);if(devS)T(devS+' от базового',274,274,13);}
   else if(mode===3){c.fillRect(200,20,1.5,238);T('КРЕН',10,42,13);T(heelS,100,92,42,700,'center');stern(100,205,1.6);T('ДИФФЕРЕНТ',210,42,13);T(pitchS,300,92,42,700,'center');prof(300,205,1.45);T('нос →',390,252,10,600,'right');H(0,258,400);T('КУРС',8,296,12);T(hs,200,296,36,700,'center');if(devS)T(devS,392,296,26,700,'right');}
   else{rose(70,108,60);
     const X1=146,X2=276,tile=(X,Y,t,val,unit,sub)=>{T(t,X,Y,10.5);T(val,X,Y+31,29);if(unit){c.font='700 29px '+F;const w=c.measureText(val).width;T(unit,X+w+3,Y+31,12);}if(sub)T(sub,X,Y+45,11,600);};
     c.fillRect(138,20,1.5,186);c.fillRect(268,20,1.5,186);
-    tile(X1,35,'ИСТИННЫЙ ВЕТЕР',spd(tws),U,'угол '+Math.round(Math.abs(twa))+'° '+side(twa));T('КУРС',X2,33,10.5);T(hs,X2-3,82,52);if(devS)T(devS,X2,122,30);T('GPS '+cog+'° · ветер '+twd+'°',X2,141,9.5,600);
-    tile(X1,96,'ВЫМПЕЛЬНЫЙ',spd(v.aws),U,'угол '+Math.round(Math.abs(v.awa))+'° '+side(v.awa));
-    tile(X1,157,'СКОРОСТЬ',spd(v.sog),U,'по GPS');tile(X2,157,'VMG',spd(vmg),U,'к ветру');
+    tile(X1,35,'ИСТИННЫЙ ВЕТЕР',W(tws),U,AU(twa));T('КУРС',X2,33,10.5);T(hs,X2-3,82,52);if(devS)T(devS,X2,122,30);T((ng?'GPS —':'GPS '+cog+'°')+' · ветер '+(nw?NA:twd+'°'),X2,141,9.5,600);
+    tile(X1,96,'ВЫМПЕЛЬНЫЙ',W(v.aws),U,AU(v.awa));
+    tile(X1,157,'СКОРОСТЬ',GS(v.sog),U,ng?'нет GPS':'по GPS');tile(X2,157,'VMG',VM(vmg),U,'к ветру');
     H(0,206,400);c.fillRect(133,206,1.5,94);c.fillRect(266,206,1.5,94);
     T('КРЕН',8,221,10.5);T(heelS,126,223,19,700,'right');stern(66,262,1);T('ДИФФ',141,221,10.5);T(pitchS,259,223,19,700,'right');prof(199,265,1);T('нос →',259,296,9,600,'right');
     T('СДВИГ ВЕТРА',274,221,10.5);shift(274,221);}
+  if(v.toast){c.font='700 15px '+F;const tw=c.measureText(v.toast).width+28;c.fillStyle=INK;c.fillRect(200-tw/2,128,tw,44);c.fillStyle=PAP;T(v.toast,200,156,15,700,'center');c.fillStyle=INK;}
   c.restore();}
 return {reserveBlock,as5600,mt6701,gy50,bno08x,esp32s3,sd3v3,epd42,an181,tp4056,tps63020,mt3608,max3485s,esp32c3,wires,drawScreen};
 })();
