@@ -1,0 +1,438 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" href="data:,">
+<meta charset="utf-8">
+<title>Платы прибора М5</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500&family=Onest:wght@400;500;600&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Чертёжный лист: слева план платы в масштабе, справа пояснение; ниже разрез, место в коробке, вторая плата и таблицы. Стиль — общий для страниц проекта */
+:root{
+  --bg:#edf1f3; --surface:#ffffff; --ink:#14202b; --muted:#536373; --line:#d3dbe1; --accent:#0d6b78; --accent-bg:#e0eff1;
+  --pcb:#dbe8e0; --pcb-line:#6f9a86; --mod:#cfe6ea; --mod-line:#0d6b78; --conn:#f3e8c9; --conn-line:#9a7a2a; --term:#cfdff3; --term-line:#3f6aa3;
+  --part:#e4e1ec; --part-line:#6a6486; --low:#7c8a96; --new:#b4521a; --ko:#c3ccd3; --old:#8c99a5;
+  --f-display:"Unbounded","Arial Black",system-ui,sans-serif; --f-body:"Onest",system-ui,-apple-system,"Segoe UI",sans-serif; --f-mono:"JetBrains Mono",ui-monospace,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--bg:#0e151b;--surface:#162029;--ink:#e2e9ee;--muted:#93a3b0;--line:#27343f;--accent:#4db6c2;--accent-bg:#123238;
+  --pcb:#16302a;--pcb-line:#4a8a73;--mod:#12404a;--mod-line:#4db6c2;--conn:#3c3320;--conn-line:#cfae5e;--term:#1c3350;--term-line:#82abe0;--part:#2a2937;--part-line:#a39dc2;--low:#8798a6;--new:#f0a060;--ko:#33414d;--old:#6d7b88;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0e151b;--surface:#162029;--ink:#e2e9ee;--muted:#93a3b0;--line:#27343f;--accent:#4db6c2;--accent-bg:#123238;
+  --pcb:#16302a;--pcb-line:#4a8a73;--mod:#12404a;--mod-line:#4db6c2;--conn:#3c3320;--conn-line:#cfae5e;--term:#1c3350;--term-line:#82abe0;--part:#2a2937;--part-line:#a39dc2;--low:#8798a6;--new:#f0a060;--ko:#33414d;--old:#6d7b88;color-scheme:dark}
+[hidden]{display:none!important}
+body{background:var(--bg);color:var(--ink);font:15px/1.5 var(--f-body);margin:0}
+.wrap{max-width:1180px;margin:0 auto;padding-block:20px 56px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:grid;gap:40px}
+.stage{position:relative;display:grid;gap:14px;min-width:0}
+h1{font:500 26px/1.2 var(--f-display);margin:0;text-wrap:balance;padding-right:150px}
+h2{font:500 18px/1.3 var(--f-display);margin:0;text-wrap:balance}
+h3{margin:0;font:600 13px var(--f-body);color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
+p{margin:0}
+.lead{max-width:70ch;color:var(--muted)}
+section{display:grid;gap:16px;min-width:0}
+.facts{display:flex;flex-wrap:wrap;gap:10px 28px;margin:0;padding:0;list-style:none}
+.facts li{display:grid;gap:0}
+.facts b{font:600 20px/1.2 var(--f-mono);font-variant-numeric:tabular-nums}
+.facts span{font-size:13px;color:var(--muted)}
+.two{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:24px;align-items:start}
+@media (max-width:900px){.two{grid-template-columns:minmax(0,1fr)}h1{padding-right:0}}
+.sheet{background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:12px;display:grid;gap:10px;min-width:0}
+.sheet svg{display:block;width:100%;height:auto}
+.seg{display:flex;flex-wrap:wrap;gap:6px}
+.btn{min-height:36px;padding:0 12px;border-radius:4px;border:1px solid var(--line);background:var(--bg);color:var(--ink);font:500 13px var(--f-body);cursor:pointer}
+.btn[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-bg);color:var(--accent);font-weight:600}
+.btn:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.read{min-height:3.2em;margin:0;padding:8px 10px;border-left:3px solid var(--accent);background:var(--accent-bg);font-size:13.5px;border-radius:0 4px 4px 0}
+.read b{font-weight:600}
+.legend{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:12.5px;color:var(--muted);margin:0;padding:0;list-style:none}
+.legend i{display:inline-block;width:14px;height:10px;margin-right:6px;border:1.5px solid;border-radius:2px;vertical-align:-1px}
+.notes{margin:0;padding-left:18px;display:grid;gap:8px;max-width:70ch}
+.notes b{font-weight:600}
+.tbl{overflow-x:auto;min-width:0}
+table{border-collapse:collapse;width:100%;font-size:13.5px}
+th,td{text-align:left;padding:7px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font:600 12px var(--f-body);color:var(--muted);text-transform:uppercase;letter-spacing:.04em;white-space:nowrap}
+td:first-child{white-space:nowrap;font-weight:600}
+td.n{font-family:var(--f-mono);font-variant-numeric:tabular-nums;white-space:nowrap}
+.tag{display:inline-block;padding:1px 7px;border-radius:10px;font:600 11.5px var(--f-body);border:1px solid var(--new);color:var(--new);white-space:nowrap}
+.tag.w{border-style:dashed}
+.small{font-size:13px;color:var(--muted);max-width:75ch}
+a{color:var(--accent)}
+/* чертёж */
+svg text{font-family:var(--f-body);fill:var(--ink)}
+.brd{fill:var(--pcb);stroke:var(--pcb-line);stroke-width:.5}
+.strip{fill:var(--ko);opacity:.55}
+.hole{fill:var(--surface);stroke:var(--pcb-line);stroke-width:.35}
+.dim{fill:var(--muted);font-family:var(--f-mono)}
+.p{cursor:pointer}
+.p rect,.p circle{stroke-width:.35}
+.t-mod rect{fill:var(--mod);stroke:var(--mod-line);stroke-width:.5}
+.t-conn rect{fill:var(--conn);stroke:var(--conn-line)}
+.t-term rect{fill:var(--term);stroke:var(--term-line)}
+.t-part rect,.t-part circle{fill:var(--part);stroke:var(--part-line)}
+.t-low rect{fill:var(--low);stroke:none}
+.p.new rect{stroke:var(--new);stroke-width:.7}
+.p.opt rect{stroke-dasharray:1.2 .9}
+.t-low.new rect{fill:var(--new)}
+.t-low.opt rect{fill:none;stroke:var(--low);stroke-width:.3;stroke-dasharray:.8 .6}
+.row{stroke:var(--mod-line);stroke-width:.9;stroke-dasharray:.5 2.04;stroke-linecap:round;opacity:.8}
+.p.sel rect,.p.sel circle{stroke:var(--ink);stroke-width:.9;stroke-dasharray:none}
+svg[data-floor="1"] .t-mod rect{fill:none;stroke-dasharray:1.5 1.2;stroke-width:.35}
+svg[data-floor="1"] .t-mod text,svg[data-floor="1"] .row{opacity:.35}
+svg[data-floor="2"] .t-conn,svg[data-floor="2"] .t-term,svg[data-floor="2"] .t-part,svg[data-floor="2"] .t-low{opacity:.13}
+svg[data-floor="all"] .t-mod rect{fill-opacity:.86}
+.cut{stroke:var(--new);stroke-width:.3;stroke-dasharray:3 1.2 .6 1.2}
+.sec-plate{fill:var(--ko)}.sec-pcb{fill:var(--pcb-line)}.sec-post{stroke:var(--mod-line);stroke-width:.6}
+.sec-mod{fill:var(--mod);stroke:var(--mod-line);stroke-width:.3}.sec-part{fill:var(--part);stroke:var(--part-line);stroke-width:.3}
+.sec-term{fill:var(--term);stroke:var(--term-line);stroke-width:.3}.sec-low{fill:var(--low)}
+.lim{stroke:var(--new);stroke-width:.35;stroke-dasharray:2 1.2}
+.box-in{fill:var(--surface);stroke:var(--muted);stroke-width:.6}
+.box-col{fill:var(--ko);stroke:var(--muted);stroke-width:.3}
+.box-shelf{fill:var(--part);stroke:var(--part-line);stroke-width:.4}
+.box-wall{fill:none;stroke:var(--muted);stroke-width:.4;stroke-dasharray:1.5 1.2}
+.box-old{fill:none;stroke:var(--old);stroke-width:.45;stroke-dasharray:2.4 1.6}
+.box-brd{fill:var(--pcb);stroke:var(--pcb-line);stroke-width:.7}
+.box-mod{fill:var(--mod);stroke:var(--mod-line);stroke-width:.35}
+.ray{stroke:var(--new);stroke-width:.4}
+.home{position:absolute;top:14px;right:16px;z-index:6;padding:8px 12px;border-radius:4px;border:1px solid var(--accent);background:var(--surface);color:var(--ink);font:600 13px var(--f-body);text-decoration:none}
+.home:hover,.home:focus-visible{background:var(--accent);color:var(--surface);outline:none}
+@media (max-width:900px){.home{top:10px;left:16px;right:auto}.badge{top:54px}.tools{top:114px}.views{top:116px}.stage>h1{padding-right:0;padding-top:44px}}
+</style>
+
+<div class="wrap">
+  <div class="stage" id="stage">
+    <a class="home" href="../">← Главное меню</a>
+    <h1>Платы прибора М5</h1>
+    <p class="lead">Эскиз двух плат в масштабе: что стоит на каком этаже и помещается ли всё в заводской размер 100 × 100 мм. Это ещё не чертёж для завода: дорожки и точные места появятся при разводке. Нынешняя сборка на двух макетных платах показана на странице <a href="../cockpit/">«Блок в кокпите»</a>.</p>
+    <ul class="facts">
+      <li><b>95 × 100 мм</b><span>плата блока в кокпите, занято <span id="fUse"></span></span></li>
+      <li><b>62 × 26 мм</b><span>плата на топе мачты, на месте макетной</span></li>
+      <li><b id="fMod"></b><span>модулей на втором этаже платы кокпита</span></li>
+      <li><b id="fCon"></b><span>разъёмов жгутов на плате кокпита</span></li>
+    </ul>
+  </div>
+
+  <section>
+    <h2>Плата блока в кокпите</h2>
+    <div class="two">
+      <div class="sheet">
+        <div class="seg" role="group" aria-label="Какой этаж показать">
+          <button class="btn" type="button" id="fAll" data-f="all" aria-pressed="true">Оба этажа</button>
+          <button class="btn" type="button" id="f1" data-f="1" aria-pressed="false">Первый: запаяно</button>
+          <button class="btn" type="button" id="f2" data-f="2" aria-pressed="false">Второй: модули</button>
+        </div>
+        <svg id="planC" role="img" aria-label="План платы блока в кокпите, вид со стороны деталей"></svg>
+        <p class="read" id="readC">Наведите или нажмите на деталь: что это и какой у неё размер.</p>
+        <ul class="legend">
+          <li><i style="background:var(--mod);border-color:var(--mod-line)"></i>модуль в гнёздах, второй этаж</li>
+          <li><i style="background:var(--conn);border-color:var(--conn-line)"></i>разъём жгута с защёлкой</li>
+          <li><i style="background:var(--term);border-color:var(--term-line)"></i>клемма под винт</li>
+          <li><i style="background:var(--part);border-color:var(--part-line)"></i>деталь, запаянная в плату</li>
+          <li><i style="background:var(--low);border-color:var(--low)"></i>мелкая деталь под модулем</li>
+          <li><i style="background:none;border-color:var(--new)"></i>новое</li>
+          <li><i style="background:none;border-color:var(--muted);border-style:dashed"></i>место оставлено, ждёт решения</li>
+        </ul>
+      </div>
+      <div style="display:grid;gap:16px;min-width:0">
+        <ul class="notes">
+          <li><b>Второй этаж: <span id="nMod"></span> модулей в гнёздах.</b> ESP32-S3, TPS63020, LM2596, 3 × MAX3485 и датчик давления. Любой снимается рукой, без паяльника.</li>
+          <li><b>Первый этаж: запаяно в плату.</b> <span id="nCon"></span> разъёмов жгутов, 3 клеммы под винт для витых пар, детали питания и защиты.</li>
+          <li><b>Под модулями стоит <span id="nLow"></span> мелких деталей.</b> Это и есть выигрыш двух этажей: одно место занято дважды.</li>
+          <li><b>Провода между модулями исчезают.</b> Их заменяют дорожки платы. Остаются только жгуты к экрану, датчикам, кнопкам и разъёмам стенки.</li>
+          <li><b>LM2596 переезжает с плиты на плату.</b> Это моё предложение: на 4 провода меньше.</li>
+          <li><b>Нижние 12 мм платы пустые.</b> Над ними висят корпуса разъёмов стенки коробки, туда не подлезть отвёрткой.</li>
+        </ul>
+        <div class="sheet">
+          <h3>Разрез А–А: высота этажей, мм</h3>
+          <svg id="secC" role="img" aria-label="Разрез платы кокпита по линии А–А с высотами"></svg>
+          <p class="small">Модули стоят в гнёздах на 7,5 мм выше платы. Самый высокий — LM2596, 20,5 мм. До задней стороны экрана 42,6 мм: запас вдвое.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Где плата стоит в коробке</h2>
+    <div class="two">
+      <div class="sheet">
+        <svg id="boxC" role="img" aria-label="Плата в коробке блока: полки датчиков, разъёмы стенки, расстояния до компаса"></svg>
+        <ul class="legend">
+          <li><i style="background:var(--pcb);border-color:var(--pcb-line)"></i>новая плата</li>
+          <li><i style="background:none;border-color:var(--old);border-style:dashed"></i>было: 2 макетные платы и LM2596</li>
+          <li><i style="background:var(--part);border-color:var(--part-line)"></i>полки GPS и компаса</li>
+          <li><i style="background:none;border-color:var(--muted);border-style:dashed"></i>разъёмы стенки, висят над платой</li>
+        </ul>
+      </div>
+      <ul class="notes">
+        <li><b>Плата встаёт между полкой GPS и полкой компаса.</b> Внутри коробки 192 × 112 мм, плата занимает середину.</li>
+        <li><b>Компасу преобразователи не мешают.</b> От катушки LM2596 до компаса <span id="dLM"></span> мм, от TPS63020 <span id="dTPS"></span> мм. Нужно не меньше 60 мм.</li>
+        <li><b>ESP32-S3 стал ближе к компасу:</b> <span id="dS3"></span> мм между центрами вместо 71 мм. Проверить на столе, что курс не прыгает при включении Wi-Fi.</li>
+        <li><b>Плиту нужно перерисовать и напечатать заново.</b> 4 новые бобышки под плату, полка GPS короче на 2 мм, место LM2596 на плите освобождается.</li>
+        <li><b>Ширина 95 мм, а не 100:</b> справа с полки свисают контакты компаса, слева полка GPS. В заводской размер 100 × 100 плата укладывается.</li>
+      </ul>
+    </div>
+  </section>
+
+  <section>
+    <h2>Плата на топе мачты</h2>
+    <div class="two">
+      <div class="sheet">
+        <div class="seg" role="group" aria-label="Какой этаж показать на плате топа">
+          <button class="btn" type="button" id="tAll" data-f="all" aria-pressed="true">Оба этажа</button>
+          <button class="btn" type="button" id="t1" data-f="1" aria-pressed="false">Первый: запаяно</button>
+          <button class="btn" type="button" id="t2" data-f="2" aria-pressed="false">Второй: модули</button>
+        </div>
+        <svg id="planT" role="img" aria-label="План платы на топе мачты, вид со стороны деталей"></svg>
+        <p class="read" id="readT">Наведите или нажмите на деталь: что это и какой у неё размер.</p>
+      </div>
+      <ul class="notes">
+        <li><b>Размер и 4 отверстия как у нынешней макетной платы.</b> Этажерку капсулы перепечатывать не нужно.</li>
+        <li><b>В гнёздах:</b> ESP32-C3 SuperMini и MAX3485 на переходнике.</li>
+        <li><b>Запаяно:</b> SMBJ5.0A и SM712 у ввода кабеля, резисторы шины датчиков, конденсаторы.</li>
+        <li><b>4 разъёма с защёлкой:</b> кабель мачты и 3 датчика. Сейчас эти провода паяются к плате.</li>
+        <li><b>Датчики остаются отдельными платами.</b> AS5600 стоит под крышкой, MT6701 у дна, каждый у своего магнита. GY-50 остаётся на своих стойках с другой стороны этажерки.</li>
+        <li><b>Плотно:</b> между разъёмами по 0,5 мм. Если при разводке места не хватит, возьмём разъёмы с шагом 2 мм вместо 2,5 мм.</li>
+      </ul>
+    </div>
+  </section>
+
+  <section>
+    <h2>Датчик давления и температуры</h2>
+    <ul class="notes">
+      <li><b>Модуль BME280 на 3,3 В:</b> давление, температура и влажность. Стоит на втором этаже платы кокпита, на 4 контактах.</li>
+      <li><b>Что покажет экран:</b> давление и его ход за 3 и за 24 часа графиком, предупреждение о быстром падении. По шкале морских прогнозов 1,6–3,5 гПа за 3 часа — «падает», 3,6–6 — «падает быстро», больше 6 — «очень быстро».</li>
+      <li><b>Нужен клапан выравнивания давления в стенке коробки.</b> Коробка герметичная: без клапана датчик мерил бы нагрев коробки на солнце, а не погоду. Клапан пропускает воздух и не пропускает воду. Это ещё одно отверстие в коробке.</li>
+      <li><b>Температура — это температура внутри коробки,</b> а не воздуха: на солнце и от своих плат она выше. Для температуры воздуха нужен выносной щуп в тени.</li>
+      <li><b>Ход давления копится, только пока прибор включён.</b> Чтобы утром видеть ночь, прибор должен работать ночью: это около 2 А·ч в сутки от аккумулятора лодки.</li>
+      <li><b>Влажность в коробке</b> BME280 меряет заодно: прибор предупредит, что в коробке сыро, раньше, чем вода дойдёт до плат.</li>
+    </ul>
+    <h3>Ножки ESP32-S3: что меняется</h3>
+    <div class="tbl"><table>
+      <tr><th>Ножка</th><th>Сейчас</th><th>Станет</th><th>Состояние</th></tr>
+      <tr><td>IO14</td><td>кнопка «ноль» и подсветка</td><td>шина датчиков, данные (SDA)</td><td><span class="tag w">ждёт решения</span></td></tr>
+      <tr><td>IO43</td><td>свободна</td><td>шина датчиков, такт (SCL)</td><td><span class="tag w">ждёт решения</span></td></tr>
+      <tr><td>IO7</td><td>4 кнопки на крышке через резисторы</td><td>те же 4 кнопки и пятая, «ноль»: ещё один резистор 22 кОм</td><td><span class="tag w">ждёт решения</span></td></tr>
+      <tr><td>IO46</td><td>свободна</td><td>звуковой излучатель, если решим ставить</td><td><span class="tag w">ждёт решения</span></td></tr>
+    </table></div>
+    <p class="small">Свободных ножек у ESP32-S3 почти не осталось, а шине датчиков нужны 2. Одна освобождается, если кнопку «ноль» перевести на общую ножку кнопок. Кнопка работает как раньше: короткое нажатие — подсветка, 3 секунды — ноль. Одновременно с другой кнопкой её нажимать нельзя. Это моё предложение.</p>
+  </section>
+
+  <section>
+    <h2>Что ещё можно добавить недорого</h2>
+    <div class="tbl"><table>
+      <tr><th>Что</th><th>Что даёт</th><th>Что для этого нужно</th><th>Место на плате</th></tr>
+      <tr><td>Звуковой излучатель</td><td>стартовый отсчёт 5–4–1–0, сигнал захода и отхода без взгляда на экран, тревоги по давлению и разряду</td><td>излучатель снаружи коробки или пьезопластина на крышке изнутри; 1 ножка, IO46. Громкость сквозь коробку проверить на столе</td><td>разъём J15 оставлен</td></tr>
+      <tr><td>Датчик света BH1750</td><td>подсветка экрана сама включается в сумерках и гаснет днём</td><td>модуль на рамке под прозрачной крышкой, шина датчиков</td><td>разъём J14</td></tr>
+      <tr><td>Влажность в коробке</td><td>предупреждение «в коробке сыро»</td><td>ничего: это умеет BME280</td><td>уже есть</td></tr>
+      <tr><td>Щуп температуры DS18B20 на проводе</td><td>температура воздуха в тени или воды за бортом</td><td>щуп с кабелем и гермоввод; 1 ножка, IO0</td><td>нет, добавить разъём на 3 контакта</td></tr>
+      <tr><td>Датчик грозы AS3935</td><td>расстояние до грозы, до 40 км</td><td>модуль на шине датчиков. Дороже остальных и ловит помехи от преобразователей: сначала проверить на столе</td><td>разъём J14 через разветвитель</td></tr>
+      <tr><td>Стартовая линия по GPS</td><td>расстояние и время до линии старта: концы линии запоминаются кнопкой</td><td>только прошивка, деталей не нужно</td><td>—</td></tr>
+    </table></div>
+    <p class="small">Цены этих модулей я не проверял. Первые две строки мест на плате почти не занимают, поэтому разъёмы под них в эскизе уже оставлены: поставить деталь можно позже.</p>
+  </section>
+
+  <section>
+    <h2>Разъёмы платы кокпита</h2>
+    <div class="tbl"><table id="tabC"></table></div>
+    <h3>Разъёмы платы топа</h3>
+    <div class="tbl"><table id="tabT"></table></div>
+  </section>
+
+  <section>
+    <h2>Заказ плат и что не решено</h2>
+    <ul class="notes">
+      <li><b>Обе платы укладываются в 100 × 100 мм.</b> На pcbwave.com это по $4,90 за 5 штук каждой, с доставкой около $17,5 за обе. Одной ли посылкой они уйдут, я не проверял.</li>
+      <li><b>Ждёт решения:</b> перенос кнопки «ноль» на общую ножку, звуковой излучатель, датчик света.</li>
+      <li><b>Ждёт проверки:</b> как оплатить заказ из России; курс компаса при включённом Wi-Fi; громкость звука сквозь коробку.</li>
+      <li><b>После вашего согласия:</b> схема и разводка в KiCad, новая плита под плату, обновление страницы блока.</li>
+    </ul>
+  </section>
+</div>
+
+<script>
+// Раскладка плат прибора М5. Единицы — мм. Начало — левый нижний угол платы, x вправо, y вверх; вид со стороны деталей.
+// t: mod — модуль в гнёздах, второй этаж; conn — разъём жгута; term — винтовая клемма; part — деталь, запаянная в плату; low — мелкая деталь, может стоять под модулем
+// z — высота верха над платой, мм. opt — место оставлено, деталь ждёт решения. isNew — добавлено по просьбе 11.11
+const XH=n=>n*2.5+2.4, XD=5.75;
+const BD={
+ cockpit:{W:95,H:100,holeD:3.2,keep:3.5,holes:[[4,4],[91,4],[4,96],[91,96]],
+  strip:12,   // нижняя полоса: над ней корпуса разъёмов стенки коробки
+  parts:[
+   // ---- второй этаж: модули в гнёздах
+   {id:'LM',t:'mod',x:7.5,y:14,w:21,h:43,z:20.5,lab:'LM2596',d:'LM2596: 12 В лодки → 5,3 В. Стоит на 4 штырях по углам; подстроечник заменён 2 постоянными резисторами'},
+   {id:'TPS',t:'mod',x:7.5,y:61,w:33.47,h:24.3,z:12,lab:'TPS63020',d:'TPS63020: шина VSYS → 3,3 В для ESP32-S3 и датчиков'},
+   {id:'S3',t:'mod',x:44,y:41.5,w:27.9,h:57,z:13,lab:'ESP32-S3',d:'ESP32-S3 N16R8 в двух цанговых панелях 1 × 22, сверху прижимная планка. Антенной вверх'},
+   {id:'MXT',t:'mod',x:74,y:21,w:11.5,h:11.5,z:10.5,lab:'MAX',d:'MAX3485 на переходнике SOP-8: передача в порт'},
+   {id:'MXP',t:'mod',x:74,y:35,w:11.5,h:11.5,z:10.5,lab:'MAX',d:'MAX3485 на переходнике SOP-8: приём из порта'},
+   {id:'MXR',t:'mod',x:74,y:49,w:11.5,h:11.5,z:10.5,lab:'MAX',d:'MAX3485 на переходнике SOP-8: приём с мачты'},
+   {id:'BARO',t:'mod',x:30,y:24,w:12,h:15,z:10,isNew:1,lab:'BME280',d:'Новое: датчик давления, температуры и влажности BME280, плата на 3,3 В. Нужен клапан выравнивания давления в стенке коробки'},
+   // ---- разъёмы жгутов, левый край: кабель от резервного блока
+   {id:'J1',t:'conn',x:0.6,y:14,w:XD,h:XH(4),z:15,n:4,lab:'J1',d:'J1, 4 контакта: +12 В, минус, жила «лодка», жила «резерв» — от разъёма SP13'},
+   {id:'J2',t:'conn',x:0.6,y:28,w:XD,h:XH(3),z:15,n:3,lab:'J2',d:'J2, 3 контакта: +5 В на мачту, земля мачты, экран кабеля — от разъёма SP13'},
+   {id:'J15',t:'conn',x:0.6,y:40,w:XD,h:XH(2),z:15,n:2,opt:1,lab:'J15',d:'J15, 2 контакта: звуковой излучатель. Место оставлено, ждёт решения'},
+   // ---- нижний ряд: разъёмы стенки коробки
+   {id:'J3',t:'conn',x:30,y:13,w:XH(2),h:XD,z:15,n:2,lab:'J3',d:'J3, 2 контакта: тумблер питания'},
+   {id:'J4',t:'conn',x:39,y:13,w:XH(4),h:XD,z:15,n:4,lab:'J4',d:'J4, 4 контакта: USB-C на панели — 5 В, D−, D+, земля'},
+   {id:'J11',t:'conn',x:53,y:13,w:XH(2),h:XD,z:15,n:2,lab:'J11',d:'J11, 2 контакта: кнопка «ноль» и подсветка в нижней стенке'},
+   {id:'J13',t:'conn',x:62,y:13,w:XH(2),h:XD,z:15,n:2,lab:'J13',d:'J13, 2 контакта: 2 планки красной подсветки экрана'},
+   {id:'J5',t:'conn',x:76,y:13,w:XH(4),h:XD,z:15,n:4,lab:'J5',d:'J5, 4 контакта: питание порта M12 — +5 В, +12 В и 2 земли через шунт'},
+   // ---- верхний ряд слева
+   {id:'J6',t:'conn',x:9,y:90,w:XH(4),h:XD,z:15,n:4,lab:'J6',d:'J6, 4 контакта: GPS — 3,3 В, земля, TX, RX'},
+   {id:'J14',t:'conn',x:23,y:90,w:XH(4),h:XD,z:15,n:4,isNew:1,lab:'J14',d:'Новое: J14, 4 контакта: запасной разъём шины датчиков — 3,3 В, земля, SDA, SCL. Сюда встаёт датчик света или любой будущий датчик'},
+   // ---- правый столбец сверху: рамка, крышка, полка компаса
+   {id:'J9',t:'conn',x:74.6,y:63,w:XD,h:XH(6),z:15,n:6,lab:'J9',d:'J9, 6 контактов: карта памяти micro-SD'},
+   {id:'J10',t:'conn',x:74.6,y:82,w:XD,h:XH(5),z:15,n:5,lab:'J10',d:'J10, 5 контактов: 4 кнопки на крышке и их общая земля'},
+   {id:'J8',t:'conn',x:81.6,y:63,w:XD,h:XH(8),z:15,n:8,lab:'J8',d:'J8, 8 контактов: экран e-paper'},
+   {id:'J12',t:'conn',x:81.6,y:87,w:XD,h:XH(3),z:15,n:3,lab:'J12',d:'J12, 3 контакта: стрелки «заход» и «отход», общая земля'},
+   {id:'J7',t:'conn',x:88.6,y:63,w:XD,h:XH(10),z:15,n:10,lab:'J7',d:'J7, 10 контактов: компас BNO085 на полке справа'},
+   // ---- винтовые клеммы витых пар
+   {id:'KT',t:'term',x:87,y:21.7,w:7.6,h:10.16,z:10,lab:'TX',d:'Клемма под винт: пара передачи порта, контакты 1 и 2 разъёма M12'},
+   {id:'KP',t:'term',x:87,y:35.7,w:7.6,h:10.16,z:10,lab:'RX',d:'Клемма под винт: пара приёма порта, контакты 3 и 4 разъёма M12'},
+   {id:'KM',t:'term',x:87,y:49.7,w:7.6,h:10.16,z:10,lab:'A B',d:'Клемма под винт: пара данных с мачты, контакты 7 и 8 разъёма SP13'},
+   // ---- первый этаж: питание и защита
+   {id:'S24',t:'part',x:30,y:19.6,w:5.6,h:3.8,z:2.4,lab:'',d:'SMBJ24A: срезает выбросы бортовой сети на входе 12 В'},
+   {id:'D1',t:'part',x:30,y:43,w:5.2,h:2.8,z:2.3,lab:'',d:'D1, SS34: от LM2596 на шину 5 В'},
+   {id:'C1',t:'part',x:32,y:48,w:8,h:8,z:12,round:1,lab:'470',d:'Конденсатор 470 мкФ 10 В на шине VSYS, стоит вертикально'},
+   {id:'D2',t:'part',x:30,y:57.3,w:12,h:2.7,z:2.7,lab:'',d:'D2, 1N5819: шина 5 В → VSYS'},
+   {id:'P02',t:'part',x:45,y:21,w:7.4,h:3.1,z:12,lab:'0,2 А',d:'PPTC 0,2 А: +5 В на мачту'},
+   {id:'P05',t:'part',x:54.5,y:21,w:7.4,h:3.1,z:12,lab:'0,5 А',d:'PPTC 0,5 А: +5 В в порт'},
+   {id:'P15',t:'part',x:64,y:21,w:7.4,h:3.1,z:12,lab:'1,5 А',d:'PPTC 1,5 А: +12 В в порт'},
+   {id:'SV',t:'part',x:45,y:26.5,w:5.6,h:3.8,z:2.4,lab:'',d:'SMBJ5.0A на шине 5 В: защита от отказа LM2596'},
+   {id:'S5',t:'part',x:53,y:26.5,w:5.6,h:3.8,z:2.4,lab:'',d:'SMBJ5.0A: защита +5 В кабеля мачты'},
+   {id:'RSH',t:'part',x:61,y:26.8,w:6.5,h:3.2,z:1,lab:'',d:'Шунт 0,1 Ом 1 Вт в земле порта: ток внешнего модуля'},
+   {id:'D3',t:'part',x:45,y:32.5,w:12,h:2.7,z:2.7,lab:'',d:'D3, 1N5819: USB-C на шину 5 В'},
+   // ---- мелкие детали под ESP32-S3: сетка 3 × 7
+   ...[['8,2 кОм: делитель напряжения лодки'],['100 нФ: вход АЦП лодки'],['8,2 кОм: делитель напряжения резерва'],['100 нФ: вход АЦП резерва'],['100 нФ: вход АЦП тока порта'],['10 кОм: подтяжка кнопок'],['2,2 кОм: кнопка МЕНЮ'],['4,7 кОм: кнопка ▲'],['10 кОм: кнопка ▼'],['22 кОм: кнопка «ноль», если её перенести на общую ножку кнопок',1],['68 Ом: стрелка «заход»'],['68 Ом: стрелка «отход»'],['2N7002: ключ подсветки'],['120 Ом: нагрузка линии мачты'],['560 Ом: смещение линии мачты, провод A'],['560 Ом: смещение линии мачты, провод B'],['120 Ом: нагрузка пары приёма порта'],['4,7 кОм: подтяжка шины датчиков, SDA',2],['4,7 кОм: подтяжка шины датчиков, SCL',2],['100 нФ: питание BME280',2],['ключ звукового излучателя',1]]
+     .map((a,i)=>({id:'R'+i,t:'low',x:49.4+(i%3)*6.2,y:46+Math.floor(i/3)*6.6,w:3.4,h:1.8,z:1,lab:'',opt:a[1]===1?1:0,isNew:a[1]===2?1:0,d:a[0]+'. Стоит под ESP32-S3'})),
+   // ---- под переходниками MAX3485: защита пары и конденсатор питания
+   ...['MXT','MXP','MXR'].flatMap((k,i)=>[{id:'SM'+i,t:'low',x:78.2,y:27.6+i*14,w:3,h:2.6,z:1.1,lab:'',d:'SM712: защита витой пары. Стоит под переходником MAX3485'},{id:'CM'+i,t:'low',x:78,y:23.2+i*14,w:3.4,h:1.8,z:1,lab:'',d:'100 нФ: питание MAX3485. Стоит под переходником'}])
+  ]},
+ top:{W:62,H:26,holeD:2.9,keep:3.2,holes:[[4.5,7],[57.5,7],[4.5,19],[57.5,19]],
+  parts:[
+   {id:'C3',t:'mod',x:9.5,y:1.2,w:17.81,h:24.1,z:10,lab:'ESP32-C3',d:'ESP32-C3 SuperMini в цанговых гнёздах, USB вверх: для прошивки снять крышку капсулы'},
+   {id:'MX',t:'mod',x:29.5,y:13.6,w:11.5,h:11.5,z:10.5,lab:'MAX',d:'MAX3485 на переходнике SOP-8: передача данных о ветре в кабель'},
+   {id:'T1',t:'conn',x:47.7,y:6.8,w:XD,h:XH(4),z:15,n:4,lab:'J1',d:'J1, 4 контакта: кабель мачты — +5 В, A, земля, B'},
+   {id:'T2',t:'conn',x:28.5,y:0.6,w:XH(4),h:XD,z:15,n:4,lab:'J2',d:'J2, 4 контакта: AS5600, датчик направления ветра'},
+   {id:'T3',t:'conn',x:41.5,y:0.6,w:XH(4),h:XD,z:15,n:4,lab:'J3',d:'J3, 4 контакта: MT6701, датчик скорости ветра'},
+   {id:'T4',t:'conn',x:41.6,y:19.65,w:XH(4),h:XD,z:15,n:4,lab:'J4',d:'J4, 4 контакта: GY-50, гироскоп качки топа'},
+   {id:'TV',t:'part',x:29.5,y:8,w:5.6,h:3.8,z:2.4,lab:'',d:'SMBJ5.0A: защита +5 В у ввода кабеля'},
+   {id:'TS',t:'part',x:37,y:8.6,w:3,h:2.6,z:1.1,lab:'',d:'SM712: защита линий A и B у ввода кабеля'},
+   ...[['4,7 кОм: подтяжка шины датчиков, SDA'],['4,7 кОм: подтяжка шины датчиков, SCL'],['100 нФ: питание датчиков'],['100 нФ: питание MAX3485']].map((a,i)=>({id:'Q'+i,t:'low',x:13+(i%2)*6.5,y:7+Math.floor(i/2)*8,w:3.4,h:1.8,z:1,lab:'',d:a[0]+'. Стоит под ESP32-C3'}))
+  ]},
+ // блок в коробке: начало — центр коробки, x вправо, y вверх. Плата кокпита: левый нижний угол в (bx,by)
+ box:{w:192,h:112,bx:-50,by:-50,
+  gps:[-82,41,32,11.4],bnoShelf:[54,23,16,3],bno:[46.1,26,25.65,1.6],bnoC:[58.9,26],
+  bez:[[-88,-40],[-88,40],[88,-40],[88,40]],lid:[[-91,-51],[-91,51],[91,-51],[91,51]],
+  wall:[['SP13',-50,8,16],['USB-C',-20,7,14],['ноль',0,6,12],['тумблер',22,6,10],['M12',50,8,18]]}   // имя, x, полуширина, глубина внутрь от нижней стенки
+};
+
+(function(){
+const $=id=>document.getElementById(id);
+const f=n=>String(Math.round(n*10)/10).replace('.',',');
+const esc=s=>s.replace(/&/g,'&amp;').replace(/</g,'&lt;');
+const ORDER={low:0,part:1,conn:2,term:3,mod:4};
+const FLOOR={mod:'второй этаж, в гнёздах',conn:'первый этаж, разъём',term:'первый этаж, клемма',part:'первый этаж, запаяно',low:'первый этаж, под модулем'};
+
+// ---- план платы
+function plan(svg,b,o){
+  const m=o.m,Y=y=>b.H-y;let s='';
+  svg.setAttribute('viewBox',[-m,-m*0.6,b.W+2*m,b.H+m*1.9].join(' '));svg.setAttribute('data-floor','all');
+  s+='<rect class="brd" x="0" y="0" width="'+b.W+'" height="'+b.H+'" rx="1.2"/>';
+  if(b.strip){s+='<rect class="strip" x="0.3" y="'+(Y(b.strip))+'" width="'+(b.W-0.6)+'" height="'+(b.strip-0.3)+'"/>';
+    s+='<text x="'+(b.W/2)+'" y="'+(Y(b.strip/2)+o.fs*0.3)+'" text-anchor="middle" font-size="'+(o.fs*0.8)+'" class="dim">над этой полосой разъёмы стенки коробки</text>';}
+  b.holes.forEach(h=>{s+='<circle class="hole" cx="'+h[0]+'" cy="'+Y(h[1])+'" r="'+(b.holeD/2)+'"/>';});
+  if(o.cut!=null){s+='<line class="cut" x1="'+(-m*0.7)+'" x2="'+(b.W+m*0.7)+'" y1="'+Y(o.cut)+'" y2="'+Y(o.cut)+'"/>';
+    s+='<text x="'+(-m*0.72)+'" y="'+(Y(o.cut)-0.9)+'" font-size="'+(o.fs*0.85)+'" font-weight="600">А</text><text x="'+(b.W+m*0.72)+'" y="'+(Y(o.cut)-0.9)+'" text-anchor="end" font-size="'+(o.fs*0.85)+'" font-weight="600">А</text>';}
+  b.parts.slice().sort((a,c)=>ORDER[a.t]-ORDER[c.t]).forEach(p=>{
+    const x=p.x,y=Y(p.y+p.h);
+    s+='<g class="p t-'+p.t+(p.isNew?' new':'')+(p.opt?' opt':'')+'" data-id="'+p.id+'">';
+    if(p.round)s+='<circle cx="'+(x+p.w/2)+'" cy="'+(y+p.h/2)+'" r="'+(p.w/2)+'"/>';
+    else s+='<rect x="'+x+'" y="'+y+'" width="'+p.w+'" height="'+p.h+'" rx="'+(p.t==='low'?0.3:0.6)+'"/>';
+    if(p.t==='mod'){   // ряды гнёзд вдоль длинных сторон
+      const tall=p.h>=p.w,e=1.3;
+      if(p.id==='LM'){[[e+1,e+1],[p.w-e-1,e+1],[e+1,p.h-e-1],[p.w-e-1,p.h-e-1]].forEach(q=>{s+='<line class="row" x1="'+(x+q[0])+'" x2="'+(x+q[0]+0.01)+'" y1="'+(y+q[1])+'" y2="'+(y+q[1])+'"/>';});}
+      else if(p.id==='BARO'){s+='<line class="row" x1="'+(x+e)+'" x2="'+(x+e)+'" y1="'+(y+2.5)+'" y2="'+(y+p.h-2.5)+'"/>';}
+      else if(tall){[e,p.w-e].forEach(d=>{s+='<line class="row" x1="'+(x+d)+'" x2="'+(x+d)+'" y1="'+(y+1.8)+'" y2="'+(y+p.h-1.8)+'"/>';});}
+      else{[e,p.h-e].forEach(d=>{s+='<line class="row" x1="'+(x+1.8)+'" x2="'+(x+p.w-1.8)+'" y1="'+(y+d)+'" y2="'+(y+d)+'"/>';});}
+    }
+    if(p.lab){const cx=x+p.w/2,cy=y+p.h/2,big=p.t==='mod',fs=big?(Math.min(p.w,p.h)<13?o.fs*0.8:o.fs*1.05):o.fs*0.8;
+      const fits=p.lab.length*fs*0.56<p.w-0.6,rot=!fits&&p.h>p.w;
+      s+='<text x="'+cx+'" y="'+(cy+fs*0.35)+'" text-anchor="middle" font-size="'+fs+'"'+(big?' font-weight="600"':'')+(rot?' transform="rotate(-90 '+cx+' '+cy+')"':'')+'>'+esc(p.lab)+'</text>';}
+    s+='</g>';
+  });
+  s+='<text class="dim" x="'+(b.W/2)+'" y="'+(b.H+m*1.05)+'" text-anchor="middle" font-size="'+o.fs+'">'+f(b.W)+' мм</text>';
+  s+='<text class="dim" x="'+(-m*0.45)+'" y="'+(b.H/2)+'" text-anchor="middle" font-size="'+o.fs+'" transform="rotate(-90 '+(-m*0.45)+' '+(b.H/2)+')">'+f(b.H)+' мм</text>';
+  svg.innerHTML=s;
+  const read=$(o.read);let sel=null;
+  const show=g=>{const p=b.parts.find(q=>q.id===g.dataset.id);if(!p)return;if(sel)sel.classList.remove('sel');sel=g;g.classList.add('sel');
+    read.innerHTML='<b>'+esc(p.d)+'</b><br>'+f(p.w)+' × '+f(p.h)+' мм, верх на '+f(p.z)+' мм над платой; '+FLOOR[p.t]+'.';};
+  svg.addEventListener('pointerover',e=>{const g=e.target.closest('.p');if(g)show(g);});
+  svg.addEventListener('click',e=>{const g=e.target.closest('.p');if(g)show(g);});
+  o.btns.forEach(id=>$(id).addEventListener('click',()=>{svg.setAttribute('data-floor',$(id).dataset.f);o.btns.forEach(k=>$(k).setAttribute('aria-pressed',String(k===id)));}));
+}
+
+// ---- разрез по линии y = cut
+function section(svg,b,cut){
+  const top=44,bot=-15,Z=z=>top-z,W=b.W;let s='';
+  svg.setAttribute('viewBox',[-12,-6,W+24,top-bot+10].join(' '));
+  s+='<rect class="sec-plate" x="-4" y="'+Z(-9.4)+'" width="'+(W+8)+'" height="3"/>';
+  [[4,0],[W-4,0]].forEach(q=>{s+='<rect class="sec-plate" x="'+(q[0]-3.5)+'" y="'+Z(-1.6)+'" width="7" height="7.8"/>';});
+  s+='<rect class="sec-pcb" x="0" y="'+Z(0)+'" width="'+W+'" height="1.6"/>';
+  const hit=b.parts.filter(p=>p.y<=cut&&p.y+p.h>=cut).sort((a,c)=>a.x-c.x);
+  hit.forEach(p=>{
+    if(p.t==='mod'){[p.x+1.3,p.x+p.w-1.3].forEach(x=>{s+='<line class="sec-post" x1="'+x+'" x2="'+x+'" y1="'+Z(0)+'" y2="'+Z(7.5)+'"/>';});
+      s+='<rect class="sec-mod" x="'+p.x+'" y="'+Z(9.1)+'" width="'+p.w+'" height="1.6"/>';
+      s+='<rect class="sec-mod" x="'+(p.x+p.w*0.18)+'" y="'+Z(p.z)+'" width="'+(p.w*0.64)+'" height="'+(p.z-9.1)+'" opacity=".7"/>';
+      s+='<text x="'+(p.x+p.w/2)+'" y="'+(Z(p.z)-1.4)+'" text-anchor="middle" font-size="3">'+esc(p.lab)+' '+f(p.z)+'</text>';}
+    else if(p.t==='low'){s+='<rect class="sec-low" x="'+p.x+'" y="'+Z(p.z)+'" width="'+p.w+'" height="'+p.z+'"/>';}
+    else{s+='<rect class="sec-'+(p.t==='term'?'term':'part')+'" x="'+p.x+'" y="'+Z(p.z)+'" width="'+p.w+'" height="'+p.z+'"/>';
+      s+='<text x="'+(p.x+p.w/2)+'" y="'+(Z(p.z)-1.4)+'" text-anchor="middle" font-size="3">'+f(p.z)+'</text>';}
+  });
+  s+='<line class="lim" x1="-8" x2="'+(W+8)+'" y1="'+Z(42.6)+'" y2="'+Z(42.6)+'"/><text x="'+(W+8)+'" y="'+(Z(42.6)-1.2)+'" text-anchor="end" font-size="3" class="dim">задняя сторона экрана, 42,6</text>';
+  s+='<text x="-9" y="'+(Z(-0.8)+1)+'" text-anchor="end" font-size="3" class="dim">0</text><text x="'+(W+8)+'" y="'+(Z(-11)+0.4)+'" text-anchor="end" font-size="3" class="dim">плита и бобышки, плата на 12,4 мм от задней стенки</text>';
+  svg.innerHTML=s;
+}
+
+// ---- блок в коробке
+function box(svg,B,b){
+  const hw=B.w/2,hh=B.h/2,Y=y=>-y;let s='';
+  svg.setAttribute('viewBox',[-hw-8,-hh-8,B.w+16,B.h+20].join(' '));
+  s+='<rect class="box-in" x="'+(-hw)+'" y="'+(-hh)+'" width="'+B.w+'" height="'+B.h+'" rx="3"/>';
+  B.lid.forEach(c=>{s+='<circle class="box-col" cx="'+c[0]+'" cy="'+Y(c[1])+'" r="5"/>';});
+  B.bez.forEach(c=>{s+='<circle class="box-col" cx="'+c[0]+'" cy="'+Y(c[1])+'" r="5"/>';});
+  // было
+  [[-45,0,90,50],[-20,-55,70,50],[-73,-54,21,43]].forEach(r=>{s+='<rect class="box-old" x="'+r[0]+'" y="'+Y(r[1]+r[3])+'" width="'+r[2]+'" height="'+r[3]+'"/>';});
+  // новая плата и её модули
+  s+='<rect class="box-brd" x="'+B.bx+'" y="'+Y(B.by+b.H)+'" width="'+b.W+'" height="'+b.H+'" rx="1.2"/>';
+  b.parts.filter(p=>p.t==='mod').forEach(p=>{s+='<rect class="box-mod" x="'+(B.bx+p.x)+'" y="'+Y(B.by+p.y+p.h)+'" width="'+p.w+'" height="'+p.h+'" rx=".6"/>';});
+  // полки
+  s+='<rect class="box-shelf" x="'+B.gps[0]+'" y="'+Y(B.gps[1]+B.gps[3])+'" width="'+B.gps[2]+'" height="'+B.gps[3]+'"/><text x="'+(B.gps[0]+B.gps[2]/2)+'" y="'+(Y(B.gps[1]+B.gps[3]/2)+1.6)+'" text-anchor="middle" font-size="4.6">GPS</text>';
+  s+='<rect class="box-shelf" x="'+B.bnoShelf[0]+'" y="'+Y(B.bnoShelf[1]+B.bnoShelf[3])+'" width="'+B.bnoShelf[2]+'" height="'+B.bnoShelf[3]+'"/><rect class="box-shelf" x="'+B.bno[0]+'" y="'+Y(B.bno[1]+B.bno[3])+'" width="'+B.bno[2]+'" height="'+B.bno[3]+'"/><text x="'+(B.bnoC[0]+6)+'" y="'+(Y(B.bnoC[1])-4)+'" text-anchor="middle" font-size="4.6">компас</text>';
+  // разъёмы стенки
+  B.wall.forEach(w=>{s+='<rect class="box-wall" x="'+(w[1]-w[2])+'" y="'+Y(-hh+w[3])+'" width="'+(2*w[2])+'" height="'+w[3]+'"/><text x="'+w[1]+'" y="'+(hh+6)+'" text-anchor="middle" font-size="4.4" class="dim">'+w[0]+'</text>';});
+  // расстояния до компаса
+  const P=(id,fx,fy)=>{const p=b.parts.find(q=>q.id===id);return [B.bx+p.x+p.w*fx,B.by+p.y+p.h*fy];};
+  const D=(a)=>Math.round(Math.hypot(a[0]-B.bnoC[0],a[1]-B.bnoC[1]));
+  [['LM',0.5,0.27,'dLM'],['TPS',0.5,0.5,'dTPS'],['S3',0.5,0.5,'dS3']].forEach(q=>{const a=P(q[0],q[1],q[2]),d=D(a);$(q[3]).textContent=d;
+    if(q[0]!=='S3'){s+='<line class="ray" x1="'+a[0]+'" y1="'+Y(a[1])+'" x2="'+B.bnoC[0]+'" y2="'+Y(B.bnoC[1])+'"/><circle cx="'+a[0]+'" cy="'+Y(a[1])+'" r="1.2" fill="var(--new)"/>';
+      s+='<text x="'+((a[0]*0.55+B.bnoC[0]*0.45))+'" y="'+(Y(a[1]*0.55+B.bnoC[1]*0.45)-1.6)+'" text-anchor="middle" font-size="4.6" font-weight="600">'+d+' мм</text>';}});
+  s+='<text x="0" y="'+(hh+13)+'" text-anchor="middle" font-size="4.4" class="dim">нижняя стенка коробки: разъёмы</text>';
+  svg.innerHTML=s;
+}
+
+// ---- таблицы разъёмов
+function tab(el,b){const rows=b.parts.filter(p=>p.t==='conn'||p.t==='term').sort((a,c)=>(a.t==='term')-(c.t==='term')||(parseInt(a.lab.slice(1))||0)-(parseInt(c.lab.slice(1))||0));
+  el.innerHTML='<tr><th>Разъём</th><th>Контактов</th><th>Куда идёт жгут</th><th>Состояние</th></tr>'+rows.map(p=>{const d=p.d.replace(/^Новое: /,''),i=d.indexOf(':'),name=p.t==='term'?'клемма':p.lab;
+    return '<tr><td>'+esc(name)+'</td><td class="n">'+(p.n||2)+'</td><td>'+esc(d.slice(i+1).trim())+'</td><td>'+(p.isNew?'<span class="tag">новое</span>':p.opt?'<span class="tag w">ждёт решения</span>':'')+'</td></tr>';}).join('');}
+
+const C=BD.cockpit,T=BD.top;
+plan($('planC'),C,{m:9,fs:2.9,cut:53.5,read:'readC',btns:['fAll','f1','f2']});
+plan($('planT'),T,{m:6,fs:1.9,read:'readT',btns:['tAll','t1','t2']});
+section($('secC'),C,53.5);
+box($('boxC'),BD.box,C);
+tab($('tabC'),C);tab($('tabT'),T);
+const cnt=t=>C.parts.filter(p=>p.t===t).length;
+const used=C.parts.filter(p=>p.t!=='low').reduce((s,p)=>s+p.w*p.h,0)/100;
+$('fUse').textContent=Math.round(used)+' см² из '+Math.round(C.W*C.H/100);
+$('fMod').textContent=cnt('mod');$('nMod').textContent=cnt('mod');
+$('fCon').textContent=cnt('conn');$('nCon').textContent=cnt('conn');$('nLow').textContent=cnt('low');
+})();
+</script>
