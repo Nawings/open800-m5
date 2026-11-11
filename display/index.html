@@ -379,7 +379,7 @@ function reserveBlock(){const g=new T.Group(),W=120,D=80,H=55,tw=3;
   g.add(bx(45,-14.5,-20.4,21,43,1.6,xlB,XL));g.add(bx(45,-24,-18.2,9,10,2.8,pkg,'XL6009: микросхема в корпусе TO-263'));
   const coil=mesh(new T.CylinderGeometry(6,6,7,24),std(0x2b2b2b,{roughness:0.6}),'катушка повышающего модуля');coil.rotation.x=Math.PI/2;coil.position.set(45,-11,-16);g.add(coil);
   [[39,0],[51,0]].forEach((p,i)=>g.add(cy(p[0],p[1],-14.6,3.8,3.8,10,std(0x1c2a5a,{roughness:0.4}),i?'конденсатор на выходе, 13 В':'конденсатор на входе, 9 В',18)));
-  g.add(bx(52,-31,-18,5,9,4,std(0x2f6fb0,{roughness:0.5}),'подстроечник: выставить 13,0 В до подключения'));
+  [-29.2,-32.8].forEach(y=>{const r=mesh(new T.CylinderGeometry(0.95,0.95,3.4,12),std(0xd8c79a,{roughness:0.5}),'2 постоянных резистора на месте подстроечника XL6009, последовательно: выход 13,0 В и не уходит от тряски');r.rotation.z=Math.PI/2;r.position.set(52,y,-18.6);g.add(r);});
   [[37,-33],[53,4]].forEach(p=>g.add(cy(p[0],p[1],-23.2,1.6,1.6,2,std(0xc9a227,{metalness:0.8,roughness:0.3}),'стойка повышающего модуля',10)));
   g.add(bx(46,16,12,12,14,1.6,std(0x1d6a3a,{roughness:0.5}),'триггер USB-C PD: просит у пауэрбанка 9 В. Без него пауэрбанк даёт только 5 В'));g.add(bx(46,18,13.4,4,4,1,pkg,'микросхема триггера PD'));
   // предохранитель на выходе элементов
