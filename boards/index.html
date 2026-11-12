@@ -1524,49 +1524,65 @@ function chips(){const T=R().tracks,cnt={},L={};const nets=[...new Set(PADS().ma
   $('ckOv').innerHTML=Object.keys(OV).filter(k=>k!=='nc'||true).map(k=>'<button class="btn" type="button" data-o="'+k+'" aria-pressed="'+st.ov.has(k)+'">'+esc(OV[k])+'</button>').join('');
   const sel=$('ckNet');sel.innerHTML='<option value="">— не выбрана —</option>'+['P','V','H','S','G'].map(c=>'<optgroup label="'+esc(CN[c])+'">'+nets.filter(n=>cls(n)===c).sort().map(n=>'<option value="'+esc(n)+'"'+(n===st.net?' selected':'')+'>'+esc(n)+(BO.NET[n]?' — '+esc(BO.NET[n][1]):'')+'</option>').join('')+'</optgroup>').join('');}
 // вид: мм → пиксели
-let W0=0,H0=0,K=1;
+let W0=0,H0=0,K=1,DPR=1;
 function fit(){const B=D();st.z=1;st.vx=0;st.vy=B.H;}
-function size(){const B=D(),w=wrap.clientWidth,h=Math.min(Math.round(w*B.H/B.W),Math.round(window.innerHeight*0.72));const dpr=Math.min(2,window.devicePixelRatio||1);
-  cv.style.width=w+'px';cv.style.height=h+'px';cv.width=Math.round(w*dpr);cv.height=Math.round(h*dpr);W0=w;H0=h;K=Math.min(w/B.W,h/B.H);return dpr;}
+// размер холста меняем только когда изменилась ширина: пересоздание холста на каждом кадре — главный тормоз
+function size(){const B=D(),w=wrap.clientWidth,h=Math.min(Math.round(w*B.H/B.W),Math.round(window.innerHeight*0.72)),dpr=Math.min(2,window.devicePixelRatio||1);
+  if(w!==W0||h!==H0||dpr!==DPR){W0=w;H0=h;DPR=dpr;cv.style.width=w+'px';cv.style.height=h+'px';cv.width=Math.round(w*dpr);cv.height=Math.round(h*dpr);}K=Math.min(W0/B.W,H0/B.H);return DPR;}
 const sx=x=>(x-st.vx)*K*st.z,sy=y=>(st.vy-y)*K*st.z;
-function draw(){const dpr=size(),B=D(),r=R(),c=cv.getContext('2d');c.setTransform(dpr,0,0,dpr,0,0);c.fillStyle='#0b1014';c.fillRect(0,0,W0,H0);
+// ---- заготовки: считаются один раз, дальше только рисуются
+const CACHE={};
+// заливка: картинка «одна клетка сетки — один пиксель», рисуется одним drawImage с масштабом
+function pourImg(){const key=st.b+'|'+st.l+'|'+st.on.has('G')+'|'+st.on.has('I');if(CACHE.pour&&CACHE.pour.key===key)return CACHE.pour.img;
+  const r=R(),B=D(),G=r.G,nx=Math.round(B.W/G)+1,ny=Math.round(B.H/G)+1,img=new ImageData(nx,ny),d=img.data,Ls=st.l===2?[1,0]:[st.l];
+  const put=(pr,rgb,a)=>Ls.forEach(l=>pr[l].forEach((row,j)=>{const y=ny-1-j;for(let q=0;q<row.length;q+=2)for(let i=row[q];i<row[q]+row[q+1];i++){const o=(y*nx+i)*4,A=a*255;
+    const old=d[o+3]/255,na=A/255+old*(1-A/255);if(na<=0)continue;for(let k=0;k<3;k++)d[o+k]=Math.round((rgb[k]*A/255+d[o+k]*old*(1-A/255))/na);d[o+3]=Math.round(na*255);}}));
+  const aG=st.on.has('G')?(st.l===2?0.16:0.26):0.07,aI=st.on.has('I')||st.on.has('G')?(st.l===2?0.18:0.28):0.07;
+  put(r.pour,[170,181,191],aG);if(r.pourI)put(r.pourI,[213,81,129],aI);
+  const c=document.createElement('canvas');c.width=nx;c.height=ny;c.getContext('2d').putImageData(img,0,0);CACHE.pour={key,img:c,nx,ny};return c;}
+// дорожки: контуры Path2D, собранные по слою, ширине и цвету
+function trackPaths(){const key=st.b+'|'+st.l+'|'+[...st.on].sort().join('')+'|'+(st.net||'');if(CACHE.tr&&CACHE.tr.key===key)return CACHE.tr.list;
+  const r=R(),Ls=st.l===2?[1,0]:[st.l],groups=new Map();
+  for(const pass of [0,1])Ls.forEach(l=>r.tracks.forEach(t=>{if(t.l!==l)return;const lit=st.net?t.net===st.net:isLit(t.net);if(lit!==!!pass)return;
+    const col=lit?(st.net?'#ffffff':COL[cls(t.net)]):'#36424c',a=lit?(st.l===2&&l===1?0.62:1):0.5,k=pass+'|'+l+'|'+col+'|'+a+'|'+t.w;
+    let g=groups.get(k);if(!g){g={col,a,w:t.w,p:new Path2D()};groups.set(k,g);}t.pts.forEach((q,i)=>i?g.p.lineTo(q[0],q[1]):g.p.moveTo(q[0],q[1]));}));
+  const list=[...groups.values()];CACHE.tr={key,list};return list;}
+function padPaths(){const key=st.b+'|'+st.l+'|'+[...st.on].sort().join('')+'|'+(st.net||'');if(CACHE.pd&&CACHE.pd.key===key)return CACHE.pd;
+  const lit=new Path2D(),dim=new Path2D();PADS().forEach(p=>{if(st.l!==2&&!p.L.includes(st.l?'b':'t'))return;const on=st.net?p.net===st.net:(p.net&&isLit(p.net)),P=on?lit:dim;
+    if(p.s==='c'){P.moveTo(p.x+p.w/2,p.y);P.arc(p.x,p.y,p.w/2,0,7);}else P.rect(p.x-p.w/2,p.y-p.h/2,p.w,p.h);});
+  const r=R(),vl=new Path2D(),vs=new Path2D(),vh=new Path2D();r.vias.forEach(v=>{const on=st.net?v.net===st.net:(st.ov.has('via')||isLit(v.net));if(!on&&!st.ov.has('via'))return;const P=v.s?vs:vl;P.moveTo(v.x+r.viaD/2,v.y);P.arc(v.x,v.y,r.viaD/2,0,7);vh.moveTo(v.x+r.viaDrill/2,v.y);vh.arc(v.x,v.y,r.viaDrill/2,0,7);});
+  CACHE.pd={key,lit,dim,vl,vs,vh};return CACHE.pd;}
+function spotPaths(k){const ver=V()||{},key=st.b+'|'+st.l+'|'+Math.round(k*10);if(CACHE.sp&&CACHE.sp.key===key)return CACHE.sp;const red=new Path2D(),amb=new Path2D(),rr=Math.max(0.3,2.2/k);
+  ((ver.noGnd||{}).spots||[]).forEach(s=>{if(st.l!==2&&s[2]!==st.l)return;const P=s[3]?amb:red;P.moveTo(s[0]+rr,s[1]);P.arc(s[0],s[1],rr,0,7);});CACHE.sp={key,red,amb};return CACHE.sp;}
+// перерисовка не чаще кадра экрана
+let pending=false;function draw(){if(pending)return;pending=true;requestAnimationFrame(()=>{pending=false;paint();});}
+function paint(){const dpr=size(),B=D(),r=R(),c=cv.getContext('2d');c.setTransform(dpr,0,0,dpr,0,0);c.fillStyle='#0b1014';c.fillRect(0,0,W0,H0);
   const k=K*st.z;c.save();c.translate(-st.vx*k,st.vy*k);c.scale(k,-k);   // теперь единицы — мм, y вверх
   const o=B.notch?[[0,0],[B.W,0],[B.W,B.H],[B.notch[0],B.H],[B.notch[0],B.notch[1]],[0,B.notch[1]]]:[[0,0],[B.W,0],[B.W,B.H],[0,B.H]];
   const path=()=>{c.beginPath();o.forEach((q,i)=>i?c.lineTo(q[0],q[1]):c.moveTo(q[0],q[1]));c.closePath();};
   path();c.fillStyle='#17222a';c.fill();c.save();path();c.clip();
-  const G=r.G,Ls=st.l===2?[1,0]:[st.l];
-  // зоны
+  const G=r.G;
   if(st.ov.has('zone')){((B.zones||{}).P||[]).forEach(z=>{c.fillStyle='rgba(217,89,38,.13)';c.fillRect(z[0],z[1],z[2]-z[0],z[3]-z[1]);});
     if(B.iso){const z=B.iso.zone,b=B.iso.bar;c.fillStyle='rgba(213,81,129,.16)';c.fillRect(z[0],z[1],z[2]-z[0],z[3]-z[1]);c.fillStyle='rgba(255,255,255,.10)';c.fillRect(b[0],b[1],b[2]-b[0],b[3]-b[1]);}
-    (B.cuKeep||[]).forEach(z=>{c.save();c.beginPath();c.rect(z[0],z[1],z[2]-z[0],z[3]-z[1]);c.clip();c.strokeStyle='rgba(255,255,255,.28)';c.lineWidth=0.25;for(let x=z[0]-20;x<z[2];x+=1.2){c.beginPath();c.moveTo(x,z[1]);c.lineTo(x+(z[3]-z[1]),z[3]);c.stroke();}c.restore();});
+    (B.cuKeep||[]).forEach(z=>{c.save();c.beginPath();c.rect(z[0],z[1],z[2]-z[0],z[3]-z[1]);c.clip();c.strokeStyle='rgba(255,255,255,.28)';c.lineWidth=0.25;c.beginPath();for(let x=z[0]-20;x<z[2];x+=1.2){c.moveTo(x,z[1]);c.lineTo(x+(z[3]-z[1]),z[3]);}c.stroke();c.restore();});
     (B.inductorKeep||[]).forEach(z=>{c.setLineDash([0.8,0.6]);c.strokeStyle='rgba(255,212,59,.7)';c.lineWidth=0.25;c.strokeRect(z[0],z[1],z[2]-z[0],z[3]-z[1]);c.setLineDash([]);});}
-  // заливка
-  Ls.forEach(l=>{[[r.pour,'rgba(170,181,191,'],[r.pourI,'rgba(213,81,129,']].forEach(([pr,base])=>{if(!pr)return;const a=st.on.has('G')||(base[5]==='2'&&st.on.has('I'))?(st.l===2?0.16:0.26):0.07;c.fillStyle=base+a+')';
-    pr[l].forEach((row,j)=>{for(let q=0;q<row.length;q+=2)c.fillRect(row[q]*G-G/2,j*G-G/2,row[q+1]*G,G);});});});
-  // дорожки: сначала погашенные, затем подсвеченные; нижний слой при «оба» — бледнее
+  // заливка — одной картинкой
+  {const im=pourImg();c.save();c.imageSmoothingEnabled=false;c.translate(-G/2,(im.height-1)*G+G/2);c.scale(G,-G);c.drawImage(im,0,0);c.restore();}
+  // дорожки
   const minW=1.3/k;c.lineCap='round';c.lineJoin='round';
-  for(const pass of [0,1])Ls.forEach(l=>{r.tracks.forEach(t=>{if(t.l!==l)return;const lit=st.net?t.net===st.net:isLit(t.net);if(lit!==!!pass)return;
-    c.globalAlpha=lit?(st.l===2&&l===1?0.62:1):0.5;c.strokeStyle=lit?(st.net?'#ffffff':COL[cls(t.net)]):'#36424c';c.lineWidth=Math.max(t.w,minW);
-    c.beginPath();t.pts.forEach((q,i)=>i?c.lineTo(q[0],q[1]):c.moveTo(q[0],q[1]));c.stroke();});});
-  c.globalAlpha=1;
-  // площадки
-  PADS().forEach(p=>{if(st.l!==2&&!p.L.includes(st.l?'b':'t'))return;const lit=st.net?p.net===st.net:(p.net&&isLit(p.net));c.fillStyle=lit?(st.net?'#ffffff':'#c9a85a'):'#5d5640';
-    if(p.s==='c'){c.beginPath();c.arc(p.x,p.y,p.w/2,0,7);c.fill();}else c.fillRect(p.x-p.w/2,p.y-p.h/2,p.w,p.h);});
-  // переходы
-  r.vias.forEach(v=>{const lit=st.net?v.net===st.net:(st.ov.has('via')||isLit(v.net));if(!lit&&!st.ov.has('via'))return;c.fillStyle=v.s?'#8b97a2':(st.net&&v.net===st.net?'#ffffff':'#c9a85a');c.beginPath();c.arc(v.x,v.y,r.viaD/2,0,7);c.fill();c.fillStyle='#0b1014';c.beginPath();c.arc(v.x,v.y,r.viaDrill/2,0,7);c.fill();});
+  trackPaths().forEach(g=>{c.globalAlpha=g.a;c.strokeStyle=g.col;c.lineWidth=Math.max(g.w,minW);c.stroke(g.p);});c.globalAlpha=1;
+  const pp=padPaths();c.fillStyle='#5d5640';c.fill(pp.dim);c.fillStyle=st.net?'#ffffff':'#c9a85a';c.fill(pp.lit);
+  c.fillStyle='#8b97a2';c.fill(pp.vs);c.fillStyle=st.net?'#ffffff':'#c9a85a';c.fill(pp.vl);c.fillStyle='#0b1014';c.fill(pp.vh);
   B.holes.forEach(h=>{c.fillStyle='#0b1014';c.strokeStyle='#5d6873';c.lineWidth=0.3;c.beginPath();c.arc(h[0],h[1],B.holeD/2,0,7);c.fill();c.stroke();});
   c.restore();path();c.strokeStyle='#6d7a85';c.lineWidth=1/k;c.stroke();
-  // наложения: точки и кольца — постоянного размера на экране
   const ring=(x,y,rp,col,lw)=>{c.beginPath();c.arc(x,y,rp/k,0,7);c.strokeStyle=col;c.lineWidth=(lw||2)/k;c.stroke();};
-  const ver=V()||{};
-  if(st.ov.has('ng')&&ver.noGnd)ver.noGnd.spots.forEach(s=>{if(st.l!==2&&s[2]!==st.l)return;c.fillStyle=s[3]?'#fab219':'#ff4d4d';c.beginPath();c.arc(s[0],s[1],Math.max(0.3,2.2/k),0,7);c.fill();});
+  if(st.ov.has('ng')){const s=spotPaths(k);c.fillStyle='#ff4d4d';c.fill(s.red);c.fillStyle='#fab219';c.fill(s.amb);}
   if(st.ov.has('nc'))PADS().filter(p=>!p.net).forEach(p=>{ring(p.x,p.y,6,'#e8e8e2',1.6);c.strokeStyle='#e8e8e2';c.lineWidth=1.4/k;const d=3.5/k;c.beginPath();c.moveTo(p.x-d,p.y-d);c.lineTo(p.x+d,p.y+d);c.moveTo(p.x-d,p.y+d);c.lineTo(p.x+d,p.y-d);c.stroke();});
   if(st.ov.has('tight'))tightList().forEach(q=>{ring(q.at[0],q.at[1],11,'#fab219',2.2);});
   if(st.focus){ring(st.focus[0],st.focus[1],20,'#ffffff',2.5);ring(st.focus[0],st.focus[1],26,'rgba(255,255,255,.35)',1.5);}
   c.restore();
-  // подписи тесных мест — в пикселях, чтобы не мельчали
   if(st.ov.has('tight')){c.font='600 12px system-ui,sans-serif';c.textBaseline='middle';tightList().forEach(q=>{const x=sx(q.at[0])+14,y=sy(q.at[1]);if(x<0||y<0||x>W0||y>H0)return;const s=q.lab;c.fillStyle='rgba(11,16,20,.82)';c.fillRect(x-3,y-9,c.measureText(s).width+6,18);c.fillStyle='#fab219';c.fillText(s,x,y);});}
-  if(st.ov.has('zone')&&st.z<2.2){c.font='600 12px system-ui,sans-serif';c.fillStyle='rgba(232,232,226,.85)';const tl=(t,x,y)=>{const X=sx(x),Y=sy(y);c.fillText(t,X,Y);};
+  if(st.ov.has('zone')&&st.z<2.2){c.font='600 12px system-ui,sans-serif';c.fillStyle='rgba(232,232,226,.85)';const tl=(t,x,y)=>{c.fillText(t,sx(x),sy(y));};
     if((B.zones||{}).P)tl('силовая зона',(B.zones.P[0][0]+B.zones.P[0][2])/2-8,B.zones.P[0][3]-3);if(B.iso)tl('сторона мачты',1.5,B.iso.zone[3]-3);(B.cuKeep||[]).forEach(z=>tl('антенна: меди нет',z[0]+0.5,z[1]+1.5));}
 }
 // самые тесные места: из независимой проверки
