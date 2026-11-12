@@ -1,0 +1,255 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" href="data:,">
+<title>Компоновка блока М5</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;600&family=Onest:wght@400;500;600&family=JetBrains+Mono:wght@500&family=Oswald:wght@500&display=swap">
+<style>
+/* Раскладка: лента вариантов сверху, под ней чертёж выбранного варианта в масштабе 1 мм = 1 единица SVG, справа цифры; ниже таблица сравнения и вопросы */
+:root{
+  --bg:#edf1f3; --surface:#ffffff; --ink:#14202b; --muted:#536373; --line:#d3dbe1; --accent:#0d6b78; --accent-bg:#e0eff1;
+  --case:#dfe5e9; --case-line:#8796a3; --glass:#f6f7f2; --glass-line:#9aa6a0; --ink-epd:#1b1d1f; --btn:#3d4852; --dim:#b4521a;
+  --ok:#2c7a3f; --warn:#a8641c; --led-g:#2e9d47; --led-r:#d03b3b;
+  --f-head:"Unbounded","Arial Black",sans-serif; --f-body:"Onest",system-ui,sans-serif; --f-mono:"JetBrains Mono",ui-monospace,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0e151b;--surface:#162029;--ink:#e2e9ee;--muted:#93a3b0;--line:#27343f;--accent:#4db6c2;--accent-bg:#123238;
+  --case:#26323c;--case-line:#6d7f8e;--glass:#dfe2db;--glass-line:#7e8a84;--ink-epd:#1b1d1f;--btn:#a9b6c1;--dim:#f0a060;--ok:#6fcf86;--warn:#f0b060;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0e151b;--surface:#162029;--ink:#e2e9ee;--muted:#93a3b0;--line:#27343f;--accent:#4db6c2;--accent-bg:#123238;
+  --case:#26323c;--case-line:#6d7f8e;--glass:#dfe2db;--glass-line:#7e8a84;--ink-epd:#1b1d1f;--btn:#a9b6c1;--dim:#f0a060;--ok:#6fcf86;--warn:#f0b060;color-scheme:dark}
+body{background:var(--bg);color:var(--ink);font:15px/1.55 var(--f-body)}
+.stage{position:relative;max-width:1180px;margin:0 auto;padding-block:28px 56px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:grid;gap:26px}
+h1{font:600 clamp(24px,3.4vw,34px)/1.15 var(--f-head);margin:0;text-wrap:balance;padding-right:150px}
+h2{font:500 20px/1.25 var(--f-head);margin:0;text-wrap:balance}
+h3{font:600 15px/1.3 var(--f-body);margin:0}
+p{margin:0;max-width:72ch}
+.lede{color:var(--muted);font-size:16px}
+.facts{display:flex;flex-wrap:wrap;gap:8px}
+.fact{display:inline-flex;gap:6px;align-items:center;padding:4px 10px;border:1px solid var(--line);border-radius:14px;background:var(--surface);font-size:13px}
+.fact b{font-weight:600}.fact.ok b{color:var(--ok)}.fact.q b{color:var(--warn)}
+.sheet{background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:14px;display:grid;gap:12px;min-width:0}
+.seg{display:flex;flex-wrap:wrap;gap:6px}
+.btn{min-height:36px;padding:0 12px;border-radius:4px;border:1px solid var(--line);background:var(--bg);color:var(--ink);font:500 13px var(--f-body);cursor:pointer}
+.btn[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-bg);color:var(--accent);font-weight:600}
+.btn:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px}
+.card{display:grid;gap:6px;text-align:left;padding:12px;border-radius:6px;border:1px solid var(--line);background:var(--surface);color:var(--ink);font:inherit;cursor:pointer}
+.card[aria-pressed="true"]{border-color:var(--accent);box-shadow:inset 0 0 0 1px var(--accent)}
+.card:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.card .k{font:600 12px var(--f-mono);letter-spacing:.06em;color:var(--accent)}
+.card .t{font-weight:600}
+.card .s{font-size:13px;color:var(--muted)}
+.card svg{width:100%;height:70px}
+.two{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,1fr);gap:18px;align-items:start}
+@media (max-width:900px){.two{grid-template-columns:minmax(0,1fr)}h1{padding-right:0}}
+.draw{overflow-x:auto}
+#front{display:block;width:100%;height:auto}
+#front.real{width:auto}
+.read{margin:0;padding:8px 10px;border-left:3px solid var(--accent);background:var(--accent-bg);font-size:13.5px;border-radius:0 4px 4px 0}
+dl.nums{display:grid;grid-template-columns:auto 1fr;gap:6px 14px;margin:0}
+dl.nums dt{color:var(--muted);font-size:13px}
+dl.nums dd{margin:0;font-variant-numeric:tabular-nums;font-weight:600}
+.tbl{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:13.5px;font-variant-numeric:tabular-nums}
+th,td{padding:7px 9px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+th{font:600 11.5px var(--f-body);letter-spacing:.05em;text-transform:uppercase;color:var(--muted)}
+td.n{text-align:right;white-space:nowrap}
+tr.sel td{background:var(--accent-bg)}
+.yes{color:var(--ok);font-weight:600}.no{color:var(--warn);font-weight:600}
+ul.notes{margin:0;padding-left:18px;display:grid;gap:8px;max-width:80ch}
+.small{font-size:12.5px;color:var(--muted)}
+/* чертёж */
+.case{fill:var(--case);stroke:var(--case-line);stroke-width:.6}
+.win{fill:none;stroke:var(--case-line);stroke-width:.35;stroke-dasharray:2 1.4}
+.mod{fill:#2a6b4e;stroke:#1d4c38;stroke-width:.3;opacity:.55}
+.glass{fill:var(--glass);stroke:var(--glass-line);stroke-width:.3}
+.epd{fill:var(--ink-epd);font-family:"Oswald","Arial Narrow",sans-serif;font-weight:500}
+.epdl{fill:#55605a;font-family:var(--f-body)}
+.knob{fill:var(--btn)}
+.dimL{stroke:var(--dim);stroke-width:.35;fill:none}
+.dimT{fill:var(--dim);font:600 4.6px var(--f-body)}
+.ghost{fill:none;stroke-width:.7;stroke-dasharray:3 2}
+.lbl{fill:var(--muted);font:500 4.2px var(--f-body)}
+@media (prefers-reduced-motion:no-preference){.card{transition:border-color .15s}}
+.home{position:absolute;top:14px;right:16px;z-index:6;padding:8px 12px;border-radius:4px;border:1px solid var(--accent);background:var(--surface);color:var(--ink);font:600 13px var(--f-body);text-decoration:none}
+.home:hover,.home:focus-visible{background:var(--accent);color:var(--surface);outline:none}
+@media (max-width:900px){.home{top:10px;left:16px;right:auto}.badge{top:54px}.tools{top:114px}.views{top:116px}.stage>h1{padding-right:0;padding-top:44px}}
+</style>
+
+<div class="stage" id="stage">
+    <a class="home" href="../">← Главное меню</a>
+  <header style="display:grid;gap:12px">
+    <h1>Компоновка блока в кокпите: большой экран и второй 4,2″</h1>
+    <p class="lede">Варианты печатного корпуса блока с новым основным экраном 7,5″ или 10,2″ и нынешним экраном 4,2″ рядом. Чертежи — в одном масштабе, вид спереди, со стороны рулевого. Размеры примерные: точные дадут чертежи экранов, когда они будут у нас в руках.</p>
+    <div class="facts">
+      <span class="fact ok"><b>Решено</b> второй экран 4,2″ — в той же коробке</span>
+      <span class="fact ok"><b>Решено</b> корпус печатаем сами, форма любая</span>
+      <span class="fact ok"><b>Решено</b> ниже 0 °C работать не нужно, серия от 10 штук</span>
+      <span class="fact q"><b>Ждёт решения</b> основной экран 7,5″ или 10,2″ и компоновка</span>
+    </div>
+  </header>
+
+  <section style="display:grid;gap:12px" aria-labelledby="hv">
+    <h2 id="hv">Варианты</h2>
+    <div class="cards" id="cards" role="group" aria-label="Вариант компоновки"></div>
+  </section>
+
+  <section class="two" aria-labelledby="hd">
+    <div class="sheet">
+      <div style="display:flex;flex-wrap:wrap;gap:10px;justify-content:space-between;align-items:center">
+        <h2 id="hd">Вид спереди</h2>
+        <div class="seg" role="group" aria-label="Что показать">
+          <button class="btn" type="button" id="tDim" aria-pressed="true">Размеры</button>
+          <button class="btn" type="button" id="tAll" aria-pressed="false">Контуры всех вариантов</button>
+          <button class="btn" type="button" id="tMod" aria-pressed="false">Платы модулей</button>
+          <button class="btn" type="button" id="tReal" aria-pressed="false">В натуральную величину</button>
+        </div>
+      </div>
+      <div class="draw"><svg id="front" role="img" aria-label="Вид спереди выбранного варианта блока"></svg></div>
+      <p class="read" id="readF"></p>
+    </div>
+    <div class="sheet">
+      <h3 id="vName"></h3>
+      <dl class="nums" id="vNums"></dl>
+      <p class="small" id="vNote"></p>
+    </div>
+  </section>
+
+  <section class="sheet" aria-labelledby="hc">
+    <h2 id="hc">Сравнение</h2>
+    <div class="tbl"><table id="cmp"></table></div>
+    <p class="small">Высота крупной цифры — для одинаковой раскладки основного экрана: 4 крупных числа в 2 ряда, узкий шрифт; размер подобран так, чтобы самое длинное число влезло в свою четверть экрана. Дальность чтения — по правилу эргономики: цифра должна быть видна под углом не меньше 24′, это около 1/140 расстояния. Размеры корпуса — внешние, со стенкой 3 мм; глубина у всех около 78 мм, как сейчас.</p>
+  </section>
+
+  <section class="sheet" aria-labelledby="hp">
+    <h2 id="hp">Печать корпуса</h2>
+    <div class="tbl"><table id="bed"></table></div>
+    <ul class="notes">
+      <li><b>Материал — ASA:</b> не боится солнца и солёной воды, держит до 90–100 °C. PETG на солнце желтеет и ползёт, PLA размягчается около 55 °C.</li>
+      <li><b>Герметичность как у IP67 без покупной коробки:</b> передняя рамка и корпус стягиваются винтами М3 в латунные вставки через уплотнитель — шнур из силиконовой резины в канавке или напечатанная прокладка из TPU. Стенки 3 мм, 4–5 периметров, без щелей между слоями.</li>
+      <li><b>Окно перед экранами:</b> поликарбонат или оргстекло 3 мм, вырезанное по размеру, на уплотнителе. Сверху — плёнка от ультрафиолета: e-paper не любит прямой ультрафиолет.</li>
+      <li><b>Если корпус больше стола принтера:</b> печатаем из двух половин и соединяем на шпильках и клею, а снаружи шов закрывает рамка. Это надёжно, но добавляет один шов, который нужно уплотнить.</li>
+      <li><b>Клапан выравнивания давления</b> для датчика BME280 и разъёмы в нижней стенке остаются, как сейчас.</li>
+    </ul>
+  </section>
+
+  <section class="sheet" aria-labelledby="hq">
+    <h2 id="hq">Что нужно решить</h2>
+    <ul class="notes">
+      <li><b>Основной экран.</b> 7,5″ GDEM075T42 — около 3 500–4 000 ₽, цену у продавца ещё не проверяли; обновление 0,3 с. 10,2″ GDEM102T91 — 6 423 ₽ на AliExpress; обновление 0,42 с; крупные цифры 46 мм против 34 мм у 7,5″, то есть в 1,35 раза выше.</li>
+      <li><b>Компоновка.</b> «Рядом» — блок широкий и низкий, хорошо ложится под сдвижной люк. «Друг под другом» — блок узкий и высокий, занимает меньше ширины на переборке.</li>
+      <li><b>Место на переборке.</b> Нужен замер: ширина и высота свободного места там, где будет висеть блок, и есть ли рядом стойки, ручки или люк. От этого зависит, какой вариант вообще встанет.</li>
+      <li><b>Размер стола принтера.</b> На столе 256 × 256 мм целиком печатается только A2. A1 и B2 — со стола 300 × 300 мм, B1 — только с 350 мм. На меньшем столе корпус собирается из двух половин.</li>
+    </ul>
+  </section>
+</div>
+
+<script>
+(function(){
+const $=id=>document.getElementById(id);
+const f=(n,d)=>String(d?n.toFixed(d):Math.round(n)).replace('.',',');
+// ---- модули, мм. Активное поле — по даташитам; положение поля внутри стекла у 7,5″ и 10,2″ — примерное
+const SCR={
+  s42:{name:'4,2″ WeAct (есть)',mod:[92,89.7],glass:[91,77],act:[84.8,63.6],actOff:[-0.33,3.9],res:'400 × 300'},
+  s75:{name:'7,5″ GDEM075T42',mod:[170.2,111.2],glass:[170.2,111.2],act:[163.2,97.9],actOff:[0,2.4],res:'800 × 480',upd:'0,3 с',price:'≈ 3 500–4 000 ₽'},
+  s102:{name:'10,2″ GDEM102T91',mod:[224,157],glass:[224,157],act:[215.5,143.7],actOff:[0,2.6],res:'960 × 640',upd:'0,42 с',price:'6 423 ₽'}
+};
+const WALL=3,GAP=6,BETW=8,BTN=14,PITCH=18,LED=5;
+// ---- варианты: элементы в координатах внутреннего поля, начало — левый нижний угол
+function build(v){const E=[];let W,H;
+  const main=SCR[v.main],sm=SCR.s42;
+  if(v.id==='now'){W=186;H=106;E.push({k:'scr',s:sm,x:GAP+4,y:(H-sm.mod[1])/2,role:'main'});
+    [0,1,2,3].forEach(i=>E.push({k:'btn',x:126,y:H/2+27-i*PITCH}));E.push({k:'led',x:150,y:H/2+24,c:'g'},{k:'led',x:150,y:H/2+6,c:'r'});}
+  else if(v.lay==='side'){const colH=sm.mod[1]+BETW+BTN+4;H=Math.max(main.mod[1],colH)+2*GAP;W=GAP+main.mod[0]+BETW+sm.mod[0]+GAP;
+    E.push({k:'scr',s:main,x:GAP,y:(H-main.mod[1])/2,role:'main'});const cx=GAP+main.mod[0]+BETW,top=(H+colH)/2;
+    E.push({k:'scr',s:sm,x:cx,y:top-sm.mod[1],role:'small'});const by=top-sm.mod[1]-BETW-BTN/2;
+    E.push({k:'led',x:cx+5,y:by,c:'g'});[0,1,2,3].forEach(i=>E.push({k:'btn',x:cx+20+i*PITCH,y:by}));E.push({k:'led',x:cx+sm.mod[0]-5,y:by,c:'r'});}
+  else{const rowW=sm.mod[0]+BETW+2*PITCH+10;W=Math.max(main.mod[0],rowW)+2*GAP;H=GAP+main.mod[1]+BETW+sm.mod[1]+GAP;
+    E.push({k:'scr',s:main,x:(W-main.mod[0])/2,y:H-GAP-main.mod[1],role:'main'});const x0=(W-rowW)/2;
+    E.push({k:'scr',s:sm,x:x0,y:GAP,role:'small'});const bx=x0+sm.mod[0]+BETW+4;
+    [0,1,2,3].forEach(i=>E.push({k:'btn',x:bx+(i%2)*PITCH+5,y:GAP+sm.mod[1]-14-Math.floor(i/2)*PITCH}));E.push({k:'led',x:bx+5,y:GAP+12,c:'g'},{k:'led',x:bx+PITCH+5,y:GAP+12,c:'r'});}
+  return {W,H,OW:W+2*WALL,OH:H+2*WALL,E};}
+const V=[
+  {id:'now',key:'0',title:'Сейчас',sub:'один экран 4,2″, покупная коробка 200 × 120',main:'s42'},
+  {id:'a1',key:'A1',title:'7,5″ и 4,2″ рядом',sub:'широкий и низкий, кнопки под малым экраном',main:'s75',lay:'side'},
+  {id:'a2',key:'A2',title:'7,5″ сверху, 4,2″ снизу',sub:'узкий и высокий, кнопки справа от малого экрана',main:'s75',lay:'stack'},
+  {id:'b1',key:'B1',title:'10,2″ и 4,2″ рядом',sub:'самые крупные цифры, самый широкий',main:'s102',lay:'side'},
+  {id:'b2',key:'B2',title:'10,2″ сверху, 4,2″ снизу',sub:'самые крупные цифры, высокий',main:'s102',lay:'stack'}];
+// крупная цифра: шрифт подбирается так, чтобы самое длинное число влезло в половину ширины и в половину высоты экрана
+const MC=document.createElement('canvas').getContext('2d');let RATIO=0.79,WID={};
+function measure(){MC.font='500 100px Oswald, "Arial Narrow", sans-serif';const m=MC.measureText('8');RATIO=(m.actualBoundingBoxAscent||79)/100;
+  ['12,4','38°','177°','6,1'].forEach(t=>{WID[t]=MC.measureText(t).width/100;});}
+function fsFor(a){const wmax=Math.max(...Object.values(WID));return Math.min(a[0]/2*0.88/wmax,(a[1]/2-a[1]*0.1)*0.86/RATIO);}
+function sizes(){V.forEach(v=>{const m=SCR[v.main];v.fs=fsFor(m.act);v.digit=v.fs*RATIO;v.dist=v.digit*140/1000;});}
+measure();V.forEach(v=>{v.g=build(v);});sizes();
+// у нынешней коробки — её настоящий размер
+V[0].g.OW=200;V[0].g.OH=120;
+const COL={now:'#8796a3',a1:'#2a78d6',a2:'#199e70',b1:'#d95926',b2:'#9085e9'};
+const st={v:'a1',dim:true,all:false,mod:false,real:false};
+
+// ---- содержимое экранов: основной — 4 крупных числа, малый — старт и питание
+function mainContent(x,y,s){const a=s.act,ax=x+(s.mod[0]-a[0])/2+s.actOff[0],ay=y+(s.mod[1]-a[1])/2+s.actOff[1],Y=v=>ay+a[1]-v,h=a[1]*0.36;let t='';
+  const cells=[['12,4','истинный ветер, уз',0,1],['38°','угол к ветру',1,1],['177°','курс',0,0],['6,1','скорость, уз',1,0]];
+  cells.forEach(c=>{const cx=ax+a[0]*(c[2]?0.75:0.25),rowTop=ay+(c[3]?0:a[1]/2);
+    t+='<text class="epdl" x="'+(ax+a[0]*(c[2]?0.5:0)+a[0]*0.03)+'" y="'+(rowTop+a[1]*0.07)+'" font-size="'+(a[1]*0.05)+'">'+c[1]+'</text>';
+    const fsz=fsFor(a);t+='<text class="epd" x="'+cx+'" y="'+(rowTop+a[1]/2*0.55+fsz*RATIO/2+a[1]*0.03)+'" text-anchor="middle" font-size="'+fsz+'">'+c[0]+'</text>';});
+  t+='<line x1="'+(ax+a[0]/2)+'" x2="'+(ax+a[0]/2)+'" y1="'+(ay+a[1]*0.04)+'" y2="'+(ay+a[1]*0.96)+'" stroke="#9aa6a0" stroke-width=".4"/><line x1="'+(ax+a[0]*0.03)+'" x2="'+(ax+a[0]*0.97)+'" y1="'+(ay+a[1]/2)+'" y2="'+(ay+a[1]/2)+'" stroke="#9aa6a0" stroke-width=".4"/>';
+  return t;}
+function smallContent(x,y,s){const a=s.act,ax=x+(s.mod[0]-a[0])/2+s.actOff[0],ay=y+(s.mod[1]-a[1])/2+s.actOff[1];let t='';
+  t+='<text class="epdl" x="'+(ax+3)+'" y="'+(ay+6)+'" font-size="3.6">до старта</text>';
+  t+='<text class="epd" x="'+(ax+a[0]/2)+'" y="'+(ay+28)+'" text-anchor="middle" font-size="22">3:42</text>';
+  t+='<text class="epdl" x="'+(ax+3)+'" y="'+(ay+40)+'" font-size="3.6">прошлый галс: 183° · 5,8 уз</text>';
+  t+='<text class="epdl" x="'+(ax+3)+'" y="'+(ay+49)+'" font-size="3.6">лодка 12,7 В · резерв 12,3 В</text>';
+  t+='<text class="epdl" x="'+(ax+3)+'" y="'+(ay+58)+'" font-size="3.6">мачта ✓ · GPS 9 спутн.</text>';return t;}
+// SVG: y вниз. Внутреннее поле сдвинуто на стенку
+function scene(v,ox,oy,opt){const g=v.g,Y=y=>oy+WALL+g.H-y,X=x=>ox+WALL+x;let s='';
+  s+='<rect class="case" x="'+ox+'" y="'+oy+'" width="'+g.OW+'" height="'+g.OH+'" rx="'+(v.id==='now'?3:8)+'"/>';
+  g.E.forEach(e=>{if(e.k==='scr'){const m=e.s,x=X(e.x),y=Y(e.y+m.mod[1]);
+      if(opt.mod)s+='<rect class="mod" x="'+x+'" y="'+y+'" width="'+m.mod[0]+'" height="'+m.mod[1]+'"/>';
+      const gw=m.glass[0],gh=m.glass[1],gx=x+(m.mod[0]-gw)/2,gy=y+(m.mod[1]-gh)/2+(m===SCR.s42?-2:0);
+      s+='<rect class="glass" x="'+gx+'" y="'+gy+'" width="'+gw+'" height="'+gh+'" rx=".8"/>';
+      s+=e.role==='main'&&v.id!=='now'?mainContent(x,y,m):e.role==='small'?smallContent(x,y,m):mainContent(x,y,m);
+      s+='<rect class="win" x="'+(x-2)+'" y="'+(y-2)+'" width="'+(m.mod[0]+4)+'" height="'+(m.mod[1]+4)+'" rx="1.5"/>';}
+    if(e.k==='btn')s+='<circle class="knob" cx="'+X(e.x)+'" cy="'+Y(e.y)+'" r="'+(BTN/2)+'"/>';
+    if(e.k==='led')s+='<circle cx="'+X(e.x)+'" cy="'+Y(e.y)+'" r="'+(LED/2)+'" fill="'+(e.c==='g'?'var(--led-g)':'var(--led-r)')+'"/>';});
+  // разъёмы в нижней стенке — подписи
+  s+='<text class="lbl" x="'+(ox+g.OW/2)+'" y="'+(oy+g.OH+7)+'" text-anchor="middle">снизу: SP13, USB-C, тумблер</text>';
+  return s;}
+function dims(v,ox,oy){const g=v.g;let s='';const y1=oy-7,x1=ox-7;
+  s+='<path class="dimL" d="M'+ox+' '+(y1+2)+'V'+(y1-2)+'M'+(ox+g.OW)+' '+(y1+2)+'V'+(y1-2)+'M'+ox+' '+y1+'H'+(ox+g.OW)+'"/>';
+  s+='<text class="dimT" x="'+(ox+g.OW/2)+'" y="'+(y1-2.2)+'" text-anchor="middle">'+f(g.OW)+' мм</text>';
+  s+='<path class="dimL" d="M'+(x1+2)+' '+oy+'H'+(x1-2)+'M'+(x1+2)+' '+(oy+g.OH)+'H'+(x1-2)+'M'+x1+' '+oy+'V'+(oy+g.OH)+'"/>';
+  s+='<text class="dimT" x="'+(x1-2.6)+'" y="'+(oy+g.OH/2)+'" text-anchor="middle" transform="rotate(-90 '+(x1-2.6)+' '+(oy+g.OH/2)+')">'+f(g.OH)+' мм</text>';
+  return s;}
+// ---- карточки
+const thumbW=Math.max(...V.map(v=>v.g.OW)),thumbH=Math.max(...V.map(v=>v.g.OH));
+function cards(){$('cards').innerHTML=V.map(v=>'<button class="card" type="button" data-v="'+v.id+'" aria-pressed="'+(v.id===st.v)+'"><span class="k">'+v.key+'</span><svg viewBox="0 0 '+(thumbW+4)+' '+(thumbH+4)+'" aria-hidden="true">'+scene(v,2+(thumbW-v.g.OW)/2,2+(thumbH-v.g.OH),{mod:false})+'</svg><span class="t">'+v.title+'</span><span class="s">'+v.sub+' · '+f(v.g.OW)+' × '+f(v.g.OH)+' мм</span></button>').join('');}
+cards();
+$('cards').addEventListener('click',e=>{const b=e.target.closest('[data-v]');if(!b)return;st.v=b.dataset.v;draw();});
+// ---- главный чертёж: общий масштаб для всех вариантов — рамка по самому большому
+function draw(){const v=V.find(q=>q.id===st.v),g=v.g,M=16,TW=thumbW,TH=thumbH;
+  const vbW=TW+2*M+6,vbH=TH+2*M+8,ox=M+6,oy=M;let s='';
+  if(st.all)V.forEach(q=>{s+='<rect class="ghost" x="'+ox+'" y="'+M+'" width="'+q.g.OW+'" height="'+q.g.OH+'" rx="6" stroke="'+COL[q.id]+'"/><text class="lbl" x="'+(ox+q.g.OW-2)+'" y="'+(M+q.g.OH-2)+'" text-anchor="end" fill="'+COL[q.id]+'" style="fill:'+COL[q.id]+'">'+q.key+'</text>';});
+  s+=scene(v,ox,oy,{mod:st.mod});if(st.dim)s+=dims(v,ox,oy);
+  const svg=$('front');svg.setAttribute('viewBox','0 0 '+vbW+' '+vbH);svg.innerHTML=s;
+  svg.classList.toggle('real',st.real);if(st.real){svg.style.width=vbW+'mm';svg.style.height=vbH+'mm';}else{svg.style.width='';svg.style.height='';}
+  document.querySelectorAll('.card').forEach(c=>c.setAttribute('aria-pressed',String(c.dataset.v===st.v)));
+  [['tDim','dim'],['tAll','all'],['tMod','mod'],['tReal','real']].forEach(([id,k])=>$(id).setAttribute('aria-pressed',String(st[k])));
+  const m=SCR[v.main];
+  $('vName').textContent=v.key+'. '+v.title;
+  const rows=[['Корпус снаружи',f(g.OW)+' × '+f(g.OH)+' × ≈78 мм'],['Основной экран',m.name+(v.id==='now'?'':' · '+m.res)],['Активное поле',f(m.act[0],1)+' × '+f(m.act[1],1)+' мм'],
+    ['Крупная цифра',f(v.digit)+' мм'],['Читается с',f(v.dist,1)+' м'],['Второй экран',v.id==='now'?'нет':'4,2″, 400 × 300, уже куплен'],['Обновление цифр',m.upd||'около 0,3–0,6 с'],['Экран стоит',m.price||'уже куплен']];
+  $('vNums').innerHTML=rows.map(r=>'<dt>'+r[0]+'</dt><dd>'+r[1]+'</dd>').join('');
+  $('vNote').textContent=v.id==='now'?'Для сравнения: так сейчас. На нынешнем экране раскладка плотнее, поэтому цифры на нём мельче, чем в этой одинаковой для всех раскладке.':v.lay==='side'?'Кнопки и стрелки «заход» и «отход» — в ряд под малым экраном. Карта памяти — на боковой стенке.':'Кнопки — квадратом 2 × 2 справа от малого экрана, стрелки под ними. Карта памяти — на боковой стенке.';
+  $('readF').textContent=st.real?'Натуральная величина зависит от экрана: браузер считает 1 мм как 3,78 пикселя. Приложите линейку к размеру корпуса и проверьте.':'Светлое поле — стекло экрана с примерной картинкой, пунктир — окно в рамке. Тёмные круги — кнопки Ø14 мм, цветные — стрелки 5 мм.';
+  cmp();}
+// ---- таблицы
+function cmp(){$('cmp').innerHTML='<tr><th>Вариант</th><th>Корпус, мм</th><th>Основной экран</th><th>Крупная цифра</th><th>Читается с</th><th>Площадь лицевой стороны</th><th>Экран стоит</th></tr>'+
+  V.map(v=>'<tr'+(v.id===st.v?' class="sel"':'')+'><td><b>'+v.key+'</b> '+v.title+'</td><td class="n">'+f(v.g.OW)+' × '+f(v.g.OH)+'</td><td>'+SCR[v.main].name+'</td><td class="n">'+f(v.digit)+' мм</td><td class="n">'+f(v.dist,1)+' м</td><td class="n">'+f(v.g.OW*v.g.OH/100)+' см²</td><td>'+(SCR[v.main].price||'уже куплен')+'</td></tr>').join('');}
+const BEDS=[['220 × 220',220,220,'Ender-3 и похожие'],['256 × 256',256,256,'Bambu Lab A1, P1S, X1'],['300 × 300',300,300,'Ender-3 Max, Prusa XL на одну голову близко'],['350 × 320',350,320,'Bambu Lab H2D']];
+$('bed').innerHTML='<tr><th>Стол принтера</th>'+V.slice(1).map(v=>'<th>'+v.key+' · '+f(v.g.OW)+' × '+f(v.g.OH)+'</th>').join('')+'</tr>'+BEDS.map(b=>'<tr><td>'+b[0]+' <span class="small">'+b[3]+'</span></td>'+V.slice(1).map(v=>{const fit=(v.g.OW<=b[1]-6&&v.g.OH<=b[2]-6)||(v.g.OW<=b[2]-6&&v.g.OH<=b[1]-6);return '<td>'+(fit?'<span class="yes">целиком</span>':'<span class="no">из 2 частей</span>')+'</td>';}).join('')+'</tr>').join('');
+['tDim','tAll','tMod','tReal'].forEach(id=>$(id).addEventListener('click',()=>{const k={tDim:'dim',tAll:'all',tMod:'mod',tReal:'real'}[id];st[k]=!st[k];draw();}));
+draw();
+if(document.fonts&&document.fonts.ready)document.fonts.ready.then(()=>{measure();sizes();cards();draw();});
+})();
+</script>
