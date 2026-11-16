@@ -96,6 +96,7 @@ code{font-family:var(--f-mono);font-size:12px}
     <div class="views" role="group" aria-label="Куда смотреть">
       <button type="button" data-view="boat" aria-pressed="true">Лодка</button>
       <button type="button" data-view="top" aria-pressed="false">Топ мачты</button>
+      <button type="button" data-view="deck" aria-pressed="false">Рубка</button>
       <button type="button" data-view="cockpit" aria-pressed="false">Кокпит</button>
       <button type="button" data-view="cable" aria-pressed="false">Кабель</button>
       <button type="button" data-view="inside" aria-pressed="false">Внутри</button>
@@ -180,7 +181,7 @@ code{font-family:var(--f-mono);font-size:12px}
     </tbody></table></div>
     <p class="note">RVSP, 4 жилы, 24AWG, ≈ 15–20 м. Защита на обоих концах: SM712 на A и B, SMBJ5.0A на +5 В. Трасса: внутри мачты вниз, через пятку мачты в каюту, разъём M12 под подволоком у мачты, затем в резервный блок разъёмом SP13 на 5 контактов. От резервного блока к прибору идёт один кабель с 8 жилами в экране. На палубу кабель не выходит (решение от 05.11). Гермоввод PG7 — на капсуле; проход под мачтой — уплотнить.</p>
 
-    <p class="note"><b>Внутри лодки</b> (кнопка «Внутри»): переборки на 0,72 и 2,02 м от форштевня, рама мачты на 3,06–3,35 м, переборка на 4,2 м, низкая стенка на 4,81 м и переборка на 5,99 м сняты с чертежа набора, ± 5 см. Аккумулятор и резервный блок — в отсеке между 2,02 м и рамой мачты, правый борт; шина — в следующем отсеке, за рамой. Точное положение в отсеках и проёмы в переборках примерные, их надо сверить на лодке.</p>
+    <p class="note"><b>Внутри лодки</b> (кнопка «Внутри»): переборки на 0,72 и 2,02 м от форштевня, рама мачты на 3,06–3,35 м, переборка на 4,2 м, низкая стенка на 4,81 м и переборка на 5,99 м сняты с чертежа набора, ± 5 см. Аккумулятор и резервный блок — в отсеке между 2,02 м и рамой мачты, правый борт. По фото 16.11 добавлены: пиллерс под степсом мачты (стальная труба с фланцами), белая труба бушприта под палубой со шлангом слива, проёмы в рундуки под кокпитом по бокам от входа и щиток питания лодки — 3 клавишных выключателя (чёрный и 2 синих с подсветкой) и 2 латунные шины, плюс и минус, в синих держателях. Провода бытовые: коричневый — плюс, синий — минус, к потребителям белые кабели. Предохранителя между аккумулятором и шинами на фото не видно. Где щиток стоит на лодке, по фото не определить: в модели он у переборки 4,2 м. Прибор к шинам не подключается: у него свой провод от клемм аккумулятора через предохранитель 3 А.</p>
     <p class="note">Как устроен блок в кокпите, питание от аккумулятора лодки, резервный блок и данные по Wi-Fi: <a href="../cockpit/">«Блок в кокпите»</a>.</p>
 
     <h2>Детали и что с ними</h2>
@@ -221,7 +222,8 @@ code{font-family:var(--f-mono);font-size:12px}
       <li>Высота мачты: топ над палубой и над блоком в кокпите. Без неё вычитание качки работает по примерной высоте.</li>
       <li>Точный контур места справа от входа: одно фото переборки прямо спереди с рулеткой. По замерам 16.11 место около 34 × 33 см.</li>
       <li>Как провести кабель под палубой от мачты к кокпиту.</li>
-      <li>Как устроен топ: чертёж или фото крышки мачты под плиту кронштейна, есть ли в мачте место под кабель.</li>
+      <li>Топ мачты сверху: фото торца с линейкой. По фото 16.11 топ ≈ 100 × 60–65 мм, сзади вровень с торцом лежит полоса удочки — кронштейн с болтами в 104 мм вдоль лодки на него не встаёт. Есть ли в мачте место под кабель.</li>
+      <li>Где на лодке щиток питания (3 выключателя и 2 шины) и что включает каждый выключатель. Есть ли предохранитель между аккумулятором и шинами — на фото его не видно.</li>
       <li>Правила класса O-800: разрешены ли такие приборы на гонках.</li>
     </ul>
 
@@ -1133,6 +1135,10 @@ const CAB_AFT=-0.48,CAB0=CAB_AFT+0.03,CY=0.77,CABH=0.30;   // задний кр�
 const CWT=[[-4.0,0.82],[-3.41,0.91],[-2.64,1.01],[-2.07,1.05],[-1.49,1.08],[-0.89,1.10],[-0.48,1.10]];
 function cockW(x){if(x<=CWT[0][0])return CWT[0][1];for(let i=1;i<CWT.length;i++)if(x<=CWT[i][0]){const a=CWT[i-1],b=CWT[i];return a[1]+(b[1]-a[1])*(x-a[0])/(b[0]-a[0]);}return CWT[CWT.length-1][1];}
 function cabHalf(x){const xl=x-CAB0;return xl<0.63?1.0:Math.max(0.6,1.0-0.4*(xl-0.63)/1.85);}
+// сечение рубки по фото 16.11: плоская крыша, плечо радиусом 0,18 м, ниже — пологий скат к палубе до ширины по чертежу.
+// У кормы: справа от проёма входа (0,28 м от оси) до плеча 0,34 м на 12 см ниже крыши — значит крыша плоская до 0,45 м от оси
+const CAB_R=0.18,CAB_RW=0.45;
+function roofHalf(x){return CAB_RW*cabHalf(x);}
 // окраска борта — картинкой на развёртке: левая половина холста — правый борт (нос справа), правая — левый борт (нос слева)
 const hullTexC=document.createElement('canvas');hullTexC.width=4096;hullTexC.height=512;const hullTex=new THREE.CanvasTexture(hullTexC);hullTex.anisotropy=8;
 const YMIN=-0.6,YMAX=1.2,PXM=2048/L,PYM=512/(YMAX-YMIN);
@@ -1172,16 +1178,30 @@ const cockMat=M(0xc9d0d5,{side:THREE.DoubleSide,roughness:0.95});
   const cwA=cockW(CAB_AFT),yA=sh(tt(CAB_AFT));
   const bh=new THREE.Mesh(new THREE.PlaneGeometry(2*cwA,yA-0.30),cockMat);bh.rotation.y=Math.PI/2;bh.position.set(CAB_AFT,(yA+0.30)/2,0);boat.add(lab(bh,'кормовая переборка рубки'));
 })();
-// рубка: по чертежу 2,05 м шириной сзади, сужается к носу до 1,2 м; высота на чертеже не видна — примерная
-(function(){
-  const s=new THREE.Shape();s.moveTo(0,0);s.lineTo(0,CABH);s.lineTo(1.6,CABH-0.02);s.quadraticCurveTo(2.25,CABH-0.04,2.48,0);s.lineTo(0,0);
-  const g=new THREE.ExtrudeGeometry(s,{depth:2.0,bevelEnabled:true,bevelSize:0.03,bevelThickness:0.03,bevelSegments:2});g.translate(0,0,-1.0);
-  const p=g.attributes.position;for(let i=0;i<p.count;i++)p.setZ(i,p.getZ(i)*cabHalf(CAB0+p.getX(i)));g.computeVertexNormals();
-  const m=new THREE.Mesh(g,M(0xe8ecef,{roughness:0.5}));m.position.set(CAB0,CY,0);boat.add(lab(m,'рубка: план по чертежу, высота примерная'));m.userData.shell=true;m.userData.op=0.4;SHELLS.push(m);
-  const door=box(0.02,0.60,0.55,M(0x26313b,{roughness:0.8}));door.position.set(CAB_AFT-0.005,0.68,0);door.scale.y=0.76/0.60;boat.add(lab(door,'вход в каюту: где он на самом деле, неизвестно — от этого зависит место блока'));
-})();
 function roofY(x){return CY+0.03+CABH-0.02*Math.max(0,Math.min(1,(x-CAB0)/1.6));}
 function cabinTop(x){const xl=x-CAB0;return xl<=1.6?roofY(x):CY+0.03+(CABH-0.02)*(1-Math.pow(Math.min(1,(xl-1.6)/0.88),2));}
+// сечение рубки на станции x: точки от левого края палубы через крышу к правому, [z, y]
+function cabSec(x,n){const yt=Math.max(CY+0.031,cabinTop(Math.min(x,CAB0+2.479))),yb=CY,h=yt-yb,R=Math.min(CAB_R,h*0.6),rw=roofHalf(x),bw=cabHalf(x),pts=[];
+  pts.push([-bw,yb]);for(let k=0;k<=n;k++){const a=Math.PI/2*k/n;pts.push([-(rw+R*Math.cos(a)),yt-R+R*Math.sin(a)]);}
+  for(let k=n;k>=0;k--){const a=Math.PI/2*k/n;pts.push([rw+R*Math.cos(a),yt-R+R*Math.sin(a)]);}pts.push([bw,yb]);return pts;}
+// рубка по фото 16.11: высота у кормы 0,33 м над палубой, плечи скруглены R ≈ 0,18 м; план по чертежу (2,05 → 1,2 м по низу)
+(function(){
+  const NS=40,NA=8,pos=[],idx=[],x0=CAB_AFT,x1=CAB0+2.48;let W=0;
+  for(let i=0;i<=NS;i++){const x=x0+(x1-x0)*i/NS,sec=cabSec(x,NA);W=sec.length;sec.forEach(p=>pos.push(x,p[1],p[0]));}
+  for(let i=0;i<NS;i++)for(let j=0;j<W-1;j++){const a=i*W+j,b=a+1,c=a+W,d=c+1;idx.push(a,b,c,b,d,c);}
+  const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.Float32BufferAttribute(pos,3));g.setIndex(idx);g.computeVertexNormals();
+  const cm=M(0xe8ecef,{roughness:0.5,side:THREE.DoubleSide});
+  const m=new THREE.Mesh(g,cm);boat.add(lab(m,'рубка по фото 16.11: у кормы 0,33 м над палубой, крыша плоская до 0,45 м от оси, плечи скруглены R ≈ 18 см, ниже пологий скат; план по чертежу'));m.userData.shell=true;m.userData.op=0.4;SHELLS.push(m);
+  // кормовая стенка рубки с проёмом входа 56 см
+  const sec=cabSec(x0,NA),sh0=new THREE.Shape();sec.forEach((p,i)=>i?sh0.lineTo(p[0],p[1]):sh0.moveTo(p[0],p[1]));
+  const hole=new THREE.Path();hole.moveTo(-0.28,CY-0.001);hole.lineTo(0.28,CY-0.001);hole.lineTo(0.28,roofY(CAB0)+0.001);hole.lineTo(-0.28,roofY(CAB0)+0.001);sh0.holes.push(hole);
+  const af=new THREE.Mesh(new THREE.ShapeGeometry(sh0,6),cm);af.rotation.y=Math.PI/2;af.position.x=x0;boat.add(lab(af,'кормовая стенка рубки: справа от входа место ≈ 34 × 33 см под блок, правый верхний угол скруглён'));
+  const door=box(0.02,0.60,0.56,M(0x26313b,{roughness:0.8}));door.position.set(CAB_AFT-0.005,0.68,0);door.scale.y=0.76/0.60;boat.add(lab(door,'вход в каюту: проём 56 см по замеру 16.11, закрывается вставными щитами'));
+  [-1,1].forEach(sd=>{const gd=box(0.035,0.80,0.03,M(0x6b737b,{roughness:0.5,metalness:0.3}));gd.position.set(CAB_AFT-0.012,0.70,sd*0.295);boat.add(lab(gd,'направляющая щитов входа: серая, по фото 16.11'));});
+  // комингсы кокпита: горбы у рубки, на фото 16.11 справа внизу от места под блок
+  [-1,1].forEach(sd=>{const pts=[];for(let k=0;k<=12;k++){const x=CAB_AFT-1.6*k/12,t=tt(x),cw=Math.min(cockW(x),hb(t)-0.05),hgt=0.11*Math.pow(1-k/12,0.7);pts.push(V(x,sh(t)+0.02+hgt*0.5,sd*(cw+0.07)));}
+    const cg=new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts),40,0.07,10,false),M(0xe8ecef,{roughness:0.5}));cg.scale.set(1,1,1);boat.add(lab(cg,'комингс кокпита: поднимается к рубке, по фото 16.11 высоту не мерили'));});
+})();
 // киль, руль, румпель
 const lead=M(0x3d4148,{roughness:0.5,metalness:0.3});
 (function(){
@@ -1194,7 +1214,8 @@ const lead=M(0x3d4148,{roughness:0.5,metalness:0.3});
 // мачта и такелаж
 const MX=0.94,MB=roofY(MX),MT=MB+11.2,BY=1.99,HND=9.9;   // мачта в 3,06 м от форштевня (уточнил владелец); по чертежу парусности 11,2 м над рубкой; гик на 1,99 м, штаг на 9,9 м над водой
 const mastMat=M(0x23262a,{metalness:0.3,roughness:0.35});   // мачта и гик тёмные, как на фото
-const mast=new THREE.Mesh(new THREE.CylinderGeometry(0.042,0.050,MT-MB,18),mastMat);mast.scale.z=0.78;   // сечение у пятки по замеру 16.11: 100 мм вдоль лодки (с ликпазом) × 78 мм поперёк; к топу сужение примерноеmast.position.set(MX,(MB+MT)/2,0);
+const mast=new THREE.Mesh(new THREE.CylinderGeometry(0.042,0.050,MT-MB,18),mastMat);mast.scale.z=0.78;   // сечение у пятки по замеру 16.11: 100 мм вдоль лодки (с ликпазом) × 78 мм поперёк; к топу сужение примерное
+mast.position.set(MX,(MB+MT)/2,0);
 reg(lab(mast,'мачта: 11,2 м над рубкой по чертежу парусности, топ на 12,35 м над водой. Сечение у пятки по замеру 16.11 — 100 × 78 мм, к топу сужение примерное. Кабель идёт внутри'),boat,{shell:true,op:0.28});
 const rig=M(0x50575e,{metalness:0.6,roughness:0.4});
 const STEM=V(3.95,sh(1)+0.02,0);
@@ -1213,9 +1234,12 @@ const SP1=3.86,SP2=6.94;   // две пары стреловидных крас�
   boat.add(lab(rod(V(CPX,CPY-0.02,CPZ*sd),V(CPX,CPY+0.10,CPZ*sd),0.012,M(0x9aa0a6,{metalness:0.7,roughness:0.3}),10),'вантпутенс: по чертежу в 3,35 м от форштевня'));
 });
 // удочка на топе (≈ 1,5 м назад и вниз, как на фото Open 800) и ахтерштаг с её конца на корму
-const UD=[V(MX-0.03,MT-0.03,0),V(MX-0.30,MT+0.06,0),V(MX-0.62,MT+0.02,0),V(MX-0.88,MT-0.19,0)];   // по чертежу парусности: ≈ 0,9 м назад
+const UD=[V(MX-0.05,MT+0.006,0),V(MX-0.25,MT+0.012,0),V(MX-0.55,MT+0.05,0),V(MX-0.88,MT-0.08,0),V(MX-1.05,MT-0.26,0)];   // по чертежу парусности: ≈ 0,9 м назад
 const UDtip=UD[UD.length-1];
-boat.add(lab(tube(UD,0.008,M(0x17191c,{roughness:0.35,metalness:0.2})),'удочка: гибкий прут ≈ 1,5 м с топа мачты назад. Отводит ахтерштаг за верх грота'));
+boat.add(lab(tube(UD,0.008,M(0xb9c0c6,{roughness:0.35,metalness:0.7})),'удочка: алюминиевая полоса ≈ 1,5 м, прикручена к плите топа, уходит назад. Отводит ахтерштаг за верх грота. По фото 16.11'));
+(function(){const p=new THREE.Shape();p.moveTo(0,0);p.lineTo(0,-0.11);p.lineTo(-0.21,-0.05);p.lineTo(-0.21,0);p.lineTo(0,0);
+  const g=new THREE.ExtrudeGeometry(p,{depth:0.008,bevelEnabled:false});g.translate(0,0,-0.004);const m=new THREE.Mesh(g,M(0x17191c,{roughness:0.5}));m.position.set(MX-0.045,MT,0);
+  boat.add(lab(m,'плита топа: чёрная, ≈ 21 см назад от мачты, высота у мачты ≈ 11 см, с окнами шкивов. К ней 2 болтами прикручена полоса удочки. По фото 16.11'));})();
 const tang=new THREE.Mesh(new THREE.SphereGeometry(0.012,12,8),M(0x9aa0a6,{metalness:0.6}));tang.position.copy(UDtip);boat.add(lab(tang,'конец удочки: сюда крепится ахтерштаг'));
 boat.add(lab(rod(UDtip,V(-3.97,sh(0)+0.02,0),0.004,rig),'ахтерштаг: с конца удочки на корму'));
 boat.add(lab(rod(V(-3.97,sh(0)-0.02,0),V(-3.97,sh(0)+0.06,0),0.02,M(0x9aa0a6,{metalness:0.6,roughness:0.35}),12),'крепление ахтерштага на корме'));
@@ -1279,7 +1303,7 @@ function winch(x,y,z,l){const g=new THREE.Group();
   const d=new THREE.Mesh(new THREE.CylinderGeometry(0.044,0.05,0.08,24),steel);d.position.y=0.07;g.add(d);
   const t=new THREE.Mesh(new THREE.CylinderGeometry(0.05,0.045,0.03,24),dark);t.position.y=0.125;g.add(t);
   g.position.set(x,y,z);boat.add(lab(g,l));}
-const TRX=MX-2.9;
+const TRX=MX-2.9,JTZ=0.85*roofHalf(MX+0.42);
 const trav=box(0.05,0.03,1.6,steel);trav.position.set(TRX,0.315,0);boat.add(lab(trav,'погон гротового шкота поперёк кокпита'));
 const car=box(0.07,0.04,0.08,dark);car.position.set(TRX,0.35,0);boat.add(lab(car,'каретка погона: ездит вслед за гиком'));
 const hatch=box(0.55,0.04,0.62,M(0xd5dade,{roughness:0.4}));hatch.position.set(CAB0+0.275,roofY(CAB0+0.275)+0.02,0);boat.add(lab(hatch,'сдвижной люк входа в каюту: проём 56 см шириной, 53–56 см вдоль лодки по замеру 16.11'));
@@ -1288,11 +1312,12 @@ const fh=box(0.45,0.035,0.45,M(0xd5dade,{roughness:0.4}));fh.position.set(2.45,s
 boat.add(lab(rod(V(-2.30,0.88,0),V(-1.85,1.02,0.32),0.012,M(0x17191c)),'удлинитель румпеля'));
 [-1,1].forEach(sd=>{
   const wx=-1.05;winch(wx,sh(tt(wx))+0.012,sd*(hb(tt(wx))-0.12),'лебёдка шкотов стакселя и спинакера');
-  winch(CAB0+0.2,roofY(CAB0+0.2),sd*0.72,'лебёдка фалов на крыше рубки');
-  for(let k=0;k<3;k++){const c=box(0.09,0.035,0.045,dark);c.position.set(CAB0+0.45,roofY(CAB0+0.45)+0.017,sd*(0.40+k*0.08));boat.add(lab(c,'стопоры фалов и оттяжек'));}
-  const hl=mkLine(0x2f6fd6);setLine(hl,V(CAB0+0.5,roofY(CAB0+0.5)+0.025,sd*0.48),V(MX-0.06,MB+0.05,sd*0.03));boat.add(hl);
-  const tr=box(0.5,0.012,0.025,steel);tr.position.set(MX+0.42,cabinTop(MX+0.42)+0.006,sd*0.6);boat.add(lab(tr,'погон шкота стакселя: перед мачтой, стаксель её не перекрывает'));
-  [CAB0+0.55,CAB0+1.55].forEach(px=>{const w=box(0.55,0.09,0.012,M(0x1b2530,{roughness:0.1,metalness:0.3}));w.position.set(px,CY+0.15,sd*(cabHalf(px)+0.034));boat.add(lab(w,'иллюминатор рубки'));});
+  winch(CAB0+0.12,roofY(CAB0+0.12),sd*0.50,'лебёдка фалов на крыше рубки у кормового угла, по фото 16.11');
+  for(let k=0;k<4;k++){const c=box(0.11,0.04,0.04,dark);c.position.set(CAB0+0.58,roofY(CAB0+0.58)+0.02,sd*(0.335+k*0.042));boat.add(lab(c,'стопоры фалов: 4 в ряд у переднего края люка, по фото 16.11'));}
+  const hl=mkLine(0x2f6fd6);setLine(hl,V(CAB0+0.64,roofY(CAB0+0.64)+0.025,sd*0.39),V(MX-0.08,MB+0.03,sd*0.06));boat.add(hl);
+  [-1,1].forEach(q=>{const bl=new THREE.Mesh(new THREE.CylinderGeometry(0.03,0.03,0.016,16),dark);bl.rotation.x=Math.PI/2;bl.position.set(MX+q*0.02-0.1,MB+0.03,sd*0.085);boat.add(lab(bl,'отводной блок у степса: фалы с мачты идут к стопорам, по фото 16.11'));});
+  const tr=box(0.5,0.012,0.025,steel);tr.position.set(MX+0.42,cabinTop(MX+0.42)+0.006,sd*JTZ);boat.add(lab(tr,'погон шкота стакселя: перед мачтой, стаксель её не перекрывает'));
+  [CAB0+0.75,CAB0+1.55].forEach(px=>{const sec=cabSec(px,8),a=sec[sec.length-1],b=sec[sec.length-2],zm=(a[0]+b[0])/2,ym=(a[1]+b[1])/2,ang=Math.atan2(b[1]-a[1],a[0]-b[0]);const w=box(0.5,0.006,0.06,M(0x1b2530,{roughness:0.1,metalness:0.3}));w.position.set(px,ym+0.004,sd*zm);w.rotation.x=sd*ang;boat.add(lab(w,'иллюминатор на скате рубки: место примерное'));});
   const cl=box(0.13,0.025,0.03,steel);cl.position.set(-3.75,sh(tt(-3.75))+0.035,sd*(hb(tt(-3.75))-0.12));boat.add(lab(cl,'кормовая швартовная утка'));
   const bc=box(0.13,0.025,0.03,steel);bc.position.set(3.0,sh(tt(3.0))+0.035,sd*(hb(tt(3.0))-0.12));boat.add(lab(bc,'носовая швартовная утка'));
 });
@@ -1592,25 +1617,47 @@ const intG=new THREE.Group(),sprG=new THREE.Group();boat.add(intG);boat.add(sprG
   tb([[ax,bT+0.016,bz+0.05],[ax-0.04,bT+0.05,bz+0.05],[fx0,bT+0.04,bz+0.04]],0.0035,0xc0392b,'красная жила 0,75 мм²: от плюсовой клеммы к предохранителю');
   intG.add(lab(rod(V(fx0,bT+0.04,bz+0.04),V(fx1,bT+0.04,bz+0.04),0.009,M(0x2b2f35,{roughness:0.6}),14),'предохранитель 3 А: не дальше 200 мм от клеммы'));
   tb([[fx1,bT+0.04,bz+0.04],[(fx1+HB[0])/2,0.24,hz+0.02],[HB[0],HB[1]+0.002,hz+0.002]],0.0035,0xc0392b,'красная жила от предохранителя в резервный блок');
-  tb([[ax,bT+0.016,bz-0.05],[ax-0.06,bT+0.05,bz-0.05],[(ax+HB[0])/2,0.24,hz-0.03],[HB[0],HB[1]-0.002,hz-0.002]],0.0035,0x1a1b1f,'чёрная жила 0,75 мм² от минусовой клеммы в резервный блок: отдельно от шины, чтобы ток ходовых огней не искажал измерение');
+  tb([[ax,bT+0.016,bz-0.05],[ax-0.06,bT+0.05,bz-0.05],[(ax+HB[0])/2,0.24,hz-0.03],[HB[0],HB[1]-0.002,hz-0.002]],0.0035,0x1a1b1f,'чёрная жила 0,75 мм² от минусовой клеммы в резервный блок: отдельно от шин щитка, чтобы ток потребителей лодки не искажал измерение');
   tb([[HO[0],HO[1],HO[2]],[HO[0]-0.08,0.2,hz],[0.6,0.26,hz+0.02],[0.2,0.3,0.52],[-0.15,0.46,0.52],[CAB_AFT+0.1,0.68,0.5],[CAB_AFT+0.03,0.81,0.48],[CAB_AFT-0.04,0.81,0.47],[cpToBoat(-0.05,-0.078,-0.004).x,cpToBoat(-0.05,-0.078,-0.004).y,cpToBoat(-0.05,-0.078,-0.004).z]],0.0042,0x2b2f35,'один кабель к прибору: 8 жил в экране, питание, измерение, мачта');
-  // шина
-  const wx=dx(4.2)+0.012,wy=0.55,wz=halfAt(dx(4.2),wy)-0.13;
-  intG.add(lab(box(0.012,0.028,0.14,M(0xb87333,{metalness:0.7,roughness:0.35})),'')).position.set(0,0,0);
-  const bar=intG.children[intG.children.length-1];bar.position.set(wx,wy,wz);bar.userData.label='распределительная шина массы на переборке 4,2 м: положение на переборке примерное';
-  const sw=box(0.02,0.05,0.04,M(0x22252a,{roughness:0.8}));sw.position.set(wx,wy+0.07,wz);intG.add(lab(sw,'выключатель ходовых огней: положение примерное'));
+  // щиток питания лодки по фото 16.11: 3 клавишных выключателя на стенке, над ними 2 латунные шины в синих держателях на стяжках.
+  // Провода бытовые: коричневый — плюс, синий — минус, к потребителям уходят белые кабели в оболочке. Место щитка на лодке по фото не определить — в модели на кормовой стороне переборки 4,2 м, лицом ко входу
+  const wx=dx(4.2)-0.012,wy=0.55,wz=halfAt(dx(4.2),wy)-0.13,brass=M(0xc9a64a,{metalness:0.75,roughness:0.35}),blueH=M(0x2c3e8c,{roughness:0.6});
+  intG.add(lab(box(0.006,0.07,0.14,M(0xe3e0d8,{roughness:0.9})),'стенка щитка: стеклопластик')).position.set(wx+0.003,wy+0.02,wz);
+  [['#1b1c20','чёрный: без подсветки'],['#2f62d8','синий, с подсветкой'],['#2f62d8','синий, с подсветкой']].forEach((c,i)=>{const k=box(0.014,0.021,0.015,M(new THREE.Color(c[0]).getHex(),{roughness:0.5}));k.position.set(wx-0.007,wy+0.02,wz-0.025+i*0.025);intG.add(lab(k,'выключатель '+(i+1)+' из 3 — '+c[1]+'. Что он включает, по фото не видно'));});
+  [[-0.04,'шина минуса: латунная, синие провода от потребителей и подсветки выключателей'],[0.045,'шина плюса: латунная, коричневые провода к выключателям; питание от аккумулятора белым кабелем']].forEach(b=>{
+    const h=box(0.03,0.02,0.075,blueH);h.position.set(wx-0.015,wy+0.105,wz+b[0]);intG.add(lab(h,'синий держатель шины: прикручен стяжками к кромке'));
+    const r=box(0.012,0.01,0.065,brass);r.position.set(wx-0.02,wy+0.088,wz+b[0]);intG.add(lab(r,b[1]));});
+  const wire=(pts,r,c,l)=>tb(pts,r,c,l);
+  wire([[bx0-0.09,bT+0.016,bz+0.05],[bx0-0.2,0.45,bz+0.02],[wx+0.3,0.6,wz+0.05],[wx-0.03,wy+0.088,wz+0.07]],0.0045,0xe9e6df,'белый кабель питания щитка: от аккумулятора к шинам. Предохранителя на нём по фото не видно');
+  [[-0.025,0x6b3d25],[0,0x6b3d25],[0.025,0x6b3d25]].forEach((q,i)=>wire([[wx-0.02,wy+0.085,wz+0.045],[wx-0.05,wy+0.06,wz+q[0]+0.01],[wx-0.016,wy+0.02,wz+q[0]]],0.0012,q[1],'коричневый провод: шина плюса → выключатель '+(i+1)));
+  [[-0.025,'к потребителю 1'],[0,'к потребителю 2'],[0.025,'к потребителю 3']].forEach((q,i)=>wire([[wx-0.016,wy+0.012,wz+q[0]],[wx-0.08,wy-0.08,wz+q[0]*2],[wx-0.25,wy-0.15+i*0.02,wz-0.25-i*0.05]],0.0028,0xe9e6df,'белый кабель '+q[1]+': коричневая жила от выключателя, синяя на шину минуса'));
+  // пиллерс под степсом мачты: стальная труба с фланцами на 4 болтах (фото 16.11)
+  const ssM=M(0xb8bec4,{metalness:0.35,roughness:0.35}),pTop=MB-0.035;
+  intG.add(lab(rod(V(MX,0.12,0),V(MX,pTop,0),0.025,ssM,20),'пиллерс: стальная труба ≈ Ø50 мм от пола каюты под степс мачты, по фото 16.11'));
+  [[0.126,'нижний фланец пиллерса'],[pTop-0.004,'фланец пиллерса под крышей рубки: 4 болта, по фото 16.11']].forEach(f=>{const fl=box(0.11,0.008,0.09,ssM);fl.position.set(MX,f[0],0);intG.add(lab(fl,f[1]));});
+  // труба бушприта под палубой: белая, от форштевня назад, на заднем конце заглушка и шланг слива (фото 16.11)
+  const tF=V(3.9,sh(1)-0.08,0),tA=V(dx(2.05),sh(tt(dx(2.05)))-0.09,-0.06);
+  intG.add(lab(rod(tF,tA,0.055,M(0xf0f0ee,{roughness:0.6}),20),'труба бушприта под палубой: бушприт убирается внутрь, ≈ Ø110 мм. По фото 16.11, длина примерная'));
+  const cap=new THREE.Mesh(new THREE.CylinderGeometry(0.058,0.058,0.02,20),M(0xf7f7f5,{roughness:0.5}));cap.position.copy(tA);cap.quaternion.setFromUnitVectors(V(0,1,0),tF.clone().sub(tA).normalize());intG.add(lab(cap,'заглушка трубы бушприта'));
+  tb([[tA.x+0.05,tA.y-0.05,tA.z],[tA.x+0.02,tA.y-0.2,tA.z-0.2],[tA.x+0.1,0.32,-halfAt(tA.x,0.32)+0.05]],0.008,0x9aa3ab,'шланг слива трубы бушприта: в борт, по фото 16.11');
+  // кормовая переборка изнутри: по бокам от входа панели, ниже — проёмы в рундуки под кокпитом (фото 16.11)
+  [-1,1].forEach(sd=>{const xa=CAB_AFT+0.012,sp=new THREE.Shape();const z0=0.66,z1=Math.min(1.02,halfAt(xa,0.5)-0.05),y0=0.32,y1=0.74,r=0.12;
+    sp.moveTo(z0,y0);sp.lineTo(z1,y0);sp.lineTo(z1,y1-r);sp.quadraticCurveTo(z1,y1,z1-r,y1);sp.lineTo(z0+r,y1);sp.quadraticCurveTo(z0,y1,z0,y1-r);sp.lineTo(z0,y0);
+    const o=new THREE.Mesh(new THREE.ShapeGeometry(sp,8),M(0x14181c,{side:THREE.DoubleSide,roughness:0.9}));o.rotation.y=-Math.PI/2;o.scale.x=sd;o.position.x=xa;intG.add(lab(o,'проём в кормовой переборке: рундук под кокпитом. Над ним панель ≈ 34 см шириной и 26 см до крыши, по фото 16.11 изнутри'));});
   const spr=(s,p,w)=>{const c=document.createElement('canvas');c.width=512;c.height=112;const q=c.getContext('2d');q.fillStyle='rgba(14,22,30,.88)';q.fillRect(0,0,512,112);q.strokeStyle='#39c0cf';q.lineWidth=4;q.strokeRect(2,2,508,108);q.fillStyle='#fff';q.font='700 46px Arial';q.textAlign='center';q.textBaseline='middle';q.fillText(s,256,58);const o=new THREE.Sprite(new THREE.SpriteMaterial({map:new THREE.CanvasTexture(c),depthTest:false,transparent:true}));o.position.set(p[0],p[1],p[2]);o.scale.set(w,w*112/512,1);o.renderOrder=999;sprG.add(o);};
-  spr('аккумулятор 60 А·ч',[bx0+0.15,0.42,bz+0.75],0.7);spr('резервный блок',[hx-0.05,0.5,hz-0.42],0.6);spr('шина и огни',[wx-0.05,0.42,wz+0.5],0.5);spr('переборка 2,02 м',[dx(2.02),1.08,-0.15],0.62);spr('рама мачты 3,06 м',[dx(3.06),1.32,-0.25],0.66);spr('переборка 4,2 м',[dx(4.2),1.06,-0.72],0.6);spr('блок в кокпите',[CAB_AFT-0.1,1.25,0.5],0.6);
+  spr('аккумулятор 60 А·ч',[bx0+0.15,0.42,bz+0.75],0.7);spr('резервный блок',[hx-0.05,0.5,hz-0.42],0.6);spr('щиток: 3 выкл. и 2 шины',[wx-0.05,0.42,wz+0.5],0.62);spr('пиллерс',[MX,0.75,-0.35],0.4);spr('труба бушприта',[2.9,1.15,-0.3],0.55);spr('переборка 2,02 м',[dx(2.02),1.08,-0.15],0.62);spr('рама мачты 3,06 м',[dx(3.06),1.32,-0.25],0.66);spr('переборка 4,2 м',[dx(4.2),1.06,-0.72],0.6);spr('блок в кокпите',[CAB_AFT-0.1,1.25,0.5],0.6);
 })();
 const INS=[],HID=[];
-function setInside(on){if(!INS.length)boat.children.forEach(o=>{const l=o.userData.label||'';if(o.material&&/^(корпус Open|палуба|транец|кокпит:|борт кокпита|кормовая переборка|рубка)/.test(l))INS.push(o);});INS.forEach(o=>{o.material.transparent=on;o.material.opacity=on?0.1:1;o.material.depthWrite=!on;o.material.needsUpdate=true;});if(!on)setShells();sprG.visible=on;
+function setInside(on){if(!INS.length)boat.children.forEach(o=>{const l=o.userData.label||'';if(o.material&&/^(корпус Open|палуба|транец|кокпит:|борт кокпита|кормовая переборка|кормовая стенка|комингс|рубка)/.test(l))INS.push(o);});INS.forEach(o=>{o.material.transparent=on;o.material.opacity=on?0.1:1;o.material.depthWrite=!on;o.material.needsUpdate=true;});if(!on)setShells();sprG.visible=on;
   HID.forEach(o=>o.visible=true);HID.length=0;if(on){const keep=new Set([intG,sprG,cpG,cableG,...INS]);boat.children.forEach(o=>{if(!keep.has(o)&&o.visible){o.visible=false;HID.push(o);}});scene.children.forEach(o=>{if(o!==boat&&o.isMesh&&o.visible){o.visible=false;HID.push(o);}});}}
 
 // ---------- камера ----------
 function worldOf(o){const v=new THREE.Vector3();o.getWorldPosition(v);return v;}
+const deckAnchor=new THREE.Object3D();deckAnchor.position.set(CAB_AFT+0.55,0.95,0);boat.add(deckAnchor);
 const VIEWS={
   boat:()=>({t:V(0.3,5.4,0),p:V(15,8.5,17.5),f:null}),
   top:()=>{const c=worldOf(topCenter);return{t:c,p:c.clone().add(V(0.26,0.12,0.40)),f:topCenter};},
+  deck:()=>{const c=worldOf(deckAnchor);return{t:c,p:c.clone().add(V(-2.4,0.75,1.15)),f:null};},
   cockpit:()=>{const c=worldOf(cpG);return{t:c,p:c.clone().add(V(-0.46,0.13,0.22)),f:cpG};},
   cable:()=>({t:V(-0.1,1.0,0.25),p:V(-3.4,2.7,3.7),f:null}),
   inside:()=>({t:V(0.75,0.3,0.1),p:V(0.1,3.4,3.3),f:null})
@@ -1718,7 +1765,7 @@ function frame(now){
   const jT=lee*JS*rad(Math.max(2,Math.min(30,(aa-15)*0.3)));jibA+=(jT-jibA)*Math.min(1,dt*2);jibG.quaternion.setFromAxisAngle(stayAx,jibA);
   spinG.scale.z=lee;boat.updateMatrixWorld(true);
   const bp=boat.worldToLocal(worldOf(boomPt));car.position.z=Math.max(-0.6,Math.min(0.6,bp.z));setLine(mainSheet,bp,V(car.position.x,0.37,car.position.z));
-  if(jibSheet.visible){const jc=boat.worldToLocal(worldOf(jibClew));const tx=Math.max(MX+0.17,Math.min(MX+0.67,jc.x));setLine(jibSheet,jc,V(tx,cabinTop(tx)+0.02,Math.sign(jc.z||lee)*0.6));}
+  if(jibSheet.visible){const jc=boat.worldToLocal(worldOf(jibClew));const tx=Math.max(MX+0.17,Math.min(MX+0.67,jc.x));setLine(jibSheet,jc,V(tx,cabinTop(tx)+0.02,Math.sign(jc.z||lee)*JTZ));}
   if(spinSheet.visible){const sc=boat.worldToLocal(worldOf(spinClew));setLine(spinSheet,sc,V(-3.7,0.85,lee*1.1));}
   // заход / отход: по изменению угла к ветру за 8 с
   hist.push([ts,Math.abs(awaT)]);while(hist.length&&hist[0][0]<ts-8)hist.shift();
