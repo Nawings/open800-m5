@@ -93,7 +93,8 @@ ul.notes{margin:0;padding-left:18px;display:grid;gap:8px;max-width:80ch}
       <span class="fact ok"><b>Решено 16.11</b> 10,2″ не ставим — не встаёт на переборку</span>
       <span class="fact ok"><b>Решено 16.11</b> толщина блока ≈ 35 мм, кабель — сзади</span>
       <span class="fact ok"><b>Решено 16.11</b> компоновка C1, корпус без острых углов, слоган «Создан для гонок»</span>
-      <span class="fact q"><b>Ждёт решения</b> управление (кнопки), салазки с защёлкой как у аккумулятора шуруповёрта, ввод кабеля сзади (R1 или R2)</span>
+      <span class="fact ok"><b>Решено 16.11</b> ввод кабеля — хвост с SP13 в нише салазок; салазки без барашков, защёлка как у аккумулятора шуруповёрта</span>
+      <span class="fact q"><b>Ждёт решения</b> управление: сколько кнопок и что делает каждая</span>
     </div>
   </header>
 
@@ -175,9 +176,10 @@ ul.notes{margin:0;padding-left:18px;display:grid;gap:8px;max-width:80ch}
   </section>
 
   <section class="sheet" aria-labelledby="hk">
-    <h2 id="hk">Кабель питания — сзади, сквозь переборку</h2>
+    <h2 id="hk">Кабель питания — сзади: хвост с SP13 в нише салазок</h2>
     <div class="seg" role="group" aria-label="Вариант кабеля и действие">
-      <button class="btn" type="button" data-c3="r1" aria-pressed="true">R1 — хвост, разъём в каюте</button>
+      <button class="btn" type="button" data-c3="r3" aria-pressed="true">Выбрано: SP13 в нише салазок</button>
+      <button class="btn" type="button" data-c3="r1" aria-pressed="false">R1 — разъём в каюте</button>
       <button class="btn" type="button" data-c3="r2" aria-pressed="false">R2 — контакты в салазках</button>
       <button class="btn" type="button" data-c3="off" aria-pressed="false">Снять блок / поставить</button>
     </div>
@@ -398,82 +400,104 @@ if(document.fonts&&document.fonts.ready)document.fonts.ready.then(()=>{measure()
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
 <script>
-// 3D: как кабель питания уходит из спины блока в переборку — R1 (хвост сквозь переборку, разъём в каюте) и R2 (контакты в салазках).
+// 3D: как кабель уходит из спины блока C1 в переборку. R3 (выбрано 16.11): короткий хвост с вилкой SP13 в нише спины блока, гнездо SP13 — в салазках.
+// Для сравнения — R1 (хвост сквозь переборку, разъём в каюте) и R2 (контакты в салазках).
 // Единицы — мм. x — вправо вдоль переборки, y — вверх, z — из переборки в кокпит (+z кокпит, −z каюта).
 (function(){
   const box=document.getElementById('c3d');if(!box||!window.THREE)return;
   const css=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
   const R=new THREE.WebGLRenderer({antialias:true});R.setPixelRatio(Math.min(2,devicePixelRatio||1));box.appendChild(R.domElement);
-  const S=new THREE.Scene(),C=new THREE.PerspectiveCamera(35,1.6,5,5000);C.position.set(440,130,140);
-  const O=new THREE.OrbitControls(C,R.domElement);O.target.set(0,-60,-30);O.enableDamping=true;O.update();
+  const S=new THREE.Scene(),C=new THREE.PerspectiveCamera(35,1.6,5,5000);C.position.set(300,-10,330);
+  const O=new THREE.OrbitControls(C,R.domElement);O.target.set(0,-50,0);O.enableDamping=true;O.update();
   S.add(new THREE.HemisphereLight(0xffffff,0x8a9099,0.85));const sun=new THREE.DirectionalLight(0xffffff,0.7);sun.position.set(300,500,600);S.add(sun);
   const M=(c,o)=>new THREE.MeshStandardMaterial(Object.assign({color:c,roughness:0.6},o||{}));
   const V=(x,y,z)=>new THREE.Vector3(x,y,z);
   const bx=(w,h,d,m,x,y,z)=>{const o=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),m);o.position.set(x,y,z);return o;};
+  const cyl=(r,l,m,x,y,z)=>{const o=new THREE.Mesh(new THREE.CylinderGeometry(r,r,l,24),m);o.rotation.x=Math.PI/2;o.position.set(x,y,z);return o;};
   const tube=(pts,r,m)=>new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts),60,r,10,false),m);
-  const lbl=(t,p)=>{const c=document.createElement('canvas');c.width=512;c.height=96;const q=c.getContext('2d');q.font='600 40px Onest, Arial, sans-serif';const w=Math.min(500,q.measureText(t).width+28);q.fillStyle='rgba(14,22,30,.86)';q.fillRect(0,0,w,96);q.fillStyle='#fff';q.textBaseline='middle';q.fillText(t,14,50);
-    const sp=new THREE.Sprite(new THREE.SpriteMaterial({map:new THREE.CanvasTexture(c),depthTest:false,transparent:true}));sp.center.set(0,0.5);sp.scale.set(0.16,0.03,1);sp.material.sizeAttenuation=false;sp.position.copy(p);sp.renderOrder=9;return sp;};
-  const W=288,H=134,D=35;   // корпус A3, толщина 35 мм
-  const grp=M(0xe6e2d6),gel=M(0xeef1f3,{roughness:0.45}),dark=M(0x23272c),cop=M(0xc9a64a,{metalness:0.6,roughness:0.35});
-  // переборка: кормовая стенка рубки, 10 мм; справа от входа — место под блок
-  const BH=new THREE.Group();S.add(BH);
-  const shp=new THREE.Shape();shp.moveTo(-200,-170);shp.lineTo(200,-170);shp.lineTo(200,170);shp.lineTo(-200,170);shp.lineTo(-200,-170);
-  const hole=new THREE.Path();hole.absarc(0,-20,12.5,0,Math.PI*2,true);shp.holes.push(hole);
-  const bg=new THREE.ExtrudeGeometry(shp,{depth:10,bevelEnabled:false,curveSegments:24});bg.translate(0,0,-10);const bulk=new THREE.Mesh(bg,M(0xb9c2c9,{roughness:0.5,side:THREE.DoubleSide,transparent:true,opacity:0.42,depthWrite:false}));BH.add(bulk);
-  // салазки на переборке: плита 150 × 80 × 6 с ласточкиным хвостом, в нише спины блока
-  const dock=bx(150,80,6,M(0x3a4048),0,-20,3);S.add(dock);
-  const dockHole=new THREE.Mesh(new THREE.CylinderGeometry(12.5,12.5,6.2,24),M(0x101215));dockHole.rotation.x=Math.PI/2;dockHole.position.set(0,-20,3);S.add(dockHole);
-  // блок: корпус 288 × 134 × 35, полупрозрачный, со стеклом и экранами
+  const lbl=(t,p)=>{const c=document.createElement('canvas');c.width=640;c.height=96;const q=c.getContext('2d');q.font='600 40px Onest, Arial, sans-serif';const w=Math.min(630,q.measureText(t).width+28);q.fillStyle='rgba(14,22,30,.86)';q.fillRect(0,0,w,96);q.fillStyle='#fff';q.textBaseline='middle';q.fillText(t,14,50);
+    const sp=new THREE.Sprite(new THREE.SpriteMaterial({map:new THREE.CanvasTexture(c),depthTest:false,transparent:true}));sp.center.set(0,0.5);sp.scale.set(0.2,0.03,1);sp.material.sizeAttenuation=false;sp.position.copy(p);sp.renderOrder=9;return sp;};
+  const W=229,H=188,D=35;   // корпус C1, толщина 35 мм
+  const gel=M(0xdfe3e6,{roughness:0.5,side:THREE.DoubleSide}),dark=M(0x23272c),cop=M(0xc9a64a,{metalness:0.6,roughness:0.35}),steel=M(0x9aa2aa,{metalness:0.6,roughness:0.35}),cab=M(0x2b2f35);
+  // переборка: кормовая стенка рубки, 10 мм; отверстие Ø25 за блоком
+  const shp=new THREE.Shape();shp.moveTo(-200,-190);shp.lineTo(200,-190);shp.lineTo(200,170);shp.lineTo(-200,170);shp.lineTo(-200,-190);
+  const HY=-50,hole=new THREE.Path();hole.absarc(0,HY,12.5,0,Math.PI*2,true);shp.holes.push(hole);
+  const bg=new THREE.ExtrudeGeometry(shp,{depth:10,bevelEnabled:false,curveSegments:24});bg.translate(0,0,-10);S.add(new THREE.Mesh(bg,gel));
+  // салазки: плита 170 × 150 × 5 на 4 винтах в переборку, две направляющие «ласточкин хвост» по краям, внизу — пружинная защёлка
+  const dk=M(0x3a4048);S.add(bx(170,150,5,dk,0,-20,2.5));
+  [-1,1].forEach(s=>{S.add(bx(10,140,6,dk,s*78,-20,8));S.add(bx(4,140,3,dk,s*(78-6),-20,12.5));});
+  [[-70,45],[70,45],[-70,-85],[70,-85]].forEach(p=>S.add(cyl(3.5,2,steel,p[0],p[1],5.6)));
+  const latch=bx(30,8,9,M(0xd9a441),0,-91,9.5);S.add(latch);   // зуб защёлки на пружине
+  // блок C1: скруглённый корпус, полупрозрачный, со стеклом, экранами и нишей в спине
   const U=new THREE.Group();S.add(U);
-  const shell=new THREE.Mesh(new THREE.BoxGeometry(W,H,D),M(0xd7dde2,{transparent:true,opacity:0.55,depthWrite:false,roughness:0.4}));shell.position.z=D/2;U.add(shell);
-  const glass=bx(W-20,H-20,1.5,M(0x9fc4d6,{transparent:true,opacity:0.35}),0,0,D-0.8);U.add(glass);
-  U.add(bx(92,90,1.2,M(0xe9ece6),-W/2+10+46,4,D-3),bx(170,111,1.2,M(0xe9ece6),W/2-10-85,0,D-3));
-  U.add(bx(126,100,1.6,M(0x2e7d4f),20,-6,12));      // плата
-  // резервный путь питания внутри блока: от спины к плате
-  const backY=-20;
+  {const BV=4,RR=10,W0=W-2*BV,H0=H-2*BV,sh=new THREE.Shape();sh.moveTo(-W0/2+RR,-H0/2);sh.lineTo(W0/2-RR,-H0/2);sh.quadraticCurveTo(W0/2,-H0/2,W0/2,-H0/2+RR);sh.lineTo(W0/2,H0/2-RR);sh.quadraticCurveTo(W0/2,H0/2,W0/2-RR,H0/2);sh.lineTo(-W0/2+RR,H0/2);sh.quadraticCurveTo(-W0/2,H0/2,-W0/2,H0/2-RR);sh.lineTo(-W0/2,-H0/2+RR);sh.quadraticCurveTo(-W0/2,-H0/2,-W0/2+RR,-H0/2);
+   const g=new THREE.ExtrudeGeometry(sh,{depth:D-2*BV,bevelEnabled:true,bevelThickness:BV,bevelSize:BV,bevelSegments:3,curveSegments:10});g.translate(0,0,BV);
+   U.add(new THREE.Mesh(g,M(0xd7dde2,{transparent:true,opacity:0.5,depthWrite:false,roughness:0.4})));}
+  U.add(bx(W-16,H-16,1.5,M(0x9fc4d6,{transparent:true,opacity:0.3}),0,0,D-1));
+  U.add(bx(111.2,170.2,1.2,M(0xe9ece6),-W/2+3+6+55.6,-H/2+3+6+85.1,D-3));
+  U.add(bx(92,89.7,1.2,M(0xe9ece6),-W/2+3+125.2+46,-H/2+3+59.2+44.85,D-3));
+  U.add(bx(200,150,1.6,M(0x2e7d4f,{transparent:true,opacity:0.7}),0,0,14));   // основная плата (раскладка — после выбора кнопок)
+  // ниша в спине блока под вилку SP13: 46 × 80 × 22, открыта к переборке
+  U.add(bx(46,80,1.5,M(0x5a626b,{transparent:true,opacity:0.55}),0,HY,22.5));
+  [-1,1].forEach(s=>U.add(bx(1.5,80,22,M(0x5a626b,{transparent:true,opacity:0.55}),s*23,HY,11)));
+  const relBtn=bx(26,4,12,M(0xd62828),0,-H/2-1.5,20);U.add(relBtn);   // клавиша защёлки на нижней грани
+  // ---- R3: гнездо SP13 в салазках, вилка на коротком хвосте из спины блока
+  const R3=new THREE.Group();S.add(R3);
+  const sock=cyl(11,22,M(0x8a9099,{metalness:0.5}),0,HY,-4);R3.add(sock);   // гнездо на панель: корпус сквозь Ø25 в каюту, фланец на плите
+  R3.add(cyl(14,2.5,steel,0,HY,6));
+  R3.add(tube([V(0,HY,-16),V(0,HY,-40),V(30,HY-60,-90),V(40,-260,-150)],4,cab));   // кабель от гнезда — в каюту к резервному блоку
+  const plug=new THREE.Group();R3.add(plug);plug.add(cyl(11,26,dark,0,0,0));plug.add(cyl(12.5,8,M(0x3a3f45),0,0,-9));
+  let tail3=null;
   // ---- R1: хвост сквозь переборку, разъём SP13 в каюте
   const R1=new THREE.Group();S.add(R1);
   const plugA=new THREE.Group(),plugB=new THREE.Group();R1.add(plugA,plugB);
   plugA.add(new THREE.Mesh(new THREE.CylinderGeometry(11,11,34,20),dark));plugB.add(new THREE.Mesh(new THREE.CylinderGeometry(11,11,30,20),M(0x8a9099,{metalness:0.5})));
-  const PA0=V(60,-160,-110),PB0=V(60,-160+32,-110);plugA.position.copy(PA0);plugB.position.copy(PB0);
-  const grommet=new THREE.Mesh(new THREE.TorusGeometry(13,3,8,24),dark);grommet.position.set(0,-20,-10);R1.add(grommet);
-  const cabIn=tube([V(60,-175,-110),V(60,-230,-110),V(40,-300,-160)],4,M(0x2b2f35));R1.add(cabIn);   // кабель к резервному блоку
-  let tail=null;const tailM=M(0x2b2f35);
+  const PA0=V(60,-170,-110),PB0=V(60,-170+32,-110);plugA.position.copy(PA0);plugB.position.copy(PB0);
+  const grommet=new THREE.Mesh(new THREE.TorusGeometry(13,3,8,24),dark);grommet.position.set(0,HY,-10);R1.add(grommet);
+  R1.add(tube([V(60,-185,-110),V(60,-230,-110),V(40,-300,-160)],4,cab));
+  let tail=null;
   // ---- R2: контакты в салазках, кабель от них сразу в каюту
   const R2=new THREE.Group();S.add(R2);
-  const pogo=bx(44,14,8,M(0x2b2f35),0,-20,10);R2.add(pogo);for(let i=0;i<8;i++)R2.add(bx(3,3,2,cop,-17.5+i*5,-20,15));
-  const pads=new THREE.Group();U.add(pads);for(let i=0;i<8;i++)pads.add(bx(3.5,5,0.6,cop,-17.5+i*5,-20,0.4));
-  R2.add(tube([V(0,-20,-2),V(0,-20,-30),V(0,-60,-60),V(30,-200,-120)],4,M(0x2b2f35)));
+  R2.add(bx(44,14,8,cab,0,HY,9));for(let i=0;i<8;i++)R2.add(bx(3,3,2,cop,-17.5+i*5,HY,14));
+  const pads=new THREE.Group();U.add(pads);for(let i=0;i<8;i++)pads.add(bx(3.5,5,0.6,cop,-17.5+i*5,HY,0.4));
+  R2.add(tube([V(0,HY,-2),V(0,HY,-30),V(0,HY-40,-60),V(30,-220,-120)],4,cab));
   // подписи
   const L=new THREE.Group();S.add(L);
-  const L1=[lbl('переборка 10 мм',V(-190,150,-5)),lbl('каюта',V(80,90,-170)),lbl('кокпит',V(80,120,90)),lbl('салазки в нише спины',V(80,-80,4))];
-  const LR1=[lbl('отверстие Ø25 за блоком',V(14,-34,-12)),lbl('разъём SP13 — в каюте',V(75,-140,-110)),lbl('к резервному блоку',V(45,-270,-150))];
-  const LR2=[lbl('контакты в салазках',V(26,-20,16)),lbl('кабель сразу в каюту',V(40,-210,-150))];
-  [...L1,...LR1,...LR2].forEach(s=>L.add(s));
+  const L1=[lbl('переборка 10 мм',V(-190,150,-5)),lbl('каюта',V(80,90,-170)),lbl('кокпит',V(80,120,110)),lbl('салазки: направляющие и защёлка',V(90,-105,12))];
+  const LR3=[lbl('гнездо SP13 в салазках',V(16,HY-14,8)),lbl('вилка SP13 на хвосте 12 см, в нише спины',V(28,HY+30,24)),lbl('клавиша защёлки снизу',V(16,-H/2-12,24)),lbl('к резервному блоку',V(45,-260,-150))];
+  const LR1=[lbl('отверстие Ø25 за блоком',V(14,HY-14,-12)),lbl('разъём SP13 — в каюте',V(75,-150,-110)),lbl('к резервному блоку',V(45,-280,-150))];
+  const LR2=[lbl('контакты в салазках',V(26,HY,16)),lbl('кабель сразу в каюту',V(40,-230,-150))];
+  [...L1,...LR3,...LR1,...LR2].forEach(s=>L.add(s));
   // состояние
-  const st={v:'r1',off:0,goal:0};
-  function tailPath(){const t=st.off,ub=V(0,backY+60*Math.min(1,t*2),60*Math.max(0,t*2-1)+0.5),pa=plugA.position;
-    const mid=t<0.01?V(0,-20,-40):V(0,-20,-14);
-    return [V(ub.x,ub.y,ub.z+2),V(0,ub.y,ub.z-2>0?ub.z-2:-1),V(0,-20,-6),mid,V(pa.x,pa.y+30,pa.z),V(pa.x,pa.y+17,pa.z)];}
-  function update(){const t=st.off;
-    // блок: сначала вверх по салазкам на 60 мм, потом от переборки
-    U.position.set(0,60*Math.min(1,t*2),60*Math.max(0,t*2-1));
-    R1.visible=st.v==='r1';R2.visible=st.v==='r2';pads.visible=st.v==='r2';LR1.forEach(s=>s.visible=st.v==='r1');LR2.forEach(s=>s.visible=st.v==='r2');
-    if(st.v==='r1'){plugA.position.copy(PA0);plugB.position.copy(PB0).add(V(0,40*Math.min(1,t*3),0));   // в каюте разъём разомкнут первым
+  const st={v:'r3',off:0,goal:0};
+  function tailPath(){const t=st.off,ub=V(0,HY+60*Math.min(1,t*2),60*Math.max(0,t*2-1)+0.5),pa=plugA.position;
+    const mid=t<0.01?V(0,HY,-40):V(0,HY,-14);
+    return [V(ub.x,ub.y,ub.z+2),V(0,ub.y,ub.z-2>0?ub.z-2:-1),V(0,HY,-6),mid,V(pa.x,pa.y+30,pa.z),V(pa.x,pa.y+17,pa.z)];}
+  function update(){const t=st.off,v=st.v;
+    if(v==='r3'){// R3: клавиша → вверх на 30 мм (зуб выходит из паза) → от стены на 90 мм (хвост 12 см) → вилка снимается с гнезда
+      const a=Math.min(1,t*3),b=Math.max(0,Math.min(1,t*3-1)),c=Math.max(0,t*3-2);
+      latch.position.y=-91-6*Math.min(1,t*6);relBtn.position.y=-H/2-1.5+2*Math.min(1,t*6);
+      U.position.set(0,30*a,90*b);plug.position.set(0,HY,14+40*c);
+      if(tail3){R3.remove(tail3);tail3.geometry.dispose();}
+      const ub=U.position,pp=plug.position;tail3=tube([V(pp.x,pp.y,pp.z+13),V(pp.x,pp.y,pp.z+18),V(ub.x+4,ub.y+HY+20,ub.z+16),V(ub.x+10,ub.y+HY+38,ub.z+20)],3.2,cab);R3.add(tail3);}
+    else{latch.position.y=-91;relBtn.position.y=-H/2-1.5;U.position.set(0,60*Math.min(1,t*2),60*Math.max(0,t*2-1));}
+    R3.visible=v==='r3';R1.visible=v==='r1';R2.visible=v==='r2';pads.visible=v==='r2';LR3.forEach(s=>s.visible=v==='r3');LR1.forEach(s=>s.visible=v==='r1');LR2.forEach(s=>s.visible=v==='r2');
+    if(v==='r1'){plugA.position.copy(PA0);plugB.position.copy(PB0).add(V(0,40*Math.min(1,t*3),0));
       const pa=plugA.position.clone().lerp(V(0,-40,-30),Math.max(0,t*1.5-0.5));plugA.position.copy(pa);
-      if(tail){R1.remove(tail);tail.geometry.dispose();}tail=tube(tailPath(),3.2,tailM);R1.add(tail);}}
+      if(tail){R1.remove(tail);tail.geometry.dispose();}tail=tube(tailPath(),3.2,cab);R1.add(tail);}}
   // кнопки
-  const set=(k,v)=>{st[k]=v;document.querySelectorAll('[data-c3]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.c3===st.v||(b.dataset.c3==='off'&&st.goal>0.5))));};
-  document.querySelectorAll('[data-c3]').forEach(b=>b.addEventListener('click',()=>{const k=b.dataset.c3;if(k==='off'){st.goal=st.goal>0.5?0:1;}else{st.v=k;}set('v',st.v);update();
-    document.getElementById('c3txt').textContent=st.v==='r1'?TX.r1:TX.r2;}));
-  const TX={r1:'R1: из спины блока выходит хвост 30–40 см, проходит в отверстие Ø25 в переборке прямо за блоком и заканчивается разъёмом SP13 в каюте. Чтобы снять блок, сначала разомкнуть разъём в каюте, затем поднять блок по салазкам и протянуть хвост сквозь отверстие. Снаружи нет ни разъёма, ни кабеля.',
-            r2:'R2: в салазках на переборке стоят пружинные контакты на 8 контактов, кабель от них сразу уходит в каюту. На спине блока — ответные площадки. Блок садится на салазки — контакты замыкаются; поднял — разомкнул. Всё из кокпита, без захода в каюту.'};
-  document.getElementById('c3txt').textContent=TX.r1;
-  function size(){const w=box.clientWidth,h=Math.round(Math.min(460,Math.max(300,w*0.55)));R.setSize(w,h);C.aspect=w/h;C.updateProjectionMatrix();}
+  const TX={r3:'Выбрано 16.11 — хвост с SP13 в нише салазок. Салазки — плита на 4 винтах в переборку, с двумя направляющими и пружинной защёлкой внизу, без барашков. Блок надвигается сверху вниз до щелчка. Из нижней части спины выходит хвост 12 см с вилкой SP13; она вставлена в гнездо SP13 на салазках и лежит в нише спины блока. Кабель от гнезда — сквозь отверстие Ø25 в переборке, в каюту к резервному блоку. Снять: нажать красную клавишу снизу, поднять блок на 3 см, отвести от стены на длину хвоста, открутить гайку SP13 и снять вилку. В каюту заходить не нужно.',
+            r1:'R1, для сравнения: из спины блока выходит хвост 30–40 см, проходит в отверстие Ø25 прямо за блоком и заканчивается разъёмом SP13 в каюте. Чтобы снять блок, сначала разомкнуть разъём в каюте.',
+            r2:'R2, для сравнения: в салазках пружинные контакты, на спине блока — площадки. Поднял — разомкнул. Надёжность зависит от золочения, уплотнения и отключения напряжения без блока.'};
+  const set=()=>{document.querySelectorAll('[data-c3]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.c3===st.v||(b.dataset.c3==='off'&&st.goal>0.5))));};
+  document.querySelectorAll('[data-c3]').forEach(b=>b.addEventListener('click',()=>{const k=b.dataset.c3;if(k==='off'){st.goal=st.goal>0.5?0:1;}else{st.v=k;}set();update();
+    document.getElementById('c3txt').textContent=TX[st.v];}));
+  document.getElementById('c3txt').textContent=TX.r3;set();
+  function size(){const w=box.clientWidth,h=Math.round(Math.min(480,Math.max(320,w*0.58)));R.setSize(w,h);C.aspect=w/h;C.updateProjectionMatrix();}
   function theme(){R.setClearColor(new THREE.Color(css('--surface')||'#141b22'));}
   addEventListener('resize',size);size();theme();try{matchMedia('(prefers-color-scheme: dark)').addEventListener('change',theme);}catch(e){}
   update();
-  (function loop(){requestAnimationFrame(loop);if(Math.abs(st.off-st.goal)>0.002){st.off+=(st.goal-st.off)*0.06;update();}O.update();R.render(S,C);})();
+  (function loop(){requestAnimationFrame(loop);if(Math.abs(st.off-st.goal)>0.002){st.off+=(st.goal-st.off)*0.05;update();}O.update();R.render(S,C);})();
 })();
 </script>
 
