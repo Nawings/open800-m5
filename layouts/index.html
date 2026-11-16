@@ -65,6 +65,7 @@ ul.notes{margin:0;padding-left:18px;display:grid;gap:8px;max-width:80ch}
 .glass{fill:var(--glass);stroke:var(--glass-line);stroke-width:.3}
 .epd{fill:var(--ink-epd);font-family:"Oswald","Arial Narrow",sans-serif;font-weight:500}
 .epdl{fill:#55605a;font-family:var(--f-body)}
+.tb{fill:#141414;font-family:Arial,"Helvetica Neue",sans-serif;font-weight:700}.tbl{fill:#141414;font-family:Arial,"Helvetica Neue",sans-serif;font-weight:700}
 .knob{fill:var(--btn)}
 .dimL{stroke:var(--dim);stroke-width:.35;fill:none}
 .dimT{fill:var(--dim);font:600 4.6px var(--f-body)}
@@ -89,6 +90,7 @@ ul.notes{margin:0;padding-left:18px;display:grid;gap:8px;max-width:80ch}
       <span class="fact ok"><b>Решено</b> ниже 0 °C работать не нужно, серия от 10 штук</span>
       <span class="fact ok"><b>Замер 16.11</b> место справа от входа ≈ 34 × 33 см: по примерному контуру помещается только 7,5″</span>
       <span class="fact ok"><b>Решено 16.11</b> 10,2″ не ставим — не встаёт на переборку</span>
+      <span class="fact ok"><b>Решено 16.11</b> толщина блока ≈ 35 мм, кабель — сзади</span>
       <span class="fact q"><b>Ждёт решения</b> компоновка, кабель сзади, дизайн и кнопки</span>
     </div>
   </header>
@@ -122,7 +124,7 @@ ul.notes{margin:0;padding-left:18px;display:grid;gap:8px;max-width:80ch}
   <section class="sheet" aria-labelledby="hc">
     <h2 id="hc">Сравнение</h2>
     <div class="tbl"><table id="cmp"></table></div>
-    <p class="small">Высота крупной цифры — для одинаковой раскладки основного экрана: 4 крупных числа в 2 ряда, узкий шрифт; размер подобран так, чтобы самое длинное число влезло в свою четверть экрана. Дальность чтения — по правилу эргономики: цифра должна быть видна под углом не меньше 24′, это около 1/140 расстояния. Размеры корпуса — внешние, со стенкой 3 мм. Глубина у новых вариантов ≈ 35 мм вместо нынешних 75 мм коробки и 16 мм салазок — см. «Тоньше вдвое». У экрана 7,5″ стоя цифры мельче: 4 числа стоят столбиком, и каждое получает четверть высоты.</p>
+    <p class="small">На основном экране — режим «Табло», как на нынешнем экране прибора: 8 величин, лодка слева, ветер справа, по 4 строки. Высота крупной цифры — для этой раскладки, жирный шрифт; размер подобран так, чтобы самое длинное число влезло в свою ячейку. На малом экране — стартовая процедура: время до старта, расстояние до линии и время до неё, выгодный конец, перекос линии, ветер. Дальность чтения — по правилу эргономики: цифра должна быть видна под углом не меньше 24′, это около 1/140 расстояния. Размеры корпуса — внешние, со стенкой 3 мм. Глубина у новых вариантов ≈ 35 мм вместо нынешних 75 мм коробки и 16 мм салазок — см. «Тоньше вдвое». У экрана 7,5″ стоя цифры мельче: 4 числа стоят столбиком, и каждое получает четверть высоты.</p>
   </section>
 
   <section class="sheet" aria-labelledby="hm">
@@ -147,7 +149,7 @@ ul.notes{margin:0;padding-left:18px;display:grid;gap:8px;max-width:80ch}
   </section>
 
   <section class="sheet" aria-labelledby="ht">
-    <h2 id="ht">Тоньше вдвое: ≈ 35 мм вместо 78</h2>
+    <h2 id="ht">Толщина ≈ 35 мм вместо 78 — решено 16.11</h2>
     <div class="two">
       <div class="draw thk"><svg viewBox="0 0 430 230" role="img" aria-label="Разрез блока сбоку: сейчас 75 мм коробки и 16 мм салазок, новый печатный корпус около 35 мм с утопленными салазками">
         <text class="dimT" x="10" y="14">разрез сбоку, 1 : 1 по толщине · слева — переборка</text>
@@ -172,16 +174,14 @@ ul.notes{margin:0;padding-left:18px;display:grid;gap:8px;max-width:80ch}
 
   <section class="sheet" aria-labelledby="hk">
     <h2 id="hk">Кабель питания — сзади, сквозь переборку</h2>
-    <div class="cards" style="grid-template-columns:repeat(auto-fit,minmax(260px,1fr))">
-      <div class="card" style="cursor:default"><span class="k">R1</span>
-        <svg class="cbl" viewBox="0 0 220 110" aria-hidden="true"><rect x="100" y="5" width="8" height="100" fill="var(--case-line)"/><rect x="108" y="20" width="35" height="70" rx="3" fill="var(--case)" stroke="var(--case-line)"/><path d="M118 55 H90 C70 55 70 80 50 80 H40" stroke="var(--ink)" stroke-width="2.4" fill="none"/><rect x="26" y="74" width="16" height="12" rx="2" fill="var(--muted)"/><text class="lbl" x="34" y="100" text-anchor="middle">разъём SP13</text><text class="lbl" x="150" y="104">кокпит</text><text class="lbl" x="4" y="14">каюта</text><circle cx="104" cy="55" r="6" fill="none" stroke="var(--accent)"/><text class="lbl" x="112" y="14">отверстие Ø25 под блоком</text></svg>
-        <span class="t">Короткий хвост сквозь переборку, разъём — в каюте</span>
-        <span class="s">Из спины блока выходит кабель 30–40 см, проходит в отверстие Ø25 в переборке прямо за блоком; разъём SP13 — внутри каюты. Отверстие закрыто самим блоком и уплотнителем на салазках. Снаружи нет ни кабеля, ни разъёма. Снять блок — отстегнуть разъём в каюте и протянуть хвост. Самый надёжный вариант: в разъём не попадает вода.</span></div>
-      <div class="card" style="cursor:default"><span class="k">R2</span>
-        <svg class="cbl" viewBox="0 0 220 110" aria-hidden="true"><rect x="100" y="5" width="8" height="100" fill="var(--case-line)"/><rect x="108" y="16" width="10" height="78" fill="#c9d3dc"/><rect x="118" y="20" width="35" height="70" rx="3" fill="var(--case)" stroke="var(--case-line)"/><rect x="110" y="50" width="12" height="12" fill="#b88a2a"/><path d="M110 56 H60" stroke="var(--ink)" stroke-width="2.4"/><text class="lbl" x="4" y="14">каюта</text><text class="lbl" x="160" y="104">кокпит</text><text class="lbl" x="124" y="14">контакты в салазках</text></svg>
-        <span class="t">Контакты в салазках: блок садится — питание есть</span>
-        <span class="s">В салазках на переборке стоит магнитный разъём с пружинными контактами IP67 на 8 контактов, кабель от него уходит в каюту. Блок сдвигается на салазки — контакты замыкаются сами. Снимается одним движением из кокпита, без захода в каюту. Минусы: пружинные контакты в солёной воде со временем окисляются (нужны позолоченные и смазка), разъём ≈ 1–2 тыс. ₽ и точнее печать салазок.</span></div>
+    <div class="seg" role="group" aria-label="Вариант кабеля и действие">
+      <button class="btn" type="button" data-c3="r1" aria-pressed="true">R1 — хвост, разъём в каюте</button>
+      <button class="btn" type="button" data-c3="r2" aria-pressed="false">R2 — контакты в салазках</button>
+      <button class="btn" type="button" data-c3="off" aria-pressed="false">Снять блок / поставить</button>
     </div>
+    <div id="c3d" class="draw" style="padding:0;overflow:hidden;border-radius:6px"></div>
+    <p class="read" id="c3txt"></p>
+    <p class="small">Вращать — мышью или пальцем, колесо — ближе. Корпус блока показан полупрозрачным: видно экраны, плату и что у него на спине. Переборка — кормовая стенка рубки, 10 мм; блок — вариант A3, 288 × 134 × 35 мм.</p>
     <p class="small">В обоих вариантах снизу и по бокам блока отверстий нет. USB-C и карта памяти уходят внутрь, под заднюю крышку: прошивка и журналы гонок идут по Wi-Fi, кабель нужен только при ремонте. Тумблер питания заменяет кнопка: долгое нажатие включает и выключает.</p>
   </section>
 
@@ -251,7 +251,6 @@ function build(v){const E=[];let W,H;
     [0,1,2,3].forEach(i=>E.push({k:'btn',x:bx+(i%2)*PITCH+5,y:GAP+sm.mod[1]-14-Math.floor(i/2)*PITCH}));E.push({k:'led',x:bx+5,y:GAP+12,c:'g'},{k:'led',x:bx+PITCH+5,y:GAP+12,c:'r'});}
   return {W,H,OW:W+2*WALL,OH:H+2*WALL,E};}
 const V=[
-  {id:'now',key:'0',title:'Сейчас',sub:'один экран 4,2″, покупная коробка 200 × 120',main:'s42'},
   {id:'a1',key:'A1',title:'7,5″ и 4,2″ рядом',sub:'широкий и низкий, кнопки под малым экраном',main:'s75',lay:'side'},
   {id:'a3',key:'A3',title:'4,2″ слева, 7,5″ справа',sub:'как A1, но малый экран и кнопки слева',main:'s75',lay:'sideL'},
   {id:'a2',key:'A2',title:'7,5″ сверху, 4,2″ снизу',sub:'узкий и высокий, кнопки справа от малого экрана',main:'s75',lay:'stack'},
@@ -260,33 +259,48 @@ const V=[
   {id:'c2',key:'C2',title:'7,5″ стоя, 4,2″ снизу',sub:'самый узкий, высокий',main:'s75v',lay:'stack'}];
 // крупная цифра: шрифт подбирается так, чтобы самое длинное число влезло в половину ширины и в половину высоты экрана
 const MC=document.createElement('canvas').getContext('2d');let RATIO=0.79,WID={};
-function measure(){MC.font='500 100px Oswald, "Arial Narrow", sans-serif';const m=MC.measureText('8');RATIO=(m.actualBoundingBoxAscent||79)/100;
+let TCAP=0.716,TW={};
+function measure(){MC.font='700 100px Arial, sans-serif';{const m=MC.measureText('8');TCAP=(m.actualBoundingBoxAscent||71.6)/100;['5,4','177°','56°','+6°','12,0','34°','8,1','233°'].forEach(t=>{TW[t]=MC.measureText(t).width/100;});}
+  MC.font='500 100px Oswald, "Arial Narrow", sans-serif';const m=MC.measureText('8');RATIO=(m.actualBoundingBoxAscent||79)/100;
   ['12,4','38°','177°','6,1'].forEach(t=>{WID[t]=MC.measureText(t).width/100;});}
 function fsGrid(a,c,r){const wmax=Math.max(...Object.values(WID));return Math.min(a[0]/c*0.88/wmax,(a[1]/r*0.8)*0.86/RATIO);}
 function gridFor(a){const g=[[2,2],[1,4]].map(q=>({c:q[0],r:q[1],fs:fsGrid(a,q[0],q[1])}));return g[0].fs>=g[1].fs?g[0]:g[1];}
 function fsFor(a){return gridFor(a).fs;}
-function sizes(){V.forEach(v=>{const m=SCR[v.main];v.fs=fsFor(m.act);v.digit=v.fs*RATIO;v.dist=v.digit*140/1000;});}
+function tabloGeo(a){const hh=a[1]*0.075,ch=a[1]*0.062,rh=(a[1]-hh-ch)/4,cw=a[0]/2,lab=Math.min(rh*0.17,cw*0.075),wmax=Math.max(...Object.values(TW));
+  const fs=Math.min((rh-lab*1.5)*0.86/TCAP,(cw*0.80)/wmax);return {hh,ch,rh,cw,lab,fs};}
+function sizes(){V.forEach(v=>{const m=SCR[v.main],T=tabloGeo(m.act);v.fs=T.fs;v.digit=T.fs*TCAP;v.dist=v.digit*140/1000;});}
 measure();V.forEach(v=>{v.g=build(v);});sizes();
 // у нынешней коробки — её настоящий размер
-V[0].g.OW=200;V[0].g.OH=120;
+
 const COL={now:'#8796a3',a1:'#2a78d6',a3:'#2a78d6',a2:'#199e70',c1:'#d95926',c3:'#d95926',c2:'#9085e9'};
 const st={v:'a3',dim:true,all:false,mod:false,real:false};
 
 // ---- содержимое экранов: основной — 4 крупных числа, малый — старт и питание
-function mainContent(x,y,s){const a=s.act,ax=x+(s.mod[0]-a[0])/2+s.actOff[0],ay=y+(s.mod[1]-a[1])/2+s.actOff[1],Y=v=>ay+a[1]-v,h=a[1]*0.36;let t='';
-  const G=gridFor(a),cw=a[0]/G.c,ch=a[1]/G.r,fsz=G.fs,lab=Math.min(a[0],a[1])*0.05;
-  [['12,4','истинный ветер, уз'],['38°','угол к ветру'],['177°','курс'],['6,1','скорость, уз']].forEach((c,i)=>{const col=i%G.c,row=Math.floor(i/G.c),x0=ax+col*cw,top=ay+row*ch;
-    t+='<text class="epdl" x="'+(x0+cw*0.04)+'" y="'+(top+lab*1.4)+'" font-size="'+lab+'">'+c[1]+'</text>';
-    t+='<text class="epd" x="'+(x0+cw/2)+'" y="'+(top+ch*0.56+fsz*RATIO/2)+'" text-anchor="middle" font-size="'+fsz+'">'+c[0]+'</text>';
-    if(row>0)t+='<line x1="'+(x0+cw*0.03)+'" x2="'+(x0+cw*0.97)+'" y1="'+top+'" y2="'+top+'" stroke="#9aa6a0" stroke-width=".4"/>';
-    if(col>0)t+='<line x1="'+x0+'" x2="'+x0+'" y1="'+(top+ch*0.04)+'" y2="'+(top+ch*0.96)+'" stroke="#9aa6a0" stroke-width=".4"/>';});
+function mainContent(x,y,s){const a=s.act,ax=x+(s.mod[0]-a[0])/2+s.actOff[0],ay=y+(s.mod[1]-a[1])/2+s.actOff[1],T=tabloGeo(a);let t='';const ln=(x1,y1,x2,y2,w)=>'<line x1="'+x1+'" y1="'+y1+'" x2="'+x2+'" y2="'+y2+'" stroke="#141414" stroke-width="'+(w||0.5)+'"/>';
+  const hs=T.hh*0.62;
+  t+='<text class="tb" x="'+(ax+a[0]*0.02)+'" y="'+(ay+T.hh*0.75)+'" font-size="'+hs+'">M5</text><text class="tbl" x="'+(ax+a[0]*0.02+hs*2.2)+'" y="'+(ay+T.hh*0.75)+'" font-size="'+(hs*0.8)+'">ТАБЛО</text>';
+  t+='<text class="tbl" x="'+(ax+a[0]*0.98)+'" y="'+(ay+T.hh*0.75)+'" font-size="'+(hs*0.7)+'" text-anchor="end">лодка 12,7 В · резерв 12,3 В · SD ▭ 100 %</text>';
+  t+=ln(ax,ay+T.hh,ax+a[0],ay+T.hh,0.7);
+  ['ЛОДКА','ВЕТЕР'].forEach((h,i)=>{t+='<text class="tb" x="'+(ax+T.cw*(i+0.5))+'" y="'+(ay+T.hh+T.ch*0.8)+'" text-anchor="middle" font-size="'+(T.ch*0.82)+'">'+h+'</text>';});
+  const top=ay+T.hh+T.ch;t+=ln(ax,top,ax+a[0],top,0.7);t+=ln(ax+T.cw,ay+T.hh,ax+T.cw,ay+a[1],0.7);
+  const C=[[['СКОРОСТЬ, уз','5,4',''],['ГРАДУС К N','177°',''],['ГР. К ВЕТРУ','56°','П'],['+/− ОТ БАЗОВОГО КУРСА','+6°','увал']],
+           [['СКОРОСТЬ ВЫМ., уз','12,0',''],['ГРАДУС ВЫМ.','34°','П'],['V ИСТИН., уз','8,1',''],['ГРАД. ИСТИН., от севера','233°','']]];
+  C.forEach((col,ci)=>col.forEach((c,ri)=>{const x0=ax+ci*T.cw,y0=top+ri*T.rh;if(ri>0)t+=ln(x0,y0,x0+T.cw,y0,0.5);
+    t+='<text class="tbl" x="'+(x0+T.cw*0.03)+'" y="'+(y0+T.lab*1.15)+'" font-size="'+T.lab+'">'+c[0]+'</text>';
+    const base=y0+T.rh-T.rh*0.07;t+='<text class="tb" x="'+(x0+T.cw*0.04)+'" y="'+base+'" font-size="'+T.fs+'">'+c[1]+'</text>';
+    if(c[2]){const vw=(TW[c[1]]||1.5)*T.fs;t+='<text class="tb" x="'+(x0+T.cw*0.06+vw)+'" y="'+base+'" font-size="'+(T.lab*1.25)+'">'+c[2]+'</text>';}}));
   return t;}
-function smallContent(x,y,s){const a=s.act,ax=x+(s.mod[0]-a[0])/2+s.actOff[0],ay=y+(s.mod[1]-a[1])/2+s.actOff[1];let t='';
-  t+='<text class="epdl" x="'+(ax+3)+'" y="'+(ay+6)+'" font-size="3.6">до старта</text>';
-  t+='<text class="epd" x="'+(ax+a[0]/2)+'" y="'+(ay+28)+'" text-anchor="middle" font-size="22">3:42</text>';
-  t+='<text class="epdl" x="'+(ax+3)+'" y="'+(ay+40)+'" font-size="3.6">прошлый галс: 183° · 5,8 уз</text>';
-  t+='<text class="epdl" x="'+(ax+3)+'" y="'+(ay+49)+'" font-size="3.6">лодка 12,7 В · резерв 12,3 В</text>';
-  t+='<text class="epdl" x="'+(ax+3)+'" y="'+(ay+58)+'" font-size="3.6">мачта ✓ · GPS 9 спутн.</text>';return t;}
+function smallContent(x,y,s){const a=s.act,ax=x+(s.mod[0]-a[0])/2+s.actOff[0],ay=y+(s.mod[1]-a[1])/2+s.actOff[1];let t='';const L=(yy,txt,fsz,anchor,xx)=>'<text class="tbl" x="'+(xx==null?ax+2:xx)+'" y="'+(ay+yy)+'" font-size="'+fsz+'"'+(anchor?' text-anchor="'+anchor+'"':'')+'>'+txt+'</text>';
+  t+='<text class="tb" x="'+(ax+2)+'" y="'+(ay+4.6)+'" font-size="4.2">СТАРТ</text>'+L(4.6,'линия: оба конца ✓',2.9,'end',ax+a[0]-2);
+  t+='<line x1="'+ax+'" x2="'+(ax+a[0])+'" y1="'+(ay+6.2)+'" y2="'+(ay+6.2)+'" stroke="#141414" stroke-width=".5"/>';
+  t+=L(10.4,'ДО СТАРТА',2.8);t+='<text class="tb" x="'+(ax+a[0]/2)+'" y="'+(ay+27)+'" text-anchor="middle" font-size="18">−3:42</text>';
+  t+='<line x1="'+ax+'" x2="'+(ax+a[0])+'" y1="'+(ay+30.5)+'" y2="'+(ay+30.5)+'" stroke="#141414" stroke-width=".5"/>';
+  t+=L(35,'ДО ЛИНИИ',2.6)+L(35,'НА ЛИНИИ ЧЕРЕЗ',2.6,null,ax+a[0]/2+2);
+  t+='<text class="tb" x="'+(ax+2)+'" y="'+(ay+43.5)+'" font-size="8">42 м</text><text class="tb" x="'+(ax+a[0]/2+2)+'" y="'+(ay+43.5)+'" font-size="8">0:18</text>';
+  t+='<line x1="'+(ax+a[0]/2)+'" x2="'+(ax+a[0]/2)+'" y1="'+(ay+31)+'" y2="'+(ay+45.5)+'" stroke="#141414" stroke-width=".4"/>';
+  t+='<line x1="'+ax+'" x2="'+(ax+a[0])+'" y1="'+(ay+45.5)+'" y2="'+(ay+45.5)+'" stroke="#141414" stroke-width=".5"/>';
+  t+=L(50.5,'выгоднее ▶ правый конец, +12 м',3.1);t+=L(55.5,'перекос линии 8° · запас 3:24',3.1);t+=L(60.5,'ветер на линии 34° П · 12,0 уз',3.1);
+  return t;}
 // SVG: y вниз. Внутреннее поле сдвинуто на стенку
 function scene(v,ox,oy,opt){const g=v.g,Y=y=>oy+WALL+g.H-y,X=x=>ox+WALL+x;let s='';
   s+='<rect class="case" x="'+ox+'" y="'+oy+'" width="'+g.OW+'" height="'+g.OH+'" rx="'+(v.id==='now'?3:8)+'"/>';
@@ -294,7 +308,7 @@ function scene(v,ox,oy,opt){const g=v.g,Y=y=>oy+WALL+g.H-y,X=x=>ox+WALL+x;let s=
       if(opt.mod)s+='<rect class="mod" x="'+x+'" y="'+y+'" width="'+m.mod[0]+'" height="'+m.mod[1]+'"/>';
       const gw=m.glass[0],gh=m.glass[1],gx=x+(m.mod[0]-gw)/2,gy=y+(m.mod[1]-gh)/2+(m===SCR.s42?-2:0);
       s+='<rect class="glass" x="'+gx+'" y="'+gy+'" width="'+gw+'" height="'+gh+'" rx=".8"/>';
-      s+=e.role==='main'&&v.id!=='now'?mainContent(x,y,m):e.role==='small'?smallContent(x,y,m):mainContent(x,y,m);
+      s+=e.role==='small'?smallContent(x,y,m):mainContent(x,y,m);
       s+='<rect class="win" x="'+(x-2)+'" y="'+(y-2)+'" width="'+(m.mod[0]+4)+'" height="'+(m.mod[1]+4)+'" rx="1.5"/>';}
     if(e.k==='btn')s+='<circle class="knob" cx="'+X(e.x)+'" cy="'+Y(e.y)+'" r="'+(BTN/2)+'"/>';
     if(e.k==='led')s+='<circle cx="'+X(e.x)+'" cy="'+Y(e.y)+'" r="'+(LED/2)+'" fill="'+(e.c==='g'?'var(--led-g)':'var(--led-r)')+'"/>';});
@@ -327,7 +341,7 @@ function draw(){const v=V.find(q=>q.id===st.v),g=v.g,M=16,TW=thumbW,TH=thumbH;
     ['Крупная цифра',f(v.digit)+' мм'],['Читается с',f(v.dist,1)+' м'],['Второй экран',v.id==='now'?'нет':'4,2″, 400 × 300, уже куплен'],['Обновление цифр',m.upd||'около 0,3–0,6 с'],['Экран стоит',m.price||'уже куплен']];
   $('vNums').innerHTML=rows.map(r=>'<dt>'+r[0]+'</dt><dd>'+r[1]+'</dd>').join('');
   $('vNote').textContent=v.id==='now'?'Для сравнения: так сейчас. На нынешнем экране раскладка плотнее, поэтому цифры на нём мельче, чем в этой одинаковой для всех раскладке.':v.lay==='side'||v.lay==='sideL'?'Кнопки и стрелки «заход» и «отход» — в ряд под малым экраном'+(v.lay==='sideL'?', слева от основного':'')+'. Карта памяти — на боковой стенке.':'Кнопки — квадратом 2 × 2 справа от малого экрана, стрелки под ними. Карта памяти — на боковой стенке.';
-  $('readF').textContent=st.real?'Натуральная величина зависит от экрана: браузер считает 1 мм как 3,78 пикселя. Приложите линейку к размеру корпуса и проверьте.':'Светлое поле — стекло экрана с примерной картинкой, пунктир — окно в рамке. Тёмные круги — кнопки Ø14 мм, цветные — стрелки 5 мм.';
+  $('readF').textContent=(st.real?'':'Основной экран — режим «Табло» (8 величин), малый — стартовая процедура. ')+(st.real?'Натуральная величина зависит от экрана: браузер считает 1 мм как 3,78 пикселя. Приложите линейку к размеру корпуса и проверьте.':'Светлое поле — стекло экрана, пунктир — окно в рамке. Тёмные круги — кнопки Ø14 мм, цветные — стрелки 5 мм.');
   cmp();}
 // ---- таблицы
 function cmp(){$('cmp').innerHTML='<tr><th>Вариант</th><th>Корпус, мм</th><th>Основной экран</th><th>Крупная цифра</th><th>Читается с</th><th>Площадь лицевой стороны</th><th>Экран стоит</th></tr>'+
@@ -343,7 +357,7 @@ function cmp(){$('cmp').innerHTML='<tr><th>Вариант</th><th>Корпус, 
    {k:'K4',t:'Стартовая панель',s:'Крупная кнопка Старт Ø30 и концы линии слева от малого экрана — то, что жмут в суматохе старта; навигация мелкими кнопками внизу.',g:()=>scr(70,10,92,90)+scr(170,10,120,111)+btn(32,34,'Старт',16)+btn(20,82,'◀ линия',8)+btn(46,82,'линия ▶',8)+[['Экран',90],['▲',116],['▼',142],['МОБ',230]].map(b=>btn(b[1],128,b[0],6)).join(''),h:H}];
   document.getElementById('designs').innerHTML=D.map(d=>'<div class="card" style="cursor:default"><span class="k">'+d.k+'</span><svg viewBox="0 0 '+(W+4)+' '+(d.h+4)+'" aria-hidden="true"><rect x="2" y="2" width="'+W+'" height="'+d.h+'" rx="10" fill="'+c+'" stroke="'+e+'"/><g transform="translate(2,2)">'+d.g()+'</g></svg><span class="t">'+d.t+'</span><span class="s">'+d.s+'</span></div>').join('');})();
 const BEDS=[['220 × 220',220,220,'Ender-3 и похожие'],['256 × 256',256,256,'Bambu Lab A1, P1S, X1'],['300 × 300',300,300,'Ender-3 Max, Prusa XL на одну голову близко'],['350 × 320',350,320,'Bambu Lab H2D']];
-$('bed').innerHTML='<tr><th>Стол принтера</th>'+V.slice(1).map(v=>'<th>'+v.key+' · '+f(v.g.OW)+' × '+f(v.g.OH)+'</th>').join('')+'</tr>'+BEDS.map(b=>'<tr><td>'+b[0]+' <span class="small">'+b[3]+'</span></td>'+V.slice(1).map(v=>{const fit=(v.g.OW<=b[1]-6&&v.g.OH<=b[2]-6)||(v.g.OW<=b[2]-6&&v.g.OH<=b[1]-6);return '<td>'+(fit?'<span class="yes">целиком</span>':'<span class="no">из 2 частей</span>')+'</td>';}).join('')+'</tr>').join('');
+$('bed').innerHTML='<tr><th>Стол принтера</th>'+V.map(v=>'<th>'+v.key+' · '+f(v.g.OW)+' × '+f(v.g.OH)+'</th>').join('')+'</tr>'+BEDS.map(b=>'<tr><td>'+b[0]+' <span class="small">'+b[3]+'</span></td>'+V.map(v=>{const fit=(v.g.OW<=b[1]-6&&v.g.OH<=b[2]-6)||(v.g.OW<=b[2]-6&&v.g.OH<=b[1]-6);return '<td>'+(fit?'<span class="yes">целиком</span>':'<span class="no">из 2 частей</span>')+'</td>';}).join('')+'</tr>').join('');
 ['tDim','tAll','tMod','tReal'].forEach(id=>$(id).addEventListener('click',()=>{const k={tDim:'dim',tAll:'all',tMod:'mod',tReal:'real'}[id];st[k]=!st[k];draw();}));
 // ---- место на переборке: x вправо от направляющей щитов входа, y вверх от низа, мм
 const PW=340,PH=330,PR=177,PCX=PW-PR,PCY=PH-PR,BUL=[190,0,PW,110],MRG=10;
@@ -370,9 +384,91 @@ function panel(){const v=V.find(q=>q.id===pv),g=v.g,M=14,Y=y=>M+PH-y;let s='';co
   $('readP').textContent=y==null?v.key+' не помещается: корпус '+f(g.OW)+' × '+f(g.OH)+' мм выходит за скругление или на комингс.':v.key+' помещается: корпус '+f(g.OW)+' × '+f(g.OH)+' мм, низ корпуса — на '+f(y)+' мм выше низа переборки.';}
 $('pvSel').innerHTML=V.map(v=>'<button class="btn" type="button" data-p="'+v.id+'">'+v.key+'</button>').join('');
 $('pvSel').addEventListener('click',e=>{const b=e.target.closest('[data-p]');if(b){pv=b.dataset.p;panel();}});
-$('fitTab').innerHTML='<tr><th>Вариант</th><th>Корпус, мм</th><th>На переборку</th></tr>'+V.slice(1).map(v=>{const y=fitAt(v.g.OW,v.g.OH);return '<tr><td><b>'+v.key+'</b> '+v.title+'</td><td class="n">'+f(v.g.OW)+' × '+f(v.g.OH)+'</td><td>'+(y==null?'<span class="no">не помещается</span>':'<span class="yes">помещается</span>')+'</td></tr>';}).join('');
+$('fitTab').innerHTML='<tr><th>Вариант</th><th>Корпус, мм</th><th>На переборку</th></tr>'+V.map(v=>{const y=fitAt(v.g.OW,v.g.OH);return '<tr><td><b>'+v.key+'</b> '+v.title+'</td><td class="n">'+f(v.g.OW)+' × '+f(v.g.OH)+'</td><td>'+(y==null?'<span class="no">не помещается</span>':'<span class="yes">помещается</span>')+'</td></tr>';}).join('');
 panel();
 draw();
 if(document.fonts&&document.fonts.ready)document.fonts.ready.then(()=>{measure();sizes();cards();draw();});
 })();
 </script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+<script>
+// 3D: как кабель питания уходит из спины блока в переборку — R1 (хвост сквозь переборку, разъём в каюте) и R2 (контакты в салазках).
+// Единицы — мм. x — вправо вдоль переборки, y — вверх, z — из переборки в кокпит (+z кокпит, −z каюта).
+(function(){
+  const box=document.getElementById('c3d');if(!box||!window.THREE)return;
+  const css=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+  const R=new THREE.WebGLRenderer({antialias:true});R.setPixelRatio(Math.min(2,devicePixelRatio||1));box.appendChild(R.domElement);
+  const S=new THREE.Scene(),C=new THREE.PerspectiveCamera(35,1.6,5,5000);C.position.set(440,130,140);
+  const O=new THREE.OrbitControls(C,R.domElement);O.target.set(0,-60,-30);O.enableDamping=true;O.update();
+  S.add(new THREE.HemisphereLight(0xffffff,0x8a9099,0.85));const sun=new THREE.DirectionalLight(0xffffff,0.7);sun.position.set(300,500,600);S.add(sun);
+  const M=(c,o)=>new THREE.MeshStandardMaterial(Object.assign({color:c,roughness:0.6},o||{}));
+  const V=(x,y,z)=>new THREE.Vector3(x,y,z);
+  const bx=(w,h,d,m,x,y,z)=>{const o=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),m);o.position.set(x,y,z);return o;};
+  const tube=(pts,r,m)=>new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts),60,r,10,false),m);
+  const lbl=(t,p)=>{const c=document.createElement('canvas');c.width=512;c.height=96;const q=c.getContext('2d');q.font='600 40px Onest, Arial, sans-serif';const w=Math.min(500,q.measureText(t).width+28);q.fillStyle='rgba(14,22,30,.86)';q.fillRect(0,0,w,96);q.fillStyle='#fff';q.textBaseline='middle';q.fillText(t,14,50);
+    const sp=new THREE.Sprite(new THREE.SpriteMaterial({map:new THREE.CanvasTexture(c),depthTest:false,transparent:true}));sp.center.set(0,0.5);sp.scale.set(0.16,0.03,1);sp.material.sizeAttenuation=false;sp.position.copy(p);sp.renderOrder=9;return sp;};
+  const W=288,H=134,D=35;   // корпус A3, толщина 35 мм
+  const grp=M(0xe6e2d6),gel=M(0xeef1f3,{roughness:0.45}),dark=M(0x23272c),cop=M(0xc9a64a,{metalness:0.6,roughness:0.35});
+  // переборка: кормовая стенка рубки, 10 мм; справа от входа — место под блок
+  const BH=new THREE.Group();S.add(BH);
+  const shp=new THREE.Shape();shp.moveTo(-200,-170);shp.lineTo(200,-170);shp.lineTo(200,170);shp.lineTo(-200,170);shp.lineTo(-200,-170);
+  const hole=new THREE.Path();hole.absarc(0,-20,12.5,0,Math.PI*2,true);shp.holes.push(hole);
+  const bg=new THREE.ExtrudeGeometry(shp,{depth:10,bevelEnabled:false,curveSegments:24});bg.translate(0,0,-10);const bulk=new THREE.Mesh(bg,M(0xb9c2c9,{roughness:0.5,side:THREE.DoubleSide,transparent:true,opacity:0.42,depthWrite:false}));BH.add(bulk);
+  // салазки на переборке: плита 150 × 80 × 6 с ласточкиным хвостом, в нише спины блока
+  const dock=bx(150,80,6,M(0x3a4048),0,-20,3);S.add(dock);
+  const dockHole=new THREE.Mesh(new THREE.CylinderGeometry(12.5,12.5,6.2,24),M(0x101215));dockHole.rotation.x=Math.PI/2;dockHole.position.set(0,-20,3);S.add(dockHole);
+  // блок: корпус 288 × 134 × 35, полупрозрачный, со стеклом и экранами
+  const U=new THREE.Group();S.add(U);
+  const shell=new THREE.Mesh(new THREE.BoxGeometry(W,H,D),M(0xd7dde2,{transparent:true,opacity:0.55,depthWrite:false,roughness:0.4}));shell.position.z=D/2;U.add(shell);
+  const glass=bx(W-20,H-20,1.5,M(0x9fc4d6,{transparent:true,opacity:0.35}),0,0,D-0.8);U.add(glass);
+  U.add(bx(92,90,1.2,M(0xe9ece6),-W/2+10+46,4,D-3),bx(170,111,1.2,M(0xe9ece6),W/2-10-85,0,D-3));
+  U.add(bx(126,100,1.6,M(0x2e7d4f),20,-6,12));      // плата
+  // резервный путь питания внутри блока: от спины к плате
+  const backY=-20;
+  // ---- R1: хвост сквозь переборку, разъём SP13 в каюте
+  const R1=new THREE.Group();S.add(R1);
+  const plugA=new THREE.Group(),plugB=new THREE.Group();R1.add(plugA,plugB);
+  plugA.add(new THREE.Mesh(new THREE.CylinderGeometry(11,11,34,20),dark));plugB.add(new THREE.Mesh(new THREE.CylinderGeometry(11,11,30,20),M(0x8a9099,{metalness:0.5})));
+  const PA0=V(60,-160,-110),PB0=V(60,-160+32,-110);plugA.position.copy(PA0);plugB.position.copy(PB0);
+  const grommet=new THREE.Mesh(new THREE.TorusGeometry(13,3,8,24),dark);grommet.position.set(0,-20,-10);R1.add(grommet);
+  const cabIn=tube([V(60,-175,-110),V(60,-230,-110),V(40,-300,-160)],4,M(0x2b2f35));R1.add(cabIn);   // кабель к резервному блоку
+  let tail=null;const tailM=M(0x2b2f35);
+  // ---- R2: контакты в салазках, кабель от них сразу в каюту
+  const R2=new THREE.Group();S.add(R2);
+  const pogo=bx(44,14,8,M(0x2b2f35),0,-20,10);R2.add(pogo);for(let i=0;i<8;i++)R2.add(bx(3,3,2,cop,-17.5+i*5,-20,15));
+  const pads=new THREE.Group();U.add(pads);for(let i=0;i<8;i++)pads.add(bx(3.5,5,0.6,cop,-17.5+i*5,-20,0.4));
+  R2.add(tube([V(0,-20,-2),V(0,-20,-30),V(0,-60,-60),V(30,-200,-120)],4,M(0x2b2f35)));
+  // подписи
+  const L=new THREE.Group();S.add(L);
+  const L1=[lbl('переборка 10 мм',V(-190,150,-5)),lbl('каюта',V(80,90,-170)),lbl('кокпит',V(80,120,90)),lbl('салазки в нише спины',V(80,-80,4))];
+  const LR1=[lbl('отверстие Ø25 за блоком',V(14,-34,-12)),lbl('разъём SP13 — в каюте',V(75,-140,-110)),lbl('к резервному блоку',V(45,-270,-150))];
+  const LR2=[lbl('контакты в салазках',V(26,-20,16)),lbl('кабель сразу в каюту',V(40,-210,-150))];
+  [...L1,...LR1,...LR2].forEach(s=>L.add(s));
+  // состояние
+  const st={v:'r1',off:0,goal:0};
+  function tailPath(){const t=st.off,ub=V(0,backY+60*Math.min(1,t*2),60*Math.max(0,t*2-1)+0.5),pa=plugA.position;
+    const mid=t<0.01?V(0,-20,-40):V(0,-20,-14);
+    return [V(ub.x,ub.y,ub.z+2),V(0,ub.y,ub.z-2>0?ub.z-2:-1),V(0,-20,-6),mid,V(pa.x,pa.y+30,pa.z),V(pa.x,pa.y+17,pa.z)];}
+  function update(){const t=st.off;
+    // блок: сначала вверх по салазкам на 60 мм, потом от переборки
+    U.position.set(0,60*Math.min(1,t*2),60*Math.max(0,t*2-1));
+    R1.visible=st.v==='r1';R2.visible=st.v==='r2';pads.visible=st.v==='r2';LR1.forEach(s=>s.visible=st.v==='r1');LR2.forEach(s=>s.visible=st.v==='r2');
+    if(st.v==='r1'){plugA.position.copy(PA0);plugB.position.copy(PB0).add(V(0,40*Math.min(1,t*3),0));   // в каюте разъём разомкнут первым
+      const pa=plugA.position.clone().lerp(V(0,-40,-30),Math.max(0,t*1.5-0.5));plugA.position.copy(pa);
+      if(tail){R1.remove(tail);tail.geometry.dispose();}tail=tube(tailPath(),3.2,tailM);R1.add(tail);}}
+  // кнопки
+  const set=(k,v)=>{st[k]=v;document.querySelectorAll('[data-c3]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.c3===st.v||(b.dataset.c3==='off'&&st.goal>0.5))));};
+  document.querySelectorAll('[data-c3]').forEach(b=>b.addEventListener('click',()=>{const k=b.dataset.c3;if(k==='off'){st.goal=st.goal>0.5?0:1;}else{st.v=k;}set('v',st.v);update();
+    document.getElementById('c3txt').textContent=st.v==='r1'?TX.r1:TX.r2;}));
+  const TX={r1:'R1: из спины блока выходит хвост 30–40 см, проходит в отверстие Ø25 в переборке прямо за блоком и заканчивается разъёмом SP13 в каюте. Чтобы снять блок, сначала разомкнуть разъём в каюте, затем поднять блок по салазкам и протянуть хвост сквозь отверстие. Снаружи нет ни разъёма, ни кабеля.',
+            r2:'R2: в салазках на переборке стоят пружинные контакты на 8 контактов, кабель от них сразу уходит в каюту. На спине блока — ответные площадки. Блок садится на салазки — контакты замыкаются; поднял — разомкнул. Всё из кокпита, без захода в каюту.'};
+  document.getElementById('c3txt').textContent=TX.r1;
+  function size(){const w=box.clientWidth,h=Math.round(Math.min(460,Math.max(300,w*0.55)));R.setSize(w,h);C.aspect=w/h;C.updateProjectionMatrix();}
+  function theme(){R.setClearColor(new THREE.Color(css('--surface')||'#141b22'));}
+  addEventListener('resize',size);size();theme();try{matchMedia('(prefers-color-scheme: dark)').addEventListener('change',theme);}catch(e){}
+  update();
+  (function loop(){requestAnimationFrame(loop);if(Math.abs(st.off-st.goal)>0.002){st.off+=(st.goal-st.off)*0.06;update();}O.update();R.render(S,C);})();
+})();
+</script>
+
