@@ -1354,7 +1354,7 @@ add(lab(boxG,'коробка ABS IP67 200 × 120 × 75: внутри ≈ 192 × 
 const lidM=M(0xd6ecf2,{transparent:true,opacity:0.16,roughness:0.08,depthWrite:false,side:THREE.DoubleSide});
 const lidG=G(bx(-W-T,-H-T,70,W+T,H+T,73,lidM),bx(-W-T,-H-T,55,-W,H+T,70,lidM),bx(W,-H-T,55,W+T,H+T,70,lidM),bx(-W,H,55,W,H+T,70,lidM),bx(-W,-H-T,55,W,-H,70,lidM));
 add(lab(lidG,'прозрачная крышка: поликарбонат, 4 винта в углах, прокладка по кругу'),V(0,0,140),true);
-add(lab(bx(-170,-120,-41,170,120,-19,M(0xb59b74,{roughness:0.85})),'кормовая переборка рубки: блок экраном к рулевому'),V(0,0,-70)).userData.fixed=1;
+add(lab(bx(-170,-120,-41,170,120,-19,M(0xe3e7ea,{roughness:0.5})),'кормовая стенка рубки, белый гелькоут: блок экраном к рулевому'),V(0,0,-70)).userData.fixed=1;
 [[-66,20],[66,20],[-66,82],[66,82]].forEach((b,i)=>{add(G(cz(b[0],b[1],-46,-13.5,2,steel,'',12),cz(b[0],b[1],-13.6,-13,4.3,steel,'',12),cz(b[0],b[1],-46,-41,4,steel,'',6)),V(0,0,-45),'винт М4 '+(i+1)+' из 4, потай: салазки сквозь переборку, изнутри каюты шайба и самоконтрящаяся гайка; головка заподлицо').userData.fixed=1;});
 add(G(cz(0,75,-18,-2,2.5,steel,'',14),cz(0,75,-3,-2,5,steel,'',16),cz(0,75,-2,7,5.5,steel,'',16),bx(-13,74,0,13,76,8,steel)),V(0,0,14),'винт-барашек М5 × 16, нержавеющий: один держит прибор на салазках. На резьбе кольцо: отвёрнутый винт не выпадет');
 [[-88,-20],[-88,20],[88,-20],[88,20]].forEach((p,i)=>{add(G(cz(p[0],p[1],-9,6.5,2,steel,'',12),cz(p[0],p[1],3,6.5,4,steel,'',6)),V(0,0,-14),'винт М4 × 12, '+(i+1)+' из 4: плита и задняя стенка коробки в термовставку ответной планки; постоянное соединение, резиновая шайба и герметик');});
@@ -1446,8 +1446,8 @@ const BST=[[12.7,12.3],[12.3,12.3],[11.9,12.3],[13.8,12.3],[10.7,12.3],[12.7,nul
 const PWR=new THREE.Group(),RES=new THREE.Group(),HX=70,HY=-642.5,HZ=-1850;
 (function(){
   const tube=(pts,r,c,l)=>lab(new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts.map(p=>V(p[0],p[1],p[2]))),90,r,10,false),M(c,{roughness:0.7})),l);
-  const hb2=M(0xb59b74,{transparent:true,opacity:0.32,roughness:0.85,depthWrite:false,side:THREE.DoubleSide});
-  PWR.add(lab(bx(-720,-803,-3600,720,-800,-290,M(0xcbb890,{transparent:true,opacity:0.55,roughness:0.9,depthWrite:false})),'пол каюты: высота по чертежу набора'));
+  const hb2=M(0xd9d3c3,{transparent:true,opacity:0.32,roughness:0.85,depthWrite:false,side:THREE.DoubleSide});
+  PWR.add(lab(bx(-720,-803,-3600,720,-800,-290,M(0xaaa290,{transparent:true,opacity:0.55,roughness:0.9,depthWrite:false})),'пол каюты: высота по чертежу набора'));
   PWR.add(lab(bx(-720,-803,-2508,720,-40,-2500,hb2),'переборка в 2,02 м от форштевня: передняя граница отсека'));
   (function(){const a=V(-520,-800,-1460),b=V(720,-800,-1100),c=V(-520,-100,-1460),d=V(720,-100,-1100),g=new THREE.BufferGeometry().setFromPoints([a,b,c,b,d,c]);g.computeVertexNormals();PWR.add(lab(new THREE.Mesh(g,hb2),'силовая рама мачты: 3,06 м по оси, 3,35 м у борта. В ней проход, кабели идут сквозь него'));})();
   PWR.add(lab(bx(330,-800,-325,600,-90,-319,hb2),'стенка переборки 4,2 м у правого борта'));
