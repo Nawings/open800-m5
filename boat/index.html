@@ -1723,7 +1723,8 @@ const innerHullM=M(0xc9c2b0,{side:THREE.DoubleSide,roughness:0.92});
   const hx=RBX,hz=RBZ;   // резервный блок лежит на дне второго ящика у правого борта, рядом со щитком
   const hub=PCBLIB.reserveBlock();hub.rotation.x=-Math.PI/2;hub.scale.setScalar(0.001);hub.position.set(hx,RBY,hz);intG.add(hub);const HP=p=>[hx+p[0]/1000,RBY+p[2]/1000,hz-p[1]/1000],HB=HP(hub.userData.ports.bat),HO=HP(hub.userData.ports.out);
   const ax=bx0-0.09,fx0=ax-0.13,fx1=ax-0.18,D2=dx(2.02);
-  tb([[HO[0],HO[1],HO[2]],[HO[0]-0.03,0.47,hz-0.06],[HO[0]-0.12,0.47,zin(HO[0]-0.12)-0.03],[HO[0]-0.2,0.14,zin(HO[0]-0.2)-0.06],[0.6,0.14,0.5],[0.2,0.14,0.5],[CAB_AFT+0.1,0.14,0.48],[CAB_AFT+0.04,0.3,0.48],[CAB_AFT+0.03,0.81,0.48],[CAB_AFT-0.04,0.81,0.47],[cpToBoat(-0.05,-0.078,-0.004).x,cpToBoat(-0.05,-0.078,-0.004).y,cpToBoat(-0.05,-0.078,-0.004).z]],0.0042,0x2b2f35,'один кабель к прибору: 8 жил в экране, по полу вдоль полки и вверх по кормовой переборке');
+  tb([[HO[0],HO[1],HO[2]],[HO[0]-0.03,0.47,hz-0.06],[HO[0]-0.12,0.47,zin(HO[0]-0.12)-0.03],[HO[0]-0.2,0.14,zin(HO[0]-0.2)-0.06],[0.6,0.14,0.5],[0.2,0.14,0.5],[CAB_AFT+0.1,0.14,0.48],[CAB_AFT+0.04,0.3,0.48],[CAB_AFT+0.035,0.78,0.43],[CAB_AFT+0.03,0.86,0.40]],0.0042,0x2b2f35,'один кабель к прибору: по полу вдоль полки и вверх по кормовой переборке изнутри, к вводу за блоком');
+  {const gl=new THREE.Mesh(new THREE.CylinderGeometry(0.0125,0.0125,0.02,24),M(0x1c1f23,{roughness:0.6}));gl.rotation.z=Math.PI/2;gl.position.set(CAB_AFT+0.02,0.878,0.40);boat.add(lab(gl,'ввод кабеля в блок сзади: отверстие Ø25 в переборке закрыто блоком. Как подключается — хвост с разъёмом в каюте (R1) или контакты в салазках с защёлкой (R2) — решается вместе с салазками'));}
   // щиток лодки (фото 111–115, владелец 16.11): кнопки — на лицевой стенке второго ящика у правого борта, смотрят в каюту;
   // с обратной стороны этой стенки, внутри ящика, — 2 латунные шины в синих держателях у кромки и вся проводка.
   // Стенка ящика в плане идёт вдоль борта под углом, поэтому всё ставится по ней: точка на стенке + отступ по её нормали
@@ -1813,6 +1814,7 @@ function layDraw(c,v,dv){dv=dv||LDV0;const k=4,q=c.getContext('2d');q.clearRect(
   const start=(x,y,w,h)=>{q.fillStyle='#141414';q.font='700 '+(h*0.07)+'px Arial';q.fillText('СТАРТ',x+w*0.03,y+h*0.08);q.textAlign='center';q.font='700 '+(h*0.28)+'px Arial';q.fillText('−'+mmss(rem),x+w/2,y+h*0.42);q.textAlign='left';
     q.font='700 '+(h*0.11)+'px Arial';q.fillText(Math.round(dist)+' м',x+w*0.03,y+h*0.66);q.fillText(mmss(eta),x+w*0.53,y+h*0.66);q.font='700 '+(h*0.05)+'px Arial';q.fillText('ДО ЛИНИИ',x+w*0.03,y+h*0.52);q.fillText('НА ЛИНИИ ЧЕРЕЗ',x+w*0.53,y+h*0.52);
     q.fillText('выгоднее ▶ правый конец, +12 м',x+w*0.03,y+h*0.8);q.fillText('перекос линии 8° · запас '+mmss(Math.max(0,rem-eta)),x+w*0.03,y+h*0.9);};
+  {const sm=v.E.find(e=>e.k==='scr'&&e.role==='small'),band=sm?v.H-(sm.y+sm.h):0;if(sm&&band>=20){q.save();q.fillStyle='#c9d0d6';q.textAlign='center';q.textBaseline='middle';const fz=Math.min(band*0.34,sm.w*0.115)*k;q.font='italic 700 '+fz+'px Arial, sans-serif';q.fillText('Создан для гонок',X(sm.x+sm.w/2),Y(sm.y+sm.h+band/2));q.restore();}}
   v.E.forEach(e=>{if(e.k==='scr'){const x0=X(e.x),y0=Y(e.y+e.h),w=e.w*k,h=e.h*k;q.fillStyle='#1b1f24';q.fillRect(x0-2*k,y0-2*k,w+4*k,h+4*k);q.fillStyle='#e6e8e2';q.fillRect(x0,y0,w,h);
       const aw=e.aw*k,ah=e.ah*k,ax=x0+(w-aw)/2,ay=y0+(h-ah)/2;if(e.role==='small')start(ax,ay,aw,ah);else tablo(ax,ay,aw,ah);}
     else if(e.k==='btn'){q.fillStyle='#8f99a3';q.beginPath();q.arc(X(e.x),Y(e.y),7*k,0,7);q.fill();}
@@ -1820,29 +1822,32 @@ function layDraw(c,v,dv){dv=dv||LDV0;const k=4,q=c.getContext('2d');q.clearRect(
 }
 function layTex(v){const c=document.createElement('canvas');c.width=Math.round(v.OW*4);c.height=Math.round(v.OH*4);layDraw(c,v);const t=new THREE.CanvasTexture(c);t.anisotropy=8;t.userData={c,v};return t;}
 let layTexCur=null;
-function setLayout(id){layTexCur=null;layCur=id;while(layG.children.length){const o=layG.children.pop();o.traverse(m=>{if(m.geometry)m.geometry.dispose();});}
+function setLayout(id,noGo){layTexCur=null;layCur=id;while(layG.children.length){const o=layG.children.pop();o.traverse(m=>{if(m.geometry)m.geometry.dispose();});}
   const v=LAYV.find(q=>q.id===id);cpG.visible=!v;
   document.querySelectorAll('#layBtns [data-lay]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.lay===id)));
   if(!v){document.getElementById('layNote').textContent='Нынешний блок: коробка IP67 200 × 120 × 75 мм на салазках. Выберите вариант, чтобы увидеть, как новый корпус встанет на переборку.';return;}
   const tex=layTex(v);layTexCur=tex;const side=M(0x2a3138,{roughness:0.55}),front=new THREE.MeshStandardMaterial({map:tex,roughness:0.5});
-  const m=new THREE.Mesh(new THREE.BoxGeometry(0.035,v.OH/1000,v.OW/1000),[side,front,side,side,side,side]);
-  const MG=Math.max(0,Math.min(v.mg,10));m.position.set(CAB_AFT-0.0175,CY+(v.yt+v.OH/2)/1000,EO+0.31+(MG+v.OW/2)/1000);layG.add(lab(m,'блок '+v.key+': '+v.title+', '+Math.round(v.OW)+' × '+Math.round(v.OH)+' × 35 мм'));
-  document.getElementById('layNote').textContent=v.key+' — '+v.title+': корпус '+Math.round(v.OW)+' × '+Math.round(v.OH)+' × 35 мм. Стоит справа от входа, низ корпуса — на '+Math.round(v.yt)+' мм выше порога входа, верх — на '+Math.round(330-v.yt-v.OH)+' мм ниже края крыши. Свободно вокруг — '+v.mg+' мм: '+(v.mg>=15?'встаёт с запасом.':'встаёт впритык — меньше точности замеров по фото (±1–2 см), до заказа нужен прямой замер переборки.')+' Контур — по фото 16.11, перепроверен.';
-  go('deck');}
-(function(){const b=document.getElementById('layBtns');if(!b)return;b.innerHTML='<button type="button" data-lay="now" aria-pressed="true">Нынешний</button>'+LAYV.map(v=>'<button type="button" data-lay="'+v.id+'" aria-pressed="false">'+v.key+'</button>').join('');
+  const BV=4,RR=10,W0=v.OW-2*BV,H0=v.OH-2*BV,sh=new THREE.Shape();sh.moveTo(-W0/2+RR,-H0/2);sh.lineTo(W0/2-RR,-H0/2);sh.quadraticCurveTo(W0/2,-H0/2,W0/2,-H0/2+RR);sh.lineTo(W0/2,H0/2-RR);sh.quadraticCurveTo(W0/2,H0/2,W0/2-RR,H0/2);sh.lineTo(-W0/2+RR,H0/2);sh.quadraticCurveTo(-W0/2,H0/2,-W0/2,H0/2-RR);sh.lineTo(-W0/2,-H0/2+RR);sh.quadraticCurveTo(-W0/2,-H0/2,-W0/2+RR,-H0/2);
+  const UVG={generateTopUV:(g,vs,a,b,c)=>[a,b,c].map(i=>new THREE.Vector2((vs[i*3]+v.OW/2)/v.OW,(vs[i*3+1]+v.OH/2)/v.OH)),generateSideWallUV:()=>[new THREE.Vector2(0,0),new THREE.Vector2(0,0),new THREE.Vector2(0,0),new THREE.Vector2(0,0)]};
+  const cg=new THREE.ExtrudeGeometry(sh,{depth:35-2*BV,bevelEnabled:true,bevelThickness:BV,bevelSize:BV,bevelSegments:4,curveSegments:10,UVGenerator:UVG});cg.translate(0,0,BV);
+  const m=new THREE.Mesh(cg,[front,side]);m.scale.setScalar(0.001);m.rotation.y=-Math.PI/2;
+  const MG=Math.max(0,Math.min(v.mg,10));m.position.set(CAB_AFT,CY+(v.yt+v.OH/2)/1000,EO+0.31+(MG+v.OW/2)/1000);layG.add(lab(m,'блок '+v.key+': '+v.title+', '+Math.round(v.OW)+' × '+Math.round(v.OH)+' × 35 мм; углы скруглены R 14 мм, рёбра — 4 мм'));
+  document.getElementById('layNote').textContent=v.key+' — '+v.title+': корпус '+Math.round(v.OW)+' × '+Math.round(v.OH)+' × 35 мм. Стоит справа от входа, низ корпуса — на '+Math.round(v.yt)+' мм выше порога входа, верх — на '+Math.round(330-v.yt-v.OH)+' мм ниже края крыши. Свободно вокруг — '+v.mg+' мм: '+(v.mg>=15?'встаёт с запасом.':'встаёт впритык — меньше точности замеров по фото (±1–2 см), до заказа нужен прямой замер переборки.')+' Контур — по фото 16.11, перепроверен.'+(id==='c1'?' Выбран владельцем 17.11.':'');
+  if(!noGo)go('deck');}
+(function(){const b=document.getElementById('layBtns');if(!b)return;b.innerHTML=LAYV.map(v=>'<button type="button" data-lay="'+v.id+'" aria-pressed="false">'+v.key+(v.id==='c1'?' · выбран':'')+'</button>').join('');setLayout('c1',true);
   b.addEventListener('click',e=>{const t=e.target.closest('[data-lay]');if(t)setLayout(t.dataset.lay);});})();
 const deckAnchor=new THREE.Object3D();deckAnchor.position.set(CAB_AFT+0.55,0.95,0);boat.add(deckAnchor);
 const VIEWS={
   boat:()=>({t:V(0.3,5.4,0),p:V(15,8.5,17.5),f:null}),
   top:()=>{const c=worldOf(topCenter);return{t:c,p:c.clone().add(V(0.26,0.12,0.40)),f:topCenter};},
   deck:()=>{const c=worldOf(deckAnchor);return{t:c,p:c.clone().add(V(-2.4,0.75,1.15)),f:null};},
-  cockpit:()=>{const c=worldOf(cpG);return{t:c,p:c.clone().add(V(-0.46,0.13,0.22)),f:cpG};},
+  cockpit:()=>{const o=layG.children[0]||cpG,c=worldOf(o);return{t:c,p:c.clone().add(V(-0.62,0.10,0.18)),f:o};},
   cable:()=>({t:V(-0.1,1.0,0.25),p:V(-3.4,2.7,3.7),f:null}),
   inside:()=>({t:V(1.5,0.3,0.05),p:V(-1.3,2.6,1.7),f:null})
 };
 let tw=null,follow=null,lastF=V(0,0,0),curView='boat';
 const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
-function go(name){setInside(name==='inside');const v=VIEWS[name]();curView=name;follow=v.f;if(follow)lastF=worldOf(follow);
+function go(name){setInside(name==='inside');const v=VIEWS[name]();curView=name;routeLine.material.depthTest=name!=='cable';routeLine.material.needsUpdate=true;follow=v.f;if(follow)lastF=worldOf(follow);
   document.querySelectorAll('[data-view]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.view===name)));
   if(reduce){camera.position.copy(v.p);controls.target.copy(v.t);controls.update();tw=null;return;}
   tw={p0:camera.position.clone(),t0:controls.target.clone(),p1:v.p,t1:v.t,start:performance.now(),dur:1200};}

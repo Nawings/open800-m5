@@ -92,7 +92,8 @@ ul.notes{margin:0;padding-left:18px;display:grid;gap:8px;max-width:80ch}
       <span class="fact"><b>Перепроверка по фото</b> место справа от входа ≈ 33 × 33 см, внизу справа его съедает борт кокпита: все 6 вариантов встают только впритык, с зазором 7–15 мм — до заказа нужен прямой замер</span>
       <span class="fact ok"><b>Решено 16.11</b> 10,2″ не ставим — не встаёт на переборку</span>
       <span class="fact ok"><b>Решено 16.11</b> толщина блока ≈ 35 мм, кабель — сзади</span>
-      <span class="fact q"><b>Ждёт решения</b> компоновка, кабель сзади, дизайн и кнопки</span>
+      <span class="fact ok"><b>Решено 17.11</b> компоновка C1, корпус без острых углов, слоган «Создан для гонок»</span>
+      <span class="fact q"><b>Ждёт решения</b> управление (кнопки), салазки с защёлкой как у аккумулятора шуруповёрта, ввод кабеля сзади (R1 или R2)</span>
     </div>
   </header>
 
@@ -256,7 +257,7 @@ const V=[
   {id:'a1',key:'A1',title:'7,5″ и 4,2″ рядом',sub:'широкий и низкий, кнопки под малым экраном',main:'s75',lay:'side'},
   {id:'a3',key:'A3',title:'4,2″ слева, 7,5″ справа',sub:'как A1, но малый экран и кнопки слева',main:'s75',lay:'sideL'},
   {id:'a2',key:'A2',title:'7,5″ сверху, 4,2″ снизу',sub:'узкий и высокий, кнопки справа от малого экрана',main:'s75',lay:'stack'},
-  {id:'c1',key:'C1',title:'7,5″ стоя и 4,2″ справа',sub:'уже A1 на 6 см, выше на 5 см; цифры мельче',main:'s75v',lay:'side'},
+  {id:'c1',key:'C1',title:'7,5″ стоя и 4,2″ справа',sub:'ВЫБРАН 17.11 · уже A1 на 6 см, выше на 5 см',main:'s75v',lay:'side'},
   {id:'c3',key:'C3',title:'4,2″ слева, 7,5″ стоя справа',sub:'как C1, малый экран и кнопки слева',main:'s75v',lay:'sideL'},
   {id:'c2',key:'C2',title:'7,5″ стоя, 4,2″ снизу',sub:'самый узкий, высокий',main:'s75v',lay:'stack'}];
 // крупная цифра: шрифт подбирается так, чтобы самое длинное число влезло в половину ширины и в половину высоты экрана
@@ -307,7 +308,7 @@ function smallContent(x,y,s){const a=s.act,ax=x+(s.mod[0]-a[0])/2+s.actOff[0],ay
   return t;}
 // SVG: y вниз. Внутреннее поле сдвинуто на стенку
 function scene(v,ox,oy,opt){const g=v.g,Y=y=>oy+WALL+g.H-y,X=x=>ox+WALL+x;let s='';
-  s+='<rect class="case" x="'+ox+'" y="'+oy+'" width="'+g.OW+'" height="'+g.OH+'" rx="'+(v.id==='now'?3:8)+'"/>';
+  s+='<rect class="case" x="'+ox+'" y="'+oy+'" width="'+g.OW+'" height="'+g.OH+'" rx="'+(v.id==='now'?3:14)+'"/>';
   g.E.forEach(e=>{if(e.k==='scr'){const m=e.s,x=X(e.x),y=Y(e.y+m.mod[1]);
       if(opt.mod)s+='<rect class="mod" x="'+x+'" y="'+y+'" width="'+m.mod[0]+'" height="'+m.mod[1]+'"/>';
       const gw=m.glass[0],gh=m.glass[1],gx=x+(m.mod[0]-gw)/2,gy=y+(m.mod[1]-gh)/2+(m===SCR.s42?-2:0);
@@ -316,6 +317,7 @@ function scene(v,ox,oy,opt){const g=v.g,Y=y=>oy+WALL+g.H-y,X=x=>ox+WALL+x;let s=
       s+='<rect class="win" x="'+(x-2)+'" y="'+(y-2)+'" width="'+(m.mod[0]+4)+'" height="'+(m.mod[1]+4)+'" rx="1.5"/>';}
     if(e.k==='btn')s+='<circle class="knob" cx="'+X(e.x)+'" cy="'+Y(e.y)+'" r="'+(BTN/2)+'"/>';
     if(e.k==='led'){const cx=X(e.x),cy=Y(e.y),r=LED/2+0.6;['var(--led-r)','var(--led-g)','#2f6fd6'].forEach((c,i)=>{const a0=-Math.PI/2+i*2*Math.PI/3,a1=a0+2*Math.PI/3;s+='<path d="M'+cx+' '+cy+' L'+(cx+r*Math.cos(a0)).toFixed(2)+' '+(cy+r*Math.sin(a0)).toFixed(2)+' A'+r+' '+r+' 0 0 1 '+(cx+r*Math.cos(a1)).toFixed(2)+' '+(cy+r*Math.sin(a1)).toFixed(2)+' Z" fill="'+c+'"/>';});s+='<circle cx="'+cx+'" cy="'+cy+'" r="'+r+'" fill="none" stroke="var(--case-line)" stroke-width="0.5"/>';}});
+  {const sm=g.E.find(e=>e.k==='scr'&&e.role==='small');if(sm){const top=sm.y+sm.s.mod[1],band=g.H-top;if(band>=20)s+='<text x="'+X(sm.x+sm.s.mod[0]/2)+'" y="'+(Y(top+band/2)+3)+'" text-anchor="middle" style="font:italic 700 '+Math.min(band*0.34,sm.s.mod[0]*0.115).toFixed(1)+'px var(--f-body,Arial);fill:#c9d0d6">Создан для гонок</text>';}}
   // разъёмы в нижней стенке — подписи
   s+='<text class="lbl" x="'+(ox+g.OW/2)+'" y="'+(oy+g.OH+7)+'" text-anchor="middle">'+(v.id==='now'?'снизу: SP13, USB-C, тумблер':'кабель — сзади, сквозь переборку; снизу ничего')+'</text>';
   return s;}
