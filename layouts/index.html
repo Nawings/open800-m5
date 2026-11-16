@@ -266,8 +266,8 @@ function measure(){MC.font='700 100px Arial, sans-serif';{const m=MC.measureText
 function fsGrid(a,c,r){const wmax=Math.max(...Object.values(WID));return Math.min(a[0]/c*0.88/wmax,(a[1]/r*0.8)*0.86/RATIO);}
 function gridFor(a){const g=[[2,2],[1,4]].map(q=>({c:q[0],r:q[1],fs:fsGrid(a,q[0],q[1])}));return g[0].fs>=g[1].fs?g[0]:g[1];}
 function fsFor(a){return gridFor(a).fs;}
-function tabloGeo(a){const hh=a[1]*0.075,ch=a[1]*0.062,rh=(a[1]-hh-ch)/4,cw=a[0]/2,lab=Math.min(rh*0.17,cw*0.075),wmax=Math.max(...Object.values(TW));
-  const fs=Math.min((rh-lab*1.5)*0.86/TCAP,(cw*0.80)/wmax);return {hh,ch,rh,cw,lab,fs};}
+function tabloGeo(a){const hh=a[1]*(a[0]<a[1]?0.105:0.075),ch=a[1]*0.062,rh=(a[1]-hh-ch)/4,cw=a[0]/2,lab=Math.min(rh*0.17,cw*0.075),wmax=Math.max(...Object.values(TW));
+  const fs=Math.min((rh-lab*1.5)*0.76/TCAP,(cw*0.80)/wmax);return {hh,ch,rh,cw,lab,fs};}
 function sizes(){V.forEach(v=>{const m=SCR[v.main],T=tabloGeo(m.act);v.fs=T.fs;v.digit=T.fs*TCAP;v.dist=v.digit*140/1000;});}
 measure();V.forEach(v=>{v.g=build(v);});sizes();
 // у нынешней коробки — её настоящий размер
@@ -277,9 +277,11 @@ const st={v:'a3',dim:true,all:false,mod:false,real:false};
 
 // ---- содержимое экранов: основной — 4 крупных числа, малый — старт и питание
 function mainContent(x,y,s){const a=s.act,ax=x+(s.mod[0]-a[0])/2+s.actOff[0],ay=y+(s.mod[1]-a[1])/2+s.actOff[1],T=tabloGeo(a);let t='';const ln=(x1,y1,x2,y2,w)=>'<line x1="'+x1+'" y1="'+y1+'" x2="'+x2+'" y2="'+y2+'" stroke="#141414" stroke-width="'+(w||0.5)+'"/>';
-  const hs=T.hh*0.62;
-  t+='<text class="tb" x="'+(ax+a[0]*0.02)+'" y="'+(ay+T.hh*0.75)+'" font-size="'+hs+'">M5</text><text class="tbl" x="'+(ax+a[0]*0.02+hs*2.2)+'" y="'+(ay+T.hh*0.75)+'" font-size="'+(hs*0.8)+'">ТАБЛО</text>';
-  t+='<text class="tbl" x="'+(ax+a[0]*0.98)+'" y="'+(ay+T.hh*0.75)+'" font-size="'+(hs*0.7)+'" text-anchor="end">лодка 12,7 В · резерв 12,3 В · SD ▭ 100 %</text>';
+  const narrow=a[0]<a[1],hs=narrow?T.hh*0.42:T.hh*0.62,ST='лодка 12,7 В · резерв 12,3 В · SD ▭ 100 %';
+  MC.font='700 100px Arial, sans-serif';const stW=MC.measureText(ST).width/100,lW=(MC.measureText('M5').width/100)*hs+hs*0.6+(MC.measureText('ТАБЛО').width/100)*hs*0.8;
+  const y1=narrow?T.hh*0.45:T.hh*0.75,y2=narrow?T.hh*0.9:T.hh*0.75,room=narrow?a[0]*0.96:a[0]*0.96-lW-a[0]*0.03,fsS=Math.min(hs*0.7,room/stW);
+  t+='<text class="tb" x="'+(ax+a[0]*0.02)+'" y="'+(ay+y1)+'" font-size="'+hs+'">M5</text><text class="tbl" x="'+(ax+a[0]*0.02+(MC.measureText('M5').width/100)*hs+hs*0.6)+'" y="'+(ay+y1)+'" font-size="'+(hs*0.8)+'">ТАБЛО</text>';
+  t+='<text class="tbl" x="'+(ax+a[0]*0.98)+'" y="'+(ay+y2)+'" font-size="'+fsS+'" text-anchor="end">'+ST+'</text>';
   t+=ln(ax,ay+T.hh,ax+a[0],ay+T.hh,0.7);
   ['ЛОДКА','ВЕТЕР'].forEach((h,i)=>{t+='<text class="tb" x="'+(ax+T.cw*(i+0.5))+'" y="'+(ay+T.hh+T.ch*0.8)+'" text-anchor="middle" font-size="'+(T.ch*0.82)+'">'+h+'</text>';});
   const top=ay+T.hh+T.ch;t+=ln(ax,top,ax+a[0],top,0.7);t+=ln(ax+T.cw,ay+T.hh,ax+T.cw,ay+a[1],0.7);
@@ -287,7 +289,7 @@ function mainContent(x,y,s){const a=s.act,ax=x+(s.mod[0]-a[0])/2+s.actOff[0],ay=
            [['СКОРОСТЬ ВЫМ., уз','12,0',''],['ГРАДУС ВЫМ.','34°','П'],['V ИСТИН., уз','8,1',''],['ГРАД. ИСТИН., от севера','233°','']]];
   C.forEach((col,ci)=>col.forEach((c,ri)=>{const x0=ax+ci*T.cw,y0=top+ri*T.rh;if(ri>0)t+=ln(x0,y0,x0+T.cw,y0,0.5);
     t+='<text class="tbl" x="'+(x0+T.cw*0.03)+'" y="'+(y0+T.lab*1.15)+'" font-size="'+T.lab+'">'+c[0]+'</text>';
-    const base=y0+T.rh-T.rh*0.07;t+='<text class="tb" x="'+(x0+T.cw*0.04)+'" y="'+base+'" font-size="'+T.fs+'">'+c[1]+'</text>';
+    const vTop=y0+T.lab*1.5,base=vTop+(T.rh-T.lab*1.5+T.fs*TCAP)/2;t+='<text class="tb" x="'+(x0+T.cw*0.04)+'" y="'+base+'" font-size="'+T.fs+'">'+c[1]+'</text>';
     if(c[2]){const vw=(TW[c[1]]||1.5)*T.fs;t+='<text class="tb" x="'+(x0+T.cw*0.06+vw)+'" y="'+base+'" font-size="'+(T.lab*1.25)+'">'+c[2]+'</text>';}}));
   return t;}
 function smallContent(x,y,s){const a=s.act,ax=x+(s.mod[0]-a[0])/2+s.actOff[0],ay=y+(s.mod[1]-a[1])/2+s.actOff[1];let t='';const L=(yy,txt,fsz,anchor,xx)=>'<text class="tbl" x="'+(xx==null?ax+2:xx)+'" y="'+(ay+yy)+'" font-size="'+fsz+'"'+(anchor?' text-anchor="'+anchor+'"':'')+'>'+txt+'</text>';

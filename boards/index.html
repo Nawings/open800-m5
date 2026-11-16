@@ -956,6 +956,63 @@ canvas.cu{display:block;width:100%;height:auto;border-radius:4px;touch-action:ma
     </ul>
   </div>
 
+  <section id="modular">
+    <h2>Модульная архитектура и комплектации — требования 16.11</h2>
+    <p class="small">Задача владельца: набор датчиков не должен требовать новой платы; всё подключается и отключается разъёмом; прибор продаётся в разных комплектациях. Ниже — как к этому прийти. Платы пока разведены по-старому: эта схема — основа следующей разводки.</p>
+    <div class="sheet">
+      <svg viewBox="0 0 990 470" role="img" aria-label="Модульная схема: одна основная плата с одинаковыми портами, датчики на отдельных платах-карточках, удалённые узлы на шине RS-485" style="width:100%;height:auto;display:block">
+        <style>.mb{fill:var(--surface);stroke:var(--ink);stroke-width:1.4}.mc{fill:var(--bg);stroke:var(--accent);stroke-width:1.2}.mo{fill:var(--bg);stroke:var(--muted);stroke-width:1.2;stroke-dasharray:5 4}.mt{fill:var(--ink);font:600 13px var(--f-body)}.ms{fill:var(--muted);font:12px var(--f-body)}.ml{stroke:var(--muted);stroke-width:1.3;fill:none}.mp{fill:var(--accent)}.mr{stroke:#2e86c1;stroke-width:3;fill:none}</style>
+        <rect class="mb" x="20" y="20" width="330" height="330" rx="8"/>
+        <text class="mt" x="36" y="46">Основная плата блока</text><text class="ms" x="36" y="64">одна на все модели и комплектации</text>
+        <text class="ms" x="36" y="96">• ESP32-S3 — в гнезде</text><text class="ms" x="36" y="116">• питание 12 → 5 → 3,3 В</text><text class="ms" x="36" y="136">• изолированный порт RS-485</text><text class="ms" x="36" y="156">• разъём сзади: 12 В и RS-485</text>
+        <text class="ms" x="36" y="186">датчики на плате не паяются —</text><text class="ms" x="36" y="204">только порты-защёлки</text>
+        <g>
+          <text class="ms" x="334" y="93" text-anchor="end">П1</text><text class="ms" x="334" y="123" text-anchor="end">П2</text><text class="ms" x="334" y="153" text-anchor="end">П3</text><text class="ms" x="334" y="183" text-anchor="end">П4</text><text class="ms" x="334" y="213" text-anchor="end">П5</text><text class="ms" x="334" y="243" text-anchor="end">П6</text>
+          <text class="ms" x="334" y="273" text-anchor="end">GPS</text><text class="ms" x="334" y="297" text-anchor="end">экран 1 · экран 2</text><text class="ms" x="334" y="321" text-anchor="end">кнопки</text>
+          <rect class="mp" x="340" y="86" width="16" height="14" rx="2"/><rect class="mp" x="340" y="116" width="16" height="14" rx="2"/><rect class="mp" x="340" y="146" width="16" height="14" rx="2"/><rect class="mp" x="340" y="176" width="16" height="14" rx="2"/><rect class="mp" x="340" y="206" width="16" height="14" rx="2"/><rect class="mp" x="340" y="236" width="16" height="14" rx="2"/>
+          <rect class="mp" x="340" y="266" width="16" height="14" rx="2"/><rect class="mp" x="340" y="290" width="16" height="14" rx="2"/><rect class="mp" x="340" y="314" width="16" height="14" rx="2"/>
+        </g>
+        <path class="ml" d="M356 93 H430"/><path class="ml" d="M356 123 H430"/><path class="ml" d="M356 153 H430"/><path class="ml" d="M356 183 H430"/><path class="ml" d="M356 213 H430"/><path class="ml" d="M356 243 H430" stroke-dasharray="4 4"/><path class="ml" d="M356 273 H430"/><path class="ml" d="M356 297 H430"/><path class="ml" d="M356 321 H430"/>
+        <rect class="mc" x="430" y="82" width="250" height="22" rx="4"/><text class="ms" x="440" y="98">BNO085 — крен, курс</text>
+        <rect class="mc" x="430" y="112" width="250" height="22" rx="4"/><text class="ms" x="440" y="128">BME280 — давление, у клапана</text>
+        <rect class="mo" x="430" y="142" width="250" height="22" rx="4"/><text class="ms" x="440" y="158">BH1750 — свет, за окном</text>
+        <rect class="mo" x="430" y="172" width="250" height="22" rx="4"/><text class="ms" x="440" y="188">AS3935 — молнии</text>
+        <rect class="mo" x="430" y="202" width="250" height="22" rx="4"/><text class="ms" x="440" y="218">новый датчик I²C</text>
+        <rect class="mo" x="430" y="232" width="250" height="22" rx="4"/><text class="ms" x="440" y="248">свободный порт</text>
+        <rect class="mc" x="430" y="262" width="250" height="22" rx="4"/><text class="ms" x="440" y="278">GPS</text>
+        <rect class="mc" x="430" y="286" width="250" height="22" rx="4"/><text class="ms" x="440" y="302">7,5″ · 4,2″ (второй — по желанию)</text>
+        <rect class="mc" x="430" y="310" width="250" height="22" rx="4"/><text class="ms" x="440" y="326">плата кнопок под дизайн K1–K4</text>
+        <text class="ms" x="700" y="98">сплошная рамка — есть во всех</text><text class="ms" x="700" y="116">комплектациях; пунктир — по выбору</text>
+        <text class="ms" x="700" y="150">карточка: плата 30 × 20 мм,</text><text class="ms" x="700" y="168">2 отверстия М2,5, разъём-защёлка</text><text class="ms" x="700" y="186">JST-GH на 6 контактов: 3,3 В,</text><text class="ms" x="700" y="204">земля, SDA, SCL, прерывание, вкл.</text>
+        <path class="mr" d="M186 350 V400 H860"/><text class="mt" x="200" y="392">шина RS-485 — по кабелю сзади, узлы с адресами</text>
+        <path class="mr" d="M260 400 V420"/><rect class="mc" x="150" y="420" width="235" height="40" rx="6"/><text class="mt" x="162" y="438">Топ мачты</text><text class="ms" x="162" y="454">ветер, гироскоп; порт под SHT40</text>
+        <path class="mr" d="M500 400 V420"/><rect class="mo" x="400" y="420" width="235" height="40" rx="6"/><text class="mt" x="412" y="438">Резервный блок</text><text class="ms" x="412" y="454">элементы 18650 + INA226, ток</text>
+        <path class="mr" d="M740 400 V420"/><rect class="mo" x="650" y="420" width="235" height="40" rx="6"/><text class="mt" x="662" y="438">Будущие узлы</text><text class="ms" x="662" y="454">руль, трюм — без новых кабелей</text>
+      </svg>
+    </div>
+    <div class="two" style="grid-template-columns:minmax(0,1fr) minmax(0,1fr)">
+      <ul class="notes">
+        <li><b>Одна плата на все модели.</b> Основная плата блока и плата топа одинаковые в любой комплектации: заказываются одной партией, это дешевле. Комплектацию задают вставленные модули, а не плата.</li>
+        <li><b>Каждый датчик — на своей карточке</b> с разъёмом-защёлкой JST-GH на 6 контактов: от вибрации не выпадает. Вставил — работает, вынул — прибор работает без него. Порты П1–П6 одинаковые: любой датчик I²C идёт в любой порт.</li>
+        <li><b>Прошивка сама находит, что подключено:</b> при включении опрашивает шину I²C, GPS и узлы RS-485 и показывает только то, что есть. Экраны и меню подстраиваются, перепрошивать под комплектацию не нужно.</li>
+        <li><b>Удалённые модули — узлы на шине RS-485</b> с адресом: топ мачты, резервный блок с INA226, позже датчик руля или воды в трюме. Новые кабели к блоку не нужны: узел встаёт на ту же шину.</li>
+        <li><b>Места в корпусе:</b> у датчиков, которым важно место, — свои гнёзда на печатных стойках: BH1750 за окном, AS3935 подальше от Wi-Fi и питания, BME280 у клапана.</li>
+      </ul>
+      <div class="tbl"><table>
+        <tr><th>Модуль</th><th>Старт</th><th>Регата</th><th>Регата+</th></tr>
+        <tr><td>Основная плата, 7,5″, GPS, BNO085, BME280</td><td>●</td><td>●</td><td>●</td></tr>
+        <tr><td>Второй экран 4,2″ — старт</td><td>○</td><td>●</td><td>●</td></tr>
+        <tr><td>Топ мачты: ветер, гироскоп</td><td>—</td><td>●</td><td>●</td></tr>
+        <tr><td>Резервный блок</td><td>○</td><td>●</td><td>●</td></tr>
+        <tr><td>BH1750 — подсветка по свету</td><td>○</td><td>●</td><td>●</td></tr>
+        <tr><td>AS3935 — молнии</td><td>—</td><td>○</td><td>●</td></tr>
+        <tr><td>INA226 — ток аккумулятора</td><td>—</td><td>○</td><td>●</td></tr>
+        <tr><td>SHT40 на топе — воздух</td><td>—</td><td>○</td><td>●</td></tr>
+      </table>
+      <p class="small">● — входит, ○ — можно докупить и вставить, — нет. «Старт» — без мачты: скорость и курс по GPS, крен, барограф, стартовый таймер и линия. «Регата» — плюс ветер с топа и второй экран. «Регата+» — все датчики. Состав комплектаций — предложение, его утверждает владелец.</p></div>
+    </div>
+  </section>
+
   <section>
     <h2>Плата блока в кокпите</h2>
     <div class="two">
