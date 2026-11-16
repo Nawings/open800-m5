@@ -1320,7 +1320,7 @@ function winch(x,y,z,l,sc){const g=new THREE.Group();
   const d=new THREE.Mesh(new THREE.CylinderGeometry(0.044,0.05,0.08,24),steel);d.position.y=0.07;g.add(d);
   const t=new THREE.Mesh(new THREE.CylinderGeometry(0.05,0.045,0.03,24),dark);t.position.y=0.125;g.add(t);
   if(sc)g.scale.setScalar(sc);g.position.set(x,y,z);boat.add(lab(g,l));}
-const TRX=MX-2.9,JTZ=0.80,JX0=CAB0+0.0,JX1=CAB0+0.6;
+const TRX=MX-2.9,JTZ=0.48,JX0=CAB0+0.53,JX1=CAB0+0.85;   // погон шкота стакселя: по одному с борта, на крыше рубки снаружи от люка (фото 16.11, № 99–100)
 const trav=box(0.05,0.03,2*FW,steel);trav.position.set(TRX,0.315,0);boat.add(lab(trav,'погон гротового шкота поперёк кокпита'));
 const car=box(0.07,0.04,0.08,dark);car.position.set(TRX,0.35,0);boat.add(lab(car,'каретка погона: ездит вслед за гиком'));
 const hatch=box(0.55,0.04,0.62,M(0xd5dade,{roughness:0.4}));hatch.position.set(CAB0+0.275,roofY(CAB0+0.275)+0.02,EO);boat.add(lab(hatch,'сдвижной люк входа в каюту: проём 56 см шириной, 53–56 см вдоль лодки по замеру 16.11'));
@@ -1333,11 +1333,10 @@ boat.add(lab(rod(V(-2.30,0.88,0),V(-1.85,1.02,0.32),0.012,M(0x17191c)),'удли
   const NCL=sd>0?5:3;for(let k=0;k<NCL;k++){const c=box(0.10,0.045,0.03,dark);c.position.set(CAB0+0.60,roofY(CAB0+0.60)+0.0225,EO+sd*(0.30+k*0.032));boat.add(lab(c,'стопоры фалов: справа 5, слева 3 — у переднего края люка (владелец и фото 16.11)'));}
   const hl=mkLine(0x2f6fd6);setLine(hl,V(CAB0+0.65,roofY(CAB0+0.65)+0.025,EO+sd*(sd>0?0.364:0.332)),V(MX-0.08,MB+0.03,sd*0.06));boat.add(hl);
   [-1,1].forEach(q=>{const bl=new THREE.Mesh(new THREE.CylinderGeometry(0.03,0.03,0.016,16),dark);bl.rotation.x=Math.PI/2;bl.position.set(MX+q*0.02-0.1,MB+0.03,sd*0.085);boat.add(lab(bl,'отводной блок у степса: фалы с мачты идут к стопорам, по фото 16.11'));});
-  const tr=box(JX1-JX0,0.012,0.025,steel);tr.position.set((JX0+JX1)/2,sh(tt((JX0+JX1)/2))+0.025,sd*JTZ);boat.add(lab(tr,'погон шкота стакселя: на боковой палубе вдоль рубки, у кормовой её части (владелец 16.11); длина примерная'));
-  {const ZT=0.48,X0=CAB0+0.53,LT=0.32,secY=px=>{const sec=cabSec(px,16);let best=sec[0];for(let k=1;k<sec.length;k++){const p2=sec[k];if(p2[0]>=ZT&&sec[k-1][0]<ZT){const q=sec[k-1],u=(ZT-q[0])/(p2[0]-q[0]);return [q[1]+u*(p2[1]-q[1]),Math.atan2(p2[1]-q[1],p2[0]-q[0])];}}return [roofY(px),0];};
-    const [yt0,an]=secY(X0+LT/2),tk=box(LT,0.012,0.025,M(0x1a1d22,{roughness:0.4}));tk.position.set(X0+LT/2,yt0+0.006,sd*ZT);tk.rotation.x=-sd*an;boat.add(lab(tk,'погон каретки блока оттяжки стаксель-шкота: чёрный, вдоль рубки снаружи от стопоров (фото 16.11); длина примерная'));
-    const [yc]=secY(X0+0.07),car=box(0.06,0.02,0.03,dark);car.position.set(X0+0.07,yc+0.022,sd*ZT);car.rotation.x=-sd*an;boat.add(lab(car,'каретка с блоком оттяжки стаксель-шкота'));
-    const blk=new THREE.Mesh(new THREE.TorusGeometry(0.016,0.007,8,16),dark);blk.position.set(X0+0.07,yc+0.05,sd*ZT);boat.add(lab(blk,'блок оттяжки стаксель-шкота на каретке'));}
+  {const ZT=JTZ,X0=JX0,LT=JX1-JX0,secY=px=>{const sec=cabSec(px,16);let best=sec[0];for(let k=1;k<sec.length;k++){const p2=sec[k];if(p2[0]>=ZT&&sec[k-1][0]<ZT){const q=sec[k-1],u=(ZT-q[0])/(p2[0]-q[0]);return [q[1]+u*(p2[1]-q[1]),Math.atan2(p2[1]-q[1],p2[0]-q[0])];}}return [roofY(px),0];};
+    const [yt0,an]=secY(X0+LT/2),tk=box(LT,0.012,0.025,M(0x1a1d22,{roughness:0.4}));tk.position.set(X0+LT/2,yt0+0.006,sd*ZT);tk.rotation.x=-sd*an;boat.add(lab(tk,'погон шкота стакселя: один с каждого борта, чёрный, на крыше рубки снаружи от люка, начинается чуть позади стопоров (фото 16.11); длина примерная'));
+    const [yc]=secY(X0+0.07),car=box(0.06,0.02,0.03,dark);car.position.set(X0+0.07,yc+0.022,sd*ZT);car.rotation.x=-sd*an;boat.add(lab(car,'каретка погона шкота стакселя с блоком'));
+    const blk=new THREE.Mesh(new THREE.TorusGeometry(0.016,0.007,8,16),dark);blk.position.set(X0+0.07,yc+0.05,sd*ZT);boat.add(lab(blk,'блок шкота стакселя на каретке'));}
 
   const cl=box(0.13,0.025,0.03,steel);cl.position.set(-3.75,sh(tt(-3.75))+0.035,sd*(hb(tt(-3.75))-0.12));boat.add(lab(cl,'кормовая швартовная утка'));
   const bc=box(0.13,0.025,0.03,steel);bc.position.set(3.0,sh(tt(3.0))+0.035,sd*(hb(tt(3.0))-0.12));boat.add(lab(bc,'носовая швартовная утка'));
@@ -1927,7 +1926,7 @@ function frame(now){
   const jT=lee*JS*rad(Math.max(2,Math.min(30,(aa-15)*0.3)));jibA+=(jT-jibA)*Math.min(1,dt*2);jibG.quaternion.setFromAxisAngle(stayAx,jibA);
   spinG.scale.z=lee;boat.updateMatrixWorld(true);
   const bp=boat.worldToLocal(worldOf(boomPt));car.position.z=Math.max(-(FW-0.05),Math.min(FW-0.05,bp.z));setLine(mainSheet,bp,V(car.position.x,0.37,car.position.z));
-  if(jibSheet.visible){const jc=boat.worldToLocal(worldOf(jibClew));const tx=Math.max(JX0+0.05,Math.min(JX1-0.05,jc.x));setLine(jibSheet,jc,V(tx,sh(tt(tx))+0.05,Math.sign(jc.z||lee)*JTZ));}
+  if(jibSheet.visible){const jc=boat.worldToLocal(worldOf(jibClew));const tx=Math.max(JX0+0.05,Math.min(JX1-0.05,jc.x));setLine(jibSheet,jc,V(tx,roofY(tx)+0.05,Math.sign(jc.z||lee)*JTZ));}
   if(spinSheet.visible){const sc=boat.worldToLocal(worldOf(spinClew));setLine(spinSheet,sc,V(-3.7,0.85,lee*1.1));}
   // заход / отход: по изменению угла к ветру за 8 с
   hist.push([ts,Math.abs(awaT)]);while(hist.length&&hist[0][0]<ts-8)hist.shift();
