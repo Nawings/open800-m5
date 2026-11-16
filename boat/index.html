@@ -110,6 +110,9 @@ code{font-family:var(--f-mono);font-size:12px}
     <h2>Найти деталь</h2>
     <div class="btns" id="finds"></div>
     <p class="note" id="findNote">Нажмите на название — камера подлетит к детали, и она замигает оранжевым.</p>
+    <h2>Компоновка блока</h2>
+    <div class="btns" id="layBtns"></div>
+    <p class="note" id="layNote">Нынешний блок: коробка IP67 200 × 120 × 75 мм на салазках. Выберите вариант, чтобы увидеть, как новый корпус встанет на переборку.</p>
     <h2>Сборка по шагам</h2>
     <div class="btns" id="asmStart"><button id="asmGo" type="button">Собрать по шагам</button></div>
     <div class="asm" id="asmBox" hidden>
@@ -1756,6 +1759,42 @@ function setInside(on){if(!INS.length)boat.children.forEach(o=>{const l=o.userDa
 
 // ---------- камера ----------
 function worldOf(o){const v=new THREE.Vector3();o.getWorldPosition(v);return v;}
+// ---------- компоновка блока на кормовой стенке рубки: варианты со страницы «Компоновка блока» ----------
+// место: справа от входа, от края направляющей щитов (0,31 м от оси) вправо; низ места — уровень палубы у рубки (CY), высота — подбор «как можно выше, где ещё встаёт»
+const LAYV=[{"id":"a1","key":"A1","title":"7,5″ и 4,2″ рядом","OW":288.2,"OH":133.7,"W":282.2,"H":127.7,"wall":3,"y":90,"yt":120.30000000000001,"E":[{"k":"scr","x":6,"y":8.3,"w":170.2,"h":111.2,"aw":163.2,"ah":97.9,"role":"main"},{"k":"scr","x":184.2,"y":32,"w":92,"h":89.7,"aw":84.8,"ah":63.6,"role":"small"},{"k":"led","x":189.2,"y":17,"c":"g"},{"k":"btn","x":204.2,"y":17},{"k":"btn","x":222.2,"y":17},{"k":"btn","x":240.2,"y":17},{"k":"btn","x":258.2,"y":17},{"k":"led","x":271.2,"y":17,"c":"r"}]},{"id":"a3","key":"A3","title":"4,2″ слева, 7,5″ справа","OW":288.2,"OH":133.7,"W":282.2,"H":127.7,"wall":3,"y":90,"yt":120.30000000000001,"E":[{"k":"scr","x":106,"y":8.3,"w":170.2,"h":111.2,"aw":163.2,"ah":97.9,"role":"main"},{"k":"scr","x":6,"y":32,"w":92,"h":89.7,"aw":84.8,"ah":63.6,"role":"small"},{"k":"led","x":93,"y":17,"c":"r"},{"k":"btn","x":78,"y":17},{"k":"btn","x":60,"y":17},{"k":"btn","x":42,"y":17},{"k":"btn","x":24,"y":17},{"k":"led","x":11,"y":17,"c":"g"}]},{"id":"a2","key":"A2","title":"7,5″ сверху, 4,2″ снизу","OW":188.2,"OH":226.9,"W":182.2,"H":220.9,"wall":3,"y":18,"yt":89.1,"E":[{"k":"scr","x":6,"y":103.7,"w":170.2,"h":111.2,"aw":163.2,"ah":97.9,"role":"main"},{"k":"scr","x":18.1,"y":6,"w":92,"h":89.7,"aw":84.8,"ah":63.6,"role":"small"},{"k":"btn","x":127.1,"y":81.7},{"k":"btn","x":145.1,"y":81.7},{"k":"btn","x":127.1,"y":63.7},{"k":"btn","x":145.1,"y":63.7},{"k":"led","x":127.1,"y":18,"c":"g"},{"k":"led","x":145.1,"y":18,"c":"r"}]},{"id":"c1","key":"C1","title":"7,5″ стоя и 4,2″ справа","OW":229.2,"OH":188.2,"W":223.2,"H":182.2,"wall":3,"y":48,"yt":113.80000000000001,"E":[{"k":"scr","x":6,"y":6,"w":111.2,"h":170.2,"aw":97.9,"ah":163.2,"role":"main"},{"k":"scr","x":125.2,"y":59.2,"w":92,"h":89.7,"aw":84.8,"ah":63.6,"role":"small"},{"k":"led","x":130.2,"y":44.2,"c":"g"},{"k":"btn","x":145.2,"y":44.2},{"k":"btn","x":163.2,"y":44.2},{"k":"btn","x":181.2,"y":44.2},{"k":"btn","x":199.2,"y":44.2},{"k":"led","x":212.2,"y":44.2,"c":"r"}]},{"id":"c3","key":"C3","title":"4,2″ слева, 7,5″ стоя справа","OW":229.2,"OH":188.2,"W":223.2,"H":182.2,"wall":3,"y":48,"yt":113.80000000000001,"E":[{"k":"scr","x":106,"y":6,"w":111.2,"h":170.2,"aw":97.9,"ah":163.2,"role":"main"},{"k":"scr","x":6,"y":59.2,"w":92,"h":89.7,"aw":84.8,"ah":63.6,"role":"small"},{"k":"led","x":93,"y":44.2,"c":"r"},{"k":"btn","x":78,"y":44.2},{"k":"btn","x":60,"y":44.2},{"k":"btn","x":42,"y":44.2},{"k":"btn","x":24,"y":44.2},{"k":"led","x":11,"y":44.2,"c":"g"}]},{"id":"c2","key":"C2","title":"7,5″ стоя, 4,2″ снизу","OW":164,"OH":285.9,"W":158,"H":279.9,"wall":3,"y":10,"yt":32.10000000000002,"E":[{"k":"scr","x":23.4,"y":103.7,"w":111.2,"h":170.2,"aw":97.9,"ah":163.2,"role":"main"},{"k":"scr","x":6,"y":6,"w":92,"h":89.7,"aw":84.8,"ah":63.6,"role":"small"},{"k":"btn","x":115,"y":81.7},{"k":"btn","x":133,"y":81.7},{"k":"btn","x":115,"y":63.7},{"k":"btn","x":133,"y":63.7},{"k":"led","x":115,"y":18,"c":"g"},{"k":"led","x":133,"y":18,"c":"r"}]}];
+const layG=new THREE.Group();boat.add(layG);let layCur='now';
+function layTex(v){const k=4,c=document.createElement('canvas');c.width=Math.round(v.OW*k);c.height=Math.round(v.OH*k);const q=c.getContext('2d');
+  const rr=(x,y,w,h,r)=>{q.beginPath();q.moveTo(x+r,y);q.arcTo(x+w,y,x+w,y+h,r);q.arcTo(x+w,y+h,x,y+h,r);q.arcTo(x,y+h,x,y,r);q.arcTo(x,y,x+w,y,r);q.closePath();};
+  q.fillStyle='#2a3138';rr(0,0,c.width,c.height,8*k);q.fill();
+  const X=x=>(v.wall+x)*k,Y=y=>(v.wall+v.H-y)*k,B=(s,px)=>{q.font='700 '+px+'px Arial, sans-serif';return s;};
+  const tablo=(x,y,w,h)=>{const hh=h*(w<h?0.105:0.075),ch=h*0.062,rh=(h-hh-ch)/4,cw=w/2,lab=Math.min(rh*0.17,cw*0.075);q.fillStyle='#141414';q.strokeStyle='#141414';q.lineWidth=k*0.4;
+    q.font='700 '+(hh*0.5)+'px Arial';q.fillText('M5 ТАБЛО',x+w*0.02,y+hh*0.7);q.textAlign='right';q.font='700 '+Math.min(hh*0.35,w*0.035)+'px Arial';q.fillText('лодка 12,7 В · резерв 12,3 В · 100 %',x+w*0.98,y+hh*(w<h?0.95:0.7));q.textAlign='left';
+    q.beginPath();q.moveTo(x,y+hh);q.lineTo(x+w,y+hh);q.moveTo(x+cw,y+hh);q.lineTo(x+cw,y+h);q.moveTo(x,y+hh+ch);q.lineTo(x+w,y+hh+ch);q.stroke();
+    q.textAlign='center';q.font='700 '+(ch*0.8)+'px Arial';q.fillText('ЛОДКА',x+cw/2,y+hh+ch*0.82);q.fillText('ВЕТЕР',x+cw*1.5,y+hh+ch*0.82);q.textAlign='left';
+    const C=[[['СКОРОСТЬ, уз','5,4'],['ГРАДУС К N','177°'],['ГР. К ВЕТРУ','56° П'],['+/− ОТ БАЗ. КУРСА','+6° увал']],[['СКОРОСТЬ ВЫМ., уз','12,0'],['ГРАДУС ВЫМ.','34° П'],['V ИСТИН., уз','8,1'],['ГРАД. ИСТИН.','233°']]];
+    q.font='700 100px Arial';const wmax=q.measureText('233°').width/100,fs=Math.min((rh-lab*1.5)*0.76/0.72,cw*0.8/wmax);
+    C.forEach((col,ci)=>col.forEach((cl,ri)=>{const x0=x+ci*cw,y0=y+hh+ch+ri*rh;if(ri){q.beginPath();q.moveTo(x0,y0);q.lineTo(x0+cw,y0);q.stroke();}
+      q.font='700 '+lab+'px Arial';q.fillText(cl[0],x0+cw*0.03,y0+lab*1.15);const parts=cl[1].split(' ');q.font='700 '+fs+'px Arial';const base=y0+lab*1.5+(rh-lab*1.5+fs*0.72)/2;q.fillText(parts[0],x0+cw*0.04,base);
+      if(parts[1]){const vw=q.measureText(parts[0]).width;q.font='700 '+(lab*1.25)+'px Arial';q.fillText(parts[1],x0+cw*0.06+vw,base);}}));};
+  const start=(x,y,w,h)=>{q.fillStyle='#141414';q.font='700 '+(h*0.07)+'px Arial';q.fillText('СТАРТ',x+w*0.03,y+h*0.08);q.textAlign='center';q.font='700 '+(h*0.28)+'px Arial';q.fillText('−3:42',x+w/2,y+h*0.42);q.textAlign='left';
+    q.font='700 '+(h*0.11)+'px Arial';q.fillText('42 м',x+w*0.03,y+h*0.66);q.fillText('0:18',x+w*0.53,y+h*0.66);q.font='700 '+(h*0.05)+'px Arial';q.fillText('ДО ЛИНИИ',x+w*0.03,y+h*0.52);q.fillText('НА ЛИНИИ ЧЕРЕЗ',x+w*0.53,y+h*0.52);
+    q.fillText('выгоднее ▶ правый конец, +12 м',x+w*0.03,y+h*0.8);q.fillText('перекос линии 8° · запас 3:24',x+w*0.03,y+h*0.9);};
+  v.E.forEach(e=>{if(e.k==='scr'){const x0=X(e.x),y0=Y(e.y+e.h),w=e.w*k,h=e.h*k;q.fillStyle='#1b1f24';q.fillRect(x0-2*k,y0-2*k,w+4*k,h+4*k);q.fillStyle='#e6e8e2';q.fillRect(x0,y0,w,h);
+      const aw=e.aw*k,ah=e.ah*k,ax=x0+(w-aw)/2,ay=y0+(h-ah)/2;if(e.role==='small')start(ax,ay,aw,ah);else tablo(ax,ay,aw,ah);}
+    else if(e.k==='btn'){q.fillStyle='#8f99a3';q.beginPath();q.arc(X(e.x),Y(e.y),7*k,0,7);q.fill();}
+    else if(e.k==='led'){q.fillStyle=e.c==='g'?'#2fa84f':'#d62828';q.beginPath();q.arc(X(e.x),Y(e.y),2.5*k,0,7);q.fill();}});
+  const t=new THREE.CanvasTexture(c);t.anisotropy=8;return t;}
+function setLayout(id){layCur=id;while(layG.children.length){const o=layG.children.pop();o.traverse(m=>{if(m.geometry)m.geometry.dispose();});}
+  const v=LAYV.find(q=>q.id===id);cpG.visible=!v;
+  document.querySelectorAll('#layBtns [data-lay]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.lay===id)));
+  if(!v){document.getElementById('layNote').textContent='Нынешний блок: коробка IP67 200 × 120 × 75 мм на салазках. Выберите вариант, чтобы увидеть, как новый корпус встанет на переборку.';return;}
+  const tex=layTex(v),side=M(0x2a3138,{roughness:0.55}),front=new THREE.MeshStandardMaterial({map:tex,roughness:0.5});
+  const m=new THREE.Mesh(new THREE.BoxGeometry(0.035,v.OH/1000,v.OW/1000),[side,front,side,side,side,side]);
+  m.position.set(CAB_AFT-0.0175,CY+(v.yt+v.OH/2)/1000,0.31+(10+v.OW/2)/1000);layG.add(lab(m,'блок '+v.key+': '+v.title+', '+Math.round(v.OW)+' × '+Math.round(v.OH)+' × 35 мм'));
+  document.getElementById('layNote').textContent=v.key+' — '+v.title+': корпус '+Math.round(v.OW)+' × '+Math.round(v.OH)+' × 35 мм. Стоит справа от входа, низ корпуса — на '+Math.round(v.yt)+' мм выше палубы у рубки, верх — на '+Math.round(330-v.yt-v.OH)+' мм ниже края крыши. Место — по примерному контуру из замеров 16.11.';
+  go('deck');}
+(function(){const b=document.getElementById('layBtns');if(!b)return;b.innerHTML='<button type="button" data-lay="now" aria-pressed="true">Нынешний</button>'+LAYV.map(v=>'<button type="button" data-lay="'+v.id+'" aria-pressed="false">'+v.key+'</button>').join('');
+  b.addEventListener('click',e=>{const t=e.target.closest('[data-lay]');if(t)setLayout(t.dataset.lay);});})();
 const deckAnchor=new THREE.Object3D();deckAnchor.position.set(CAB_AFT+0.55,0.95,0);boat.add(deckAnchor);
 const VIEWS={
   boat:()=>({t:V(0.3,5.4,0),p:V(15,8.5,17.5),f:null}),
