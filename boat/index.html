@@ -1776,7 +1776,13 @@ function worldOf(o){const v=new THREE.Vector3();o.getWorldPosition(v);return v;}
 // место: справа от входа, от края направляющей щитов (0,31 м от оси) вправо; низ места — уровень палубы у рубки (CY), высота — подбор «как можно выше, где ещё встаёт»
 const LAYV=[{"id":"a1","key":"A1","title":"7,5″ и 4,2″ рядом","OW":288.2,"OH":133.7,"W":282.2,"H":127.7,"wall":3,"mg":7,"y":153,"yt":157.3,"E":[{"k":"scr","x":6,"y":8.3,"w":170.2,"h":111.2,"aw":163.2,"ah":97.9,"role":"main"},{"k":"scr","x":184.2,"y":32,"w":92,"h":89.7,"aw":84.8,"ah":63.6,"role":"small"},{"k":"led","x":189.2,"y":17,"c":"m"},{"k":"btn","x":204.2,"y":17},{"k":"btn","x":222.2,"y":17},{"k":"btn","x":240.2,"y":17},{"k":"btn","x":258.2,"y":17}]},{"id":"a3","key":"A3","title":"4,2″ слева, 7,5″ справа","OW":288.2,"OH":133.7,"W":282.2,"H":127.7,"wall":3,"mg":7,"y":153,"yt":157.3,"E":[{"k":"scr","x":106,"y":8.3,"w":170.2,"h":111.2,"aw":163.2,"ah":97.9,"role":"main"},{"k":"scr","x":6,"y":32,"w":92,"h":89.7,"aw":84.8,"ah":63.6,"role":"small"},{"k":"led","x":93,"y":17,"c":"m"},{"k":"btn","x":78,"y":17},{"k":"btn","x":60,"y":17},{"k":"btn","x":42,"y":17},{"k":"btn","x":24,"y":17}]},{"id":"a2","key":"A2","title":"7,5″ сверху, 4,2″ снизу","OW":188.2,"OH":226.9,"W":182.2,"H":220.9,"wall":3,"mg":13,"y":74,"yt":93.1,"E":[{"k":"scr","x":6,"y":103.7,"w":170.2,"h":111.2,"aw":163.2,"ah":97.9,"role":"main"},{"k":"scr","x":18.1,"y":6,"w":92,"h":89.7,"aw":84.8,"ah":63.6,"role":"small"},{"k":"btn","x":127.1,"y":81.7},{"k":"btn","x":145.1,"y":81.7},{"k":"btn","x":127.1,"y":63.7},{"k":"btn","x":145.1,"y":63.7},{"k":"led","x":136.1,"y":18,"c":"m"}]},{"id":"c1","key":"C1","title":"7,5″ стоя и 4,2″ справа","OW":229.2,"OH":188.2,"W":223.2,"H":182.2,"wall":3,"mg":10,"y":129,"yt":128.8,"E":[{"k":"scr","x":6,"y":6,"w":111.2,"h":170.2,"aw":97.9,"ah":163.2,"role":"main"},{"k":"scr","x":125.2,"y":59.2,"w":92,"h":89.7,"aw":84.8,"ah":63.6,"role":"small"},{"k":"led","x":130.2,"y":44.2,"c":"m"},{"k":"btn","x":145.2,"y":44.2},{"k":"btn","x":163.2,"y":44.2},{"k":"btn","x":181.2,"y":44.2},{"k":"btn","x":199.2,"y":44.2}]},{"id":"c3","key":"C3","title":"4,2″ слева, 7,5″ стоя справа","OW":229.2,"OH":188.2,"W":223.2,"H":182.2,"wall":3,"mg":10,"y":129,"yt":128.8,"E":[{"k":"scr","x":106,"y":6,"w":111.2,"h":170.2,"aw":97.9,"ah":163.2,"role":"main"},{"k":"scr","x":6,"y":59.2,"w":92,"h":89.7,"aw":84.8,"ah":63.6,"role":"small"},{"k":"led","x":93,"y":44.2,"c":"m"},{"k":"btn","x":78,"y":44.2},{"k":"btn","x":60,"y":44.2},{"k":"btn","x":42,"y":44.2},{"k":"btn","x":24,"y":44.2}]},{"id":"c2","key":"C2","title":"7,5″ стоя, 4,2″ снизу","OW":164,"OH":285.9,"W":158,"H":279.9,"wall":3,"mg":15,"y":10,"yt":34.10000000000002,"E":[{"k":"scr","x":23.4,"y":103.7,"w":111.2,"h":170.2,"aw":97.9,"ah":163.2,"role":"main"},{"k":"scr","x":6,"y":6,"w":92,"h":89.7,"aw":84.8,"ah":63.6,"role":"small"},{"k":"btn","x":115,"y":81.7},{"k":"btn","x":133,"y":81.7},{"k":"btn","x":115,"y":63.7},{"k":"btn","x":133,"y":63.7},{"k":"led","x":124,"y":18,"c":"m"}]}];
 const layG=new THREE.Group();boat.add(layG);let layCur='now';
-function layTex(v){const k=4,c=document.createElement('canvas');c.width=Math.round(v.OW*k);c.height=Math.round(v.OH*k);const q=c.getContext('2d');
+const LDV0={awa:-34,aws:12,hdg:177,sog:5.4,sig:0,t:0};
+const f1c=x=>x.toFixed(1).replace('.',','),mmss=s=>{s=Math.max(0,Math.round(s));return Math.floor(s/60)+':'+String(s%60).padStart(2,'0');};
+function layDraw(c,v,dv){dv=dv||LDV0;const k=4,q=c.getContext('2d');q.clearRect(0,0,c.width,c.height);q.textAlign='left';
+  // величины табло из того, что меряет прибор: вымпельный ветер с топа, скорость и курс по GPS; истинный — расчётом
+  const ar=dv.awa*Math.PI/180,Ax=dv.aws*Math.cos(ar),Ay=dv.aws*Math.sin(ar),Tx=Ax-dv.sog,Ty=Ay,tws=Math.hypot(Tx,Ty),twa=Math.atan2(Ty,Tx)*180/Math.PI,twd=Math.round((dv.hdg+twa+720)%360),SL=a=>a<0?'Л':'П',dB=Math.round(dv.hdg-171);
+  const VAL=[[['СКОРОСТЬ, уз',f1c(dv.sog)],['ГРАДУС К N',Math.round(dv.hdg)+'°'],['ГР. К ВЕТРУ',Math.round(Math.abs(twa))+'° '+SL(twa)],['+/− ОТ БАЗ. КУРСА',(dB>=0?'+':'−')+Math.abs(dB)+'° '+(dB>=0?'увал':'привод')]],[['СКОРОСТЬ ВЫМ., уз',f1c(dv.aws)],['ГРАДУС ВЫМ.',Math.round(Math.abs(dv.awa))+'° '+SL(dv.awa)],['V ИСТИН., уз',f1c(tws)],['ГРАД. ИСТИН.',twd+'°']]];
+  const rem=300-(dv.t%300),dist=Math.max(0,42-(dv.t%300)*0.12),eta=dist/Math.max(0.5,dv.sog*0.5144);
   const rr=(x,y,w,h,r)=>{q.beginPath();q.moveTo(x+r,y);q.arcTo(x+w,y,x+w,y+h,r);q.arcTo(x+w,y+h,x,y+h,r);q.arcTo(x,y+h,x,y,r);q.arcTo(x,y,x+w,y,r);q.closePath();};
   q.fillStyle='#2a3138';rr(0,0,c.width,c.height,8*k);q.fill();
   const X=x=>(v.wall+x)*k,Y=y=>(v.wall+v.H-y)*k,B=(s,px)=>{q.font='700 '+px+'px Arial, sans-serif';return s;};
@@ -1784,24 +1790,26 @@ function layTex(v){const k=4,c=document.createElement('canvas');c.width=Math.rou
     q.font='700 '+(hh*0.5)+'px Arial';q.fillText('M5 ТАБЛО',x+w*0.02,y+hh*0.7);q.textAlign='right';q.font='700 '+Math.min(hh*0.35,w*0.035)+'px Arial';q.fillText('лодка 12,7 В · резерв 12,3 В · 100 %',x+w*0.98,y+hh*(w<h?0.95:0.7));q.textAlign='left';
     q.beginPath();q.moveTo(x,y+hh);q.lineTo(x+w,y+hh);q.moveTo(x+cw,y+hh);q.lineTo(x+cw,y+h);q.moveTo(x,y+hh+ch);q.lineTo(x+w,y+hh+ch);q.stroke();
     q.textAlign='center';q.font='700 '+(ch*0.8)+'px Arial';q.fillText('ЛОДКА',x+cw/2,y+hh+ch*0.82);q.fillText('ВЕТЕР',x+cw*1.5,y+hh+ch*0.82);q.textAlign='left';
-    const C=[[['СКОРОСТЬ, уз','5,4'],['ГРАДУС К N','177°'],['ГР. К ВЕТРУ','56° П'],['+/− ОТ БАЗ. КУРСА','+6° увал']],[['СКОРОСТЬ ВЫМ., уз','12,0'],['ГРАДУС ВЫМ.','34° П'],['V ИСТИН., уз','8,1'],['ГРАД. ИСТИН.','233°']]];
+    const C=VAL;
     q.font='700 100px Arial';const wmax=q.measureText('233°').width/100,fs=Math.min((rh-lab*1.5)*0.76/0.72,cw*0.8/wmax);
     C.forEach((col,ci)=>col.forEach((cl,ri)=>{const x0=x+ci*cw,y0=y+hh+ch+ri*rh;if(ri){q.beginPath();q.moveTo(x0,y0);q.lineTo(x0+cw,y0);q.stroke();}
       q.font='700 '+lab+'px Arial';q.fillText(cl[0],x0+cw*0.03,y0+lab*1.15);const parts=cl[1].split(' ');q.font='700 '+fs+'px Arial';const base=y0+lab*1.5+(rh-lab*1.5+fs*0.72)/2;q.fillText(parts[0],x0+cw*0.04,base);
       if(parts[1]){const vw=q.measureText(parts[0]).width;q.font='700 '+(lab*1.25)+'px Arial';q.fillText(parts[1],x0+cw*0.06+vw,base);}}));};
-  const start=(x,y,w,h)=>{q.fillStyle='#141414';q.font='700 '+(h*0.07)+'px Arial';q.fillText('СТАРТ',x+w*0.03,y+h*0.08);q.textAlign='center';q.font='700 '+(h*0.28)+'px Arial';q.fillText('−3:42',x+w/2,y+h*0.42);q.textAlign='left';
-    q.font='700 '+(h*0.11)+'px Arial';q.fillText('42 м',x+w*0.03,y+h*0.66);q.fillText('0:18',x+w*0.53,y+h*0.66);q.font='700 '+(h*0.05)+'px Arial';q.fillText('ДО ЛИНИИ',x+w*0.03,y+h*0.52);q.fillText('НА ЛИНИИ ЧЕРЕЗ',x+w*0.53,y+h*0.52);
-    q.fillText('выгоднее ▶ правый конец, +12 м',x+w*0.03,y+h*0.8);q.fillText('перекос линии 8° · запас 3:24',x+w*0.03,y+h*0.9);};
+  const start=(x,y,w,h)=>{q.fillStyle='#141414';q.font='700 '+(h*0.07)+'px Arial';q.fillText('СТАРТ',x+w*0.03,y+h*0.08);q.textAlign='center';q.font='700 '+(h*0.28)+'px Arial';q.fillText('−'+mmss(rem),x+w/2,y+h*0.42);q.textAlign='left';
+    q.font='700 '+(h*0.11)+'px Arial';q.fillText(Math.round(dist)+' м',x+w*0.03,y+h*0.66);q.fillText(mmss(eta),x+w*0.53,y+h*0.66);q.font='700 '+(h*0.05)+'px Arial';q.fillText('ДО ЛИНИИ',x+w*0.03,y+h*0.52);q.fillText('НА ЛИНИИ ЧЕРЕЗ',x+w*0.53,y+h*0.52);
+    q.fillText('выгоднее ▶ правый конец, +12 м',x+w*0.03,y+h*0.8);q.fillText('перекос линии 8° · запас '+mmss(Math.max(0,rem-eta)),x+w*0.03,y+h*0.9);};
   v.E.forEach(e=>{if(e.k==='scr'){const x0=X(e.x),y0=Y(e.y+e.h),w=e.w*k,h=e.h*k;q.fillStyle='#1b1f24';q.fillRect(x0-2*k,y0-2*k,w+4*k,h+4*k);q.fillStyle='#e6e8e2';q.fillRect(x0,y0,w,h);
       const aw=e.aw*k,ah=e.ah*k,ax=x0+(w-aw)/2,ay=y0+(h-ah)/2;if(e.role==='small')start(ax,ay,aw,ah);else tablo(ax,ay,aw,ah);}
     else if(e.k==='btn'){q.fillStyle='#8f99a3';q.beginPath();q.arc(X(e.x),Y(e.y),7*k,0,7);q.fill();}
-    else if(e.k==='led'){if(e.c==='m'){['#d62828','#2fa84f','#2f6fd6'].forEach((c,i)=>{const a0=-Math.PI/2+i*2*Math.PI/3;q.fillStyle=c;q.beginPath();q.moveTo(X(e.x),Y(e.y));q.arc(X(e.x),Y(e.y),3.1*k,a0,a0+2*Math.PI/3);q.closePath();q.fill();});}else{q.fillStyle=e.c==='g'?'#2fa84f':'#d62828';q.beginPath();q.arc(X(e.x),Y(e.y),2.5*k,0,7);q.fill();}}});
-  const t=new THREE.CanvasTexture(c);t.anisotropy=8;return t;}
-function setLayout(id){layCur=id;while(layG.children.length){const o=layG.children.pop();o.traverse(m=>{if(m.geometry)m.geometry.dispose();});}
+    else if(e.k==='led'){if(e.c==='m'){const col=dv.sig<0?'#3df06a':dv.sig>0&&Math.floor(dv.t*2)%2===0?'#ff4436':null;q.fillStyle='#11161b';q.beginPath();q.arc(X(e.x),Y(e.y),4*k,0,7);q.fill();if(col){q.save();q.shadowColor=col;q.shadowBlur=6*k;q.fillStyle=col;q.beginPath();q.arc(X(e.x),Y(e.y),3.1*k,0,7);q.fill();q.restore();}else{q.strokeStyle='#59636d';q.lineWidth=0.6*k;q.beginPath();q.arc(X(e.x),Y(e.y),3.1*k,0,7);q.stroke();}}else{q.fillStyle=e.c==='g'?'#2fa84f':'#d62828';q.beginPath();q.arc(X(e.x),Y(e.y),2.5*k,0,7);q.fill();}}});
+}
+function layTex(v){const c=document.createElement('canvas');c.width=Math.round(v.OW*4);c.height=Math.round(v.OH*4);layDraw(c,v);const t=new THREE.CanvasTexture(c);t.anisotropy=8;t.userData={c,v};return t;}
+let layTexCur=null;
+function setLayout(id){layTexCur=null;layCur=id;while(layG.children.length){const o=layG.children.pop();o.traverse(m=>{if(m.geometry)m.geometry.dispose();});}
   const v=LAYV.find(q=>q.id===id);cpG.visible=!v;
   document.querySelectorAll('#layBtns [data-lay]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.lay===id)));
   if(!v){document.getElementById('layNote').textContent='Нынешний блок: коробка IP67 200 × 120 × 75 мм на салазках. Выберите вариант, чтобы увидеть, как новый корпус встанет на переборку.';return;}
-  const tex=layTex(v),side=M(0x2a3138,{roughness:0.55}),front=new THREE.MeshStandardMaterial({map:tex,roughness:0.5});
+  const tex=layTex(v);layTexCur=tex;const side=M(0x2a3138,{roughness:0.55}),front=new THREE.MeshStandardMaterial({map:tex,roughness:0.5});
   const m=new THREE.Mesh(new THREE.BoxGeometry(0.035,v.OH/1000,v.OW/1000),[side,front,side,side,side,side]);
   const MG=Math.max(0,Math.min(v.mg,10));m.position.set(CAB_AFT-0.0175,CY+(v.yt+v.OH/2)/1000,EO+0.31+(MG+v.OW/2)/1000);layG.add(lab(m,'блок '+v.key+': '+v.title+', '+Math.round(v.OW)+' × '+Math.round(v.OH)+' × 35 мм'));
   document.getElementById('layNote').textContent=v.key+' — '+v.title+': корпус '+Math.round(v.OW)+' × '+Math.round(v.OH)+' × 35 мм. Стоит справа от входа, низ корпуса — на '+Math.round(v.yt)+' мм выше палубы у рубки, верх — на '+Math.round(330-v.yt-v.OH)+' мм ниже края крыши. Свободно вокруг — '+v.mg+' мм: '+(v.mg>=15?'встаёт с запасом.':'встаёт впритык — меньше точности замеров по фото (±1–2 см), до заказа нужен прямой замер переборки.')+' Контур — по фото 16.11, перепроверен.';
@@ -1928,7 +1936,8 @@ function frame(now){
   sig=Math.abs(awaT)<100&&delta>2.5?1:Math.abs(awaT)<100&&delta<-2.5?-1:0;sigD=Math.abs(delta);
   ledH.color.set(sig<0?0x4be36b:0x1f5a2c);ledH.emissive.set(sig<0?0x22d14a:0x000000);
   ledL.color.set(sig>0?0xff5a4a:0x5c2420);ledL.emissive.set(sig>0?0xff3b2f:0x000000);
-  if(now-lastDraw>500){lastDraw=now;drawDisplay({heel:h,pitch:p,awa:awaT,aws:S.aws,sig,d:sigD});}
+  if(now-lastDraw>500){lastDraw=now;drawDisplay({heel:h,pitch:p,awa:awaT,aws:S.aws,sig,d:sigD});
+    if(layTexCur){const yaw=S.demo?3*Math.sin(2*Math.PI*(ts-S.t0)/4.1):0,sg=5.4+(S.demo?0.25*Math.sin(2*Math.PI*(ts-S.t0)/5.3):0);layDraw(layTexCur.userData.c,layTexCur.userData.v,{awa:awaM,aws:awsM/0.5144,hdg:177+yaw,sog:sg,sig,t:ts});layTexCur.needsUpdate=true;}}
   if(now-lastRead>200){lastRead=now;
     $('rRaw').textContent=Math.round(Math.abs(awaM))+'°'+side(awaM)+' · '+f1(awsM/0.5144)+' уз';
     $('rFix').textContent=Math.round(Math.abs(awaT))+'°'+side(awaT)+' · '+f1(S.aws)+' уз';
