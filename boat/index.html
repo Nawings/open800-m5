@@ -1330,7 +1330,25 @@ boat.add(lab(rod(V(-2.30,0.88,0),V(-1.85,1.02,0.32),0.012,M(0x17191c)),'удли
 [-1,1].forEach(sd=>{
   const wx=-1.05;winch(wx,sh(tt(wx))+0.012,sd*(hb(tt(wx))-0.12),'лебёдка шкотов стакселя и спинакера');
   if(sd>0)winch(CAB0+0.18,roofY(CAB0+0.18),EO+0.43,'лебёдка фалов: одна, на крыше справа от люка, в 37 см за стопорами (фото 16.11); слева лебёдки нет',0.72);
-  const NCL=sd>0?5:3;for(let k=0;k<NCL;k++){const c=box(0.10,0.045,0.03,dark);c.position.set(CAB0+0.60,roofY(CAB0+0.60)+0.0225,EO+sd*(0.30+k*0.032));boat.add(lab(c,'стопоры фалов: справа 5, слева 3 — у переднего края люка (владелец и фото 16.11)'));}
+  // стопоры фалов по фото 16.11 (№ 99, 100): блок из отдельных чёрных корпусов ≈ 29 мм шириной; внизу кормовой стороны — отверстие с медной втулкой,
+  // верх скошен назад, в скосе окно с кулачком; блок на светлой подкладке. Справа 5, слева 3 (владелец). Справа заняты 1-й (у люка, чёрно-белый фал) и 5-й (жёлтый)
+  {const NCL=sd>0?5:3,CW=0.029,CL=0.085,CH=0.05,XC=CAB0+0.60,y0=roofY(XC)+0.004,z0=EO+sd*(0.30-CW/2);
+    const prof=new THREE.Shape();prof.moveTo(-CL/2,0);prof.lineTo(-CL/2,0.029);prof.lineTo(-CL/2+0.022,CH);prof.lineTo(CL/2-0.006,CH);prof.quadraticCurveTo(CL/2,CH,CL/2,CH-0.006);prof.lineTo(CL/2,0);prof.lineTo(-CL/2,0);
+    const bg=new THREE.ExtrudeGeometry(prof,{depth:CW-0.0016,bevelEnabled:false});bg.translate(0,0,-(CW-0.0016)/2);
+    const blackC=M(0x1c1f23,{roughness:0.55}),win=M(0x08090a,{roughness:1}),cam=M(0x3a3f45,{roughness:0.4,metalness:0.3}),bronze=M(0xb07a4f,{metalness:0.7,roughness:0.35});
+    const pad=box(CL+0.008,0.004,NCL*CW+0.006,M(0xcdb08a,{roughness:0.9}));pad.position.set(XC,y0-0.002,z0+sd*(NCL-1)*CW/2);boat.add(lab(pad,'подкладка под стопорами: светлая, по фото 16.11'));
+    const ang=Math.atan2(CH-0.029,0.022);
+    for(let k=0;k<NCL;k++){const g=new THREE.Group(),zc=z0+sd*k*CW;g.position.set(XC,y0,zc);
+      g.add(new THREE.Mesh(bg,blackC));
+      // окно с кулачком на скосе
+      const w=box(0.016,0.002,CW-0.009,win);w.position.set(-CL/2+0.011,0.0395,0);w.rotation.z=ang;g.add(w);
+      const cm=new THREE.Mesh(new THREE.TorusGeometry(0.006,0.0022,8,14,Math.PI*1.3),cam);cm.rotation.y=Math.PI/2;cm.position.set(-CL/2+0.012,0.037,0);g.add(cm);
+      // отверстие с медной втулкой
+      const bu=new THREE.Mesh(new THREE.TorusGeometry(0.0068,0.0019,8,20),bronze);bu.rotation.y=Math.PI/2;bu.position.set(-CL/2-0.0008,0.0145,0);g.add(bu);
+      const ho=new THREE.Mesh(new THREE.CircleGeometry(0.0055,16),win);ho.rotation.y=-Math.PI/2;ho.position.set(-CL/2-0.0005,0.0145,0);g.add(ho);
+      boat.add(lab(g,'стопор фала '+(k+1)+' из '+NCL+(sd>0?' (справа)':' (слева)')+': чёрный корпус ≈ 29 мм, отверстие с медной втулкой, сверху окно с кулачком — по фото 16.11'));}
+    if(sd>0)[[0,0x5d6166,'фал в 1-м стопоре справа: чёрно-белый (фото 16.11)'],[4,0xd9cf86,'фал в 5-м стопоре справа: жёлтый (фото 16.11)']].forEach(([k,c,l])=>{const zc=z0+k*CW,yy=y0+0.0145;
+      boat.add(lab(tube([V(XC-CL/2-0.002,yy,zc),V(XC-CL/2-0.06,y0+0.006,zc+0.005),V(CAB0+0.36,y0+0.005,zc+0.02+k*0.01),V(CAB0+0.24,roofY(CAB0+0.24)+0.005,EO+0.40)],0.0045,M(c,{roughness:0.8})),l));});}
   const hl=mkLine(0x2f6fd6);setLine(hl,V(CAB0+0.65,roofY(CAB0+0.65)+0.025,EO+sd*(sd>0?0.364:0.332)),V(MX-0.08,MB+0.03,sd*0.06));boat.add(hl);
   [-1,1].forEach(q=>{const bl=new THREE.Mesh(new THREE.CylinderGeometry(0.03,0.03,0.016,16),dark);bl.rotation.x=Math.PI/2;bl.position.set(MX+q*0.02-0.1,MB+0.03,sd*0.085);boat.add(lab(bl,'отводной блок у степса: фалы с мачты идут к стопорам, по фото 16.11'));});
   {const ZT=JTZ,X0=JX0,LT=JX1-JX0,secY=px=>{const sec=cabSec(px,16);let best=sec[0];for(let k=1;k<sec.length;k++){const p2=sec[k];if(p2[0]>=ZT&&sec[k-1][0]<ZT){const q=sec[k-1],u=(ZT-q[0])/(p2[0]-q[0]);return [q[1]+u*(p2[1]-q[1]),Math.atan2(p2[1]-q[1],p2[0]-q[0])];}}return [roofY(px),0];};
