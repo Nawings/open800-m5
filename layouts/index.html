@@ -85,7 +85,8 @@ ul.notes{margin:0;padding-left:18px;display:grid;gap:8px;max-width:80ch}
       <span class="fact ok"><b>Решено</b> второй экран 4,2″ — в той же коробке</span>
       <span class="fact ok"><b>Решено</b> корпус печатаем сами, форма любая</span>
       <span class="fact ok"><b>Решено</b> ниже 0 °C работать не нужно, серия от 10 штук</span>
-      <span class="fact q"><b>Ждёт решения</b> основной экран 7,5″ или 10,2″ и компоновка</span>
+      <span class="fact ok"><b>Замер 16.11</b> место справа от входа ≈ 34 × 33 см: по примерному контуру помещается только 7,5″</span>
+      <span class="fact q"><b>Ждёт решения</b> компоновка A1, A2 или A3 и точный контур места</span>
     </div>
   </header>
 
@@ -121,6 +122,27 @@ ul.notes{margin:0;padding-left:18px;display:grid;gap:8px;max-width:80ch}
     <p class="small">Высота крупной цифры — для одинаковой раскладки основного экрана: 4 крупных числа в 2 ряда, узкий шрифт; размер подобран так, чтобы самое длинное число влезло в свою четверть экрана. Дальность чтения — по правилу эргономики: цифра должна быть видна под углом не меньше 24′, это около 1/140 расстояния. Размеры корпуса — внешние, со стенкой 3 мм; глубина у всех около 78 мм, как сейчас.</p>
   </section>
 
+  <section class="sheet" aria-labelledby="hm">
+    <h2 id="hm">Место на переборке: замеры 16.11</h2>
+    <div class="two">
+      <div style="display:grid;gap:10px;min-width:0">
+        <div class="seg" role="group" aria-label="Какой вариант приложить к месту" id="pvSel"></div>
+        <div class="draw"><svg id="panel" role="img" aria-label="Контур свободного места на кормовой переборке справа от входа в каюту и приложенный корпус"></svg></div>
+        <p class="read" id="readP"></p>
+      </div>
+      <div style="display:grid;gap:10px;min-width:0">
+        <ul class="notes">
+          <li><b>Где:</b> кормовая переборка рубки, справа от входа в каюту, если смотреть из кокпита вперёд. Слева — направляющая щитов входа, сверху — край крыши рубки с лебёдкой, внизу справа — подъём комингса кокпита.</li>
+          <li><b>По замерам:</b> от направляющей до правого края — 34 см на высоте около 12 см от верха; от верха вниз вдоль направляющей — 33 см; по диагонали от нижнего угла у направляющей до скругления — 40 см. Из этих трёх чисел получается скругление верхнего правого угла радиусом около 18 см.</li>
+          <li><b>Подъём комингса</b> внизу справа на фото виден, но не измерен: на рисунке он нарисован прямой от 19 см по низу до 11 см по правому краю. Это самое неточное место контура.</li>
+          <li><b>Отступ</b> корпуса от краёв — 1 см со всех сторон.</li>
+        </ul>
+        <div class="tbl"><table id="fitTab"></table></div>
+        <p class="small">Контур примерный: снят с фото по трём замерам. Чтобы снять его точно, нужно одно фото переборки прямо спереди с рулеткой по низу и по правому краю — или четыре числа: ширина по низу до комингса, высота правого края до скругления, где начинается скругление сверху, куда упирается комингс справа.</p>
+      </div>
+    </div>
+  </section>
+
   <section class="sheet" aria-labelledby="hp">
     <h2 id="hp">Печать корпуса</h2>
     <div class="tbl"><table id="bed"></table></div>
@@ -138,7 +160,7 @@ ul.notes{margin:0;padding-left:18px;display:grid;gap:8px;max-width:80ch}
     <ul class="notes">
       <li><b>Основной экран.</b> 7,5″ GDEM075T42 — около 3 500–4 000 ₽, цену у продавца ещё не проверяли; обновление 0,3 с. 10,2″ GDEM102T91 — 6 423 ₽ на AliExpress; обновление 0,42 с; крупные цифры 46 мм против 34 мм у 7,5″, то есть в 1,35 раза выше.</li>
       <li><b>Компоновка.</b> «Рядом» — блок широкий и низкий, хорошо ложится под сдвижной люк; малый экран с кнопками может стоять справа (A1, B1) или слева (A3, B3) — размеры корпуса одинаковые. «Друг под другом» — блок узкий и высокий, занимает меньше ширины на переборке.</li>
-      <li><b>Место на переборке.</b> Нужен замер: ширина и высота свободного места там, где будет висеть блок, и есть ли рядом стойки, ручки или люк. От этого зависит, какой вариант вообще встанет.</li>
+      <li><b>Место на переборке — замерено 16.11.</b> Справа от входа свободно около 34 × 33 см со скруглённым верхним углом. По примерному контуру помещаются все варианты с экраном 7,5″ (A1, A2, A3), а с экраном 10,2″ — ни один. Контур уточнится по одному фото переборки спереди с рулеткой.</li>
       <li><b>Размер стола принтера.</b> На столе 256 × 256 мм целиком печатается только A2. A1, A3 и B2 — со стола 300 × 300 мм, B1 и B3 — только с 350 мм. На меньшем столе корпус собирается из двух половин.</li>
     </ul>
   </section>
@@ -252,6 +274,33 @@ function cmp(){$('cmp').innerHTML='<tr><th>Вариант</th><th>Корпус, 
 const BEDS=[['220 × 220',220,220,'Ender-3 и похожие'],['256 × 256',256,256,'Bambu Lab A1, P1S, X1'],['300 × 300',300,300,'Ender-3 Max, Prusa XL на одну голову близко'],['350 × 320',350,320,'Bambu Lab H2D']];
 $('bed').innerHTML='<tr><th>Стол принтера</th>'+V.slice(1).map(v=>'<th>'+v.key+' · '+f(v.g.OW)+' × '+f(v.g.OH)+'</th>').join('')+'</tr>'+BEDS.map(b=>'<tr><td>'+b[0]+' <span class="small">'+b[3]+'</span></td>'+V.slice(1).map(v=>{const fit=(v.g.OW<=b[1]-6&&v.g.OH<=b[2]-6)||(v.g.OW<=b[2]-6&&v.g.OH<=b[1]-6);return '<td>'+(fit?'<span class="yes">целиком</span>':'<span class="no">из 2 частей</span>')+'</td>';}).join('')+'</tr>').join('');
 ['tDim','tAll','tMod','tReal'].forEach(id=>$(id).addEventListener('click',()=>{const k={tDim:'dim',tAll:'all',tMod:'mod',tReal:'real'}[id];st[k]=!st[k];draw();}));
+// ---- место на переборке: x вправо от направляющей щитов входа, y вверх от низа, мм
+const PW=340,PH=330,PR=177,PCX=PW-PR,PCY=PH-PR,BUL=[190,0,PW,110],MRG=10;
+function inPanel(x,y){if(x<0||y<0||x>PW||y>PH)return false;if(x>PCX&&y>PCY&&Math.hypot(x-PCX,y-PCY)>PR)return false;const t=(x-BUL[0])/(BUL[2]-BUL[0]);if(t>0&&y<BUL[3]*Math.min(1,t))return false;return true;}
+function fitAt(w,h){for(let y=MRG;y+h<=PH-MRG;y+=2){let ok=true;for(let i=0;i<=20&&ok;i++){const px=MRG+w*i/20;[y-MRG,y+h+MRG].forEach(py=>{if(!inPanel(px,py))ok=false;});}
+  for(let j=0;j<=20&&ok;j++){const py=y+h*j/20;if(!inPanel(MRG+w+MRG,py))ok=false;}if(ok&&MRG+w+MRG<=PW)return y;}return null;}
+let pv='a3';
+function panel(){const v=V.find(q=>q.id===pv),g=v.g,M=14,Y=y=>M+PH-y;let s='';const sv=$('panel');sv.setAttribute('viewBox',[-M-6,0,PW+2*M+30,PH+2*M+14].join(' '));
+  // контур
+  let d='M'+(0)+' '+Y(0)+' L0 '+Y(PH)+' L'+PCX+' '+Y(PH)+' A'+PR+' '+PR+' 0 0 1 '+PW+' '+Y(PCY)+' L'+PW+' '+Y(BUL[3])+' L'+BUL[0]+' '+Y(0)+' Z';
+  s+='<rect x="-14" y="'+Y(PH)+'" width="12" height="'+PH+'" fill="var(--case-line)" opacity=".5"/><text class="lbl" x="-8" y="'+Y(PH/2)+'" text-anchor="middle" transform="rotate(-90 -8 '+Y(PH/2)+')">вход в каюту</text>';
+  s+='<path d="'+d+'" fill="var(--accent-bg)" stroke="var(--accent)" stroke-width="1.2"/>';
+  s+='<path d="M'+BUL[0]+' '+Y(0)+' L'+PW+' '+Y(BUL[3])+' L'+PW+' '+Y(0)+' Z" fill="var(--case)" stroke="var(--case-line)" stroke-dasharray="3 2"/><text class="lbl" x="'+(PW-40)+'" y="'+Y(18)+'" text-anchor="middle">комингс</text>';
+  s+='<text class="dimT" x="'+(PW/2)+'" y="'+(Y(PH)-4)+'" text-anchor="middle">крыша рубки, сверху лебёдка</text>';
+  // размеры
+  s+='<path class="dimL" d="M0 '+Y(PH-120)+' H'+PW+'"/><text class="dimT" x="'+(PW/2+40)+'" y="'+(Y(PH-120)-2)+'">34 см</text>';
+  s+='<path class="dimL" d="M'+(PW+12)+' '+Y(0)+' V'+Y(PH)+'"/><text class="dimT" x="'+(PW+16)+'" y="'+Y(PH/2)+'" transform="rotate(90 '+(PW+16)+' '+Y(PH/2)+')" text-anchor="middle">33 см</text>';
+  s+='<path class="dimL" d="M0 '+Y(0)+' L288 '+Y(278)+'" stroke-dasharray="2 2"/><text class="dimT" x="120" y="'+Y(130)+'">40 см</text>';
+  // корпус
+  const y=fitAt(g.OW,g.OH),yy=y==null?Math.max(MRG,(PH-g.OH)/2):y,col=y==null?'#d03b3b':'var(--ok)';
+  s+='<rect x="'+MRG+'" y="'+Y(yy+g.OH)+'" width="'+g.OW+'" height="'+g.OH+'" rx="6" fill="none" stroke="'+col+'" stroke-width="2" stroke-dasharray="'+(y==null?'5 3':'0')+'"/>';
+  s+='<text class="dimT" x="'+(MRG+g.OW/2)+'" y="'+(Y(yy+g.OH/2)+2)+'" text-anchor="middle" style="fill:'+col+';font-size:9px">'+v.key+' · '+f(g.OW)+' × '+f(g.OH)+'</text>';
+  sv.innerHTML=s;document.querySelectorAll('#pvSel [data-p]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.p===pv)));
+  $('readP').textContent=y==null?v.key+' не помещается: корпус '+f(g.OW)+' × '+f(g.OH)+' мм выходит за скругление или на комингс.':v.key+' помещается: корпус '+f(g.OW)+' × '+f(g.OH)+' мм, низ корпуса — на '+f(y)+' мм выше низа переборки.';}
+$('pvSel').innerHTML=V.map(v=>'<button class="btn" type="button" data-p="'+v.id+'">'+v.key+'</button>').join('');
+$('pvSel').addEventListener('click',e=>{const b=e.target.closest('[data-p]');if(b){pv=b.dataset.p;panel();}});
+$('fitTab').innerHTML='<tr><th>Вариант</th><th>Корпус, мм</th><th>На переборку</th></tr>'+V.slice(1).map(v=>{const y=fitAt(v.g.OW,v.g.OH);return '<tr><td><b>'+v.key+'</b> '+v.title+'</td><td class="n">'+f(v.g.OW)+' × '+f(v.g.OH)+'</td><td>'+(y==null?'<span class="no">не помещается</span>':'<span class="yes">помещается</span>')+'</td></tr>';}).join('');
+panel();
 draw();
 if(document.fonts&&document.fonts.ready)document.fonts.ready.then(()=>{measure();sizes();cards();draw();});
 })();
