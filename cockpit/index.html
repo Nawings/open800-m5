@@ -190,6 +190,31 @@ code{font-family:var(--f-mono);font-size:12px}
         <rect class="k" x="44" y="288" width="366" height="26" rx="4"/><text x="227" y="305" text-anchor="middle">прибор: предохранитель 3 А → резервный блок → прибор</text>
         <text class="m" x="227" y="326" text-anchor="middle">от шин щитка: плюс через предохранитель 3 А, минус — после массы</text>
       </svg>
+      <svg class="sch" style="aspect-ratio:420/272" viewBox="0 0 420 272" role="img" aria-label="Подключение белого кабеля к аккумулятору: две клеммы, кольцевые наконечники, коричневая жила на плюс, синяя на минус, место под предохранитель">
+        <text x="210" y="16" text-anchor="middle" style="font-weight:700">У аккумулятора: вид сверху</text>
+        <rect x="150" y="34" width="250" height="150" rx="8"/><text class="m" x="275" y="176" text-anchor="middle">аккумулятор 60 А·ч, крышка</text>
+        <circle cx="190" cy="70" r="13" style="fill:var(--surface);stroke:#c0392b;stroke-width:2.5"/><text x="190" y="75" text-anchor="middle" style="font-weight:700">+</text>
+        <circle cx="190" cy="140" r="13" style="fill:var(--surface);stroke:var(--ink);stroke-width:2.5"/><text x="190" y="145" text-anchor="middle" style="font-weight:700">−</text>
+        <circle cx="190" cy="70" r="20" style="fill:none;stroke:#b87333;stroke-width:4"/><circle cx="190" cy="140" r="20" style="fill:none;stroke:#b87333;stroke-width:4"/>
+        <text class="m" x="222" y="58">наконечник + гайка</text><text class="m" x="222" y="128">наконечник + гайка</text>
+        <path d="M170 70 H120 C100 70 96 98 84 104" style="stroke:#8a5a2b;stroke-width:3"/>
+        <rect x="112" y="60" width="34" height="20" rx="4" style="stroke:#ff8c1a;stroke-dasharray:4 3;fill:none"/><text x="129" y="52" text-anchor="middle" style="fill:#ff8c1a;font-size:10px">10 А</text>
+        <path d="M170 140 H120 C100 140 96 112 84 106" style="stroke:#2e5fbf;stroke-width:3"/>
+        <rect x="62" y="98" width="24" height="16" rx="3" style="fill:#15161a;stroke:#15161a"/>
+        <path d="M62 106 H8" style="stroke:var(--muted);stroke-width:7;stroke-linecap:round"/>
+        <text class="m" x="8" y="134">белый кабель</text><text class="m" x="8" y="148">к щитку в ящике</text>
+        <text class="m" x="60" y="84" text-anchor="middle">термоусадка</text>
+        <text x="8" y="206" style="fill:#8a5a2b">коричневая жила → «+»</text><text x="160" y="206" style="fill:#2e5fbf">синяя жила → «−»</text>
+        <text x="8" y="228" style="fill:#ff8c1a">пунктир — предохранитель 10 А: сейчас его нет</text>
+        <text class="m" x="8" y="248">тип клемм вашего аккумулятора не известен:</text><text class="m" x="8" y="264">на рисунке обычные конусные</text>
+      </svg>
+      <ol class="note" style="margin:6px 0 0 18px;padding:0">
+        <li><b>Плюс:</b> клемма «+» → коричневая жила белого кабеля → шина плюса в ящике.</li>
+        <li><b>Огни:</b> шина плюса → коричневые провода → 2 синих выключателя → белые кабели → передние огни и кормовой огонь.</li>
+        <li><b>Обратно:</b> синие жилы огней → шина минуса → толстый синий провод → чёрный выключатель массы → синяя жила белого кабеля → клемма «−».</li>
+        <li><b>Масса выключена</b> — цепь разорвана в минусе: огни и всё на шинах обесточены.</li>
+        <li><b>Прибор:</b> шина плюса → предохранитель 3 А → резервный блок → прибор; минус — с шины минуса. При выключенной массе прибор сам переходит на свои элементы.</li>
+      </ol>
     </div>
     <div class="card">
       <h3>Резервный блок <button type="button" data-go="res">Показать</button></h3>
@@ -1452,8 +1477,16 @@ const PWR=new THREE.Group(),RES=new THREE.Group(),HX=70,HY=-642.5,HZ=-1850;
   const lc=document.createElement('canvas');lc.width=512;lc.height=256;const q=lc.getContext('2d');q.fillStyle='#e8e4d8';q.fillRect(0,0,512,256);q.fillStyle='#1c1d20';q.font='800 86px Arial';q.textAlign='center';q.fillText('60 А·ч',256,112);q.font='700 56px Arial';q.fillText('12 В',256,196);
   const lm=new THREE.Mesh(new THREE.PlaneGeometry(120,60),new THREE.MeshBasicMaterial({map:new THREE.CanvasTexture(lc)}));lm.rotation.y=Math.PI/2;lm.position.set(-432.2,-710,-3050);PWR.add(lab(lm,'аккумулятор лодки 60 А·ч, 12 В'));
   const term=(x,c,l)=>{const m=cyl(8,16,M(c,{metalness:0.2,roughness:0.5}),20,l);m.position.set(x,-602,-2960);return m;};
-  PWR.add(term(-470,0xc0392b,'плюсовая клемма'),term(-570,0x20232a,'минусовая клемма'));
-  PWR.add(tube([[-480,-600,-2965],[-470,-560,-2800],[-500,-560,-2480],[-300,-445,-2400],[WX+120,-445,-2240],[WX+40,-500,-2110],[WX+22,-517,-2100]],3.5,0xe9e6df,'толстый белый кабель питания щитка: от аккумулятора к шине плюса через проход в переборке 2,02 м. Предохранителя на нём по фото не видно'));
+  PWR.add(term(-470,0xc0392b,'плюсовая клемма: на ней коричневая жила белого кабеля'),term(-570,0x20232a,'минусовая клемма: на ней синяя жила белого кабеля'));
+  // наконечники жил на клеммах, гайки, разделка белого кабеля и место под рекомендуемый предохранитель
+  [-470,-570].forEach(x=>{const rg=lab(new THREE.Mesh(new THREE.TorusGeometry(10.5,2.8,8,20),M(0xb87333,{metalness:0.6,roughness:0.35})),'кольцевой наконечник жилы на клемме');rg.rotation.x=Math.PI/2;rg.position.set(x,-597,-2960);PWR.add(rg);
+    PWR.add(lab(bx(x-4.5,-599,-2938,x+4.5,-596,-2950,M(0xb87333,{metalness:0.6,roughness:0.35})),'наконечник обжат на жиле'));
+    const nt=lab(new THREE.Mesh(new THREE.CylinderGeometry(8,8,6,6),M(0xb8bec4,{metalness:0.7,roughness:0.3})),'гайка клеммы');nt.position.set(x,-591,-2960);PWR.add(nt);});
+  PWR.add(tube([[-470,-597,-2938],[-470,-597,-2900],[-505,-615,-2820],[-516,-620,-2792]],2.2,0x6b3d25,'коричневая жила белого кабеля: плюс аккумулятора → шина плюса в ящике щитка. Сейчас прямо на клемму, без предохранителя'));
+  PWR.add(tube([[-570,-597,-2938],[-570,-597,-2900],[-535,-615,-2820],[-524,-620,-2792]],2.2,0x2e5fbf,'синяя жила белого кабеля: минус аккумулятора → выключатель массы в ящике щитка'));
+  {const hs=lab(new THREE.Mesh(new THREE.CylinderGeometry(5.8,5.8,22,14),M(0x15161a,{roughness:0.6})),'термоусадка на конце оболочки белого кабеля: дальше к клеммам — 2 жилы');hs.rotation.x=Math.PI/2;hs.position.set(-520,-620,-2785);PWR.add(hs);
+   const g=lab(new THREE.Mesh(new THREE.CylinderGeometry(9,9,50,14),M(0xff8c1a,{transparent:true,opacity:0.45,depthWrite:false,roughness:0.5})),'РЕКОМЕНДУЮ поставить сюда предохранитель 10 А в держателе — не дальше 20 см от плюса. Сейчас его нет');g.rotation.x=Math.PI/2;g.position.set(-470,-597,-2880);PWR.add(g);}
+  PWR.add(tube([[-520,-620,-2775],[-520,-640,-2700],[-500,-560,-2480],[-300,-445,-2400],[WX+120,-445,-2240],[WX+40,-500,-2110],[WX+22,-517,-2100]],3.5,0xe9e6df,'толстый белый кабель питания щитка: от аккумулятора к шине плюса через проход в переборке 2,02 м. Предохранителя на нём по фото не видно'));
   // порты коробки: локальные x → −z мира, y → −x мира, z → y мира
   const port=p=>[HX-p[1],HY+p[2],HZ-p[0]],P={bat:[75,0,8],out:[-75,0,10],mast:[27,66,10]},pb=port(P.bat),po=port(P.out),pm=port(P.mast);
   // резервный блок — от шин щитка в том же ящике: плюс через предохранитель 3 А, минус с шины минуса (владелец 16.11)
@@ -1552,6 +1585,7 @@ const CO=[
  {p:[-20,-745,-1500],f:1,e:[0,0,0],t:'резервный блок',s:'наведите на деталь — что это',v:'res'},
  {p:[70,-615,-1850],f:1,e:[0,0,0],t:'резервный блок',s:'в ящике со щитком',v:'bat'},
  {p:[-520,-610,-3050],f:1,e:[0,0,0],t:'аккумулятор лодки',s:'60 А·ч, в носу',v:'bat'},
+ {p:[-470,-597,-2880],f:1,e:[0,0,0],t:'сюда — предохранитель 10 А',s:'сейчас его нет',v:'bat'},
  {p:[-20,-600,-2040],f:1,e:[0,0,0],t:'предохранитель 3 А',s:'у шины плюса, в ящике',v:'bat'},
  {p:[-136,-590,-2140],f:1,e:[0,0,0],t:'кнопки щитка',s:'снаружи ящика, шины — внутри',v:'bat'},
  {p:[-50,-105,-19],f:1,e:[0,0,0],t:'сквозь переборку',s:'один кабель, гермоввод PG9',v:'bat'},
