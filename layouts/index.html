@@ -56,6 +56,7 @@ th{font:600 11.5px var(--f-body);letter-spacing:.05em;text-transform:uppercase;c
 td.n{text-align:right;white-space:nowrap}
 tr.sel td{background:var(--accent-bg)}
 .yes{color:var(--ok);font-weight:600}.no{color:var(--warn);font-weight:600}
+.mid{color:#b07800;font-weight:600}
 ul.notes{margin:0;padding-left:18px;display:grid;gap:8px;max-width:80ch}
 .small{font-size:12.5px;color:var(--muted)}
 /* чертёж */
@@ -88,7 +89,7 @@ ul.notes{margin:0;padding-left:18px;display:grid;gap:8px;max-width:80ch}
       <span class="fact ok"><b>Решено</b> второй экран 4,2″ — в той же коробке</span>
       <span class="fact ok"><b>Решено</b> корпус печатаем сами, форма любая</span>
       <span class="fact ok"><b>Решено</b> ниже 0 °C работать не нужно, серия от 10 штук</span>
-      <span class="fact ok"><b>Замер 16.11</b> место справа от входа ≈ 34 × 33 см: по примерному контуру помещается только 7,5″</span>
+      <span class="fact"><b>Перепроверка по фото</b> место справа от входа ≈ 33 × 33 см, внизу справа его съедает подъём пола кокпита: все 6 вариантов встают только впритык, с зазором 7–15 мм — до заказа нужен прямой замер</span>
       <span class="fact ok"><b>Решено 16.11</b> 10,2″ не ставим — не встаёт на переборку</span>
       <span class="fact ok"><b>Решено 16.11</b> толщина блока ≈ 35 мм, кабель — сзади</span>
       <span class="fact q"><b>Ждёт решения</b> компоновка, кабель сзади, дизайн и кнопки</span>
@@ -137,13 +138,13 @@ ul.notes{margin:0;padding-left:18px;display:grid;gap:8px;max-width:80ch}
       </div>
       <div style="display:grid;gap:10px;min-width:0">
         <ul class="notes">
-          <li><b>Где:</b> кормовая переборка рубки, справа от входа в каюту, если смотреть из кокпита вперёд. Слева — направляющая щитов входа, сверху — край крыши рубки с лебёдкой, внизу справа — подъём комингса кокпита.</li>
-          <li><b>По замерам:</b> от направляющей до правого края — 34 см на высоте около 12 см от верха; от верха вниз вдоль направляющей — 33 см; по диагонали от нижнего угла у направляющей до скругления — 40 см. Из этих трёх чисел получается скругление верхнего правого угла радиусом около 18 см.</li>
-          <li><b>Подъём комингса</b> внизу справа на фото виден, но не измерен: на рисунке он нарисован прямой от 19 см по низу до 11 см по правому краю. Это самое неточное место контура.</li>
-          <li><b>Отступ</b> корпуса от краёв — 1 см со всех сторон.</li>
+          <li><b>Где:</b> кормовая переборка рубки, справа от входа в каюту, если смотреть из кокпита вперёд. Слева — направляющая щитов входа, сверху — край крыши рубки с лебёдкой, внизу справа — подъём пола кокпита к борту.</li>
+          <li><b>По замерам и фото 16.11 (перепроверено):</b> высота от края крыши до низа у направляющей — 33–34 см; ширина от направляющей до правого края — 34 см на 9 см ниже верха; диагональ 40 см — от низа направляющей (≈ 4 см над полом) до скругления. Фото снятое прямо (с вертикальной рулеткой) показывает: верх плоский примерно на 22 см, дальше скругление радиусом около 11 см. Раньше я ставил радиус 18 см — это было неверно.</li>
+          <li><b>Подъём пола кокпита</b> внизу справа: начинается примерно в 19–20 см от направляющей и у правого края поднимается на 14–18 см. На рисунке — четверть эллипса 14 × 15 см. Раньше он был нарисован прямой до 11 см — ниже, чем на фото, и поэтому широкие варианты «помещались».</li>
+          <li><b>Зазор</b> до краёв — 1 см, если место позволяет; если нет — наибольший возможный (он и указан в таблице).</li>
         </ul>
         <div class="tbl"><table id="fitTab"></table></div>
-        <p class="small">Контур примерный: снят с фото по трём замерам. Чтобы снять его точно, нужно одно фото переборки прямо спереди с рулеткой по низу и по правому краю — или четыре числа: ширина по низу до комингса, высота правого края до скругления, где начинается скругление сверху, куда упирается комингс справа.</p>
+        <p class="small">«Свободно вокруг» — на сколько миллиметров можно отступить от корпуса во все стороны, чтобы он ещё встал. Точность контура по фото — ±1–2 см, поэтому зелёным отмечено только то, что встаёт с запасом от 15 мм; жёлтым — то, что встаёт впритык и требует замера. Контур примерный: снят с фото по трём замерам. Чтобы снять его точно, нужно одно фото переборки прямо спереди с рулеткой по низу и по правому краю — или четыре числа: ширина по низу до подъёма пола кокпита, высота правого края до скругления, где начинается скругление сверху, как высоко поднимается пол кокпита у правого края.</p>
       </div>
     </div>
   </section>
@@ -197,6 +198,7 @@ ul.notes{margin:0;padding-left:18px;display:grid;gap:8px;max-width:80ch}
       <tr><td><b>Сенсорная</b> через стекло</td><td class="n">нет</td><td><span class="no">плохо</span>: брызги жмут сами, в перчатке не работает</td><td class="n">≈ 30 ₽</td><td>не советую</td></tr>
     </table></div>
     <p class="small">Совет: магнитные кнопки — корпус остаётся глухим, отверстий только окно и кабель сзади. Кнопки для гонки: <b>Старт</b> — запуск и подгонка таймера к минуте; <b>Линия ◀</b> и <b>Линия ▶</b> — отметить концы стартовой линии, прибор покажет, сколько до линии и какой конец выгоднее; <b>Экран</b>, <b>▲</b>, <b>▼</b>; <b>МОБ</b> — человек за бортом: точка и курс к ней. Кнопки на рисунках — по 16 мм, под перчатку.</p>
+    <ul class="notes"><li><b>Один многоцветный светодиод вместо двух</b> (по просьбе владельца 16.11): адресуемый RGB-светодиод SK6812 под прозрачной линзой Ø8 мм, вклеенной в корпус, — отверстия наружу нет. Одна линия данных от процессора, любой цвет и яркость. Цвета: зелёный — всё работает; жёлтый — предупреждение (нет GPS или топа мачты); синий — прибор на резервном блоке; красный — ошибка. Чтобы не путать цвета на солнце и при нарушениях цветового зрения, у каждого состояния ещё и свой ритм: горит ровно, мигает, двойная вспышка. Ночью яркость снижается по датчику света BH1750, чтобы не слепить.</li></ul>
   </section>
 
   <section class="sheet" aria-labelledby="hp">
@@ -239,16 +241,16 @@ const WALL=3,GAP=6,BETW=8,BTN=14,PITCH=18,LED=5;
 function build(v){const E=[];let W,H;
   const main=SCR[v.main],sm=SCR.s42;
   if(v.id==='now'){W=186;H=106;E.push({k:'scr',s:sm,x:GAP+4,y:(H-sm.mod[1])/2,role:'main'});
-    [0,1,2,3].forEach(i=>E.push({k:'btn',x:126,y:H/2+27-i*PITCH}));E.push({k:'led',x:150,y:H/2+24,c:'g'},{k:'led',x:150,y:H/2+6,c:'r'});}
-  else if(v.lay==='sideL'){const r=build(Object.assign({},v,{lay:'side'}));r.E.forEach(e=>{if(e.k==='scr')e.x=r.W-e.x-e.s.mod[0];else{e.x=r.W-e.x;if(e.k==='led')e.c=e.c==='g'?'r':'g';}});return r;}
+    [0,1,2,3].forEach(i=>E.push({k:'btn',x:126,y:H/2+27-i*PITCH}));E.push({k:'led',x:150,y:H/2+15,c:'m'});}
+  else if(v.lay==='sideL'){const r=build(Object.assign({},v,{lay:'side'}));r.E.forEach(e=>{if(e.k==='scr')e.x=r.W-e.x-e.s.mod[0];else{e.x=r.W-e.x;}});return r;}
   else if(v.lay==='side'){const colH=sm.mod[1]+BETW+BTN+4;H=Math.max(main.mod[1],colH)+2*GAP;W=GAP+main.mod[0]+BETW+sm.mod[0]+GAP;
     E.push({k:'scr',s:main,x:GAP,y:(H-main.mod[1])/2,role:'main'});const cx=GAP+main.mod[0]+BETW,top=(H+colH)/2;
     E.push({k:'scr',s:sm,x:cx,y:top-sm.mod[1],role:'small'});const by=top-sm.mod[1]-BETW-BTN/2;
-    E.push({k:'led',x:cx+5,y:by,c:'g'});[0,1,2,3].forEach(i=>E.push({k:'btn',x:cx+20+i*PITCH,y:by}));E.push({k:'led',x:cx+sm.mod[0]-5,y:by,c:'r'});}
+    E.push({k:'led',x:cx+5,y:by,c:'m'});[0,1,2,3].forEach(i=>E.push({k:'btn',x:cx+20+i*PITCH,y:by}));}
   else{const rowW=sm.mod[0]+BETW+2*PITCH+10;W=Math.max(main.mod[0],rowW)+2*GAP;H=GAP+main.mod[1]+BETW+sm.mod[1]+GAP;
     E.push({k:'scr',s:main,x:(W-main.mod[0])/2,y:H-GAP-main.mod[1],role:'main'});const x0=(W-rowW)/2;
     E.push({k:'scr',s:sm,x:x0,y:GAP,role:'small'});const bx=x0+sm.mod[0]+BETW+4;
-    [0,1,2,3].forEach(i=>E.push({k:'btn',x:bx+(i%2)*PITCH+5,y:GAP+sm.mod[1]-14-Math.floor(i/2)*PITCH}));E.push({k:'led',x:bx+5,y:GAP+12,c:'g'},{k:'led',x:bx+PITCH+5,y:GAP+12,c:'r'});}
+    [0,1,2,3].forEach(i=>E.push({k:'btn',x:bx+(i%2)*PITCH+5,y:GAP+sm.mod[1]-14-Math.floor(i/2)*PITCH}));E.push({k:'led',x:bx+PITCH/2+5,y:GAP+12,c:'m'});}
   return {W,H,OW:W+2*WALL,OH:H+2*WALL,E};}
 const V=[
   {id:'a1',key:'A1',title:'7,5″ и 4,2″ рядом',sub:'широкий и низкий, кнопки под малым экраном',main:'s75',lay:'side'},
@@ -313,7 +315,7 @@ function scene(v,ox,oy,opt){const g=v.g,Y=y=>oy+WALL+g.H-y,X=x=>ox+WALL+x;let s=
       s+=e.role==='small'?smallContent(x,y,m):mainContent(x,y,m);
       s+='<rect class="win" x="'+(x-2)+'" y="'+(y-2)+'" width="'+(m.mod[0]+4)+'" height="'+(m.mod[1]+4)+'" rx="1.5"/>';}
     if(e.k==='btn')s+='<circle class="knob" cx="'+X(e.x)+'" cy="'+Y(e.y)+'" r="'+(BTN/2)+'"/>';
-    if(e.k==='led')s+='<circle cx="'+X(e.x)+'" cy="'+Y(e.y)+'" r="'+(LED/2)+'" fill="'+(e.c==='g'?'var(--led-g)':'var(--led-r)')+'"/>';});
+    if(e.k==='led'){const cx=X(e.x),cy=Y(e.y),r=LED/2+0.6;['var(--led-r)','var(--led-g)','#2f6fd6'].forEach((c,i)=>{const a0=-Math.PI/2+i*2*Math.PI/3,a1=a0+2*Math.PI/3;s+='<path d="M'+cx+' '+cy+' L'+(cx+r*Math.cos(a0)).toFixed(2)+' '+(cy+r*Math.sin(a0)).toFixed(2)+' A'+r+' '+r+' 0 0 1 '+(cx+r*Math.cos(a1)).toFixed(2)+' '+(cy+r*Math.sin(a1)).toFixed(2)+' Z" fill="'+c+'"/>';});s+='<circle cx="'+cx+'" cy="'+cy+'" r="'+r+'" fill="none" stroke="var(--case-line)" stroke-width="0.5"/>';}});
   // разъёмы в нижней стенке — подписи
   s+='<text class="lbl" x="'+(ox+g.OW/2)+'" y="'+(oy+g.OH+7)+'" text-anchor="middle">'+(v.id==='now'?'снизу: SP13, USB-C, тумблер':'кабель — сзади, сквозь переборку; снизу ничего')+'</text>';
   return s;}
@@ -362,31 +364,34 @@ const BEDS=[['220 × 220',220,220,'Ender-3 и похожие'],['256 × 256',256
 $('bed').innerHTML='<tr><th>Стол принтера</th>'+V.map(v=>'<th>'+v.key+' · '+f(v.g.OW)+' × '+f(v.g.OH)+'</th>').join('')+'</tr>'+BEDS.map(b=>'<tr><td>'+b[0]+' <span class="small">'+b[3]+'</span></td>'+V.map(v=>{const fit=(v.g.OW<=b[1]-6&&v.g.OH<=b[2]-6)||(v.g.OW<=b[2]-6&&v.g.OH<=b[1]-6);return '<td>'+(fit?'<span class="yes">целиком</span>':'<span class="no">из 2 частей</span>')+'</td>';}).join('')+'</tr>').join('');
 ['tDim','tAll','tMod','tReal'].forEach(id=>$(id).addEventListener('click',()=>{const k={tDim:'dim',tAll:'all',tMod:'mod',tReal:'real'}[id];st[k]=!st[k];draw();}));
 // ---- место на переборке: x вправо от направляющей щитов входа, y вверх от низа, мм
-const PW=340,PH=330,PR=177,PCX=PW-PR,PCY=PH-PR,BUL=[190,0,PW,110],MRG=10;
-function inPanel(x,y){if(x<0||y<0||x>PW||y>PH)return false;if(x>PCX&&y>PCY&&Math.hypot(x-PCX,y-PCY)>PR)return false;const t=(x-BUL[0])/(BUL[2]-BUL[0]);if(t>0&&y<BUL[3]*Math.min(1,t))return false;return true;}
-function fitAt(w,h){for(let y=MRG;y+h<=PH-MRG;y+=2){let ok=true;for(let i=0;i<=20&&ok;i++){const px=MRG+w*i/20;[y-MRG,y+h+MRG].forEach(py=>{if(!inPanel(px,py))ok=false;});}
-  for(let j=0;j<=20&&ok;j++){const py=y+h*j/20;if(!inPanel(MRG+w+MRG,py))ok=false;}if(ok&&MRG+w+MRG<=PW)return y;}return null;}
+const PW=335,PH=330,PR=110,PCX=PW-PR,PCY=PH-PR,BUL=[195,0,PW,150],MRG=10;
+function inPanel(x,y){if(x<0||y<0||x>PW||y>PH)return false;if(x>PCX&&y>PCY&&Math.hypot(x-PCX,y-PCY)>PR)return false;if(x>BUL[0]){const u=(x-PW)/(PW-BUL[0]);if(y<BUL[3]*Math.sqrt(Math.max(0,1-u*u)))return false;}return true;}
+function fitAt(w,h,M){M=M==null?MRG:M;for(let y=M;y+h<=PH-M;y+=1){let ok=true;for(let i=0;i<=40&&ok;i++){const px=M+w*i/40;[y-M,y+h+M].forEach(py=>{if(!inPanel(px,py))ok=false;});}
+  for(let j=-1;j<=41&&ok;j++){const py=j<0?y-M:j>40?y+h+M:y+h*j/40;if(!inPanel(M+w+M,py))ok=false;}if(ok)return y;}return null;}
+// запас: на сколько мм корпус можно раздвинуть во все стороны и он всё ещё встанет
+function marg(w,h){let m=-1;for(let M=0;M<=40;M++){if(fitAt(w,h,M)!=null)m=M;else break;}return m;}
+function verdict(m){return m>=15?'<span class="yes">помещается</span>':m>=5?'<span class="mid">впритык — нужен замер</span>':'<span class="no">не помещается</span>';}
 let pv='a3';
 function panel(){const v=V.find(q=>q.id===pv),g=v.g,M=14,Y=y=>M+PH-y;let s='';const sv=$('panel');sv.setAttribute('viewBox',[-M-6,0,PW+2*M+30,PH+2*M+14].join(' '));
   // контур
-  let d='M'+(0)+' '+Y(0)+' L0 '+Y(PH)+' L'+PCX+' '+Y(PH)+' A'+PR+' '+PR+' 0 0 1 '+PW+' '+Y(PCY)+' L'+PW+' '+Y(BUL[3])+' L'+BUL[0]+' '+Y(0)+' Z';
+  let d='M'+(0)+' '+Y(0)+' L0 '+Y(PH)+' L'+PCX+' '+Y(PH)+' A'+PR+' '+PR+' 0 0 1 '+PW+' '+Y(PCY)+' L'+PW+' '+Y(BUL[3])+' A'+(PW-BUL[0])+' '+BUL[3]+' 0 0 0 '+BUL[0]+' '+Y(0)+' Z';
   s+='<rect x="-14" y="'+Y(PH)+'" width="12" height="'+PH+'" fill="var(--case-line)" opacity=".5"/><text class="lbl" x="-8" y="'+Y(PH/2)+'" text-anchor="middle" transform="rotate(-90 -8 '+Y(PH/2)+')">вход в каюту</text>';
   s+='<path d="'+d+'" fill="var(--accent-bg)" stroke="var(--accent)" stroke-width="1.2"/>';
-  s+='<path d="M'+BUL[0]+' '+Y(0)+' L'+PW+' '+Y(BUL[3])+' L'+PW+' '+Y(0)+' Z" fill="var(--case)" stroke="var(--case-line)" stroke-dasharray="3 2"/><text class="lbl" x="'+(PW-40)+'" y="'+Y(18)+'" text-anchor="middle">комингс</text>';
+  s+='<path d="M'+BUL[0]+' '+Y(0)+' A'+(PW-BUL[0])+' '+BUL[3]+' 0 0 1 '+PW+' '+Y(BUL[3])+' L'+PW+' '+Y(0)+' Z" fill="var(--case)" stroke="var(--case-line)" stroke-dasharray="3 2"/><text class="lbl" x="'+(PW-45)+'" y="'+Y(40)+'" text-anchor="middle">подъём пола</text><text class="lbl" x="'+(PW-45)+'" y="'+Y(26)+'" text-anchor="middle">кокпита</text>';
   s+='<text class="dimT" x="'+(PW/2)+'" y="'+(Y(PH)-4)+'" text-anchor="middle">крыша рубки, сверху лебёдка</text>';
   // размеры
-  s+='<path class="dimL" d="M0 '+Y(PH-120)+' H'+PW+'"/><text class="dimT" x="'+(PW/2+40)+'" y="'+(Y(PH-120)-2)+'">34 см</text>';
+  s+='<path class="dimL" d="M0 '+Y(PH-90)+' H'+PW+'"/><text class="dimT" x="'+(PW/2+40)+'" y="'+(Y(PH-90)-2)+'">34 см</text>';
   s+='<path class="dimL" d="M'+(PW+12)+' '+Y(0)+' V'+Y(PH)+'"/><text class="dimT" x="'+(PW+16)+'" y="'+Y(PH/2)+'" transform="rotate(90 '+(PW+16)+' '+Y(PH/2)+')" text-anchor="middle">33 см</text>';
-  s+='<path class="dimL" d="M0 '+Y(0)+' L288 '+Y(278)+'" stroke-dasharray="2 2"/><text class="dimT" x="120" y="'+Y(130)+'">40 см</text>';
+  s+='<path class="dimL" d="M0 '+Y(45)+' L'+(PCX+PR*0.707).toFixed(0)+' '+Y(PCY+PR*0.707)+'" stroke-dasharray="2 2"/><text class="dimT" x="120" y="'+Y(130)+'">40 см</text>';
   // корпус
-  const y=fitAt(g.OW,g.OH),yy=y==null?Math.max(MRG,(PH-g.OH)/2):y,col=y==null?'#d03b3b':'var(--ok)';
+  const mg=marg(g.OW,g.OH),y=mg>=5?fitAt(g.OW,g.OH,Math.min(mg,MRG)):null,yy=y==null?Math.max(MRG,(PH-g.OH)/2):y,col=mg<5?'#d03b3b':mg<15?'#c98a00':'var(--ok)';
   s+='<rect x="'+MRG+'" y="'+Y(yy+g.OH)+'" width="'+g.OW+'" height="'+g.OH+'" rx="6" fill="none" stroke="'+col+'" stroke-width="2" stroke-dasharray="'+(y==null?'5 3':'0')+'"/>';
   s+='<text class="dimT" x="'+(MRG+g.OW/2)+'" y="'+(Y(yy+g.OH/2)+2)+'" text-anchor="middle" style="fill:'+col+';font-size:9px">'+v.key+' · '+f(g.OW)+' × '+f(g.OH)+'</text>';
   sv.innerHTML=s;document.querySelectorAll('#pvSel [data-p]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.p===pv)));
-  $('readP').textContent=y==null?v.key+' не помещается: корпус '+f(g.OW)+' × '+f(g.OH)+' мм выходит за скругление или на комингс.':v.key+' помещается: корпус '+f(g.OW)+' × '+f(g.OH)+' мм, низ корпуса — на '+f(y)+' мм выше низа переборки.';}
+  $('readP').textContent=mg<5?v.key+' не помещается: корпус '+f(g.OW)+' × '+f(g.OH)+' мм упирается в скругление крыши или в подъём пола кокпита.':v.key+(mg>=15?' помещается':' помещается впритык')+': корпус '+f(g.OW)+' × '+f(g.OH)+' мм, низ корпуса — на '+f(y)+' мм выше низа переборки, свободно вокруг — '+mg+' мм.'+(mg<15?' Это меньше точности замеров по фото (±1–2 см): до заказа нужен прямой замер.':'');}
 $('pvSel').innerHTML=V.map(v=>'<button class="btn" type="button" data-p="'+v.id+'">'+v.key+'</button>').join('');
 $('pvSel').addEventListener('click',e=>{const b=e.target.closest('[data-p]');if(b){pv=b.dataset.p;panel();}});
-$('fitTab').innerHTML='<tr><th>Вариант</th><th>Корпус, мм</th><th>На переборку</th></tr>'+V.map(v=>{const y=fitAt(v.g.OW,v.g.OH);return '<tr><td><b>'+v.key+'</b> '+v.title+'</td><td class="n">'+f(v.g.OW)+' × '+f(v.g.OH)+'</td><td>'+(y==null?'<span class="no">не помещается</span>':'<span class="yes">помещается</span>')+'</td></tr>';}).join('');
+$('fitTab').innerHTML='<tr><th>Вариант</th><th>Корпус, мм</th><th>Свободно вокруг</th><th>На переборку</th></tr>'+V.map(v=>{const m=marg(v.g.OW,v.g.OH);return '<tr><td><b>'+v.key+'</b> '+v.title+'</td><td class="n">'+f(v.g.OW)+' × '+f(v.g.OH)+'</td><td class="n">'+(m<0?'—':m+' мм')+'</td><td>'+verdict(m)+'</td></tr>';}).join('');
 panel();
 draw();
 if(document.fonts&&document.fonts.ready)document.fonts.ready.then(()=>{measure();sizes();cards();draw();});
