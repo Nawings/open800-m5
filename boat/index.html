@@ -1962,7 +1962,7 @@ function frame(now){
   sig=Math.abs(awaT)<100&&delta>2.5?1:Math.abs(awaT)<100&&delta<-2.5?-1:0;sigD=Math.abs(delta);
   ledH.color.set(sig<0?0x4be36b:0x1f5a2c);ledH.emissive.set(sig<0?0x22d14a:0x000000);
   ledL.color.set(sig>0?0xff5a4a:0x5c2420);ledL.emissive.set(sig>0?0xff3b2f:0x000000);
-  if(now-lastDraw>500){lastDraw=now;drawDisplay({heel:h,pitch:p,awa:awaT,aws:S.aws,sig,d:sigD});
+  if(now-lastDraw>=1000){lastDraw=now;  // e-paper обновляется не чаще раза в секундуdrawDisplay({heel:h,pitch:p,awa:awaT,aws:S.aws,sig,d:sigD});
     if(layTexCur){const yaw=S.demo?3*Math.sin(2*Math.PI*(ts-S.t0)/4.1):0,sg=5.4+(S.demo?0.25*Math.sin(2*Math.PI*(ts-S.t0)/5.3):0);layDraw(layTexCur.userData.c,layTexCur.userData.v,{awa:awaM,aws:awsM/0.5144,hdg:177+yaw,sog:sg,sig,t:ts,heel:h,pitch:p});layTexCur.needsUpdate=true;}}
   if(now-lastRead>200){lastRead=now;
     $('rRaw').textContent=Math.round(Math.abs(awaM))+'°'+side(awaM)+' · '+f1(awsM/0.5144)+' уз';
