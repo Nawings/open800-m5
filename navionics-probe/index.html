@@ -5,14 +5,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Изобаты Оки и Волги · Navionics probe</title>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="">
-  <link rel="stylesheet" href="style.css?v=contours-v3">
+  <link rel="stylesheet" href="style.css?v=projection-v4">
 </head>
 <body>
   <header><a href="../">Open 800 · Главное меню</a><h1>Navionics probe <span>Ока и Волга</span></h1><p>Восстановленные изобаты с глубинами в метрах</p></header>
   <div class="warning" role="note">Экспериментальные данные архива 2022 года. Не использовать для навигации: актуальные глубины, уровень воды и точность привязки не проверены.</div>
   <main>
     <aside aria-label="Управление картой">
-      <section><h2>Глубины найдены</h2><p id="summary">Загрузка проверенных данных…</p><p class="small">Единицы сверены со скриншотами Boating: 35 = 3,5 м, 85 = 8,5 м. Прежняя ошибка выбора тайлов исправлена.</p></section>
+      <section><h2>Глубины найдены</h2><p id="summary">Загрузка проверенных данных…</p><p class="small">Единицы сверены с Boating: 35 = 3,5 м, 85 = 8,5 м. Привязка исправлена на Navionics Mercator и проверена по мостам. Остаточные расхождения с берегом возможны.</p></section>
       <section><h2>Слои</h2><div id="layers"></div><label><input type="checkbox" id="labels" checked> Подписи глубин</label><label><input type="checkbox" id="bounds"> Границы двух тайлов</label><label><input type="checkbox" id="basemap" checked> Подложка OpenStreetMap</label></section>
       <section><label for="interval">Шаг отображения изобат</label><select id="interval"><option value="0.5">Все · 0,5 м</option><option value="1">1 м</option><option value="2">2 м</option></select><p class="small">На общем виде подписи прорежены. Приблизьте карту для подробностей.</p></section>
       <nav aria-label="Участки"><button data-view="oka">Ока и мосты</button><button data-view="strelka">Стрелка и Волга</button><button data-view="all">Все данные</button></nav>
@@ -26,6 +26,6 @@
     </section>
   </main>
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
-  <script src="app.js?v=contours-v3"></script>
+  <script src="app.js?v=projection-v4"></script>
 </body>
 </html>

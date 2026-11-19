@@ -63,7 +63,7 @@
   const fetchJson=async url=>{const r=await fetch(url,{cache:'no-cache'});if(!r.ok)throw new Error(`HTTP ${r.status}`);return r.json();};
   async function init(){
     try {
-      manifest=await fetchJson('data/manifest.json?v=contours-v3');
+      manifest=await fetchJson('data/manifest.json?v=projection-v4');
       if(manifest.version!==3)throw new Error('Устаревший набор данных');
       const url=file=>`data/${file}?v=${encodeURIComponent(manifest.revision)}`;
       await Promise.all(manifest.layers.map(async config=>{
