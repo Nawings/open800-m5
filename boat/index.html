@@ -159,7 +159,7 @@ code{font-family:var(--f-mono);font-size:12px}
       <li>SuperMini, MAX3485 на переходнике SOP-8 и защита запаяны на плату-носитель, GY-50 стоит на стойках этажерки. Скотча, стяжек и саморезов нет.</li>
       <li>У мачты карбоновая трубка входит на 80 мм в приваренную нержавеющую трубу 30 × 2 × 100 мм; между углепластиком и нержавейкой — изолирующая втулка 0,5 мм.</li>
       <li>Кабель идёт внутри трубки и через отверстие в нержавеющей площадке уходит в мачту.</li>
-      <li>Сварной узел весит около 0,52 кг. При расчётном моменте 40 Н·м: труба ≈ 35 МПа, площадка ≈ 75 МПа, кольцевой шов ≈ 20 МПа; для 316L с консервативным пределом текучести 170 МПа запас площадки больше 2.</li>
+      <li>Сварной узел весит около 0,70 кг. При расчётном моменте 40 Н·м: труба ≈ 35 МПа, площадка ≈ 74 МПа; для 316L с консервативным пределом текучести 170 МПа запас площадки больше 2. Шов идёт по полному эллиптическому периметру косого торца.</li>
       <li>Капсула глухая: оси внутрь не входят, магниты работают сквозь окна. Подшипники керамические, под колоколом ступицы и в колодце дна, открытых только вниз. Капсула рассчитана на окунание топа: 0,5 бар, это 5 м воды.</li>
       <li><span class="open">Не проверено:</span> ничего ещё не напечатано. Шаг отверстий плат и размер MT6701 надо снять с настоящих плат, профиль топа под пробку кронштейна — проверить кольцом mast_top_test.</li>
     </ul>
@@ -167,41 +167,44 @@ code{font-family:var(--f-mono);font-size:12px}
     <h2>Сварной кронштейн: размеры для изготовления</h2>
     <table class="parts"><tbody>
       <tr class="sub"><td>Деталь</td><td>Размер и требование</td></tr>
-      <tr><td>Площадка</td><td>AISI 316L, 120 × 50 × 8 мм; кромки R3, заусенцы снять. Ширина 50 мм оставляет площадку снаружи боковой щеки топа</td></tr>
-      <tr><td>Труба</td><td>AISI 316L, 30 × 2 мм, длина 100 мм; внутренний Ø26 мм</td></tr>
-      <tr><td>Положение трубы</td><td>ось 20° к площадке; продольная ось трубы совпадает с осью выноса</td></tr>
-      <tr><td>Точка сварки</td><td>нижняя наружная образующая трубы касается верхней плоскости площадки в 15 мм от заднего края. Труба идёт над площадкой, как на эскизе 19.11</td></tr>
-      <tr><td>Сварной шов</td><td>сплошной TIG по окружности, катет 4 мм; присадка ER316L / 1.4430</td></tr>
+      <tr><td>Площадка</td><td>AISI 316L, 120 × 90 × 6 мм; кромки R3, заусенцы снять. Площадка перекрывает боковую щёку топа и прижимает удочку</td></tr>
+      <tr><td>Труба</td><td>AISI 316L, 30 × 2 мм, внутренний Ø26 мм. От центра косого реза до прямого торца по оси 130 мм; короткая образующая 88,8 мм, длинная 171,2 мм</td></tr>
+      <tr><td>Положение трубы</td><td>ось 20° к площадке; плоскость косого реза параллельна площадке, продольная ось трубы совпадает с осью выноса</td></tr>
+      <tr><td>Пятно контакта</td><td>полный эллипс 87,7 × 30 мм с внутренним отверстием 76,0 × 26 мм; весь косой торец трубы лежит на площадке</td></tr>
+      <tr><td>Сварной шов</td><td>сплошной TIG по всему эллиптическому периметру, катет 4 мм; присадка ER316L / 1.4430</td></tr>
       <tr><td>Посадка карбона</td><td>80 мм; втулка PA/G10 26 × 25 × 80 мм исключает контакт карбона с нержавейкой</td></tr>
       <tr><td>Фиксация выноса</td><td>2 болта М5: оси в 35 и 75 мм от устья трубы; внутри распорки длиной 23 мм</td></tr>
       <tr><td>Крепление площадки</td><td>штатные шпильки удочки; центры отверстий перенести по месту после сварки, сверлить Ø шпильки + 1 мм</td></tr>
-      <tr><td>Масса</td><td>площадка ≈ 0,38 кг, труба ≈ 0,14 кг, весь сварной узел ≈ 0,52 кг</td></tr>
+      <tr><td>Масса</td><td>площадка ≈ 0,52 кг, труба ≈ 0,18 кг, весь сварной узел ≈ 0,70 кг</td></tr>
     </tbody></table>
     <svg viewBox="0 0 640 300" role="img" aria-label="Размерная схема сварного кронштейна" style="display:block;width:100%;height:auto;margin:12px 0;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:6px">
       <defs><marker id="arr" markerWidth="7" markerHeight="7" refX="3.5" refY="3.5" orient="auto"><path d="M7 3.5L0 0v7z" fill="currentColor"/></marker></defs>
       <g fill="none" stroke="currentColor" stroke-width="2">
-        <rect x="28" y="88" width="240" height="100" rx="6" fill="rgba(185,192,198,.26)"/>
+        <rect x="28" y="48" width="240" height="180" rx="6" fill="rgba(185,192,198,.26)"/>
         <line x1="28" y1="30" x2="268" y2="30" marker-start="url(#arr)" marker-end="url(#arr)"/>
-        <line x1="12" y1="88" x2="12" y2="188" marker-start="url(#arr)" marker-end="url(#arr)"/>
+        <line x1="12" y1="48" x2="12" y2="228" marker-start="url(#arr)" marker-end="url(#arr)"/>
         <line x1="83" y1="126" x2="83" y2="150" stroke-dasharray="5 4"/>
         <line x1="215" y1="126" x2="215" y2="150" stroke-dasharray="5 4"/>
         <circle cx="83" cy="138" r="7"/><circle cx="215" cy="138" r="7"/>
-        <line x1="83" y1="212" x2="215" y2="212" marker-start="url(#arr)" marker-end="url(#arr)"/>
-        <rect x="348" y="214" width="250" height="16" fill="rgba(185,192,198,.35)"/>
-        <g transform="translate(378 214) rotate(-20)"><rect x="0" y="-30" width="200" height="60" rx="29" fill="rgba(185,192,198,.55)"/><rect x="0" y="-25" width="200" height="50" rx="24" fill="var(--bg)"/></g>
-        <line x1="378" y1="214" x2="566" y2="146" stroke-dasharray="6 4"/>
-        <path d="M423 214 A45 45 0 0 0 420 198"/>
+        <ellipse cx="148" cy="138" rx="88" ry="30" fill="rgba(185,192,198,.18)"/>
+        <ellipse cx="148" cy="138" rx="76" ry="26"/>
+        <line x1="83" y1="252" x2="215" y2="252" marker-start="url(#arr)" marker-end="url(#arr)"/>
+        <rect x="330" y="218" width="290" height="12" fill="rgba(185,192,198,.35)"/>
+        <path d="M344 218 L476 218 L601 168 L585 126 Z" fill="rgba(185,192,198,.55)"/>
+        <path d="M362 216 L458 216 L596 163 L590 131 Z" fill="var(--bg)"/>
+        <line x1="410" y1="218" x2="593" y2="147" stroke-dasharray="6 4"/>
+        <path d="M455 218 A45 45 0 0 0 452 202"/>
         <line x1="348" y1="250" x2="598" y2="250" marker-start="url(#arr)" marker-end="url(#arr)"/>
-        <line x1="618" y1="214" x2="618" y2="230" marker-start="url(#arr)" marker-end="url(#arr)"/>
+        <line x1="624" y1="218" x2="624" y2="230" marker-start="url(#arr)" marker-end="url(#arr)"/>
       </g>
       <g fill="currentColor" font-family="ui-monospace,Consolas,monospace" font-size="15">
-        <text x="112" y="22">120 мм</text><text x="2" y="142" transform="rotate(-90 2 142)">50 мм</text>
-        <text x="82" y="238">центры отверстий перенести по месту</text><text x="130" y="108">вид сверху · лист 8 мм</text>
-        <text x="410" y="135">труба 30×2×100</text><text x="425" y="200">20°</text>
-        <text x="440" y="274">100 мм</text><text x="608" y="244">8</text><text x="392" y="290">вид сбоку · TIG 4 мм по окружности</text>
+        <text x="112" y="22">120 мм</text><text x="2" y="142" transform="rotate(-90 2 142)">90 мм</text>
+        <text x="82" y="276">отверстия перенести по месту</text><text x="105" y="68">контакт 87,7 × 30 · лист 6 мм</text>
+        <text x="430" y="115">труба 30×2 · ось 130</text><text x="458" y="200">20°</text>
+        <text x="430" y="274">88,8 / 171,2 мм</text><text x="614" y="244">6</text><text x="365" y="290">вид сбоку · полный TIG-шов по эллипсу</text>
       </g>
     </svg>
-    <p class="note"><b>Порядок изготовления:</b> отрезать площадку и трубу, снять фаски, прихватить трубу под 20°, проверить ось шаблоном, обварить по окружности, выправить площадку после сварки. Затем приложить узел поверх штатной удочки, перенести центры её шпилек и просверлить площадку. После обработки шва — травление и пассивация. Не сверлить монтажные отверстия по фотографии.</p>
+    <p class="note"><b>Порядок изготовления:</b> вырезать площадку 120 × 90 × 6 мм; разметить на трубе косой рез так, чтобы после реза короткая образующая была 88,8 мм, длинная 171,2 мм, а длина по оси — 130 мм. Снять фаски, поставить весь эллиптический торец на площадку, проверить угол оси 20° шаблоном, прихватить в четырёх точках и обварить по всему эллипсу. Затем выправить площадку, приложить узел поверх щеки и штатной удочки, перенести центры крепежа и просверлить площадку. После обработки шва — травление и пассивация. Не сверлить монтажные отверстия по фотографии.</p>
 
     <h2>Цифры модели</h2>
     <ul class="facts">
@@ -1157,6 +1160,12 @@ function rod(a,b,r,m,seg){const d=new THREE.Vector3().subVectors(b,a),len=d.leng
 function hollowRod(a,b,ro,ri,m,seg){const d=new THREE.Vector3().subVectors(b,a),len=d.length(),dir=d.clone().normalize(),g=new THREE.Group(),n=seg||24;
   const wallMat=m.clone();wallMat.side=THREE.DoubleSide;const wall=new THREE.Mesh(new THREE.CylinderGeometry(ro,ro,len,n,1,true),wallMat);wall.position.copy(a).addScaledVector(d,0.5);wall.quaternion.setFromUnitVectors(V(0,1,0),dir);g.add(wall);
   [[a,dir.clone().negate()],[b,dir]].forEach(e=>{const ring=new THREE.Mesh(new THREE.RingGeometry(ri,ro,n),m);ring.position.copy(e[0]);ring.quaternion.setFromUnitVectors(V(0,0,1),e[1]);g.add(ring);});return g;}
+function hollowMiterTube(base,mouth,ro,ri,m,seg){const dir=new THREE.Vector3().subVectors(mouth,base).normalize(),n=seg||32,e1=V(0,0,1),e2=V(-dir.y,dir.x,0).normalize(),P=[];
+  const pt=(r,i,end)=>{const a=i*2*Math.PI/n,c=Math.cos(a),s=Math.sin(a),cross=e1.clone().multiplyScalar(r*c).addScaledVector(e2,r*s);if(end)return mouth.clone().add(cross);return base.clone().add(cross).addScaledVector(dir,-cross.y/dir.y);};
+  const tri=(a,b,c)=>[a,b,c].forEach(q=>P.push(q.x,q.y,q.z));
+  for(let i=0;i<n;i++){const j=(i+1)%n,ob0=pt(ro,i,0),ob1=pt(ro,j,0),om0=pt(ro,i,1),om1=pt(ro,j,1),ib0=pt(ri,i,0),ib1=pt(ri,j,0),im0=pt(ri,i,1),im1=pt(ri,j,1);
+    tri(ob0,om0,om1);tri(ob0,om1,ob1);tri(ib0,im1,im0);tri(ib0,ib1,im1);tri(ob0,ob1,ib1);tri(ob0,ib1,ib0);tri(om0,im0,im1);tri(om0,im1,om1);}
+  const geo=new THREE.BufferGeometry();geo.setAttribute('position',new THREE.Float32BufferAttribute(P,3));geo.computeVertexNormals();const mm=m.clone();mm.side=THREE.DoubleSide;return new THREE.Mesh(geo,mm);}
 function flatBarH(a,b,w,t,m){const d=new THREE.Vector3().subVectors(b,a),len=Math.hypot(d.x,d.z),mesh=box(len,t,w,m);mesh.position.copy(a).addScaledVector(d,0.5);mesh.rotation.y=-Math.atan2(d.z,d.x);return mesh;}
 function tube(pts,r,m){const c=new THREE.CatmullRomCurve3(pts.map(p=>p.isVector3?p:V(p[0],p[1],p[2])));return new THREE.Mesh(new THREE.TubeGeometry(c,Math.max(24,pts.length*14),r,6),m);}
 function lab(o,l){o.userData.label=l;return o;}
@@ -1309,10 +1318,10 @@ const mastHeadG=new THREE.Group();mastHeadG.position.set(MX,MT,0);boat.add(mastH
 })();
 // Мачта на исходных фото лежит на боку. В рабочем положении широкая сторона полосы и её дуга горизонтальны:
 // высота постоянная, небольшой изгиб идёт поперёк лодки и возвращается к оси у точки ахтерштага.
-const UD=[V(MX-0.015,MT-0.030,-0.061),V(MX-0.35,MT-0.030,-0.072),V(MX-0.75,MT-0.030,-0.095),V(MX-1.16,MT-0.030,-0.075),V(MX-1.48,MT-0.030,-0.046)];
+const UD=[V(MX-0.015,MT-0.030,-0.050),V(MX-0.35,MT-0.030,-0.060),V(MX-0.75,MT-0.030,-0.095),V(MX-1.16,MT-0.030,-0.075),V(MX-1.48,MT-0.030,-0.046)];
 const UDtip=UD[UD.length-1],udMat=M(0xb9c0c6,{roughness:0.35,metalness:0.72});
 for(let i=0;i<UD.length-1;i++)boat.add(lab(flatBarH(UD[i],UD[i+1],0.031,0.006,udMat),'удочка: плоская алюминиевая полоса шириной ≈ 31 мм, лежит горизонтально; общий вылет ≈ 1,5 м, форма по фото 15.11'));
-const tape=flatBarH(V(MX-0.10,MT-0.026,-0.064),V(MX-0.18,MT-0.026,-0.067),0.034,0.001,M(0xe7c51b,{roughness:0.8}));boat.add(lab(tape,'жёлтая контрольная лента на удочке — как на фото 15.11'));
+const tape=flatBarH(V(MX-0.10,MT-0.026,-0.052),V(MX-0.18,MT-0.026,-0.055),0.034,0.001,M(0xe7c51b,{roughness:0.8}));boat.add(lab(tape,'жёлтая контрольная лента на удочке — как на фото 15.11'));
 const tang=new THREE.Mesh(new THREE.CylinderGeometry(0.015,0.015,0.012,16),M(0x9aa0a6,{metalness:0.6}));tang.rotation.x=Math.PI/2;tang.position.copy(UDtip);boat.add(lab(tang,'конец удочки: сюда крепится ахтерштаг'));
 boat.add(lab(rod(UDtip,V(-3.97,sh(0)+0.02,0),0.004,rig),'ахтерштаг: с конца удочки на корму'));
 boat.add(lab(rod(V(-3.97,sh(0)-0.02,0),V(-3.97,sh(0)+0.06,0),0.02,M(0x9aa0a6,{metalness:0.6,roughness:0.35}),12),'крепление ахтерштага на корме'));
@@ -1466,10 +1475,10 @@ const BD=V(-cA,-sA,0),CAX=V(0,0.062,0),along=(p,k)=>p.clone().addScaledVector(BD
 const Jc=along(CAX,0.088), Fc=along(CAX,0.70);     // устье гнезда капсулы и устье гнезда кронштейна
 // Единая физическая база сварного узла: верх штатной удочки. Площадка касается удочки,
 // труба касается площадки нижней образующей, а локальное устье Fc совмещается с устьем стальной трубы.
-// Точка касания трубы с площадкой находится в 15 мм от заднего края пластины:
-// труба идёт под 20° НАД площадкой, как на эскизе владельца 19.11, а не от площадки наружу.
-const mountPlateWorld=V(MX-0.080,MT-0.023,-0.071),sleeveBaseWorld=V(MX-0.125,MT-0.004,-0.071);
-const sleeveMouthWorld=sleeveBaseWorld.clone().add(V(cA*0.100,sA*0.100,0));
+// Косой торец трубы полностью лежит на площадке: плоскость реза параллельна площадке.
+// Для Ø30 и 20° контактный эллипс 87,7 × 30 мм. Площадка перекрывает щёку и прижимает удочку.
+const SLEEVE_L=0.130,mountPlateWorld=V(MX-0.080,MT-0.024,-0.040),sleeveBaseWorld=V(MX-0.080,MT-0.021,-0.040);
+const sleeveMouthWorld=sleeveBaseWorld.clone().add(V(cA*SLEEVE_L,sA*SLEEVE_L,0));
 const topG=new THREE.Group();topG.position.copy(sleeveMouthWorld.clone().sub(Fc));boat.add(topG);
 const Bo=mountPlateWorld.clone().sub(topG.position);
 const topCenter=new THREE.Object3D();topCenter.position.set(-0.03,0.05,0);topG.add(topCenter);
@@ -1549,16 +1558,16 @@ reg(lab(cupG,'чашки'),topG,{s:6,e:[0,-0.12,0]});
 // вынос: у капсулы — печатное гнездо, у мачты — сварная нержавеющая площадка с трубой
 (function(){
   const g=new THREE.Group();
-  const boom=rod(along(CAX,0.043),along(Fc,0.07),0.0125,carbon,20);lab(boom,'вынос: карбоновая трубка 25 × 23 мм, 0,73 м, 20° вверх, вылет от устья 0,7 м; частота ≈ 19 Гц, без подкоса; кабель внутри, съёмная');
+  const boom=rod(along(CAX,0.043),along(Fc,0.08),0.0125,carbon,20);lab(boom,'вынос: карбоновая трубка 25 × 23 мм, 0,73 м, 20° вверх, вылет от устья 0,7 м; входит на 80 мм в нержавеющую трубу; кабель внутри, съёмная');
   boom.userData.shell=true;boom.userData.op=0.3;SHELLS.push(boom);g.add(boom);
   const bolt=(p,half,l)=>{g.add(lab(rod(p.clone().setZ(-half-0.005),p.clone().setZ(half+0.005),0.0025,chrome,10),l));[-1,1].forEach(sd=>g.add(lab(rod(p.clone().setZ(sd*half),p.clone().setZ(sd*(half+0.0012)),0.0075,chrome,18),'широкая шайба М5 × 15')));};
   [0.058,0.078].forEach(k=>bolt(along(CAX,k),0.0155,'болт М5 × 45 с распоркой внутри трубки: гнездо капсулы'));
   [0.035,0.075].forEach(k=>bolt(along(Fc,k),0.015,'болт М5 через нержавеющую трубу и внутреннюю распорку: удерживает съёмный карбоновый вынос'));
-  const inox=M(0xe2e5e7,{metalness:0.55,roughness:0.24}),plate=box(0.120,0.008,0.050,inox);plate.position.copy(Bo);g.add(lab(plate,'сварная площадка AISI 316L: 120 × 50 × 8 мм; нижняя поверхность лежит на штатной удочке и прижимает её. Узкая площадка вынесена наружу от щеки топа и не пересекает её. Отверстия перенести с реального узла после сварки'));
-  const sleeve=hollowRod(Fc,along(Fc,0.100),0.015,0.013,inox,32);g.add(lab(sleeve,'приваренная открытая труба AISI 316L: 30 × 2 мм, длина 100 мм, внутренний Ø26; ось 20° к площадке, сплошной TIG-шов катетом 4 мм'));
-  const weld=rod(along(Fc,0.095),along(Fc,0.100),0.019,M(0xaab2b8,{metalness:0.78,roughness:0.42}),32);g.add(lab(weld,'сплошной TIG-шов трубы к площадке, катет 4 мм'));
+  const inox=M(0xe2e5e7,{metalness:0.55,roughness:0.24}),plate=box(0.120,0.006,0.090,inox);plate.position.copy(Bo);g.add(lab(plate,'сварная площадка AISI 316L: 120 × 90 × 6 мм; лежит на боковой щеке топа, перекрывает её и одновременно прижимает штатную удочку. Отверстия перенести с реального узла после сварки'));
+  const sleeveBase=along(Fc,SLEEVE_L),sleeve=hollowMiterTube(sleeveBase,Fc,0.015,0.013,inox,40);g.add(lab(sleeve,'приваренная открытая труба AISI 316L 30 × 2: длина по оси от центра косого реза 130 мм; короткая образующая 88,8 мм, длинная 171,2 мм; косой торец полностью лежит на площадке'));
+  const weldMat=M(0xaab2b8,{metalness:0.72,roughness:0.45}),weld=new THREE.Mesh(new THREE.RingGeometry(0.015,0.019,48),weldMat);weld.position.copy(sleeveBase).add(V(0,0.0005,0));weld.rotation.x=-Math.PI/2;weld.scale.x=1/sA;g.add(lab(weld,'сплошной TIG-шов катетом 4 мм по всему эллиптическому периметру косого торца'));
   const ins=hollowRod(Fc,along(Fc,0.082),0.013,0.0125,M(0xe3e5e2,{roughness:0.55,transparent:true,opacity:0.52}),32);g.add(lab(ins,'изолирующая втулка PA/G10: наружный Ø26, внутренний Ø25, длина 80 мм; отделяет карбон от нержавейки и выбирает зазор'));
-  [V(MX-0.105,MT-0.023,-0.061),V(MX-0.035,MT-0.023,-0.061)].forEach((w,i)=>{const p=w.clone().sub(topG.position),b=rod(V(p.x,p.y-0.016,p.z),V(p.x,p.y+0.016,p.z),0.004,chrome,16);g.add(lab(b,'штатная шпилька удочки через площадку; отверстие сверлить по месту, '+(i+1)+' из 2'));});
+  [V(MX-0.125,MT-0.024,-0.071),V(MX-0.035,MT-0.024,-0.071)].forEach((w,i)=>{const p=w.clone().sub(topG.position),b=rod(V(p.x,p.y-0.014,p.z),V(p.x,p.y+0.014,p.z),0.004,chrome,16);g.add(lab(b,'штатная шпилька удочки через площадку; отверстие сверлить по месту, '+(i+1)+' из 2'));});
   reg(g,topG,{s:7});
 })();
 
