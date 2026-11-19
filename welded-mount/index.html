@@ -23,7 +23,7 @@ a{color:var(--accent)}button{font:600 13px var(--body);color:var(--ink);backgrou
   <section class="stage" id="stage">
     <a class="home" href="../">← Главное меню</a>
     <canvas id="view" aria-label="Вращаемая 3D-модель сварной площадки топа Open 800"></canvas>
-    <div class="badge"><h1>Сварная площадка топа</h1><span>AISI 316L · rev A · размеры в миллиметрах</span></div>
+    <div class="badge"><h1>Сварная площадка топа</h1><span>AISI 316L · rev B · внутренняя проводка · размеры в миллиметрах</span></div>
     <div class="views" role="group" aria-label="Режим 3D-модели">
       <button type="button" data-mode="part" aria-pressed="true">Сварной узел</button>
       <button type="button" data-mode="installed" aria-pressed="false">На топе</button>
@@ -39,18 +39,19 @@ a{color:var(--accent)}button{font:600 13px var(--body);color:var(--ink);backgrou
   </section>
   <aside class="panel">
     <h2>Что изготовить</h2>
-    <div class="callout"><b>Две детали:</b> площадка из листа и труба с косым резом. После прихватки торец трубы должен целиком лежать на площадке.</div>
+    <div class="callout"><b>Сварной узел из двух деталей:</b> площадка и труба с косым резом. Внутри трубы — съёмная разрезная втулка с каналом для кабеля. После прихватки торец трубы должен целиком лежать на площадке.</div>
     <table class="spec"><tbody>
       <tr><td>Материал</td><td><b>AISI 316L</b></td></tr>
-      <tr><td>Площадка</td><td><b>120 × 90 × 6</b>, R3</td></tr>
-      <tr><td>Труба</td><td><b>Ø30 × 2</b>, внутренний Ø26</td></tr>
+      <tr><td>Площадка</td><td><b>150 × 90 × 6</b>, R3</td></tr>
+      <tr><td>Труба</td><td><b>Ø38 × 2</b>, внутренний Ø34</td></tr>
       <tr><td>Ось трубы</td><td><b>20°</b> к площадке</td></tr>
-      <tr><td>Длина по оси</td><td><b>130</b> от центра косого реза</td></tr>
-      <tr><td>Образующие</td><td><b>88,8 / 171,2</b> короткая / длинная</td></tr>
-      <tr><td>Контакт</td><td>эллипс <b>87,7 × 30</b></td></tr>
-      <tr><td>Внутренний эллипс</td><td><b>76,0 × 26</b></td></tr>
+      <tr><td>Длина по оси</td><td><b>145</b> от центра косого реза</td></tr>
+      <tr><td>Образующие</td><td><b>92,8 / 197,2</b> короткая / длинная</td></tr>
+      <tr><td>Контакт</td><td>эллипс <b>111,1 × 38</b></td></tr>
+      <tr><td>Внутренний эллипс</td><td><b>99,4 × 34</b></td></tr>
       <tr><td>Сварка</td><td>TIG по всему эллипсу, катет 4; ER316L</td></tr>
-      <tr><td>Расчётная масса</td><td>≈ <b>0,70 кг</b></td></tr>
+      <tr><td>Сварной металл</td><td>≈ <b>0,91 кг</b></td></tr>
+      <tr><td>Втулка</td><td>разрезная PA/G10, Ø34 / Ø25,5 × 80; канал кабеля 5 × 5</td></tr>
     </tbody></table>
     <h2>Установка на топ</h2>
     <div class="legend">
@@ -59,7 +60,7 @@ a{color:var(--accent)}button{font:600 13px var(--body);color:var(--ink);backgrou
       <div><i class="sw" style="background:#aeb6bc"></i>удочка под площадкой</div>
       <div><i class="sw" style="background:#e7c51b"></i>контрольная лента на удочке</div>
     </div>
-    <p class="note">Площадка лежит сверху на обеих щеках. Удочка проходит под площадкой по центру и прижимается двумя центральными болтами.</p>
+    <p class="note">Площадка лежит сверху на обеих щеках шириной 79,71 мм. При ширине площадки 90 мм выпуск составляет по 5,15 мм. Удочка проходит под площадкой по центру и прижимается двумя центральными болтами.</p>
     <h2>Съёмная труба: разъём</h2>
     <div class="callout"><b>Рекомендуемая схема:</b> стационарная герметичная розетка закреплена под задней кромкой площадки; на съёмной трубе остаётся короткий хвост с вилкой. Разъём доступен сбоку при установленной мачте.</div>
     <table class="spec"><tbody>
@@ -71,7 +72,8 @@ a{color:var(--accent)}button{font:600 13px var(--body);color:var(--ink);backgrou
       <tr><td>Фиксация</td><td>резьбовое кольцо; корпус Ø19,1 мм</td></tr>
     </tbody></table>
     <p class="note">Стационарную половину фиксировать резиновой P-скобой, контактами вниз/назад. Перед разъёмом оставить капельную петлю 50–70 мм. На обеих сторонах нужен отдельный зажим кабеля — разъём не должен воспринимать натяжение.</p>
-    <div class="callout warn"><b>Карбон не сверлить под кабель.</b> Четырёхжильный кабель вести снаружи выноса в сменных УФ-стойких клипсах. Отверстие у корня карбоновой трубы создаст концентратор напряжений, а между Ø25 и втулкой Ø26 места для кабеля нет.</div>
+    <div class="callout"><b>Провод внутри трубок.</b> Кабель идёт внутри карбона Ø25×23, выходит из его открытого вставного конца, разворачивается в свободной полости приёмной трубы и возвращается к устью по каналу 5×5 мм в разрезной втулке Ø34/25,5. Снаружи остаётся только короткий хвост от устья до разъёма.</div>
+    <div class="callout warn"><b>Карбон не сверлить.</b> Приёмная труба 30×2 здесь не подходит: между её Ø26 и карбоном Ø25 остаётся только 0,5 мм радиального зазора. Для внутреннего кабеля принята труба 38×2 с внутренним Ø34.</div>
     <h2>Монтажные отверстия</h2>
     <div class="callout warn"><b>Не сверлить по этому рисунку.</b> Координаты отверстий ещё не сняты с реального топа. После сварки приложить узел, перенести центры четырёх крайних и двух центральных отверстий по месту.</div>
     <button class="printlink" type="button" id="print">Печать чертежа</button>
@@ -86,16 +88,16 @@ a{color:var(--accent)}button{font:600 13px var(--body);color:var(--ink);backgrou
         <marker id="a" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto"><path d="M8 4L0 0v8z" fill="var(--accent)"/></marker>
       </defs>
       <text x="28" y="32" font-size="18" font-weight="600">ВИД СВЕРХУ · ПЛОЩАДКА И ПЯТНО КОНТАКТА</text>
-      <rect class="steel" x="80" y="80" width="360" height="270" rx="9"/>
-      <ellipse class="cut" cx="260" cy="215" rx="131.55" ry="45"/>
-      <ellipse class="thin" cx="260" cy="215" rx="114" ry="39"/>
+      <rect class="steel" x="35" y="80" width="450" height="270" rx="9"/>
+      <ellipse class="cut" cx="260" cy="215" rx="166.65" ry="57"/>
+      <ellipse class="thin" cx="260" cy="215" rx="149.1" ry="51"/>
       <line class="thin" x1="260" y1="70" x2="260" y2="360" stroke-dasharray="6 5"/>
       <line class="thin" x1="65" y1="215" x2="455" y2="215" stroke-dasharray="6 5"/>
-      <line class="dim" x1="80" y1="55" x2="440" y2="55" marker-start="url(#a)" marker-end="url(#a)"/><text x="235" y="47" font-size="16">120</text>
+      <line class="dim" x1="35" y1="55" x2="485" y2="55" marker-start="url(#a)" marker-end="url(#a)"/><text x="235" y="47" font-size="16">150</text>
       <line class="dim" x1="55" y1="80" x2="55" y2="350" marker-start="url(#a)" marker-end="url(#a)"/><text x="27" y="225" font-size="16" transform="rotate(-90 27 225)">90</text>
-      <line class="dim" x1="128.45" y1="385" x2="391.55" y2="385" marker-start="url(#a)" marker-end="url(#a)"/><text x="225" y="408" font-size="15">87,7</text>
-      <line class="dim" x1="465" y1="170" x2="465" y2="260" marker-start="url(#a)" marker-end="url(#a)"/><text x="478" y="220" font-size="15">30</text>
-      <rect class="unknown" x="105" y="103" width="310" height="224" rx="18"/><text x="116" y="326" font-size="13" fill="var(--warn)">ЗОНА ОТВЕРСТИЙ — ПЕРЕНЕСТИ ПО МЕСТУ</text>
+      <line class="dim" x1="93.35" y1="385" x2="426.65" y2="385" marker-start="url(#a)" marker-end="url(#a)"/><text x="225" y="408" font-size="15">111,1</text>
+      <line class="dim" x1="505" y1="158" x2="505" y2="272" marker-start="url(#a)" marker-end="url(#a)"/><text x="518" y="220" font-size="15">38</text>
+      <rect class="unknown" x="60" y="103" width="400" height="224" rx="18"/><text x="72" y="326" font-size="13" fill="var(--warn)">ЗОНА ОТВЕРСТИЙ — ПЕРЕНЕСТИ ПО МЕСТУ</text>
 
       <text x="560" y="32" font-size="18" font-weight="600">ВИД СБОКУ · КОСОЙ РЕЗ И СВАРКА</text>
       <rect class="steel" x="560" y="335" width="470" height="18"/>
@@ -104,9 +106,9 @@ a{color:var(--accent)}button{font:600 13px var(--body);color:var(--ink);backgrou
       <path class="cut" d="M610 335 L742 335"/>
       <line class="thin" x1="676" y1="335" x2="1000" y2="216" stroke-dasharray="7 5"/>
       <path class="dim" d="M742 335 A58 58 0 0 0 738 315"/><text x="750" y="315" font-size="16">20°</text>
-      <line class="dim" x1="684" y1="382" x2="1008" y2="263" marker-start="url(#a)" marker-end="url(#a)"/><text x="830" y="347" font-size="15">130 по оси</text>
-      <line class="dim" x1="610" y1="370" x2="1008" y2="224" marker-start="url(#a)" marker-end="url(#a)"/><text x="825" y="285" font-size="14">171,2 длинная</text>
-      <line class="dim" x1="742" y1="365" x2="992" y2="273" marker-start="url(#a)" marker-end="url(#a)"/><text x="835" y="332" font-size="14">88,8 короткая</text>
+      <line class="dim" x1="684" y1="382" x2="1008" y2="263" marker-start="url(#a)" marker-end="url(#a)"/><text x="830" y="347" font-size="15">145 по оси</text>
+      <line class="dim" x1="610" y1="370" x2="1008" y2="224" marker-start="url(#a)" marker-end="url(#a)"/><text x="825" y="285" font-size="14">197,2 длинная</text>
+      <line class="dim" x1="742" y1="365" x2="992" y2="273" marker-start="url(#a)" marker-end="url(#a)"/><text x="835" y="332" font-size="14">92,8 короткая</text>
       <line class="dim" x1="1048" y1="335" x2="1048" y2="353" marker-start="url(#a)" marker-end="url(#a)"/><text x="1058" y="350" font-size="15">6</text>
       <text x="576" y="405" font-size="14">Косой торец полностью лежит на площадке.</text>
       <text x="576" y="427" font-size="14">TIG-шов катетом 4 мм по всему эллиптическому периметру.</text>
@@ -117,9 +119,9 @@ a{color:var(--accent)}button{font:600 13px var(--body);color:var(--ink);backgrou
       <rect class="steel" x="122" y="502" width="276" height="18"/>
       <line class="thick" x1="225" y1="492" x2="225" y2="580"/><line class="thick" x1="295" y1="492" x2="295" y2="580"/>
       <text x="120" y="630" font-size="14">Удочка проходит под площадкой; два центральных болта прижимают её.</text>
-      <text x="120" y="654" font-size="14">Площадка лежит сверху на двух щеках шириной 80,71.</text>
+      <text x="120" y="654" font-size="14">Площадка лежит сверху на двух щеках шириной 79,71.</text>
       <line class="dim" x1="122" y1="690" x2="398" y2="690" marker-start="url(#a)" marker-end="url(#a)"/><text x="243" y="682" font-size="15">90</text>
-      <line class="dim" x1="150" y1="672" x2="370" y2="672" marker-start="url(#a)" marker-end="url(#a)"/><text x="228" y="664" font-size="15">80,71</text>
+      <line class="dim" x1="150" y1="672" x2="370" y2="672" marker-start="url(#a)" marker-end="url(#a)"/><text x="228" y="664" font-size="15">79,71</text>
       <text x="650" y="520" font-size="15" font-weight="600">МАТЕРИАЛ</text><text x="650" y="547" font-size="14">AISI 316L / EN 1.4404</text>
       <text x="650" y="580" font-size="15" font-weight="600">ДОПУСКИ НА СВАРОЧНУЮ ЗАГОТОВКУ</text><text x="650" y="607" font-size="14">Лист: ±0,5 · угол оси: ±0,5° · ось трубы по центру: ±0,5</text>
       <text x="650" y="640" font-size="15" font-weight="600">ПОСЛЕ СВАРКИ</text><text x="650" y="667" font-size="14">Правка плоскости, травление и пассивация. Отверстия — только по месту.</text>
@@ -127,15 +129,15 @@ a{color:var(--accent)}button{font:600 13px var(--body);color:var(--ink);backgrou
   </section>
 
   <section class="grid2">
-    <article class="card"><h3>Карта раскроя</h3><table class="spec"><tbody><tr><td>Лист</td><td>120 × 90 × 6, R3</td></tr><tr><td>Трубная заготовка</td><td>Ø30 × 2; после косого реза 88,8 / 171,2</td></tr><tr><td>Изолятор</td><td>PA/G10 26 × 25 × 80</td></tr><tr><td>Присадка</td><td>ER316L / 1.4430</td></tr></tbody></table></article>
-    <article class="card"><h3>Контроль перед сваркой</h3><ul class="steps"><li>Эллиптический торец без качания лежит на площадке.</li><li>Ось трубы находится по центру ширины 90 мм.</li><li>Угол оси к площадке — 20°.</li><li>Карбоновая трубка входит минимум на 80 мм.</li><li>Монтажные отверстия ещё не просверлены.</li></ul></article>
+    <article class="card"><h3>Карта раскроя</h3><table class="spec"><tbody><tr><td>Лист</td><td>150 × 90 × 6, R3</td></tr><tr><td>Трубная заготовка</td><td>Ø38 × 2; после косого реза 92,8 / 197,2</td></tr><tr><td>Разрезная втулка</td><td>PA/G10 34 × 25,5 × 80, канал 5 × 5</td></tr><tr><td>Присадка</td><td>ER316L / 1.4430</td></tr></tbody></table></article>
+    <article class="card"><h3>Контроль перед сваркой</h3><ul class="steps"><li>Эллиптический торец без качания лежит на площадке.</li><li>Ось трубы находится по центру ширины 90 мм.</li><li>Угол оси к площадке — 20°.</li><li>Карбоновая трубка со втулкой входит минимум на 80 мм.</li><li>В канале 5×5 свободно проходит выбранный кабель.</li><li>Монтажные отверстия ещё не просверлены.</li></ul></article>
   </section>
   <section class="grid2">
-    <article class="card"><h3>Разъёмное соединение при установленной мачте</h3><ol class="steps"><li>Поднять съёмный вынос к топу; обе крышки разъёмов пока закрыты.</li><li>Вставить карбоновую трубу на 80 мм и затянуть два болта М5 с внутренними распорками.</li><li>Снять крышки, совместить ключ разъёма и затянуть синее резьбовое кольцо.</li><li>Защёлкнуть оба хвоста в P-скобу и клипсу, сформировав капельную петлю.</li><li>Для перевозки выполнить действия в обратном порядке и закрыть обе половины крышками.</li></ol></article>
+    <article class="card"><h3>Разъёмное соединение при установленной мачте</h3><ol class="steps"><li>До подъёма подготовить съёмный вынос: кабель уже находится внутри карбона, его хвост уложен в канал разрезной втулки.</li><li>Поднять вынос к топу, вставить карбон вместе со втулкой на 80 мм и затянуть два болта М5 с распорками.</li><li>Снять крышки, совместить ключ разъёма и затянуть синее резьбовое кольцо.</li><li>Защёлкнуть короткий хвост в P-скобу, оставив капельную петлю.</li><li>Для перевозки выполнить действия в обратном порядке и закрыть обе половины крышками.</li></ol></article>
     <article class="card"><h3>Распиновка 4 контактов</h3><table class="spec"><tbody><tr><td>1 · коричневый</td><td><b>+5 V</b></td></tr><tr><td>2 · белый</td><td><b>RS-485 A</b></td></tr><tr><td>3 · синий</td><td><b>GND</b></td></tr><tr><td>4 · чёрный</td><td><b>RS-485 B</b></td></tr></tbody></table><p class="note">Стационарную половину делать с гнездовыми контактами, чтобы на отключённом топе не оставались открытые питаемые штыри.</p></article>
   </section>
-  <section class="card"><h3>Комплект разъёма</h3><table class="spec"><tbody><tr><td>PX0411/04S/xxxx</td><td>стационарная inline-розетка, 4 контакта</td></tr><tr><td>PX0410/04P/xxxx</td><td>вилка на хвосте съёмного анемометра</td></tr><tr><td>PX0480/1</td><td>крышка стационарной половины</td></tr><tr><td>PX0481</td><td>крышка съёмной половины</td></tr><tr><td>Контакты</td><td>4 пары под выбранное сечение 0,14–0,34 мм²</td></tr><tr><td>Крепление</td><td>2 резиновые P-скобы, клипсы кабеля, страховочные шнуры крышек</td></tr></tbody></table><p class="note">Официальные данные: <a href="https://www.bulgin.com/en/products/inline-cable-connector-px0411-series-4-contact-socket-4-0mm-4-5mm-cable.html" target="_blank" rel="noopener">PX0411/04S</a>, <a href="https://www.bulgin.com/us/products/flex-cable-connector-px0410-series.html" target="_blank" rel="noopener">PX0410</a>, <a href="https://www.bulgin.com/en/products/sealing-caps-for-400-series-power-data-connectors.html" target="_blank" rel="noopener">герметичные крышки</a>.</p></section>
-  <section class="card"><h3>Порядок изготовления</h3><ol class="steps"><li>Вырезать площадку и обработать кромки R3.</li><li>Разметить косой рез трубы: короткая образующая 88,8 мм, длинная 171,2 мм.</li><li>Снять фаски, обезжирить, собрать в шаблоне 20°.</li><li>Прихватить в четырёх точках, повторно проверить угол и плоскость.</li><li>Обварить TIG по всему эллипсу катетом 4 мм.</li><li>Выправить площадку, выполнить травление и пассивацию.</li><li>На лодке провести удочку под площадкой, перенести отверстия по месту и только затем сверлить.</li></ol><div class="rev">OPEN800-M5 · WELDED-MOUNT · REV A · 19.11.2026</div></section>
+  <section class="card"><h3>Комплект разъёма и внутренней проводки</h3><table class="spec"><tbody><tr><td>PX0411/04S/xxxx</td><td>стационарная inline-розетка, 4 контакта</td></tr><tr><td>PX0410/04P/xxxx</td><td>вилка на коротком хвосте съёмного анемометра</td></tr><tr><td>PX0480/1</td><td>крышка стационарной половины</td></tr><tr><td>PX0481</td><td>крышка съёмной половины</td></tr><tr><td>Втулка</td><td>две половины PA/G10, наружный Ø34, гнездо Ø25,5, канал 5×5, длина 80</td></tr><tr><td>Кабель</td><td>4 × 0,14 мм², наружный Ø до 4,5 мм; +5 V, GND и витая пара A/B</td></tr><tr><td>Крепление</td><td>2 резиновые P-скобы, страховочные шнуры крышек</td></tr></tbody></table><p class="note">Официальные данные: <a href="https://www.bulgin.com/en/products/inline-cable-connector-px0411-series-4-contact-socket-4-0mm-4-5mm-cable.html" target="_blank" rel="noopener">PX0411/04S</a>, <a href="https://www.bulgin.com/us/products/flex-cable-connector-px0410-series.html" target="_blank" rel="noopener">PX0410</a>, <a href="https://www.bulgin.com/en/products/sealing-caps-for-400-series-power-data-connectors.html" target="_blank" rel="noopener">герметичные крышки</a>.</p></section>
+  <section class="card"><h3>Порядок изготовления</h3><ol class="steps"><li>Вырезать площадку 150×90×6 и обработать кромки R3.</li><li>Разметить косой рез трубы Ø38×2: короткая образующая 92,8 мм, длинная 197,2 мм.</li><li>Снять фаски, обезжирить, собрать в шаблоне 20°.</li><li>Прихватить в четырёх точках, повторно проверить угол и плоскость.</li><li>Обварить TIG по всему эллипсу катетом 4 мм.</li><li>Изготовить две половины втулки Ø34/25,5×80 с продольным каналом 5×5.</li><li>Выправить площадку, выполнить травление и пассивацию.</li><li>На лодке провести удочку под площадкой, перенести отверстия по месту и только затем сверлить.</li></ol><div class="rev">OPEN800-M5 · WELDED-MOUNT · REV B · 19.11.2026</div></section>
 </main>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js" integrity="sha384-CI3ELBVUz9XQO+97x6nwMDPosPR5XvsxW2ua7N1Xeygeh1IxtgqtCkGfQY9WWdHu" crossorigin="anonymous"></script>
@@ -153,24 +155,28 @@ const mat=(c,o)=>new THREE.MeshStandardMaterial(Object.assign({color:c,roughness
 const root=new THREE.Group(),context=new THREE.Group(),cableG=new THREE.Group(),sectionParts=[];scene.add(root,context,cableG);const parts=[];function label(o,t){o.userData.label=t;parts.push(o);return o}function box(x,y,z,m){return new THREE.Mesh(new THREE.BoxGeometry(x,y,z),m)}function rod(a,b,r,m,n=24){const d=b.clone().sub(a),q=new THREE.Mesh(new THREE.CylinderGeometry(r,r,d.length(),n),m);q.position.copy(a).addScaledVector(d,.5);q.quaternion.setFromUnitVectors(V(0,1,0),d.normalize());return q}function flex(pts,r,m){const c=new THREE.CatmullRomCurve3(pts);return new THREE.Mesh(new THREE.TubeGeometry(c,40,r,10),m)}
 function hollow(a,b,ro,ri,m,n=32){const d=b.clone().sub(a),dir=d.clone().normalize(),g=new THREE.Group(),wm=m.clone();wm.side=THREE.DoubleSide;const wall=new THREE.Mesh(new THREE.CylinderGeometry(ro,ro,d.length(),n,1,true),wm);wall.position.copy(a).addScaledVector(d,.5);wall.quaternion.setFromUnitVectors(V(0,1,0),dir);g.add(wall);[[a,dir.clone().negate()],[b,dir]].forEach(e=>{const r=new THREE.Mesh(new THREE.RingGeometry(ri,ro,n),m);r.position.copy(e[0]);r.quaternion.setFromUnitVectors(V(0,0,1),e[1]);g.add(r)});return g}
 function miter(base,mouth,ro,ri,m,n=48){const dir=mouth.clone().sub(base).normalize(),e1=V(0,0,1),e2=V(-dir.y,dir.x,0).normalize(),P=[],pt=(r,i,end)=>{const a=i*2*Math.PI/n,c=Math.cos(a),s=Math.sin(a),x=e1.clone().multiplyScalar(r*c).addScaledVector(e2,r*s);return end?mouth.clone().add(x):base.clone().add(x).addScaledVector(dir,-x.y/dir.y)},tri=(a,b,c)=>[a,b,c].forEach(p=>P.push(p.x,p.y,p.z));for(let i=0;i<n;i++){const j=(i+1)%n,ob0=pt(ro,i,0),ob1=pt(ro,j,0),om0=pt(ro,i,1),om1=pt(ro,j,1),ib0=pt(ri,i,0),ib1=pt(ri,j,0),im0=pt(ri,i,1),im1=pt(ri,j,1);tri(ob0,om0,om1);tri(ob0,om1,ob1);tri(ib0,im1,im0);tri(ib0,ib1,im1);tri(ob0,ob1,ib1);tri(ob0,ib1,ib0);tri(om0,im0,im1);tri(om0,im1,om1)}const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.Float32BufferAttribute(P,3));g.computeVertexNormals();const mm=m.clone();mm.side=THREE.DoubleSide;return new THREE.Mesh(g,mm)}
-const plate=label(box(.120,.006,.090,inox),'Площадка AISI 316L · 120 × 90 × 6 · R3');plate.position.y=0;plate.castShadow=true;root.add(plate);
-const A=20*Math.PI/180,dir=V(Math.cos(A),Math.sin(A),0),base=V(0,.003,0),mouth=base.clone().addScaledVector(dir,.130),tube=label(miter(base,mouth,.015,.013,inox),'Труба AISI 316L · Ø30 × 2 · косой торец полностью лежит на площадке');tube.castShadow=true;root.add(tube);
-const weld=label(new THREE.Mesh(new THREE.RingGeometry(.015,.019,64),weldMat),'TIG-шов катетом 4 по всему эллиптическому периметру');weld.position.copy(base).add(V(0,.0005,0));weld.rotation.x=-Math.PI/2;weld.scale.x=1/Math.sin(A);root.add(weld);
-const insEnd=mouth.clone().addScaledVector(dir,-.080),ins=label(hollow(mouth,insEnd,.013,.0125,mat(0xe8e9e2,{transparent:true,opacity:.48,roughness:.6}),40),'Изолирующая втулка PA/G10 · 26 × 25 × 80');root.add(ins);const boom=label(rod(mouth.clone().addScaledVector(dir,-.080),mouth.clone().addScaledVector(dir,.180),.0125,carbon,32),'Карбоновый вынос Ø25 × 23 · посадка в трубу 80');root.add(boom);
+const plate=label(box(.150,.006,.090,inox),'Площадка AISI 316L · 150 × 90 × 6 · R3');plate.position.y=0;plate.castShadow=true;root.add(plate);
+const A=20*Math.PI/180,dir=V(Math.cos(A),Math.sin(A),0),base=V(0,.003,0),mouth=base.clone().addScaledVector(dir,.145),tube=label(miter(base,mouth,.019,.017,inox),'Труба AISI 316L · Ø38 × 2 · косой торец полностью лежит на площадке');tube.castShadow=true;root.add(tube);
+const weld=label(new THREE.Mesh(new THREE.RingGeometry(.019,.023,64),weldMat),'TIG-шов катетом 4 по всему эллиптическому периметру');weld.position.copy(base).add(V(0,.0005,0));weld.rotation.x=-Math.PI/2;weld.scale.x=1/Math.sin(A);root.add(weld);
+const insEnd=mouth.clone().addScaledVector(dir,-.080),ins=label(hollow(mouth,insEnd,.017,.01275,mat(0xe8e9e2,{transparent:true,opacity:.48,roughness:.6}),40),'Разрезная втулка PA/G10 · Ø34 / Ø25,5 × 80 · канал кабеля 5 × 5');root.add(ins);const boom=label(rod(insEnd,mouth.clone().addScaledVector(dir,.180),.0125,carbon,32),'Карбоновый вынос Ø25 × 23 · посадка во втулку 80');root.add(boom);
 for(const k of [.035,.075]){const p=mouth.clone().addScaledVector(dir,-k),b=label(rod(V(p.x,p.y,-.020),V(p.x,p.y,.020),.0025,alu,16),'Болт М5 через трубу, втулку и распорку');root.add(b)}
-const cheek1=label(box(.270,.090,.004,dark),'Существующая чёрная щека топа');cheek1.position.set(-.055,-.051,-.040);const cheek2=cheek1.clone();cheek2.position.z=.040;context.add(cheek1,cheek2);parts.push(cheek2);const fitting=label(new THREE.Mesh(new THREE.CylinderGeometry(.052,.052,.081,40),dark),'Округлый концевой узел шириной 80,71');fitting.rotation.x=Math.PI/2;fitting.position.set(.035,-.050,0);context.add(fitting);
+const cheek1=label(box(.270,.090,.004,dark),'Существующая чёрная щека топа');cheek1.position.set(-.055,-.051,-.039855);const cheek2=cheek1.clone();cheek2.position.z=.039855;context.add(cheek1,cheek2);parts.push(cheek2);const fitting=label(new THREE.Mesh(new THREE.CylinderGeometry(.052,.052,.07971,40),dark),'Округлый концевой узел шириной 79,71');fitting.rotation.x=Math.PI/2;fitting.position.set(.035,-.050,0);context.add(fitting);
 const crane=label(box(.390,.006,.031,alu),'Штатная удочка проходит под площадкой и прижимается ею');crane.position.set(-.135,-.006,0);context.add(crane);const tape=label(box(.065,.001,.034,yellow),'Жёлтая контрольная лента на удочке');tape.position.set(-.245,-.0025,0);context.add(tape);
 for(const z of [-.030,.030])for(const x of [-.045,.045]){const b=label(rod(V(x,-.016,z),V(x,.014,z),.004,alu,16),'Крайний болт площадки: центр перенести по месту');context.add(b)}for(const x of [-.032,.032]){const b=label(rod(V(x,-.018,0),V(x,.014,0),.003,alu,16),'Центральный болт прижимает удочку; центр перенести по месту');context.add(b)}
 const cableMat=mat(0x20252a,{roughness:.75}),blue=mat(0x176f87,{roughness:.5}),fixedConn=new THREE.Group(),plugConn=new THREE.Group();
 function connector(g,p,axis,name){const body=label(rod(p.clone().addScaledVector(axis,-.020),p.clone().addScaledVector(axis,.020),.00955,blue,32),name);g.add(body);const grip=rod(p.clone().addScaledVector(axis,-.005),p.clone().addScaledVector(axis,.007),.011,cableMat,32);g.add(grip)}
-const cp=V(-.030,-.027,.068),ax=V(0,0,1);connector(fixedConn,cp,ax,'Стационарная розетка Bulgin PX0411/04S под наружной кромкой площадки');connector(plugConn,cp.clone().addScaledVector(ax,.037),ax,'Съёмная вилка Bulgin PX0410/04P');cableG.add(fixedConn,plugConn);
-cableG.add(label(flex([V(-.030,-.027,.048),V(-.055,-.055,.020),V(-.065,-.105,0)],.0022,cableMat),'Стационарный кабель уходит внутрь мачты; перед разъёмом капельная петля'));
-cableG.add(label(flex([cp.clone().addScaledVector(ax,.057),V(.025,.010,.085),V(.110,.055,.055),mouth.clone().addScaledVector(dir,.13).add(V(0,-.020,.018))],.0022,cableMat),'Съёмный четырёхжильный хвост идёт снаружи карбонового выноса в клипсах'));
-cableG.add(label(rod(V(-.030,-.031,.055),V(-.030,-.031,.080),.0012,alu,12),'Резиновая P-скоба снимает нагрузку с разъёма'));
+const cp=V(.055,-.027,.065),ax=V(0,0,1);connector(fixedConn,cp,ax,'Стационарная розетка Bulgin PX0411/04S у передней наружной кромки площадки');connector(plugConn,cp.clone().addScaledVector(ax,.037),ax,'Съёмная вилка Bulgin PX0410/04P');cableG.add(fixedConn,plugConn);
+cableG.add(label(flex([V(.055,-.027,.045),V(.025,-.055,.020),V(-.020,-.105,0)],.0022,cableMat),'Стационарный кабель уходит внутрь мачты; перед разъёмом капельная петля'));
+const ch0=insEnd.clone().add(V(0,0,.014)),ch1=mouth.clone().add(V(0,0,.014)),deep=insEnd.clone().addScaledVector(dir,-.028);
+cableG.add(label(rod(mouth.clone().addScaledVector(dir,.180),insEnd,.0018,cableMat,16),'Прямой участок кабеля внутри карбоновой трубы'));
+cableG.add(label(flex([insEnd,deep,deep.clone().add(V(0,0,.014)),ch0],.0018,cableMat),'U-образный разворот кабеля в свободной полости приёмной трубы'));
+cableG.add(label(rod(ch0,ch1,.0018,cableMat,16),'Обратный участок кабеля внутри канала 5×5 разрезной втулки'));
+cableG.add(label(flex([ch1,V(.105,.030,.060),cp.clone().addScaledVector(ax,.057)],.0018,cableMat),'Короткий съёмный хвост от устья трубы до разъёма'));
+cableG.add(label(rod(V(.055,-.031,.052),V(.055,-.031,.078),.0012,alu,12),'Резиновая P-скоба снимает нагрузку с разъёма'));
 sectionParts.push(ins,boom);context.visible=false;
 const floor=new THREE.Mesh(new THREE.CircleGeometry(.55,64),mat(0x6f8795,{transparent:true,opacity:.16,roughness:1,side:THREE.DoubleSide}));floor.rotation.x=-Math.PI/2;floor.position.y=-.105;scene.add(floor);
 const cams={iso:{p:V(.34,.25,.32),t:V(.03,.025,0)},side:{p:V(.19,.12,.48),t:V(.02,.03,0)},top:{p:V(.02,.58,.001),t:V(.02,.02,0)}};function go(k){camera.position.copy(cams[k].p);controls.target.copy(cams[k].t);controls.update()}go('iso');
-function mode(k){context.visible=k!=='part';cableG.visible=k==='installed'||k==='cable';sectionParts.forEach(o=>o.visible=k!=='section');tube.material.opacity=k==='section'?.35:1;tube.material.transparent=k==='section';document.querySelectorAll('[data-mode]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.mode===k)));if(k==='installed')go('iso');if(k==='section')go('side');if(k==='cable'){context.visible=true;go('iso')}}cableG.visible=false;
+function mode(k){context.visible=k!=='part';cableG.visible=k==='installed'||k==='cable';sectionParts.forEach(o=>o.visible=k!=='section');const see=k==='section'||k==='cable';tube.material.opacity=see?.32:1;tube.material.transparent=see;boom.material.opacity=k==='cable'?.28:1;boom.material.transparent=k==='cable';ins.traverse(o=>{if(o.material){o.material.opacity=k==='cable'?.20:.48;o.material.transparent=true}});document.querySelectorAll('[data-mode]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.mode===k)));if(k==='installed')go('iso');if(k==='section')go('side');if(k==='cable'){context.visible=true;go('iso')}}cableG.visible=false;
 document.querySelectorAll('[data-mode]').forEach(b=>b.addEventListener('click',()=>mode(b.dataset.mode)));document.querySelectorAll('[data-camera]').forEach(b=>b.addEventListener('click',()=>go(b.dataset.camera)));const initialMode=new URLSearchParams(location.search).get('mode');if(['part','installed','section','cable'].includes(initialMode))mode(initialMode);
 const ray=new THREE.Raycaster(),mouse=new THREE.Vector2();canvas.addEventListener('pointermove',e=>{const r=canvas.getBoundingClientRect();mouse.set((e.clientX-r.left)/r.width*2-1,-(e.clientY-r.top)/r.height*2+1);ray.setFromCamera(mouse,camera);const h=ray.intersectObjects(parts,true)[0];let o=h&&h.object;while(o&&!o.userData.label)o=o.parent;if(!o){tip.hidden=true;return}tip.hidden=false;tip.textContent=o.userData.label;tip.style.left=Math.min(e.clientX-r.left+12,r.width-310)+'px';tip.style.top=Math.min(e.clientY-r.top+12,r.height-70)+'px'});canvas.addEventListener('pointerleave',()=>tip.hidden=true);
 function resize(){const w=stage.clientWidth,h=stage.clientHeight;renderer.setSize(w,h,false);camera.aspect=w/h;camera.updateProjectionMatrix()}addEventListener('resize',resize);resize();(function loop(){controls.update();renderer.render(scene,camera);requestAnimationFrame(loop)})();
