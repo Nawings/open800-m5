@@ -1,236 +1,31 @@
 <!doctype html>
 <html lang="ru">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Navionics probe · Open 800</title>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500&family=Onest:wght@400;500;600&display=swap">
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="">
-<style>
-:root{--bg:#edf1f3;--surface:#fff;--ink:#14202b;--muted:#536373;--line:#d3dbe1;--accent:#0d6b78;--exact:#087f8c;--exact-ugd:#dc7a1f;--nearby:#2563a6;--nearby-ugd:#8b55b3;--oka:#168154;--oka-ugd:#b45583;--depth:#9a6500;--danger:#a33c32}
-@media (prefers-color-scheme:dark){:root{--bg:#0e151b;--surface:#162029;--ink:#e2e9ee;--muted:#93a3b0;--line:#27343f;--accent:#4db6c2;--exact:#4db6c2;--exact-ugd:#eea24f;--nearby:#65a8e4;--nearby-ugd:#bd8fdd;--oka:#50c68f;--oka-ugd:#e38fba;--depth:#ffd166;--danger:#f08073;color-scheme:dark}}
-*{box-sizing:border-box}
-html,body{height:100%}
-body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.45 "Onest",system-ui,sans-serif}
-button,input{font:inherit}
-.shell{min-height:100%;display:grid;grid-template-rows:auto 1fr}
-header{display:flex;align-items:center;gap:18px;padding:14px 20px;background:var(--surface);border-bottom:1px solid var(--line)}
-.home{color:var(--accent);text-decoration:none;font-weight:600;white-space:nowrap}
-.title{min-width:0}
-h1{margin:0;font:500 20px/1.2 "Unbounded","Arial Black",sans-serif}
-.subtitle{margin:3px 0 0;color:var(--muted);font-size:14px}
-.workspace{min-height:0;display:grid;grid-template-columns:minmax(280px,360px) 1fr}
-aside{min-height:0;overflow:auto;padding:18px;background:var(--surface);border-right:1px solid var(--line);display:grid;align-content:start;gap:18px}
-.summary{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
-.stat{padding:11px 12px;border:1px solid var(--line);border-radius:7px}
-.stat b{display:block;font-size:20px;font-weight:600}
-.stat span{color:var(--muted);font-size:13px}
-h2{margin:0 0 8px;font-size:16px;font-weight:600}
-.layers{display:grid;gap:8px}
-.layer{display:grid;grid-template-columns:auto 13px 1fr;align-items:center;gap:9px;padding:7px 0;color:var(--ink)}
-.layer input{width:18px;height:18px;margin:0}
-.swatch{width:13px;height:13px;border-radius:50%;background:var(--swatch)}
-.controls{display:flex;flex-wrap:wrap;gap:8px}
-.controls button{border:1px solid var(--line);border-radius:6px;background:var(--surface);color:var(--ink);padding:8px 11px}
-.controls button:hover,.controls button:focus-visible{border-color:var(--accent);outline:none}
-.status{color:var(--muted);font-size:14px}
-.status.error{color:var(--danger)}
-.detail{display:grid;gap:6px;margin:0}
-.detail div{display:grid;grid-template-columns:minmax(110px,42%) 1fr;gap:8px;padding:5px 0;border-bottom:1px solid var(--line)}
-.detail dt{color:var(--muted);font-size:13px}
-.detail dd{margin:0;font-size:13px;overflow-wrap:anywhere}
-.note{margin:0;color:var(--muted);font-size:14px}
-.map-wrap{position:relative;min-height:520px}
-#map{position:absolute;inset:0;background:#dfe8ec}
-.leaflet-container{font-family:"Onest",system-ui,sans-serif}
-.leaflet-popup-content{font-size:14px}
-.depth-icon{background:transparent;border:0}
-.depth-icon span{display:grid;place-items:center;min-width:27px;height:27px;padding:0 5px;border:2px solid var(--depth);border-radius:50%;background:var(--surface);color:var(--ink);font:600 13px/1 "Onest",system-ui,sans-serif;box-shadow:0 1px 4px rgb(0 0 0 / .25)}
-@media(max-width:760px){.shell{height:auto}.workspace{grid-template-columns:1fr;grid-template-rows:auto minmax(66vh,720px)}aside{overflow:visible;border-right:0;border-bottom:1px solid var(--line)}.map-wrap{min-height:66vh}header{align-items:flex-start;flex-direction:column;gap:6px;padding:14px 16px}}
-</style>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Изобаты Оки и Волги · Navionics probe</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="">
+  <link rel="stylesheet" href="style.css?v=contours-v3">
 </head>
 <body>
-<div class="shell">
-  <header>
-    <a class="home" href="../">← Главное меню</a>
-    <div class="title">
-      <h1>Navionics probe</h1>
-      <p class="subtitle">Экспериментальная расшифровка тайлов у Нижнего Новгорода</p>
-    </div>
-  </header>
-  <main class="workspace">
-    <aside>
-      <section>
-        <h2>Что уже разобрано</h2>
-        <div class="summary" id="summary" aria-label="Сводка"></div>
-      </section>
-      <section>
-        <h2>Слои</h2>
-        <div class="layers" id="layers"></div>
-      </section>
-      <div class="controls">
-        <button type="button" id="fit">Показать данные</button>
-        <button type="button" id="city">Центр города</button>
-      </div>
-      <p class="status" id="status" aria-live="polite">Загрузка слоёв…</p>
-      <section>
-        <h2>Выбранная запись</h2>
-        <dl class="detail" id="detail"><div><dt>Подсказка</dt><dd>Нажмите линию, точку или рамку на карте.</dd></div></dl>
-      </section>
-      <p class="note">В тайле Оки до Мызинского моста глубинных записей нет. Переключаемый слой 5–55? взят из соседнего UGD восточнее Оки; это внутреннее глубиноподобное поле Navionics с пока неизвестными единицами.</p>
+  <header><a href="../">Open 800 · Главное меню</a><h1>Navionics probe <span>Ока и Волга</span></h1><p>Восстановленные изобаты с глубинами в метрах</p></header>
+  <div class="warning" role="note">Экспериментальные данные архива 2022 года. Не использовать для навигации: актуальные глубины, уровень воды и точность привязки не проверены.</div>
+  <main>
+    <aside aria-label="Управление картой">
+      <section><h2>Глубины найдены</h2><p id="summary">Загрузка проверенных данных…</p><p class="small">Единицы сверены со скриншотами Boating: 35 = 3,5 м, 85 = 8,5 м. Прежняя ошибка выбора тайлов исправлена.</p></section>
+      <section><h2>Слои</h2><div id="layers"></div><label><input type="checkbox" id="labels" checked> Подписи глубин</label><label><input type="checkbox" id="bounds"> Границы двух тайлов</label><label><input type="checkbox" id="basemap" checked> Подложка OpenStreetMap</label></section>
+      <section><label for="interval">Шаг отображения изобат</label><select id="interval"><option value="0.5">Все · 0,5 м</option><option value="1">1 м</option><option value="2">2 м</option></select><p class="small">На общем виде подписи прорежены. Приблизьте карту для подробностей.</p></section>
+      <nav aria-label="Участки"><button data-view="oka">Ока и мосты</button><button data-view="strelka">Стрелка и Волга</button><button data-view="all">Все данные</button></nav>
+      <section><h2>Глубина выбранной линии</h2><div id="selection" aria-live="polite">Нажмите изобату на карте.</div></section>
+      <p id="status" role="status">Загрузка…</p><button id="retry" hidden>Повторить загрузку</button>
+      <details><summary>Как читать результат</summary><p>Цифра — глубина изобаты в метрах, а не точечный промер. Фрагменты прочитаны из координатных потоков UGD. Грубые дубли масштаба исключены.</p><p>Подтверждение единиц выполнено по отдельным объектам. Оно не подтверждает безопасность прохода или актуальность каждой глубины.</p><p>NV2, неподтверждённые полигоны и старые диагностические линии не показаны.</p></details>
     </aside>
-    <div class="map-wrap"><div id="map" aria-label="Карта декодированных тайлов Navionics"></div></div>
+    <section class="map-wrap" aria-label="Карта изобат">
+      <div id="map"></div>
+      <div class="legend"><span class="shallow">0,5–2 м</span><span class="medium">2,5–5 м</span><span class="deep">5,5–8 м</span><span class="deepest">8,5+ м</span></div>
+    </section>
   </main>
-</div>
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
-<script>
-(() => {
-  const city = [56.3269, 44.0059];
-  const map = L.map('map').setView(city, 11);
-  L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    maxZoom: 19,
-    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-  }).addTo(map);
-  L.control.scale({ imperial: false }).addTo(map);
-  L.circleMarker(city, { radius: 6, color: '#14202b', weight: 2, fillColor: '#fff', fillOpacity: 1 })
-    .addTo(map).bindTooltip('Нижний Новгород · контрольная точка');
-  L.circleMarker([56.251, 43.946], { radius: 6, color: '#168154', weight: 2, fillColor: '#fff', fillOpacity: 1 })
-    .addTo(map).bindTooltip('Мызинский мост');
-
-  const rootStyle = getComputedStyle(document.documentElement);
-  const color = (name) => rootStyle.getPropertyValue(name).trim();
-  const layerStyles = {
-    tiles: { color: color('--muted'), weight: 1.5, opacity: .8, fillOpacity: .02, dashArray: '6 5' },
-    exactNv2: { color: color('--exact'), weight: 4, opacity: .95 },
-    exactUgd: { color: color('--exact-ugd'), weight: 3, opacity: .9, dashArray: '7 4' },
-    nearbyNv2: { color: color('--nearby'), weight: 3, opacity: .82 },
-    nearbyUgd: { color: color('--nearby-ugd'), weight: 3, opacity: .82, dashArray: '5 4' },
-    okaNv2: { color: color('--oka'), weight: 4, opacity: .95 },
-    okaUgd: { color: color('--oka-ugd'), weight: 3, opacity: .9, dashArray: '7 4' },
-    boundsExact: { color: color('--exact'), weight: 1, opacity: .5, fillOpacity: .025 },
-    boundsNv2: { color: color('--nearby'), weight: 1, opacity: .42, fillOpacity: .02 },
-    boundsUgd: { color: color('--nearby-ugd'), weight: 1, opacity: .42, fillOpacity: .02 },
-    boundsOka: { color: color('--oka'), weight: 1, opacity: .5, fillOpacity: .02 },
-    boundsOkaUgd: { color: color('--oka-ugd'), weight: 1, opacity: .5, fillOpacity: .02 },
-  };
-  const pointStyles = {
-    pointsExact: { color: color('--exact'), fillColor: color('--exact') },
-    pointsNv2: { color: color('--nearby'), fillColor: color('--nearby') },
-    pointsUgd: { color: color('--nearby-ugd'), fillColor: color('--nearby-ugd') },
-    pointsOka: { color: color('--oka'), fillColor: color('--oka') },
-    pointsOkaUgd: { color: color('--oka-ugd'), fillColor: color('--oka-ugd') },
-  };
-  const swatches = {
-    tiles: color('--muted'), exactNv2: color('--exact'), exactUgd: color('--exact-ugd'), nearbyNv2: color('--nearby'), nearbyUgd: color('--nearby-ugd'),
-    pointsExact: color('--exact'), pointsNv2: color('--nearby'), pointsUgd: color('--nearby-ugd'), boundsExact: color('--exact'), boundsNv2: color('--nearby'), boundsUgd: color('--nearby-ugd'),
-    okaNv2: color('--oka'), okaUgd: color('--oka-ugd'), pointsOka: color('--oka'), pointsOkaUgd: color('--oka-ugd'), boundsOka: color('--oka'), boundsOkaUgd: color('--oka-ugd'), depth: color('--depth')
-  };
-  const loaded = new Map();
-  window.navionicsProbe = { map, layers: loaded };
-  const dataRevision = 'depths-oka-v2';
-  const dataUrl = (file) => `data/${file}?v=${encodeURIComponent(dataRevision)}`;
-  const allBounds = L.latLngBounds();
-  const status = document.getElementById('status');
-  const detail = document.getElementById('detail');
-
-  function showProperties(properties) {
-    detail.replaceChildren();
-    const order = ['depth_value_candidate','depth_unit_candidate','object_class_candidate','object_class_code','source_file','source_record_type','source_record_class','source_record_offset','reference_count','decoded_point_count','local_scale','local_x1','local_y1','local_x2','local_y2','reference_flag','target_offset','point_on_source_bounds_edge','closed_by_equal_first_and_last_point','tile_path','extension','chart_date'];
-    const entries = Object.entries(properties || {}).sort((a,b) => {
-      const ai = order.indexOf(a[0]), bi = order.indexOf(b[0]);
-      return (ai < 0 ? 999 : ai) - (bi < 0 ? 999 : bi) || a[0].localeCompare(b[0]);
-    }).slice(0, 18);
-    for (const [key, value] of entries) {
-      const row = document.createElement('div');
-      const term = document.createElement('dt');
-      const description = document.createElement('dd');
-      term.textContent = key;
-      description.textContent = typeof value === 'object' ? JSON.stringify(value) : String(value);
-      row.append(term, description);
-      detail.append(row);
-    }
-  }
-
-  function makeGeoJson(data, config) {
-    const style = layerStyles[config.kind] || { color: color('--accent'), weight: 2, opacity: .75, fillOpacity: .02 };
-    const layer = L.geoJSON(data, {
-      style: () => style,
-      pointToLayer: (feature, latlng) => {
-        if (config.kind === 'depth') {
-          const value = Number(feature.properties.depth_value_candidate);
-          return L.marker(latlng, { icon: L.divIcon({ className: 'depth-icon', html: `<span>${Number.isFinite(value) ? value + '?' : '?'}</span>`, iconSize: [34, 30], iconAnchor: [17, 15] }) });
-        }
-        return L.circleMarker(latlng, { radius: 3.5, weight: 1, fillOpacity: .72, ...(pointStyles[config.kind] || {}) });
-      },
-      onEachFeature: (feature, item) => item.on('click', () => showProperties(feature.properties))
-    });
-    const bounds = layer.getBounds();
-    if (bounds.isValid()) allBounds.extend(bounds);
-    return layer;
-  }
-
-  function addLayerControl(config) {
-    const label = document.createElement('label');
-    label.className = 'layer';
-    const checkbox = document.createElement('input');
-    checkbox.type = 'checkbox';
-    checkbox.checked = config.visible;
-    checkbox.dataset.layer = config.id;
-    const swatch = document.createElement('span');
-    swatch.className = 'swatch';
-    swatch.style.setProperty('--swatch', swatches[config.kind] || color('--accent'));
-    const text = document.createElement('span');
-    text.textContent = config.label;
-    label.append(checkbox, swatch, text);
-    checkbox.addEventListener('change', () => {
-      const layer = loaded.get(config.id);
-      if (!layer) return;
-      if (checkbox.checked) layer.addTo(map); else layer.removeFrom(map);
-    });
-    document.getElementById('layers').append(label);
-  }
-
-  fetch(dataUrl('manifest.json'), { cache: 'no-store' })
-    .then((response) => { if (!response.ok) throw new Error('manifest ' + response.status); return response.json(); })
-    .then(async (manifest) => {
-      const summary = document.getElementById('summary');
-      const stats = [
-        [manifest.summary.files, 'файлов'],
-        [manifest.summary.decodedReferencePoints, 'опорных точек'],
-        [manifest.summary.experimentalGeometries, 'геометрий'],
-        [manifest.summary.validatedReferences, 'валидных ссылок'],
-        [manifest.summary.depthLikeRecords, 'глубиноподобных записей'],
-      ];
-      for (const [value, label] of stats) {
-        if (value === undefined || value === null) continue;
-        const card = document.createElement('div'); card.className = 'stat';
-        const strong = document.createElement('b'); strong.textContent = value;
-        const caption = document.createElement('span'); caption.textContent = label;
-        card.append(strong, caption); summary.append(card);
-      }
-      manifest.layers.forEach(addLayerControl);
-      let failed = 0;
-      await Promise.all(manifest.layers.map(async (config) => {
-        try {
-          const response = await fetch(dataUrl(config.file), { cache: 'no-store' });
-          if (!response.ok) throw new Error(String(response.status));
-          const data = await response.json();
-          const layer = makeGeoJson(data, config);
-          loaded.set(config.id, layer);
-          if (config.visible) layer.addTo(map);
-        } catch (error) {
-          failed += 1;
-          console.error(config.file, error);
-        }
-      }));
-      status.textContent = failed ? `Загружено ${manifest.layers.length - failed} из ${manifest.layers.length} слоёв` : `Загружено ${manifest.layers.length} слоёв`;
-      status.classList.toggle('error', failed > 0);
-    })
-    .catch((error) => { status.textContent = 'Ошибка загрузки: ' + error.message; status.classList.add('error'); });
-
-  document.getElementById('fit').addEventListener('click', () => { if (allBounds.isValid()) map.fitBounds(allBounds.pad(.08)); });
-  document.getElementById('city').addEventListener('click', () => map.setView(city, 13));
-})();
-</script>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+  <script src="app.js?v=contours-v3"></script>
 </body>
 </html>
