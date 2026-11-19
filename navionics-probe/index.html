@@ -127,6 +127,8 @@ h2{margin:0 0 8px;font-size:16px;font-weight:600}
   };
   const loaded = new Map();
   window.navionicsProbe = { map, layers: loaded };
+  const dataRevision = 'depths-oka-v2';
+  const dataUrl = (file) => `data/${file}?v=${encodeURIComponent(dataRevision)}`;
   const allBounds = L.latLngBounds();
   const status = document.getElementById('status');
   const detail = document.getElementById('detail');
@@ -188,7 +190,7 @@ h2{margin:0 0 8px;font-size:16px;font-weight:600}
     document.getElementById('layers').append(label);
   }
 
-  fetch('data/manifest.json')
+  fetch(dataUrl('manifest.json'), { cache: 'no-store' })
     .then((response) => { if (!response.ok) throw new Error('manifest ' + response.status); return response.json(); })
     .then(async (manifest) => {
       const summary = document.getElementById('summary');
@@ -200,6 +202,7 @@ h2{margin:0 0 8px;font-size:16px;font-weight:600}
         [manifest.summary.depthCandidates, 'кандидатов глубины'],
       ];
       for (const [value, label] of stats) {
+        if (value === undefined || value === null) continue;
         const card = document.createElement('div'); card.className = 'stat';
         const strong = document.createElement('b'); strong.textContent = value;
         const caption = document.createElement('span'); caption.textContent = label;
@@ -209,7 +212,7 @@ h2{margin:0 0 8px;font-size:16px;font-weight:600}
       let failed = 0;
       await Promise.all(manifest.layers.map(async (config) => {
         try {
-          const response = await fetch('data/' + config.file);
+          const response = await fetch(dataUrl(config.file), { cache: 'no-store' });
           if (!response.ok) throw new Error(String(response.status));
           const data = await response.json();
           const layer = makeGeoJson(data, config);
