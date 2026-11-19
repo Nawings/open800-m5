@@ -97,6 +97,7 @@ code{font-family:var(--f-mono);font-size:12px}
       <button type="button" data-view="boat" aria-pressed="true">Лодка</button>
       <button type="button" data-view="top" aria-pressed="false">Топ мачты</button>
       <button type="button" data-view="masthead" aria-pressed="false">Удочка и топ</button>
+      <button type="button" data-view="mount" aria-pressed="false">Кронштейн</button>
       <button type="button" data-view="deck" aria-pressed="false">Рубка</button>
       <button type="button" data-view="cockpit" aria-pressed="false">Кокпит</button>
       <button type="button" data-view="cable" aria-pressed="false">Кабель</button>
@@ -156,11 +157,51 @@ code{font-family:var(--f-mono);font-size:12px}
     <ul class="change">
       <li>AS5600 висит на 4 стойках крышки, MT6701 лежит в колыбели на дне, обе на винтах в термовставках.</li>
       <li>SuperMini, MAX3485 на переходнике SOP-8 и защита запаяны на плату-носитель, GY-50 стоит на стойках этажерки. Скотча, стяжек и саморезов нет.</li>
-      <li>Трубка выноса входит в круглые гнёзда корпуса и кронштейна, по 2 болта М5 в каждом, без клея и хомутов. Капсула снимается.</li>
-      <li>Кабель идёт внутри трубки, через короб кронштейна в мачту.</li>
+      <li>У мачты карбоновая трубка входит на 80 мм в приваренную нержавеющую трубу 30 × 2 × 100 мм; между углепластиком и нержавейкой — изолирующая втулка 0,5 мм.</li>
+      <li>Кабель идёт внутри трубки и через отверстие в нержавеющей площадке уходит в мачту.</li>
+      <li>Сварной узел весит около 0,52 кг. При расчётном моменте 40 Н·м: труба ≈ 35 МПа, площадка ≈ 75 МПа, кольцевой шов ≈ 20 МПа; для 316L с консервативным пределом текучести 170 МПа запас площадки больше 2.</li>
       <li>Капсула глухая: оси внутрь не входят, магниты работают сквозь окна. Подшипники керамические, под колоколом ступицы и в колодце дна, открытых только вниз. Капсула рассчитана на окунание топа: 0,5 бар, это 5 м воды.</li>
       <li><span class="open">Не проверено:</span> ничего ещё не напечатано. Шаг отверстий плат и размер MT6701 надо снять с настоящих плат, профиль топа под пробку кронштейна — проверить кольцом mast_top_test.</li>
     </ul>
+
+    <h2>Сварной кронштейн: размеры для изготовления</h2>
+    <table class="parts"><tbody>
+      <tr class="sub"><td>Деталь</td><td>Размер и требование</td></tr>
+      <tr><td>Площадка</td><td>AISI 316L, 120 × 50 × 8 мм; кромки R3, заусенцы снять. Ширина 50 мм оставляет площадку снаружи боковой щеки топа</td></tr>
+      <tr><td>Труба</td><td>AISI 316L, 30 × 2 мм, длина 100 мм; внутренний Ø26 мм</td></tr>
+      <tr><td>Положение трубы</td><td>ось 20° к площадке; продольная ось трубы совпадает с осью выноса</td></tr>
+      <tr><td>Точка сварки</td><td>нижняя наружная образующая трубы касается верхней плоскости площадки в 15 мм от заднего края. Труба идёт над площадкой, как на эскизе 19.11</td></tr>
+      <tr><td>Сварной шов</td><td>сплошной TIG по окружности, катет 4 мм; присадка ER316L / 1.4430</td></tr>
+      <tr><td>Посадка карбона</td><td>80 мм; втулка PA/G10 26 × 25 × 80 мм исключает контакт карбона с нержавейкой</td></tr>
+      <tr><td>Фиксация выноса</td><td>2 болта М5: оси в 35 и 75 мм от устья трубы; внутри распорки длиной 23 мм</td></tr>
+      <tr><td>Крепление площадки</td><td>штатные шпильки удочки; центры отверстий перенести по месту после сварки, сверлить Ø шпильки + 1 мм</td></tr>
+      <tr><td>Масса</td><td>площадка ≈ 0,38 кг, труба ≈ 0,14 кг, весь сварной узел ≈ 0,52 кг</td></tr>
+    </tbody></table>
+    <svg viewBox="0 0 640 300" role="img" aria-label="Размерная схема сварного кронштейна" style="display:block;width:100%;height:auto;margin:12px 0;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:6px">
+      <defs><marker id="arr" markerWidth="7" markerHeight="7" refX="3.5" refY="3.5" orient="auto"><path d="M7 3.5L0 0v7z" fill="currentColor"/></marker></defs>
+      <g fill="none" stroke="currentColor" stroke-width="2">
+        <rect x="28" y="88" width="240" height="100" rx="6" fill="rgba(185,192,198,.26)"/>
+        <line x1="28" y1="30" x2="268" y2="30" marker-start="url(#arr)" marker-end="url(#arr)"/>
+        <line x1="12" y1="88" x2="12" y2="188" marker-start="url(#arr)" marker-end="url(#arr)"/>
+        <line x1="83" y1="126" x2="83" y2="150" stroke-dasharray="5 4"/>
+        <line x1="215" y1="126" x2="215" y2="150" stroke-dasharray="5 4"/>
+        <circle cx="83" cy="138" r="7"/><circle cx="215" cy="138" r="7"/>
+        <line x1="83" y1="212" x2="215" y2="212" marker-start="url(#arr)" marker-end="url(#arr)"/>
+        <rect x="348" y="214" width="250" height="16" fill="rgba(185,192,198,.35)"/>
+        <g transform="translate(378 214) rotate(-20)"><rect x="0" y="-30" width="200" height="60" rx="29" fill="rgba(185,192,198,.55)"/><rect x="0" y="-25" width="200" height="50" rx="24" fill="var(--bg)"/></g>
+        <line x1="378" y1="214" x2="566" y2="146" stroke-dasharray="6 4"/>
+        <path d="M423 214 A45 45 0 0 0 420 198"/>
+        <line x1="348" y1="250" x2="598" y2="250" marker-start="url(#arr)" marker-end="url(#arr)"/>
+        <line x1="618" y1="214" x2="618" y2="230" marker-start="url(#arr)" marker-end="url(#arr)"/>
+      </g>
+      <g fill="currentColor" font-family="ui-monospace,Consolas,monospace" font-size="15">
+        <text x="112" y="22">120 мм</text><text x="2" y="142" transform="rotate(-90 2 142)">50 мм</text>
+        <text x="82" y="238">центры отверстий перенести по месту</text><text x="130" y="108">вид сверху · лист 8 мм</text>
+        <text x="410" y="135">труба 30×2×100</text><text x="425" y="200">20°</text>
+        <text x="440" y="274">100 мм</text><text x="608" y="244">8</text><text x="392" y="290">вид сбоку · TIG 4 мм по окружности</text>
+      </g>
+    </svg>
+    <p class="note"><b>Порядок изготовления:</b> отрезать площадку и трубу, снять фаски, прихватить трубу под 20°, проверить ось шаблоном, обварить по окружности, выправить площадку после сварки. Затем приложить узел поверх штатной удочки, перенести центры её шпилек и просверлить площадку. После обработки шва — травление и пассивация. Не сверлить монтажные отверстия по фотографии.</p>
 
     <h2>Цифры модели</h2>
     <ul class="facts">
@@ -1113,6 +1154,9 @@ new MutationObserver(applyTheme).observe(document.documentElement,{attributes:tr
 function M(c,o){return new THREE.MeshStandardMaterial(Object.assign({color:c,roughness:0.6,metalness:0},o||{}));}
 function box(w,h,d,m){return new THREE.Mesh(new THREE.BoxGeometry(w,h,d),m);}
 function rod(a,b,r,m,seg){const d=new THREE.Vector3().subVectors(b,a),len=d.length();const mesh=new THREE.Mesh(new THREE.CylinderGeometry(r,r,len,seg||12),m);mesh.position.copy(a).addScaledVector(d,0.5);mesh.quaternion.setFromUnitVectors(V(0,1,0),d.normalize());return mesh;}
+function hollowRod(a,b,ro,ri,m,seg){const d=new THREE.Vector3().subVectors(b,a),len=d.length(),dir=d.clone().normalize(),g=new THREE.Group(),n=seg||24;
+  const wallMat=m.clone();wallMat.side=THREE.DoubleSide;const wall=new THREE.Mesh(new THREE.CylinderGeometry(ro,ro,len,n,1,true),wallMat);wall.position.copy(a).addScaledVector(d,0.5);wall.quaternion.setFromUnitVectors(V(0,1,0),dir);g.add(wall);
+  [[a,dir.clone().negate()],[b,dir]].forEach(e=>{const ring=new THREE.Mesh(new THREE.RingGeometry(ri,ro,n),m);ring.position.copy(e[0]);ring.quaternion.setFromUnitVectors(V(0,0,1),e[1]);g.add(ring);});return g;}
 function flatBarH(a,b,w,t,m){const d=new THREE.Vector3().subVectors(b,a),len=Math.hypot(d.x,d.z),mesh=box(len,t,w,m);mesh.position.copy(a).addScaledVector(d,0.5);mesh.rotation.y=-Math.atan2(d.z,d.x);return mesh;}
 function tube(pts,r,m){const c=new THREE.CatmullRomCurve3(pts.map(p=>p.isVector3?p:V(p[0],p[1],p[2])));return new THREE.Mesh(new THREE.TubeGeometry(c,Math.max(24,pts.length*14),r,6),m);}
 function lab(o,l){o.userData.label=l;return o;}
@@ -1255,20 +1299,20 @@ const SP1=3.86,SP2=6.94;   // две пары стреловидных крас�
 const mastHeadG=new THREE.Group();mastHeadG.position.set(MX,MT,0);boat.add(mastHeadG);
 (function(){
   const cheekMat=M(0x17191c,{roughness:0.55}),alu=M(0xb9c0c6,{roughness:0.32,metalness:0.72}),steel=M(0x8d949a,{roughness:0.3,metalness:0.78});
-  const cheek=()=>{const p=new THREE.Shape();p.moveTo(0.035,0.008);p.lineTo(0.030,-0.265);p.lineTo(-0.070,-0.255);p.lineTo(-0.105,-0.080);p.lineTo(-0.098,0.004);p.closePath();
-    [[-0.030,-0.165,0.026],[-0.048,-0.087,0.012]].forEach(h=>{const q=new THREE.Path();q.absarc(h[0],h[1],h[2],0,Math.PI*2);p.holes.push(q);});
+  const cheek=()=>{const p=new THREE.Shape();p.moveTo(0.045,0.045);p.lineTo(0.045,-0.045);p.lineTo(-0.245,-0.038);p.lineTo(-0.275,0.050);p.lineTo(-0.040,0.060);p.closePath();
+    [[-0.150,0.004,0.015],[-0.075,-0.002,0.027]].forEach(h=>{const q=new THREE.Path();q.absarc(h[0],h[1],h[2],0,Math.PI*2);p.holes.push(q);});
     const g=new THREE.ExtrudeGeometry(p,{depth:0.004,bevelEnabled:false,curveSegments:24});g.translate(0,0,-0.002);return new THREE.Mesh(g,cheekMat);};
-  [-1,1].forEach(sd=>{const c=cheek();c.position.z=sd*0.040;mastHeadG.add(lab(c,'боковая щека топа: чёрная пластина длиной ≈ 27 см, с двумя облегчающими отверстиями; по фото 15.11'));
-    const gs=new THREE.Shape();gs.moveTo(-0.072,-0.245);gs.lineTo(0.020,-0.245);gs.lineTo(0.020,-0.205);gs.closePath();const gg=new THREE.Mesh(new THREE.ExtrudeGeometry(gs,{depth:0.003,bevelEnabled:false}),alu);gg.position.z=sd*0.044;mastHeadG.add(lab(gg,'алюминиевая косынка у основания щеки'));});
-  [[-0.002,-0.045],[-0.010,-0.235]].forEach(p=>{const b=rod(V(p[0],p[1],-0.049),V(p[0],p[1],0.049),0.006,steel,16);mastHeadG.add(lab(b,'сквозной болт щёк топа с широкими шайбами'));});
-  const fitting=box(0.105,0.035,0.081,cheekMat);fitting.position.set(-0.015,-0.270,0);mastHeadG.add(lab(fitting,'концевой узел топа: наружная ширина 80,71 мм по штангенциркулю'));
+  [-1,1].forEach(sd=>{const c=cheek();c.position.z=sd*0.040;mastHeadG.add(lab(c,'боковая щека топа: горизонтальная клиновидная чёрная пластина длиной ≈ 27 см, с двумя облегчающими отверстиями; по фото 15.11'));
+    const gs=new THREE.Shape();gs.moveTo(-0.060,0.045);gs.lineTo(0.025,0.045);gs.lineTo(0.025,0.075);gs.closePath();const gg=new THREE.Mesh(new THREE.ExtrudeGeometry(gs,{depth:0.003,bevelEnabled:false}),alu);gg.position.z=sd*0.044;mastHeadG.add(lab(gg,'алюминиевая косынка у округлого концевого узла'));});
+  [[-0.240,0.035],[-0.020,-0.010]].forEach(p=>{const b=rod(V(p[0],p[1],-0.049),V(p[0],p[1],0.049),0.006,steel,16);mastHeadG.add(lab(b,'сквозной болт щёк топа с широкими шайбами'));});
+  const fitting=new THREE.Mesh(new THREE.CylinderGeometry(0.052,0.052,0.081,32),cheekMat);fitting.rotation.x=Math.PI/2;fitting.position.set(0,-0.004,0);mastHeadG.add(lab(fitting,'округлый концевой узел топа: наружная ширина 80,71 мм по штангенциркулю'));
 })();
 // Мачта на исходных фото лежит на боку. В рабочем положении широкая сторона полосы и её дуга горизонтальны:
 // высота постоянная, небольшой изгиб идёт поперёк лодки и возвращается к оси у точки ахтерштага.
-const UD=[V(MX-0.015,MT+0.012,0),V(MX-0.35,MT+0.012,0.035),V(MX-0.75,MT+0.012,0.080),V(MX-1.16,MT+0.012,0.055),V(MX-1.48,MT+0.012,0)];
+const UD=[V(MX-0.015,MT-0.030,-0.061),V(MX-0.35,MT-0.030,-0.072),V(MX-0.75,MT-0.030,-0.095),V(MX-1.16,MT-0.030,-0.075),V(MX-1.48,MT-0.030,-0.046)];
 const UDtip=UD[UD.length-1],udMat=M(0xb9c0c6,{roughness:0.35,metalness:0.72});
 for(let i=0;i<UD.length-1;i++)boat.add(lab(flatBarH(UD[i],UD[i+1],0.031,0.006,udMat),'удочка: плоская алюминиевая полоса шириной ≈ 31 мм, лежит горизонтально; общий вылет ≈ 1,5 м, форма по фото 15.11'));
-const tape=flatBarH(V(MX-0.10,MT+0.015,0.009),V(MX-0.18,MT+0.015,0.018),0.034,0.001,M(0xe7c51b,{roughness:0.8}));boat.add(lab(tape,'жёлтая контрольная лента на удочке — как на фото 15.11'));
+const tape=flatBarH(V(MX-0.10,MT-0.026,-0.064),V(MX-0.18,MT-0.026,-0.067),0.034,0.001,M(0xe7c51b,{roughness:0.8}));boat.add(lab(tape,'жёлтая контрольная лента на удочке — как на фото 15.11'));
 const tang=new THREE.Mesh(new THREE.CylinderGeometry(0.015,0.015,0.012,16),M(0x9aa0a6,{metalness:0.6}));tang.rotation.x=Math.PI/2;tang.position.copy(UDtip);boat.add(lab(tang,'конец удочки: сюда крепится ахтерштаг'));
 boat.add(lab(rod(UDtip,V(-3.97,sh(0)+0.02,0),0.004,rig),'ахтерштаг: с конца удочки на корму'));
 boat.add(lab(rod(V(-3.97,sh(0)-0.02,0),V(-3.97,sh(0)+0.06,0),0.02,M(0x9aa0a6,{metalness:0.6,roughness:0.35}),12),'крепление ахтерштага на корме'));
@@ -1420,9 +1464,16 @@ function drawHull(mode){const c=hullTexC.getContext('2d'),W=4096,H=512;
 const R=0.038,H=0.076,ANG=rad(20),cA=Math.cos(ANG),sA=Math.sin(ANG);
 const BD=V(-cA,-sA,0),CAX=V(0,0.062,0),along=(p,k)=>p.clone().addScaledVector(BD,k);
 const Jc=along(CAX,0.088), Fc=along(CAX,0.70);     // устье гнезда капсулы и устье гнезда кронштейна
-const Bo=V(Fc.x-0.03378,Fc.y-0.05494,0);           // начало координат кронштейна: середина плиты, низ
-const topG=new THREE.Group();topG.position.set(MX-Bo.x,MT-Bo.y,0);boat.add(topG);
+// Единая физическая база сварного узла: верх штатной удочки. Площадка касается удочки,
+// труба касается площадки нижней образующей, а локальное устье Fc совмещается с устьем стальной трубы.
+// Точка касания трубы с площадкой находится в 15 мм от заднего края пластины:
+// труба идёт под 20° НАД площадкой, как на эскизе владельца 19.11, а не от площадки наружу.
+const mountPlateWorld=V(MX-0.080,MT-0.023,-0.071),sleeveBaseWorld=V(MX-0.125,MT-0.004,-0.071);
+const sleeveMouthWorld=sleeveBaseWorld.clone().add(V(cA*0.100,sA*0.100,0));
+const topG=new THREE.Group();topG.position.copy(sleeveMouthWorld.clone().sub(Fc));boat.add(topG);
+const Bo=mountPlateWorld.clone().sub(topG.position);
 const topCenter=new THREE.Object3D();topCenter.position.set(-0.03,0.05,0);topG.add(topCenter);
+const mountAnchor=new THREE.Object3D();mountAnchor.position.copy(Bo);topG.add(mountAnchor);
 // STL из базы печати: геометрия приезжает позже, материал и прозрачность уже настроены
 const stlL=THREE.STLLoader?new THREE.STLLoader():null;
 function stl(name,mat){const m=new THREE.Mesh(new THREE.BufferGeometry(),mat);if(stlL)fetch('stl/'+name+'.txt').then(r=>{if(!r.ok)throw r.status;return r.text();}).then(t=>{const b=atob(t.replace(/\s+/g,'')),u=new Uint8Array(b.length);for(let i=0;i<b.length;i++)u[i]=b.charCodeAt(i);const g=stlL.parse(u.buffer);g.computeVertexNormals();m.geometry=g;}).catch(()=>{});return m;}
@@ -1495,16 +1546,19 @@ const cupG=new THREE.Group();
     cupG.add(h);}
 })();
 reg(lab(cupG,'чашки'),topG,{s:6,e:[0,-0.12,0]});
-// вынос: трубка в гнёздах корпуса и кронштейна, по 2 болта
+// вынос: у капсулы — печатное гнездо, у мачты — сварная нержавеющая площадка с трубой
 (function(){
   const g=new THREE.Group();
   const boom=rod(along(CAX,0.043),along(Fc,0.07),0.0125,carbon,20);lab(boom,'вынос: карбоновая трубка 25 × 23 мм, 0,73 м, 20° вверх, вылет от устья 0,7 м; частота ≈ 19 Гц, без подкоса; кабель внутри, съёмная');
   boom.userData.shell=true;boom.userData.op=0.3;SHELLS.push(boom);g.add(boom);
   const bolt=(p,half,l)=>{g.add(lab(rod(p.clone().setZ(-half-0.005),p.clone().setZ(half+0.005),0.0025,chrome,10),l));[-1,1].forEach(sd=>g.add(lab(rod(p.clone().setZ(sd*half),p.clone().setZ(sd*(half+0.0012)),0.0075,chrome,18),'широкая шайба М5 × 15')));};
   [0.058,0.078].forEach(k=>bolt(along(CAX,k),0.0155,'болт М5 × 45 с распоркой внутри трубки: гнездо капсулы'));
-  [0.030,0.060].forEach(k=>bolt(along(Fc,k),0.0165,'болт М5 × 45 с распоркой внутри трубки: гнездо кронштейна'));
-  const s=mmG();s.position.copy(Bo);g.add(s);s.add(lab(stl('mast_bracket_d',M(0x2a2d33,{roughness:0.55})),'кронштейн мачты: ASA, пробка в открытый торец топа — основание по контуру топа, 2 полых языка по обе стороны плиты топа уходят в мачту на 35 мм, 4 винта М5 сквозь боковые стенки мачты в термовставки; гнездо Ø35 глубиной 70 мм'));
-  [[-0.016,-0.012,0.0309],[-0.016,-0.027,0.0309],[0.018,-0.012,0.0306],[0.018,-0.027,0.0306]].forEach(p=>[-1,1].forEach(sd=>{const a=V(Bo.x+p[0],Bo.y+p[1],sd*(p[2]+0.003)),b=V(Bo.x+p[0],Bo.y+p[1],sd*(p[2]-0.009));g.add(lab(rod(a,b,0.0025,chrome,10),'винт М5 × 12 сквозь боковую стенку мачты в термовставку языка кронштейна'));g.add(lab(rod(a,V(a.x,a.y,a.z+sd*0.003),0.0045,chrome,6),'головка винта М5'));}));
+  [0.035,0.075].forEach(k=>bolt(along(Fc,k),0.015,'болт М5 через нержавеющую трубу и внутреннюю распорку: удерживает съёмный карбоновый вынос'));
+  const inox=M(0xe2e5e7,{metalness:0.55,roughness:0.24}),plate=box(0.120,0.008,0.050,inox);plate.position.copy(Bo);g.add(lab(plate,'сварная площадка AISI 316L: 120 × 50 × 8 мм; нижняя поверхность лежит на штатной удочке и прижимает её. Узкая площадка вынесена наружу от щеки топа и не пересекает её. Отверстия перенести с реального узла после сварки'));
+  const sleeve=hollowRod(Fc,along(Fc,0.100),0.015,0.013,inox,32);g.add(lab(sleeve,'приваренная открытая труба AISI 316L: 30 × 2 мм, длина 100 мм, внутренний Ø26; ось 20° к площадке, сплошной TIG-шов катетом 4 мм'));
+  const weld=rod(along(Fc,0.095),along(Fc,0.100),0.019,M(0xaab2b8,{metalness:0.78,roughness:0.42}),32);g.add(lab(weld,'сплошной TIG-шов трубы к площадке, катет 4 мм'));
+  const ins=hollowRod(Fc,along(Fc,0.082),0.013,0.0125,M(0xe3e5e2,{roughness:0.55,transparent:true,opacity:0.52}),32);g.add(lab(ins,'изолирующая втулка PA/G10: наружный Ø26, внутренний Ø25, длина 80 мм; отделяет карбон от нержавейки и выбирает зазор'));
+  [V(MX-0.105,MT-0.023,-0.061),V(MX-0.035,MT-0.023,-0.061)].forEach((w,i)=>{const p=w.clone().sub(topG.position),b=rod(V(p.x,p.y-0.016,p.z),V(p.x,p.y+0.016,p.z),0.004,chrome,16);g.add(lab(b,'штатная шпилька удочки через площадку; отверстие сверлить по месту, '+(i+1)+' из 2'));});
   reg(g,topG,{s:7});
 })();
 
@@ -1866,7 +1920,8 @@ const deckAnchor=new THREE.Object3D();deckAnchor.position.set(CAB_AFT+0.55,0.95,
 const VIEWS={
   boat:()=>({t:V(0.3,5.4,0),p:V(15,8.5,17.5),f:null}),
   top:()=>{const c=worldOf(topCenter);return{t:c,p:c.clone().add(V(0.26,0.12,0.40)),f:topCenter};},
-  masthead:()=>{const c=worldOf(mastHeadG);return{t:c.clone().add(V(-0.62,-0.02,0)),p:c.clone().add(V(1.15,0.65,2.30)),f:mastHeadG};},
+  masthead:()=>{const c=worldOf(mastHeadG);return{t:c.clone().add(V(-0.40,-0.02,0)),p:c.clone().add(V(1.60,0.80,3.40)),f:mastHeadG};},
+  mount:()=>{const c=worldOf(mountAnchor);return{t:c.clone().add(V(-0.01,0.00,-0.02)),p:c.clone().add(V(-0.24,0.20,-0.45)),f:mountAnchor};},
   deck:()=>{const c=worldOf(deckAnchor);return{t:c,p:c.clone().add(V(-2.4,0.75,1.15)),f:null};},
   cockpit:()=>{const o=layG.children[0]||cpG,c=worldOf(o);return{t:c,p:c.clone().add(V(-0.62,0.10,0.18)),f:o};},
   cable:()=>({t:V(-0.1,1.0,0.25),p:V(-3.4,2.7,3.7),f:null}),
@@ -1890,7 +1945,7 @@ const STEPS=[
  {n:4,v:'top',t:'Печатная плата топа: ESP32-C3, передатчик, защита',x:'ESP32-C3 SuperMini опрашивает датчики 200 раз в секунду и 100 раз в секунду шлёт пакет вниз через MAX3485. Обе стоят в цанговых гнёздах на заводской плате 62 × 26 мм. У ввода кабеля на плате запаяны SM712 на линиях A и B и SMBJ5.0A на +5 В. Датчики и кабель приходят на 4 разъёма с защёлкой. Плата держится на 4 винтах М2,5 × 8 через распорки.',h:'SDA — IO6, SCL — IO7, данные в MAX3485 — IO10, 460 800 бод. Размер MAX3485 на модели примерный, померить. Для прошивки снять крышку.'},
  {n:5,v:'top',t:'AS5600 и крышка — направление ветра',x:'Плата 42 × 42 мм стоит под самой крышкой на 4 коротких стойках, повёрнута на 45°: углы проходят между бобышками. Винты М2,5 × 6 в термовставки. Магнит оси флюгера снаружи, над окном крышки, зазор ≈ 1,8 мм. Шаг 0,09°, без контакта. Крышка на 4 винтах М3, уплотнение — кольцо в канавке.',h:'DIR не должен висеть: проверить мультиметром ножку 8. Если датчик сбоит на 3,3 В — капля припоя между ножками 1 и 2, после этого 5 В не подавать. Под головки винтов крышки — герметик, внутрь пакетик силикагеля.'},
  {n:6,v:'top',t:'Флюгер и чашки',x:'Ступица-колокол накрывает башенку с подшипниками. Перо 60 × 175 мм из рамки ASA и плёнки 25 мкм на карбоновом плече 280 мм, напротив — носик с дробью. Снизу три конические чашки Ø50 на радиусе 60 мм. Ступицы держатся на осях установочными винтами М3 в лыску.',h:'Подшипники керамические, без смазки. Вес оси идёт только на внутреннее кольцо: упор Ø4,4 на ступице и на стаканчике магнита. Флюгер уравновесить дробью при горизонтальной оси. Чашки взвесить и подобрать одинаковые.'},
- {n:7,v:'top',t:'Вынос и кронштейн мачты',x:'Карбоновая трубка 25 × 23 мм, 0,73 м, уходит на 0,7 м вперёд от устья и на 20° вверх. В каждом гнезде по 2 болта М5 × 45 с распорками, без клея. Кронштейн — пробка в открытый торец топа: 2 языка по обе стороны плиты топа, 4 винта М5 сквозь боковые стенки мачты в термовставки. Кабель идёт внутри трубки и короба и уходит в мачту сквозь правый язык.',h:'Кромку устья кронштейна промазать герметиком: она смотрит вверх. Перед печатью кронштейна напечатать кольцо mast_top_test и примерить на торец: профиль топа снят с фото. Частота штанги ≈ 19 Гц.'},
+ {n:7,v:'top',t:'Вынос и сварной кронштейн мачты',x:'Карбоновая трубка 25 × 23 мм, 0,73 м, уходит на 0,7 м вперёд и на 20° вверх. У мачты она входит на 80 мм в трубу AISI 316L 30 × 2 × 100 мм через изолирующую втулку. Труба приварена сплошным TIG-швом катетом 4 мм к площадке AISI 316L 120 × 90 × 6 мм. Площадка ложится поверх штатной удочки и дополнительно прижимает её двумя существующими шпильками.',h:'Сначала сварить площадку и трубу под углом 20°. Затем приложить узел к реальному топу, перенести центры штатных шпилек удочки и только после этого сверлить площадку: межосевое расстояние по фотографиям не измерено. После сварки — травление и пассивация. Между карбоном и сталью обязательна втулка PA/G10 26 × 25 × 80 мм.'},
  {n:8,v:'cockpit',t:'Коробка в кокпите',x:'Коробка IP67 с прозрачной крышкой 200 × 120 × 75 мм, светлая. Стоит на кормовой переборке рубки экраном к рулевому, на печатных салазках: один винт-барашек, поднять на 31 мм и снять. Все вводы снизу: один разъём SP13 на 9 контактов, тумблер и USB-C с колпачком. Кнопки «ноль» и порта M12 нет: данные наружу — по Wi-Fi.',h:'Вход в каюту — по оси лодки, блок — на переборке справа от входа: там по замеру 16.11 свободно около 34 × 33 см. Корпус блока будет печатным, под экран 7,5″ и второй 4,2″ — варианты на странице «Компоновка блока».'},
  {n:9,v:'cockpit',t:'Питание',x:'От аккумулятора лодки 12 В по кабелю через LM2596 на плате блока. Напряжение лодки видно на экране. Между аккумулятором и прибором стоит резервный блок на 3 элементах 18650, к прибору идёт один кабель, в него же заведён кабель мачты: если аккумулятор разрядится, прибор сам перейдёт на резерв. TPS63020 даёт 3,3 В всем модулям, 5 В на мачту и в порт идут прямо с шины после LM2596 через предохранители. 60 А·ч хватает примерно на 15 суток до половины заряда.',h:'LM2596 выставить на 5,3 В до установки, затем заменить подстроечник двумя постоянными резисторами. Тумблер отключает все потребители. Схема и режимы — на странице «Блок в кокпите».'},
  {n:10,v:'cockpit',t:'Печатная плата блока',x:'Одна заводская плата 126 × 100 мм. На ней вторым этажом в гнёздах стоят ESP32-S3, TPS63020, LM2596, ADM2483 и датчик давления BME280. Мачта развязана: данные идут через ADM2483, питание — через изолированный B0505S, у мачты своя земля. ESP32-S3 — главный: вычитает качку, считает истинный ветер и заходы, рисует экран, пишет данные гонок на карту памяти. Провода — жгуты от разъёмов платы к устройствам; полная таблица жгутов, дорожки и 3D-модель — на странице «Платы прибора М5».',h:'Прошивать только при выключенном тумблере. Оплётку кабеля мачты — на землю мачты, только здесь, с одного конца.'},
