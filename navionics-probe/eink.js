@@ -46,7 +46,7 @@
       for(let i=1;i<points.length;i++){
         const [x,y]=points[i];walked+=Math.hypot(x-points[i-1][0],y-points[i-1][1]);
         if(walked<25||x<28||x>w-28||y<12||y>h-28||used.some(p=>Math.abs(p[0]-x)<55&&Math.abs(p[1]-y)<24))continue;
-        const text=f.properties.depth_m.toLocaleString('ru-RU')+' м',width=ctx.measureText(text).width+6;
+        const text=(f.properties.depth_estimated?'≈':'')+f.properties.depth_m.toLocaleString('ru-RU')+' м',width=ctx.measureText(text).width+6;
         ctx.fillStyle='#fff';ctx.fillRect(Math.round(x-width/2),Math.round(y-8),Math.ceil(width),16);ctx.fillStyle='#000';ctx.fillText(text,x,y);used.push([x,y]);break;
       }
       if(used.length>=18)break;

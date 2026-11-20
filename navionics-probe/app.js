@@ -39,11 +39,11 @@
   base.on('load tileload tileerror',scheduleFrame);
   function selectFeature(feature,latlng){
     const p=feature.properties;const box=$('selection');box.replaceChildren();
-    const number=document.createElement('div');number.className='selected-depth';number.textContent=`${fmt(p.depth_m)} м`;
+    const number=document.createElement('div');number.className='selected-depth';number.textContent=`${p.depth_estimated?'≈ ':''}${fmt(p.depth_m)} м`;
     const source=document.createElement('div');source.textContent=`${p.source_file} · запись ${p.record_offset} · ${p.point_count} вершин`;
-    const note=document.createElement('div');note.textContent=`Изобата, не точечный промер. Поле файла: ${p.raw_value} / 10.`;
+    const note=document.createElement('div');note.textContent=`Изобата, не точечный промер. Поле файла: ${p.raw_value} / 10.${p.depth_estimated?' Для этого района масштаб единиц перенесён по формату, независимой местной сверки нет.':''}`;
     box.append(number,source,note);
-    L.popup().setLatLng(latlng).setContent(`Изобата <strong>${fmt(p.depth_m)} м</strong>`).openOn(map);
+    L.popup().setLatLng(latlng).setContent(`Изобата <strong>${p.depth_estimated?'≈ ':''}${fmt(p.depth_m)} м</strong>${p.depth_estimated?'<br>Оценка по формату; местной сверки нет.':''}`).openOn(map);
   }
   function redraw(){
     for(const entry of loaded.values()){
@@ -54,12 +54,13 @@
     refreshLabels();
     hatching.draw();
     const active=[...loaded.values()].filter(e=>e.visible);
+    $('region-note').hidden=!active.some(e=>e.estimated);
     $('hazard-status').textContent=loadFailed||active.some(e=>!e.shallow)?'ОШИБКА: не все области мелководья загружены.':active.length?`Показано областей: ${shallowAreas().length}. Шаг линий не скрывает штриховку.`:'Слои скрыты — мелководье не показано.';
     scheduleFrame();
   }
   function refreshLabels(){
     labels.clearLayers();
-    if(!$('labels').checked||map.getZoom()<12)return;
+    if(!$('labels').checked||map.getZoom()<8)return;
     const size=map.getSize(),cells=new Set();let count=0;
     const visible=[...loaded.values()].filter(e=>e.visible).flatMap(e=>e.data.features).filter(passes);
     visible.sort((a,b)=>(a.properties.raw_value%20)-(b.properties.raw_value%20)||b.properties.point_count-a.properties.point_count);
@@ -71,11 +72,11 @@
       for(let i=0;i<coordinates.length;i++){
         const [lon,lat]=coordinates[i],p=map.latLngToContainerPoint([lat,lon]);
         if(last)distance+=p.distanceTo(last);last=p;
-        if(distance<45||p.x<25||p.x>size.x-40||p.y<20||p.y>size.y-55)continue;
+        if(distance<(map.getZoom()<=11?10:45)||p.x<25||p.x>size.x-40||p.y<20||p.y>size.y-55)continue;
         const cx=Math.floor(p.x/70),cy=Math.floor(p.y/35);
         if([[-1,0],[0,0],[1,0],[0,-1],[0,1]].some(([dx,dy])=>cells.has(`${cx+dx}:${cy+dy}`)))continue;
         cells.add(`${cx}:${cy}`);
-        L.marker([lat,lon],{interactive:false,keyboard:false,icon:L.divIcon({className:'depth-label',html:`<span>${fmt(feature.properties.depth_m)} м</span>`,iconSize:[42,20],iconAnchor:[21,10]})}).addTo(labels);
+        L.marker([lat,lon],{interactive:false,keyboard:false,icon:L.divIcon({className:'depth-label',html:`<span>${feature.properties.depth_estimated?'≈':''}${fmt(feature.properties.depth_m)} м</span>`,iconSize:[42,20],iconAnchor:[21,10]})}).addTo(labels);
         count++;break;
       }
     }
@@ -87,7 +88,15 @@
   $('labels').addEventListener('change',scheduleFrame);
   $('bounds').addEventListener('change',()=>{if(tiles)$('bounds').checked?tiles.addTo(map):map.removeLayer(tiles);});
   $('retry').onclick=()=>location.reload();
+  function showReservoir(){
+    const entry=loaded.get('gorky');if(!entry)return;
+    entry.visible=true;if(entry.input)entry.input.checked=true;redraw();
+    map.fitBounds(entry.viewBounds,{padding:[20,20],animate:false});
+    const url=new URL(location.href);url.searchParams.set('region','gorky');history.replaceState(null,'',url);
+  }
   document.querySelectorAll('[data-view]').forEach(button=>button.addEventListener('click',()=>{
+    if(button.dataset.view==='gorky'){showReservoir();return;}
+    const url=new URL(location.href);url.searchParams.delete('region');history.replaceState(null,'',url);
     if(button.dataset.view==='oka')map.fitBounds([[56.246,43.934],[56.327,44.004]],{padding:[20,20]});
     else if(button.dataset.view==='strelka')map.fitBounds([[56.322,43.981],[56.350,44.035]],{padding:[20,20]});
     else {const bounds=L.latLngBounds();for(const e of loaded.values())if(e.visible)bounds.extend(e.layer.getBounds());if(bounds.isValid())map.fitBounds(bounds,{padding:[25,25]});}
@@ -95,7 +104,7 @@
   const fetchJson=async url=>{const r=await fetch(url,{cache:'no-cache'});if(!r.ok)throw new Error(`HTTP ${r.status}`);return r.json();};
   async function init(){
     try {
-      manifest=await fetchJson('data/manifest.json?v=shallow-v6');
+      manifest=await fetchJson('data/manifest.json?v=gorky-v7');
       if(manifest.version!==3)throw new Error('Устаревший набор данных');
       const url=file=>`data/${file}?v=${encodeURIComponent(manifest.revision)}`;
       await Promise.all(manifest.layers.map(async config=>{
@@ -105,14 +114,16 @@
           const entry={...config,data,shallow:null};loaded.set(config.id,entry);
           try{const shallow=await fetchJson(url(config.hazardFile));if(shallow.version!==1||shallow.threshold_m!==2||shallow.areas.length!==config.hazardCount)throw new Error('Invalid shallow areas');entry.shallow=shallow;}catch(e){entry.hazardError=true;loadFailed=true;console.error('Shallow area layer unavailable',e);}
           const label=document.createElement('label'),input=document.createElement('input');input.type='checkbox';input.checked=config.visible;
+          entry.input=input;
           input.addEventListener('change',()=>{entry.visible=input.checked;redraw();});label.append(input,document.createTextNode(`${config.label} (${config.count})`));$('layers').append(label);
         }catch(e){loadFailed=true;console.error(config.id,e);}
       }));
       changeMode();
       const count=[...loaded.values()].reduce((n,e)=>n+e.data.features.length,0);
-      $('summary').textContent=`${fmt(count)} фрагмента изобат · ${loaded.size} тайла · значения в метрах`;
+      $('summary').textContent=`${fmt(count)} фрагментов изобат · ${loaded.size} слоя · ${manifest.summary.files} тайлов. ≈ — оценочные метры.`;
       status.textContent=loadFailed?'Часть слоёв не загрузилась. Повторите загрузку.':`Изобаты загружены. Версия ${manifest.revision}.`;
       status.classList.toggle('error',loadFailed);$('retry').hidden=!loadFailed;
+      if(new URL(location.href).searchParams.get('region')==='gorky')showReservoir();
       try{tiles=L.geoJSON(await fetchJson(url('tiles.geojson')),{style:{color:eink()?'#000':'#4f6470',weight:1,fillOpacity:0,dashArray:'6 5'},interactive:false});if($('bounds').checked)tiles.addTo(map);}catch{status.textContent+=' Границы тайлов недоступны.';}
     }catch(e){status.textContent=`Не удалось загрузить данные: ${e.message}. Откройте страницу через HTTP(S), не как файл.`;status.className='error';$('retry').hidden=false;}
   }
