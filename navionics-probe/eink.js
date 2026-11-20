@@ -17,7 +17,7 @@
     if(depth<=8)return {color:'#aaaaaa',weight:1.5,opacity:1,dashArray:null};
     return {color:'#000000',weight:1.2,opacity:1,dashArray:'5 3'};
   }
-  function render({canvas,map,features,base,showBase,showLabels}){
+  function render({canvas,map,features,base,showBase,showLabels,shallowAreas=[]}){
     const ctx=canvas.getContext('2d',{willReadFrequently:true}),w=400,h=300;
     canvas.width=w;canvas.height=h;ctx.fillStyle='#fff';ctx.fillRect(0,0,w,h);
     const zoom=map.getZoom(),center=map.project(map.getCenter(),zoom),left=center.x-w/2,top=center.y-h/2;
@@ -29,6 +29,7 @@
         if(tile?.complete&&tile.naturalWidth)ctx.drawImage(tile,Math.round(x*tileSize-left),Math.round(y*tileSize-top),tileSize,tileSize);else missing++;
       }
     }
+    if(globalThis.ProbeHazards)ProbeHazards.paint(ctx,shallowAreas,([lon,lat])=>{const p=map.project([lat,lon],zoom);return[p.x-left,p.y-top];},w,h,true);
     const candidates=[];
     for(const f of features){
       const s=style(f.properties.depth_m),points=f.geometry.coordinates.map(([lon,lat])=>{const p=map.project([lat,lon],zoom);return[p.x-left,p.y-top];});
@@ -50,6 +51,7 @@
       }
       if(used.length>=18)break;
     }
+    ctx.fillStyle='#fff';ctx.fillRect(0,0,145,16);ctx.fillStyle='#000';ctx.textAlign='left';ctx.font='bold 11px sans-serif';ctx.fillText('//// ≤ 2 м: мелководье',3,8);
     // Credit and scale are part of the hardware-sized frame, not merely browser UI.
     const metres=map.distance(map.unproject([center.x,center.y],zoom),map.unproject([center.x+50,center.y],zoom));
     ctx.fillStyle='#fff';ctx.fillRect(0,h-17,w,17);ctx.fillStyle='#000';ctx.font='10px sans-serif';ctx.textAlign='left';

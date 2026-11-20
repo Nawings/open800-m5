@@ -2,23 +2,27 @@
   'use strict';
   const $=id=>document.getElementById(id),status=$('status');
   if(!window.L){status.textContent='Не удалось загрузить библиотеку карты. Проверьте интернет и перезагрузите страницу.';status.className='error';$('retry').hidden=false;$('retry').onclick=()=>location.reload();return;}
+  if(!window.ProbeHazards||!window.ProbeEink){$('hazard-status').textContent='ОШИБКА: модуль отображения мелководья не загружен.';$('retry').hidden=false;$('retry').onclick=()=>location.reload();return;}
   const map=L.map('map',{preferCanvas:true}).setView([56.302,43.965],14);
   const base=L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,crossOrigin:'anonymous',attribution:'&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'}).addTo(map);
   L.control.scale({imperial:false}).addTo(map);
   const labels=L.layerGroup().addTo(map),loaded=new Map();
   let tiles=null,manifest=null,loadFailed=false,scheduled=false;
   const fmt=n=>Number(n).toLocaleString('ru-RU',{maximumFractionDigits:1});
-  const colour=d=>d<=2?'#a15c00':d<=5?'#087f8c':d<=8?'#245ac2':'#663b9b';
+  const colour=d=>d<=2?'#b02020':d<=5?'#087f8c':d<=8?'#245ac2':'#663b9b';
   const passes=f=>Math.abs(f.properties.depth_m/Number($('interval').value)-Math.round(f.properties.depth_m/Number($('interval').value)))<1e-8;
   const eink=()=> $('display-mode').value==='eink';
+  const shallowAreas=()=>[...loaded.values()].filter(e=>e.visible).flatMap(e=>e.shallow?.areas??[]);
+  const hatching=ProbeHazards.createLayer(map,shallowAreas,eink);
   let frameTimer=null,lastMode='normal';
   const modeIntervals={normal:'0.5',eink:'2'};
   function refreshFrame(){
     if(!eink())return;
     const features=[...loaded.values()].filter(e=>e.visible).flatMap(e=>e.data.features).filter(passes);
-    const result=ProbeEink.render({canvas:$('eink-frame'),map,features,base,showBase:$('basemap').checked,showLabels:$('labels').checked});
-    $('eink-save').disabled=!!result.error||result.missingTiles>0||!features.length;
-    $('eink-status').textContent=result.error||(result.missingTiles?'Не все тайлы подложки загружены. Подождите или отключите подложку.':`400×300 · 4 оттенка · подписей: ${result.labels}`);
+    const result=ProbeEink.render({canvas:$('eink-frame'),map,features,base,showBase:$('basemap').checked,showLabels:$('labels').checked,shallowAreas:shallowAreas()});
+    const hazardMissing=loadFailed||[...loaded.values()].some(e=>e.visible&&!e.shallow);
+    $('eink-save').disabled=!!result.error||result.missingTiles>0||!features.length||hazardMissing;
+    $('eink-status').textContent=hazardMissing?'ОШИБКА: слой мелководья недоступен; экспорт заблокирован.':result.error||(result.missingTiles?'Не все тайлы подложки загружены. Подождите или отключите подложку.':`400×300 · 4 оттенка · ≤ 2 м заштриховано · подписей: ${result.labels}`);
   }
   function scheduleFrame(){clearTimeout(frameTimer);if(!eink())return;$('eink-save').disabled=true;frameTimer=setTimeout(refreshFrame,120);}
   function changeMode(){
@@ -44,10 +48,13 @@
   function redraw(){
     for(const entry of loaded.values()){
       if(entry.layer)map.removeLayer(entry.layer);
-      entry.layer=L.geoJSON(entry.data,{filter:passes,style:f=>eink()?ProbeEink.style(f.properties.depth_m):({color:colour(f.properties.depth_m),weight:f.properties.raw_value%20===0?1.6:0.9,opacity:.88}),onEachFeature:(f,line)=>line.on('click',e=>selectFeature(f,e.latlng))});
+      entry.layer=L.geoJSON(entry.data,{filter:passes,style:f=>eink()?ProbeEink.style(f.properties.depth_m):({color:colour(f.properties.depth_m),weight:f.properties.depth_m===2?2.6:f.properties.raw_value%20===0?1.6:0.9,opacity:.88}),onEachFeature:(f,line)=>line.on('click',e=>selectFeature(f,e.latlng))});
       if(entry.visible)entry.layer.addTo(map);
     }
     refreshLabels();
+    hatching.draw();
+    const active=[...loaded.values()].filter(e=>e.visible);
+    $('hazard-status').textContent=loadFailed||active.some(e=>!e.shallow)?'ОШИБКА: не все области мелководья загружены.':active.length?`Показано областей: ${shallowAreas().length}. Шаг линий не скрывает штриховку.`:'Слои скрыты — мелководье не показано.';
     scheduleFrame();
   }
   function refreshLabels(){
@@ -88,14 +95,15 @@
   const fetchJson=async url=>{const r=await fetch(url,{cache:'no-cache'});if(!r.ok)throw new Error(`HTTP ${r.status}`);return r.json();};
   async function init(){
     try {
-      manifest=await fetchJson('data/manifest.json?v=projection-v4');
+      manifest=await fetchJson('data/manifest.json?v=shallow-v6');
       if(manifest.version!==3)throw new Error('Устаревший набор данных');
       const url=file=>`data/${file}?v=${encodeURIComponent(manifest.revision)}`;
       await Promise.all(manifest.layers.map(async config=>{
         try{
           const data=await fetchJson(url(config.file));
           if(!data.features.length||data.features.some(f=>!Number.isFinite(f.properties.depth_m)))throw new Error('Некорректные глубины');
-          const entry={...config,data};loaded.set(config.id,entry);
+          const entry={...config,data,shallow:null};loaded.set(config.id,entry);
+          try{const shallow=await fetchJson(url(config.hazardFile));if(shallow.version!==1||shallow.threshold_m!==2||shallow.areas.length!==config.hazardCount)throw new Error('Invalid shallow areas');entry.shallow=shallow;}catch(e){entry.hazardError=true;loadFailed=true;console.error('Shallow area layer unavailable',e);}
           const label=document.createElement('label'),input=document.createElement('input');input.type='checkbox';input.checked=config.visible;
           input.addEventListener('change',()=>{entry.visible=input.checked;redraw();});label.append(input,document.createTextNode(`${config.label} (${config.count})`));$('layers').append(label);
         }catch(e){loadFailed=true;console.error(config.id,e);}
