@@ -297,7 +297,7 @@ function scene(v,ox,oy,opt){const g=v.g,Y=y=>oy+WALL+g.H-y,X=x=>ox+WALL+x;let s=
       const gw=m.glass[0],gh=m.glass[1],gx=x+(m.mod[0]-gw)/2,gy=y+(m.mod[1]-gh)/2+(m===SCR.s42?-2:0);
       s+='<rect class="glass" x="'+gx+'" y="'+gy+'" width="'+gw+'" height="'+gh+'" rx=".8"/>';
       s+=e.role==='small'?smallContent(x,y,m):mainContent(x,y,m);
-      s+='<rect class="win" x="'+(x-2)+'" y="'+(y-2)+'" width="'+(m.mod[0]+4)+'" height="'+(m.mod[1]+4)+'" rx="1.5"/>';}
+      s+='<rect class="win" x="'+(x+.3)+'" y="'+(y+.3)+'" width="'+(m.mod[0]-.6)+'" height="'+(m.mod[1]-.6)+'" rx=".8"/>';}
     if(e.k==='btn')s+='<circle class="knob" cx="'+X(e.x)+'" cy="'+Y(e.y)+'" r="'+(BTN/2)+'"/>';
     if(e.k==='led'){const cx=X(e.x),cy=Y(e.y),r=LED/2+0.6;['var(--led-r)','var(--led-g)','#2f6fd6'].forEach((c,i)=>{const a0=-Math.PI/2+i*2*Math.PI/3,a1=a0+2*Math.PI/3;s+='<path d="M'+cx+' '+cy+' L'+(cx+r*Math.cos(a0)).toFixed(2)+' '+(cy+r*Math.sin(a0)).toFixed(2)+' A'+r+' '+r+' 0 0 1 '+(cx+r*Math.cos(a1)).toFixed(2)+' '+(cy+r*Math.sin(a1)).toFixed(2)+' Z" fill="'+c+'"/>';});s+='<circle cx="'+cx+'" cy="'+cy+'" r="'+r+'" fill="none" stroke="var(--case-line)" stroke-width="0.5"/>';}});
   if(v.contour){const ma=g.E.find(e=>e.k==='scr'&&e.role==='main'),j=X(ma.x+ma.s.mod[0]+(v.compact?.5:1));s+='<line x1="'+j+'" y1="'+(oy+4)+'" x2="'+j+'" y2="'+(oy+g.OH-4)+'" stroke="var(--dim)" stroke-width="1" stroke-dasharray="3 2"/><text class="lbl" x="'+(j+3)+'" y="'+(oy+12)+'">спина 35→50</text>';}
@@ -408,8 +408,8 @@ if(document.fonts&&document.fonts.ready)document.fonts.ready.then(()=>{measure()
   {const w=W/2,h=H/2,backL=0,backR=-EX,pos=new Float32Array([-w,-h,D,w,-h,D,w,h,D,-w,h,D,-w,-h,backL,w,-h,backR,w,h,backR,-w,h,backL]),ix=[0,1,2,0,2,3,5,4,7,5,7,6,4,0,3,4,3,7,1,5,6,1,6,2,3,2,6,3,6,7,4,5,1,4,1,0],g=new THREE.BufferGeometry();
    g.setAttribute('position',new THREE.BufferAttribute(pos,3));g.setIndex(ix);g.computeVertexNormals();U.add(new THREE.Mesh(g,M(0xd7dde2,{transparent:true,opacity:0.5,depthWrite:false,roughness:0.4})));U.add(new THREE.LineSegments(new THREE.EdgesGeometry(g,20),new THREE.LineBasicMaterial({color:0x7b8790})));}
   U.add(bx(W-12,H-12,1.5,M(0x9fc4d6,{transparent:true,opacity:0.3}),0,0,D-1));
-  U.add(bx(111.2,170.2,1.2,M(0xe9ece6),-46.5,0,D-3));
-  U.add(bx(92,89.7,1.2,M(0xe9ece6),56.1,40.25,D-3));
+  U.add(bx(111.2,170.2,1.2,dark,-46.5,0,D-3));U.add(bx(97.9,163.2,.25,M(0xe9ece6),-46.5,0,D-2.25));
+  U.add(bx(92,89.7,1.2,dark,56.1,40.25,D-3));U.add(bx(84.8,63.6,.25,M(0xe9ece6),56.1,40.25,D-2.25));
   [22.1,45.1,68.1,91.1].forEach(x=>U.add(cyl(7,4,M(0x8f99a3),x,-73,D-1)));
   U.add(bx(100,126,1.6,M(0x2e7d4f,{transparent:true,opacity:0.7}),-30,0,14));
   // ниша в спине блока под вилку SP13: 46 × 80 × 22, открыта к переборке
