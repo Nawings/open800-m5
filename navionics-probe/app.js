@@ -7,7 +7,8 @@
   const base=L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,crossOrigin:'anonymous',attribution:'&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'}).addTo(map);
   L.control.scale({imperial:false}).addTo(map);
   const labels=L.layerGroup().addTo(map),loaded=new Map();
-  let tiles=null,manifest=null,loadFailed=false,scheduled=false;
+  let tiles=null,manifest=null,loadFailed=false,scheduled=false,oblastManager=null,oblastState=null;
+  const oblastMode=new URL(location.href).searchParams.get('region')==='oblast';
   const fmt=n=>Number(n).toLocaleString('ru-RU',{maximumFractionDigits:1});
   const colour=d=>d<=2?'#b02020':d<=5?'#087f8c':d<=8?'#245ac2':'#663b9b';
   const passes=f=>Math.abs(f.properties.depth_m/Number($('interval').value)-Math.round(f.properties.depth_m/Number($('interval').value)))<1e-8;
@@ -20,9 +21,9 @@
     if(!eink())return;
     const features=[...loaded.values()].filter(e=>e.visible).flatMap(e=>e.data.features).filter(passes);
     const result=ProbeEink.render({canvas:$('eink-frame'),map,features,base,showBase:$('basemap').checked,showLabels:$('labels').checked,shallowAreas:shallowAreas()});
-    const hazardMissing=loadFailed||[...loaded.values()].some(e=>e.visible&&!e.shallow);
+    const hazardMissing=loadFailed||oblastState?.blockExport||[...loaded.values()].some(e=>e.visible&&!e.shallow);
     $('eink-save').disabled=!!result.error||result.missingTiles>0||!features.length||hazardMissing;
-    $('eink-status').textContent=hazardMissing?'ОШИБКА: слой мелководья недоступен; экспорт заблокирован.':result.error||(result.missingTiles?'Не все тайлы подложки загружены. Подождите или отключите подложку.':`400×300 · 4 оттенка · ≤ 2 м заштриховано · подписей: ${result.labels}`);
+    $('eink-status').textContent=hazardMissing?(oblastState?.message??'ОШИБКА: слой мелководья недоступен; экспорт заблокирован.'):result.error||(result.missingTiles?'Не все тайлы подложки загружены. Подождите или отключите подложку.':`400×300 · 4 оттенка · ≤ 2 м заштриховано · подписей: ${result.labels}`);
   }
   function scheduleFrame(){clearTimeout(frameTimer);if(!eink())return;$('eink-save').disabled=true;frameTimer=setTimeout(refreshFrame,120);}
   function changeMode(){
@@ -49,13 +50,15 @@
     for(const entry of loaded.values()){
       if(entry.layer)map.removeLayer(entry.layer);
       entry.layer=L.geoJSON(entry.data,{filter:passes,style:f=>eink()?ProbeEink.style(f.properties.depth_m):({color:colour(f.properties.depth_m),weight:f.properties.depth_m===2?2.6:f.properties.raw_value%20===0?1.6:0.9,opacity:.88}),onEachFeature:(f,line)=>line.on('click',e=>selectFeature(f,e.latlng))});
+      if(oblastMode)entry.layer.__oblastVectors=true;
       if(entry.visible)entry.layer.addTo(map);
     }
     refreshLabels();
     hatching.draw();
     const active=[...loaded.values()].filter(e=>e.visible);
-    $('region-note').hidden=!active.some(e=>e.estimated);
+    $('region-note').hidden=!oblastMode&&!active.some(e=>e.estimated);
     $('hazard-status').textContent=loadFailed||active.some(e=>!e.shallow)?'ОШИБКА: не все области мелководья загружены.':active.length?`Показано областей: ${shallowAreas().length}. Шаг линий не скрывает штриховку.`:'Слои скрыты — мелководье не показано.';
+    if(oblastState)$('hazard-status').textContent=oblastState.blockExport?oblastState.message:`Областей ≤2 м в загруженных тайлах: ${shallowAreas().length}. Неизвестные глубины не обозначаются как безопасные.`;
     scheduleFrame();
   }
   function refreshLabels(){
@@ -86,27 +89,60 @@
   $('interval').addEventListener('change',redraw);$('labels').addEventListener('change',refreshLabels);
   $('basemap').addEventListener('change',()=>{$('basemap').checked?base.addTo(map):map.removeLayer(base);scheduleFrame();});
   $('labels').addEventListener('change',scheduleFrame);
-  $('bounds').addEventListener('change',()=>{if(tiles)$('bounds').checked?tiles.addTo(map):map.removeLayer(tiles);});
+  $('bounds').addEventListener('change',()=>{if(oblastManager)oblastManager.coverageVisibility();else if(tiles)$('bounds').checked?tiles.addTo(map):map.removeLayer(tiles);});
   $('retry').onclick=()=>location.reload();
   function showReservoir(){
+    if(oblastManager){map.setView([56.764,43.27],12);return;}
     const entry=loaded.get('gorky');if(!entry)return;
     entry.visible=true;if(entry.input)entry.input.checked=true;redraw();
     map.fitBounds(entry.viewBounds,{padding:[20,20],animate:false});
     const url=new URL(location.href);url.searchParams.set('region','gorky');history.replaceState(null,'',url);
   }
   document.querySelectorAll('[data-view]').forEach(button=>button.addEventListener('click',()=>{
+    if(button.dataset.view==='oblast'){const url=new URL(location.href);url.searchParams.set('region','oblast');location.assign(url.href);return;}
     if(button.dataset.view==='gorky'){showReservoir();return;}
-    const url=new URL(location.href);url.searchParams.delete('region');history.replaceState(null,'',url);
-    if(button.dataset.view==='oka')map.fitBounds([[56.246,43.934],[56.327,44.004]],{padding:[20,20]});
+    const url=new URL(location.href);if(!oblastMode)url.searchParams.delete('region');history.replaceState(null,'',url);
+    if(button.dataset.view==='oka'&&oblastManager)map.setView([56.302,43.965],14);
+    else if(button.dataset.view==='oka')map.fitBounds([[56.246,43.934],[56.327,44.004]],{padding:[20,20]});
     else if(button.dataset.view==='strelka')map.fitBounds([[56.322,43.981],[56.350,44.035]],{padding:[20,20]});
     else {const bounds=L.latLngBounds();for(const e of loaded.values())if(e.visible)bounds.extend(e.layer.getBounds());if(bounds.isValid())map.fitBounds(bounds,{padding:[25,25]});}
   }));
   const fetchJson=async url=>{const r=await fetch(url,{cache:'no-cache'});if(!r.ok)throw new Error(`HTTP ${r.status}`);return r.json();};
+  async function initOblast(url){
+    if(!window.ProbeOblast)throw new Error('Модуль областной карты не загружен');
+    const catalog=await fetchJson(url(manifest.oblast.catalogFile)),boundary=await fetchJson(url(manifest.oblast.boundaryFile));
+    if(catalog.version!==1)throw new Error('Неизвестная версия каталога');
+    $('oblast-panel').hidden=false;
+    const s=catalog.summary;
+    $('oblast-stats').textContent=`Файлов: ${s.sourceVersions}. С объектами: ${s.byStatus.ready??0}; без извлечённых объектов: ${s.byStatus.empty??0}; неподдерживаемых T32: ${s.byStatus.unsupported??0}.`;
+    $('summary').textContent=`В каталоге: ${fmt(s.ugdContours)} подробных UGD и ${fmt(s.nv2Contours)} базовых NV2 фрагментов. Загружаются только тайлы видимого участка.`;
+    $('region-note').textContent='≈ — единицы перенесены по формату; местной независимой сверки нет (кроме прежних образцов Нижнего Новгорода). Отсутствие объектов декодера не означает отсутствие мелководья.';
+    map.attributionControl.addAttribution('Граница: <a href="https://www.geoboundaries.org/">geoBoundaries</a> / © OpenStreetMap, ODbL');
+    L.geoJSON(boundary,{style:{color:'#333',weight:2,fillOpacity:0,dashArray:'7 5'},interactive:false}).addTo(map);
+    const controls=[];
+    for(const [kind,text,checked] of [['ugd','Подробные UGD',true],['nv2','Дополнительные NV2 (оценочные)',false]]){
+      const label=document.createElement('label'),input=document.createElement('input');input.type='checkbox';input.checked=checked;input.dataset.sourceKind=kind;
+      label.append(input,document.createTextNode(text));$('oblast-sources').append(label);controls.push(input);
+      input.addEventListener('change',()=>oblastManager.setKinds(controls.filter(i=>i.checked).map(i=>i.dataset.sourceKind)));
+    }
+    const [w,south,e,n]=catalog.bbox;map.fitBounds([[south,w],[n,e]],{padding:[20,20],animate:false});
+    oblastManager=ProbeOblast.create({map,catalog,url,showBounds:()=>$('bounds').checked,onState:state=>{
+      oblastState=state;loadFailed=state.failed;loaded.clear();for(const entry of state.active)loaded.set(entry.id,entry);
+      // Remove old per-tile vector layers before replacing the active set.
+      map.eachLayer(layer=>{if(layer.__oblastVectors)map.removeLayer(layer);});
+      redraw();for(const entry of loaded.values())entry.layer.__oblastVectors=true;
+      $('coverage-mode').hidden=state.active.length>0;$('coverage-mode').textContent=state.message;
+      document.querySelector('.legend').hidden=state.active.length===0;
+      status.textContent=state.message;status.classList.toggle('error',state.failed);$('retry').hidden=!state.failed;
+    }});
+    $('retry').onclick=()=>oblastManager.refresh();changeMode();await oblastManager.refresh();
+  }
   async function init(){
     try {
-      manifest=await fetchJson('data/manifest.json?v=gorky-v7');
+      manifest=await fetchJson('data/manifest.json?v=oblast-v8');
       if(manifest.version!==3)throw new Error('Устаревший набор данных');
       const url=file=>`data/${file}?v=${encodeURIComponent(manifest.revision)}`;
+      if(oblastMode){await initOblast(url);return;}
       await Promise.all(manifest.layers.map(async config=>{
         try{
           const data=await fetchJson(url(config.file));
@@ -127,6 +163,6 @@
       try{tiles=L.geoJSON(await fetchJson(url('tiles.geojson')),{style:{color:eink()?'#000':'#4f6470',weight:1,fillOpacity:0,dashArray:'6 5'},interactive:false});if($('bounds').checked)tiles.addTo(map);}catch{status.textContent+=' Границы тайлов недоступны.';}
     }catch(e){status.textContent=`Не удалось загрузить данные: ${e.message}. Откройте страницу через HTTP(S), не как файл.`;status.className='error';$('retry').hidden=false;}
   }
-  window.navionicsProbe={map,layers:loaded,labels,selectFeature,get manifest(){return manifest;}};
+  window.navionicsProbe={map,layers:loaded,labels,selectFeature,get manifest(){return manifest;},get oblast(){return oblastManager;}};
   init();
 })();
