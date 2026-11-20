@@ -1936,7 +1936,9 @@ function setLayout(id,noGo){layTexCur=null;layCur=id;while(layG.children.length)
     const UVG={generateTopUV:(g,vs,a,b,c)=>[a,b,c].map(i=>new THREE.Vector2((vs[i*3]+v.OW/2)/v.OW,(vs[i*3+1]+v.OH/2)/v.OH)),generateSideWallUV:()=>[new THREE.Vector2(0,0),new THREE.Vector2(0,0),new THREE.Vector2(0,0),new THREE.Vector2(0,0)]};
     const cg=new THREE.ExtrudeGeometry(sh,{depth:35-2*BV,bevelEnabled:true,bevelThickness:BV,bevelSize:BV,bevelSegments:4,curveSegments:10,UVGenerator:UVG});cg.translate(0,0,BV);m=new THREE.Mesh(cg,[front,side]);}
   m.scale.setScalar(0.001);m.rotation.y=-Math.PI/2;
-  const MG=Math.max(0,Math.min(v.mg,10));m.position.set(CAB_AFT,CY+(v.yt+v.OH/2)/1000,EO+0.31+(MG+v.OW/2)/1000);layG.add(lab(m,'блок '+v.key+': '+v.title+', проекция '+Math.round(v.OW)+' × '+Math.round(v.OH)+' мм'));
+  // Лицевая панель выступает в кокпит на полную глубину корпуса. Раньше origin стоял в плоскости рубки,
+  // поэтому клиновидная спина уходила внутрь стенки, а кромка рубки визуально разрезала экран и кнопки.
+  const MG=Math.max(0,Math.min(v.mg,10)),FACE_OUT=0.052;m.position.set(CAB_AFT-FACE_OUT,CY+(v.yt+v.OH/2)/1000,EO+0.31+(MG+v.OW/2)/1000);layG.add(lab(m,'блок '+v.key+': '+v.title+', проекция '+Math.round(v.OW)+' × '+Math.round(v.OH)+' мм'));
   document.getElementById('layNote').textContent=v.key+' — оба экрана находятся в одной плоскости. Плоский фасад '+Math.round(v.OW)+' × '+Math.round(v.OH)+' мм; задняя часть клиновидная, глубиной 35 мм слева и 50 мм справа. '+(v.compact?'Зазор от модуля до внутренней стенки 0,9 мм: обязательна пробная рамка.':'Перед печатью проверить фигурным картонным макетом.');
   if(!noGo)go('deck');}
 (function(){const b=document.getElementById('layBtns');if(!b)return;b.innerHTML=LAYV.map(v=>'<button type="button" data-lay="'+v.id+'" aria-pressed="false">'+v.key+(v.id==='f1c'?' · компакт':'')+'</button>').join('');setLayout('f1c',true);
