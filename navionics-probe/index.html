@@ -5,27 +5,31 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Изобаты Оки и Волги · Navionics probe</title>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="">
-  <link rel="stylesheet" href="style.css?v=projection-v4">
+  <link rel="stylesheet" href="style.css?v=eink-v5">
 </head>
 <body>
+  <svg width="0" height="0" aria-hidden="true" style="position:absolute"><defs><filter id="eink-four" color-interpolation-filters="sRGB"><feColorMatrix type="saturate" values="0"/><feComponentTransfer><feFuncR type="discrete" tableValues="0 .333333 .666667 1"/><feFuncG type="discrete" tableValues="0 .333333 .666667 1"/><feFuncB type="discrete" tableValues="0 .333333 .666667 1"/></feComponentTransfer></filter></defs></svg>
   <header><a href="../">Open 800 · Главное меню</a><h1>Navionics probe <span>Ока и Волга</span></h1><p>Восстановленные изобаты с глубинами в метрах</p></header>
   <div class="warning" role="note">Экспериментальные данные архива 2022 года. Не использовать для навигации: актуальные глубины, уровень воды и точность привязки не проверены.</div>
   <main>
     <aside aria-label="Управление картой">
+      <section><label for="display-mode">Вариант отображения</label><select id="display-mode"><option value="normal">Обычная карта</option><option value="eink">E-ink · 4 градации серого</option></select><p id="eink-note" class="small" hidden>Белый фон, чёрный и два серых. Более 8 м — чёрный пунктир. Начальный шаг 2 м уменьшает наложение линий; его можно изменить. Это имитация, не проверка реальной панели или скорости её обновления.</p></section>
       <section><h2>Глубины найдены</h2><p id="summary">Загрузка проверенных данных…</p><p class="small">Единицы сверены с Boating: 35 = 3,5 м, 85 = 8,5 м. Привязка исправлена на Navionics Mercator и проверена по мостам. Остаточные расхождения с берегом возможны.</p></section>
       <section><h2>Слои</h2><div id="layers"></div><label><input type="checkbox" id="labels" checked> Подписи глубин</label><label><input type="checkbox" id="bounds"> Границы двух тайлов</label><label><input type="checkbox" id="basemap" checked> Подложка OpenStreetMap</label></section>
       <section><label for="interval">Шаг отображения изобат</label><select id="interval"><option value="0.5">Все · 0,5 м</option><option value="1">1 м</option><option value="2">2 м</option></select><p class="small">На общем виде подписи прорежены. Приблизьте карту для подробностей.</p></section>
       <nav aria-label="Участки"><button data-view="oka">Ока и мосты</button><button data-view="strelka">Стрелка и Волга</button><button data-view="all">Все данные</button></nav>
       <section><h2>Глубина выбранной линии</h2><div id="selection" aria-live="polite">Нажмите изобату на карте.</div></section>
       <p id="status" role="status">Загрузка…</p><button id="retry" hidden>Повторить загрузку</button>
+      <section id="eink-preview" hidden><h2>Кадр экрана 400×300</h2><p class="small">Центральный фрагмент карты в текущем масштабе. Фон и сглаживание сведены к четырём оттенкам.</p><canvas id="eink-frame" width="400" height="300" role="img" aria-label="Четырёхтоновый кадр e-ink 400 на 300"></canvas><p id="eink-status" class="small" role="status"></p><button id="eink-save" disabled>Скачать PNG 400×300</button></section>
       <details><summary>Как читать результат</summary><p>Цифра — глубина изобаты в метрах, а не точечный промер. Фрагменты прочитаны из координатных потоков UGD. Грубые дубли масштаба исключены.</p><p>Подтверждение единиц выполнено по отдельным объектам. Оно не подтверждает безопасность прохода или актуальность каждой глубины.</p><p>NV2, неподтверждённые полигоны и старые диагностические линии не показаны.</p></details>
     </aside>
     <section class="map-wrap" aria-label="Карта изобат">
       <div id="map"></div>
-      <div class="legend"><span class="shallow">0,5–2 м</span><span class="medium">2,5–5 м</span><span class="deep">5,5–8 м</span><span class="deepest">8,5+ м</span></div>
+      <div class="legend" aria-label="Глубины, не оценка безопасности"><span class="shallow">0,5–2 м</span><span class="medium">2,5–5 м</span><span class="deep">5,5–8 м</span><span class="deepest">8,5+ м</span></div>
     </section>
   </main>
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
-  <script src="app.js?v=projection-v4"></script>
+  <script src="eink.js?v=eink-v5"></script>
+  <script src="app.js?v=eink-v5"></script>
 </body>
 </html>
