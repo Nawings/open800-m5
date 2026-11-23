@@ -86,6 +86,7 @@ code{font-family:var(--f-mono);font-size:12px}
       <button type="button" id="bBox" aria-pressed="true">Корпус</button>
       <button type="button" id="bWire" aria-pressed="true">Провода</button>
       <button type="button" id="bExp" aria-pressed="false">Разнести</button>
+      <button type="button" id="bPcb" data-go="main" aria-pressed="false">Плата крупно</button>
       <button type="button" id="bLab" aria-pressed="true">Подписи</button>
       <button type="button" id="bAll" aria-pressed="false">Весь блок</button>
       <button type="button" id="bSlide" aria-pressed="false">Снять с салазок</button>
@@ -1148,8 +1149,9 @@ new MutationObserver(applyTheme).observe(document.documentElement,{attributes:tr
 // Лицевая поверхность корпуса — Z = 50. Внутри стенки: X −103…103, Y −86…86. Задняя стенка — клин: снаружи 35 мм слева, 50 справа.
 const root=new T.Group();scene.add(root);
 const M=(c,o)=>new T.MeshStandardMaterial(Object.assign({color:c,roughness:0.55},o||{}));
+const R={};   // детали, к которым привязаны выноски
 const parts=[];let exp=0,expT=0,sld=0,sldT=0;
-function add(obj,ex,label,grp){if(label)obj.userData.label=label;obj.userData.base=obj.position.clone();obj.userData.ex=ex||V(0,0,0);obj.userData.grp=grp||'';root.add(obj);parts.push(obj);return obj;}
+function add(obj,ex,label,grp){if(label)obj.userData.label=label;obj.userData.base=obj.position.clone();obj.userData.ry=obj.rotation.y;obj.userData.ex=ex||V(0,0,0);obj.userData.grp=grp||'';root.add(obj);parts.push(obj);return obj;}
 function lab(o,l){o.userData.label=l;return o;}
 function box(w,h,d,m,l){const o=new T.Mesh(new T.BoxGeometry(w,h,d),m);if(l)o.userData.label=l;return o;}
 function at(o,x,y,z){o.position.set(x,y,z);return o;}
@@ -1158,58 +1160,69 @@ const backZ=x=>FACE-(35+15*(x+OW/2)/OW);   // наружная задняя по
 const Xi=x=>x-IW/2,Yi=y=>y-IH/2;            // внутренние координаты лицевой панели → модель
 
 // ---------- корпус: клин ----------
-const caseM=M(0x2a3138,{roughness:0.6,transparent:true,opacity:1});
+const caseM=M(0x2a3138,{roughness:0.6,transparent:true,opacity:1});let SHELL=null;
 {const h=OH/2,w=OW/2,zf=FACE,zl=backZ(-w),zr=backZ(w);
   const pos=new Float32Array([-w,-h,zf, w,-h,zf, w,h,zf, -w,h,zf, -w,-h,zl, w,-h,zr, w,h,zr, -w,h,zl]);
   const ix=[5,4,7,5,7,6, 4,0,3,4,3,7, 1,5,6,1,6,2, 3,2,6,3,6,7, 4,5,1,4,1,0];
   const g=new T.BufferGeometry();g.setAttribute('position',new T.BufferAttribute(pos,3));g.setIndex(ix);g.computeVertexNormals();
-  const shell=new T.Mesh(g,caseM);shell.userData.shell=true;add(shell,V(0,0,-40),'корпус F1C из ASA: стенки 3 мм, задняя стенка — клин 35 → 50 мм под скругление рубки; в нише салазок — хвост SP13 и клапан выравнивания давления','case');}
+  const shell=new T.Mesh(g,caseM);shell.userData.shell=true;SHELL=shell;R.shell=add(shell,V(270,0,-70),'корпус F1C из ASA: стенки 3 мм, задняя стенка — клин 35 → 50 мм под скругление рубки; в нише салазок — хвост SP13 и клапан выравнивания давления','case');}
 // лицевая рамка с окнами экранов
 {const sh=new T.Shape();sh.moveTo(-OW/2,-OH/2);sh.lineTo(OW/2,-OH/2);sh.lineTo(OW/2,OH/2);sh.lineTo(-OW/2,OH/2);sh.lineTo(-OW/2,-OH/2);
   const win=(x,y,w,h)=>{const p=new T.Path();p.moveTo(Xi(x),Yi(y));p.lineTo(Xi(x+w),Yi(y));p.lineTo(Xi(x+w),Yi(y+h));p.lineTo(Xi(x),Yi(y+h));p.lineTo(Xi(x),Yi(y));sh.holes.push(p);};
   win(7.55,4.25,97.9,163.2);win(116.7,94.4,84.8,63.6);
   [[125.1,13,7],[148.1,13,7],[171.1,13,7],[194.1,13,7],[127.1,52,4.5],[191.1,52,2.6]].forEach(c=>{const p=new T.Path();p.absarc(Xi(c[0]),Yi(c[1]),c[2],0,Math.PI*2,true);sh.holes.push(p);});
   const g=new T.ExtrudeGeometry(sh,{depth:2,bevelEnabled:false});const fr=new T.Mesh(g,M(0x1d2228,{roughness:0.55}));fr.position.z=FACE;
-  add(fr,V(0,0,70),'лицевая рамка из ASA: окна экранов, 4 кнопки Ø14, окно датчика света и светодиода; к корпусу — винтами М3 через уплотнитель','front');
-  const pc=box(IW,IH,3,M(0xc7d9df,{transparent:true,opacity:0.18,roughness:0.08,depthWrite:false}),'окно из поликарбоната 3 мм с плёнкой от ультрафиолета');at(pc,0,0,FACE-1.5);add(pc,V(0,0,55),null,'front');}
+  R.fr=add(fr,V(-250,0,200),'лицевая рамка из ASA: окна экранов, 4 кнопки Ø14, окно датчика света и светодиода; к корпусу — винтами М3 через уплотнитель','front');
+  const pc=box(IW,IH,3,M(0xc7d9df,{transparent:true,opacity:0.18,roughness:0.08,depthWrite:false}),'окно из поликарбоната 3 мм с плёнкой от ультрафиолета');at(pc,0,0,FACE-1.5);add(pc,V(-250,0,185),null,'front');}
 // экраны
 function screenTex(w,h,draw){const c=document.createElement('canvas');c.width=w;c.height=h;const q=c.getContext('2d');q.fillStyle='#e6e8e2';q.fillRect(0,0,w,h);q.fillStyle='#1b1f24';draw(q,w,h);const t=new T.CanvasTexture(c);t.anisotropy=8;return t;}
 const t75=screenTex(480,800,(q,w,h)=>{q.font='700 34px Inter, Arial';q.fillText('ТАБЛО',20,48);const R=[['КРЕН','12°'],['ДИФФ.','+1°'],['КУРС','177°'],['СКОР.','6,8'],['ВЕТЕР И','12,4'],['НАПР. И','214°'],['ВЕТЕР В','16,1'],['УГОЛ В','32°'],['VMG','5,9'],['СДВИГ','+6°']];
   R.forEach((r,i)=>{const y=110+i*68;q.font='600 22px Inter, Arial';q.fillText(r[0],20,y);q.font='800 54px Inter, Arial';q.textAlign='right';q.fillText(r[1],w-20,y+12);q.textAlign='left';q.fillRect(20,y+24,w-40,1.5);});});
 const t42=screenTex(400,300,(q,w,h)=>{q.font='700 26px Inter, Arial';q.fillText('СТАРТ',20,40);q.font='800 110px Inter, Arial';q.fillText('−4:53',20,160);q.font='600 24px Inter, Arial';q.fillText('ДО ЛИНИИ 41 м · 0:15',20,215);q.fillText('ВЫГОДНЕЕ ▶ правый конец',20,260);});
 function scr(x,y,w,h,aw,ah,tex,l){const g=new T.Group();g.add(box(w,h,2.6,M(0x15191d,{roughness:0.5}),l));const f=new T.Mesh(new T.PlaneGeometry(aw,ah),new T.MeshStandardMaterial({map:tex,roughness:0.6}));f.position.z=1.31;g.add(lab(f,l));at(g,Xi(x+w/2),Yi(y+h/2),FACE-3-1.3-0.1);return g;}
-add(scr(0.9,0.9,111.2,170.2,97.9,163.2,t75,'экран e-paper 7,5″, 800 × 480, стоит вертикально: «Табло» и остальные виды; шлейф — сквозь прорезь в плате в разъём на 24 контакта'),V(0,0,40),null,'front');
-add(scr(113.1,81.4,92,89.7,84.8,63.6,t42,'экран WeAct 4,2″, 400 × 300: старт, питание, прошлый галс; жгут в разъём JE4'),V(0,0,40),null,'front');
+R.s75=add(scr(0.9,0.9,111.2,170.2,97.9,163.2,t75,'экран e-paper 7,5″, 800 × 480, стоит вертикально: «Табло» и остальные виды; шлейф — сквозь прорезь в плате в разъём на 24 контакта'),V(-250,0,110),null,'front');
+R.s42=add(scr(113.1,81.4,92,89.7,84.8,63.6,t42,'экран WeAct 4,2″, 400 × 300: старт, питание, прошлый галс; жгут в разъём JE4'),V(-250,0,110),null,'front');
 // кнопки, светодиод, датчик света
-[[125.1,'РЕЖИМ: коротко — вид, 3 с — ноль крена'],[148.1,'МЕНЮ: меню; 3 с — включить или выключить прибор'],[171.1,'▲: вне меню — запомнить курс, 1 с — подсветка'],[194.1,'▼']].forEach(b=>{const c=new T.Mesh(new T.CylinderGeometry(6.6,6.6,3,28),M(0x8f99a3,{metalness:0.2,roughness:0.45}));c.rotation.x=Math.PI/2;at(c,Xi(b[0]),Yi(13),FACE+1.5);add(c,V(0,0,75),'кнопка '+b[1]+' — колпачок Ø14, под ним кнопка 12 × 12 на лицевой стороне платы','front');});
-{const l=new T.Mesh(new T.CylinderGeometry(2.4,2.4,2,20),M(0x3df06a,{emissive:0x1d7a35,roughness:0.3}));l.rotation.x=Math.PI/2;at(l,Xi(191.1),Yi(52),FACE+0.6);add(l,V(0,0,75),'светодиод RGB: заход — зелёный ровно, отход — красный мигает','front');
- const w=new T.Mesh(new T.CylinderGeometry(4.3,4.3,1.6,24),M(0xbfe3ee,{transparent:true,opacity:0.6,roughness:0.1}));w.rotation.x=Math.PI/2;at(w,Xi(127.1),Yi(52),FACE+0.6);add(w,V(0,0,75),'окно датчика света BH1750: за ним карточка в гнезде П1','front');}
+[[125.1,'РЕЖИМ: коротко — вид, 3 с — ноль крена'],[148.1,'МЕНЮ: меню; 3 с — включить или выключить прибор'],[171.1,'▲: вне меню — запомнить курс, 1 с — подсветка'],[194.1,'▼']].forEach(b=>{const c=new T.Mesh(new T.CylinderGeometry(6.6,6.6,3,28),M(0x8f99a3,{metalness:0.2,roughness:0.45}));c.rotation.x=Math.PI/2;at(c,Xi(b[0]),Yi(13),FACE+1.5);R.btn=add(c,V(-250,0,225),'кнопка '+b[1]+' — колпачок Ø14, под ним кнопка 12 × 12 на лицевой стороне платы','front');});
+{const l=new T.Mesh(new T.CylinderGeometry(2.4,2.4,2,20),M(0x3df06a,{emissive:0x1d7a35,roughness:0.3}));l.rotation.x=Math.PI/2;at(l,Xi(191.1),Yi(52),FACE+0.6);add(l,V(-250,0,225),'светодиод RGB: заход — зелёный ровно, отход — красный мигает','front');
+ const w=new T.Mesh(new T.CylinderGeometry(4.3,4.3,1.6,24),M(0xbfe3ee,{transparent:true,opacity:0.6,roughness:0.1}));w.rotation.x=Math.PI/2;at(w,Xi(127.1),Yi(52),FACE+0.6);add(w,V(-250,0,225),'окно датчика света BH1750: за ним карточка в гнезде П1','front');}
 
 // ---------- плата из общей библиотеки ----------
 // плата: координаты со стороны деталей; в корпусе она повёрнута деталями назад: X = 102 − x, Y = y − 85, Z = 40,8 − z
 const bd=PCBLIB.board3d('cockpit',{ppm:9});const bg=new T.Group();bg.add(bd);bg.rotation.y=Math.PI;bg.position.set(102,-85,FACE-9.2);
-add(bg,V(0,0,-10),null,'board');
+R.bd=add(bg,V(0,0,0),null,'board');
 const bp=(x,y,z)=>V(102-x,y-85,FACE-9.2-(z||0));   // точка платы → модель
 // ---------- полки компаса и GPS у верхней стенки ----------
 const shelfM=M(0x3a4048,{roughness:0.6});
 function shelf(X,Y,w,lbl){const g=new T.Group();g.add(at(box(w,3,24,shelfM,lbl),0,0,0));return at(g,Xi(X),Yi(Y),22);}
-add(shelf(150,158,32,'полка компаса: печатается заодно с корпусом, 2 винта М2,5 держат плату BNO085'),V(0,30,-20),'sens');
-add(shelf(60,161,28,'полка GPS: антенна вверх, под верхней стенкой'),V(0,30,-20),'sens');
-{const b=box(25.65,1.6,15.55,M(0x5a2a82,{roughness:0.5}),'компас BNO085 на плате GY-BNO08X: крен, дифферент, курс; лежит горизонтально, ось X к носу, больше 100 мм от LM2596 и TPS63020');at(b,Xi(150),Yi(158)+2.3,22);add(b,V(0,30,-20),null,'sens');
- const g=box(18,6.8,18.25,M(0x23252a,{roughness:0.5}),'GPS QUESCAN AN181: скорость и курс 10 раз в секунду, керамической антенной вверх');at(g,Xi(60),Yi(161)+5,22);add(g,V(0,30,-20),null,'sens');
- const a=box(15,0.8,15,M(0xc9a26a,{roughness:0.4}),'керамическая антенна GPS');at(a,Xi(60),Yi(161)+8.8,22);add(a,V(0,30,-20),null,'sens');}
-// ---------- карточки датчиков ----------
+const SENS_EX=V(0,115,-30);
+add(shelf(150,158,32,'полка компаса: печатается заодно с корпусом, 2 винта М2,5 держат плату BNO085'),SENS_EX,'sens');
+add(shelf(60,161,28,'полка GPS: антенна вверх, под верхней стенкой'),SENS_EX,'sens');
+{const b=box(25.65,1.6,15.55,M(0x5a2a82,{roughness:0.5}),'компас BNO085 на плате GY-BNO08X: крен, дифферент, курс; лежит горизонтально, ось X к носу, больше 100 мм от LM2596 и TPS63020');at(b,Xi(150),Yi(158)+2.3,22);R.bno=add(b,SENS_EX,null,'sens');
+ const g=box(18,6.8,18.25,M(0x23252a,{roughness:0.5}),'GPS QUESCAN AN181: скорость и курс 10 раз в секунду, керамической антенной вверх');at(g,Xi(60),Yi(161)+5,22);R.gps=add(g,SENS_EX,null,'sens');
+ const a=box(15,0.8,15,M(0xc9a26a,{roughness:0.4}),'керамическая антенна GPS');at(a,Xi(60),Yi(161)+8.8,22);add(a,SENS_EX,null,'sens');}
+// ---------- карточки датчиков: 30 × 20 мм, разъём JST-GH 6, надпись на плате ----------
 const cardM=M(0x1d4f9a,{roughness:0.5});
-{const c=box(20,30,1.6,cardM,'карточка BME280 на жгуте из П2: у клапана выравнивания давления в задней стенке');at(c,0,-35,backZ(0)+6);add(c,V(0,0,-30),null,'cards');
- const v=new T.Mesh(new T.CylinderGeometry(5,5,4,20),M(0x2a2d31,{roughness:0.6}));v.rotation.x=Math.PI/2;at(v,0,-12,backZ(0)+2);add(v,V(0,0,-30),'клапан выравнивания давления в задней стенке, в нише салазок: без него корпус мерил бы свой нагрев, а не погоду','cards');
- const a=box(1.6,30,20,cardM,'карточка AS3935 на жгуте из П6: у левой стенки, дальше от антенны ESP32-S3 и LM2596');at(a,-IW/2+4,-20,25);add(a,V(-30,0,0),null,'cards');
- const h=box(20,30,1.6,cardM,'карточка BH1750 в гнезде П1 на лицевой стороне платы, прямо за окном панели');const pp=bp(77.9,51,-6.5);at(h,pp.x,pp.y+8,FACE-5.6);add(h,V(0,0,30),null,'cards');
- const sd=box(25,22,2,M(0x17181c,{roughness:0.5}),'модуль micro-SD под задней крышкой: журналы гонок, 10 записей в секунду');at(sd,60,-60,backZ(60)+5);add(sd,V(0,0,-30),null,'cards');}
+function cardTex(t1,t2){const c=document.createElement('canvas');c.width=256;c.height=128;const q=c.getContext('2d');q.fillStyle='#1d4f9a';q.fillRect(0,0,256,128);q.fillStyle='#fff';q.font='800 46px Inter, Arial';q.textAlign='center';q.fillText(t1,128,56);q.font='600 30px Inter, Arial';q.fillText(t2,128,102);const t=new T.CanvasTexture(c);t.anisotropy=8;return t;}
+function card(lbl,t1,t2,feat){const g=new T.Group();g.add(box(20,30,1.6,cardM,lbl));
+  const tx=new T.Mesh(new T.PlaneGeometry(18,9),new T.MeshStandardMaterial({map:cardTex(t1,t2),roughness:0.6}));tx.position.set(0,-4,0.81);g.add(lab(tx,lbl));
+  g.add(lab(at(box(9,4.3,4.2,M(0xf2f2ee,{roughness:0.6})),0,-12.8,2.9),lbl));   // разъём JST-GH 6
+  feat(g);return g;}
+const chip=(g,w,h,d,y,col,l)=>g.add(lab(at(box(w,h,d,M(col||0x15171a,{roughness:0.45})),0,y,0.8+d/2),l));
+{const c=card('карточка BME280 — давление, температура и влажность воздуха в корпусе; на жгуте из П2, у клапана выравнивания давления в задней стенке','BME280','давление',g=>chip(g,2.5,2.5,0.93,6,0xb8bcc0,'BME280: металлический корпус с отверстием'));
+ c.rotation.y=Math.PI;at(c,0,-35,backZ(0)+6);R.bme=add(c,V(110,-95,-120),null,'cards');
+ const v=new T.Mesh(new T.CylinderGeometry(5,5,4,20),M(0x2a2d31,{roughness:0.6}));v.rotation.x=Math.PI/2;at(v,0,-12,backZ(0)+2);R.vent=add(v,V(270,0,-70),'клапан выравнивания давления в задней стенке, в нише салазок: без него корпус мерил бы свой нагрев, а не погоду','cards');
+ const a=card('карточка AS3935 — датчик молний: слышит разряды за 1–40 км и оценивает расстояние до грозы; на жгуте из П6, у левой стенки — подальше от антенны ESP32-S3 и от LM2596, которые мешают ему помехами','AS3935','молнии',g=>{chip(g,4,4,0.9,3,0x15171a,'AS3935: микросхема датчика молний');
+   const k=new T.Mesh(new T.CylinderGeometry(1.7,1.7,11,16),M(0x8a5a2b,{roughness:0.5}));k.rotation.z=Math.PI/2;at(k,0,10,2.6);g.add(lab(k,'антенна AS3935: ферритовая катушка на 500 кГц, принимает радиоимпульс молнии'));});
+ a.rotation.y=Math.PI/2;at(a,-IW/2+4,-20,25);R.as=add(a,V(-30,-125,-80),null,'cards');R.as.userData.exRy=Math.PI/2;   // в разнесённом виде — лицом к камере
+ const h=card('карточка BH1750 — датчик освещённости: яркость подсветки экранов по свету; в гнезде П1 на лицевой стороне платы, прямо за окном панели','BH1750','свет',g=>chip(g,3,1.6,0.6,6,0x26282c,'BH1750: окно датчика света'));
+ const pp=bp(77.9,51,-6.5);at(h,pp.x,pp.y+8,FACE-5.6);R.bh=add(h,V(-60,-120,40),null,'cards');R.bh.userData.exRy=Math.PI;
+ const sd=box(25,22,2,M(0x17181c,{roughness:0.5}),'модуль micro-SD под задней крышкой: журналы гонок, 10 записей в секунду');at(sd,60,-60,backZ(60)+5);R.sd=add(sd,V(85,-75,-120),null,'cards');}
 // ---------- салазки и хвост SP13 ----------
 const dock=new T.Group();
 dock.add(lab(at(box(140,150,6,M(0x5a636c,{roughness:0.6})),0,-5,-3),'салазки на стенке рубки: блок надвигается сверху, пружинная защёлка как у аккумулятора шуруповёрта; 4 потайных винта М4 сквозь переборку'));
 dock.add(lab(at(box(30,8,8,M(0xd2a23a,{roughness:0.5})),0,-55,4),'клавиша защёлки: нажать — блок поднимается на 3 см и снимается'));
-add(dock,V(0,0,0),null,'dock');
+R.dock=add(dock,V(0,0,0),null,'dock');
 {const tail=new T.Mesh(new T.TubeGeometry(new T.CatmullRomCurve3([V(0,-40,backZ(0)),V(0,-55,backZ(0)-4),V(0,-75,3)]),20,3,10,false),M(0x111214,{roughness:0.7}));add(tail,V(0,0,-10),'хвост с вилкой SP13 на 9 контактов: выходит из задней стенки, ответная часть — на кабеле из переборки, лежит в нише салазок','dock');
  const plug=new T.Mesh(new T.CylinderGeometry(7,7,22,20),M(0x2a2d31,{metalness:0.4,roughness:0.4}));at(plug,0,-86,3);add(plug,V(0,-20,-10),'SP13: вилка и гнездо, IP68; снимается рукой','dock');}
 // ---------- жгуты ----------
@@ -1228,22 +1241,46 @@ wire('J2',V(2,-40,backZ(0)+1),0xff8c1a,'жгут хвоста SP13: питани
 wire('KM',V(-2,-40,backZ(0)+1),0xf2f2f2,'витая пара данных мачты из хвоста SP13');
 
 // ---------- выноски ----------
-const CO=[['экран 7,5″','front',V(Xi(56),Yi(150),FACE+2)],['экран 4,2″','front',V(Xi(160),Yi(150),FACE+2)],['кнопки','front',V(Xi(160),Yi(13),FACE+3)],['плата 180 × 78','board',bp(30,40,-1)],['компас','sens',V(Xi(150),Yi(158),22)],['GPS','sens',V(Xi(60),Yi(161),22)],['салазки','dock',V(55,-70,0)]];
+// [надпись, деталь, точка на детали в собранном виде, когда видна: b — блок собран, d — разнесён или смотрим внутрь]
+const PB=id=>{const p=PCBLIB.BOARDS.data.cockpit.parts.find(q=>q.id===id);return bp(p.x+p.w/2,p.y+p.h/2,(p.z||1)+0.5);};
+const CO=[['экран 7,5″',R.s75,V(Xi(56),Yi(150),FACE+2),'bd'],['экран 4,2″',R.s42,V(Xi(160),Yi(150),FACE+2),'bd'],['кнопки',R.btn,V(Xi(194),Yi(13),FACE+3),'b'],['плата 180 × 78',R.bd,bp(30,40,-1),'b'],
+  ['компас BNO085',R.bno,V(Xi(150),Yi(158)+3,22),'bds'],['GPS',R.gps,V(Xi(60),Yi(161)+9,22),'bds'],['салазки',R.dock,V(55,-70,0),'b'],
+  ['ESP32-S3 · процессор и Wi-Fi',R.bd,PB('S3'),'dmc'],['LM2596 · 12 → 5 В',R.bd,PB('LM'),'dm'],['TPS63020 · 5 → 3,3 В',R.bd,PB('TPS'),'dm'],['ADM2483 · приём с мачты',R.bd,PB('ISO'),'dm'],['B0505S · питание мачты',R.bd,PB('DCI'),'dm'],
+  ['PCA9555 · кнопки и порты',R.bd,PB('EXP'),'dm'],['разъём шлейфа 7,5″',R.bd,PB('JE7'),'dm'],['П2–П6 · порты датчиков',R.bd,PB('P4'),'dm'],['J1 · +12 В и шина к INA226',R.bd,PB('J1'),'dm'],['клемма линии мачты',R.bd,PB('KM'),'dm'],
+  ['AS3935 · молнии',R.as,V(-IW/2+6,-20,25),'dc'],['BME280 · давление',R.bme,V(0,-33,backZ(0)+4),'dc'],['BH1750 · свет',R.bh,V(R.bh.userData.base.x,R.bh.userData.base.y+4,FACE-4.5),'dc'],['карта micro-SD',R.sd,V(60,-60,backZ(60)+6),'dc'],
+  ['корпус F1C',R.shell,V(-80,60,backZ(-80)),'d'],['клапан давления',R.vent,V(0,-12,backZ(0)),'dc'],['лицевая рамка',R.fr,V(Xi(160),Yi(52),FACE+2),'d']];
 const cos=$('cos'),lines=$('lines');const coEls=CO.map(c=>{const d=document.createElement('div');d.className='co';d.textContent=c[0];cos.appendChild(d);const ln=document.createElementNS('http://www.w3.org/2000/svg','line');lines.appendChild(ln);return {d,ln,c};});
 let labOn=!matchMedia('(max-width:900px)').matches;
-function placeCO(){const r=stage.getBoundingClientRect();lines.setAttribute('viewBox','0 0 '+r.width+' '+r.height);coEls.forEach(e=>{const p=e.c[2].clone();p.project(camera);const x=(p.x+1)/2*r.width,y=(1-p.y)/2*r.height,vis=labOn&&p.z<1&&x>0&&x<r.width&&y>0&&y<r.height;e.d.hidden=!vis;e.ln.style.display=vis?'':'none';if(!vis)return;const lx=x+(x<r.width/2?-90:30),ly=y-30;e.d.style.left=lx+'px';e.d.style.top=ly+'px';e.ln.setAttribute('x1',x);e.ln.setAttribute('y1',y);e.ln.setAttribute('x2',lx+(x<r.width/2?60:0));e.ln.setAttribute('y2',ly+10);});}
+let view='all';const INSIDE={main:1,cards:1,sens:1};
+// что прячем в видах «внутрь»: плату крупно смотрим без лицевых деталей, корпуса и салазок
+const HIDE={main:{front:1,case:1,dock:1,cards:1,sens:1},cards:{case:1,dock:1},sens:{case:1,dock:1}};
+function placeCO(){const r=stage.getBoundingClientRect(),W=r.width,H=r.height;lines.setAttribute('viewBox','0 0 '+W+' '+H);
+  const tag=exp>0.5?'d':{main:'m',cards:'c',sens:'s'}[view]||'b',vis=[];
+  coEls.forEach(e=>{const o=e.c[1],p=e.c[2].clone();if(o&&o.userData.base)p.add(o.position).sub(o.userData.base);p.project(camera);
+    const x=(p.x+1)/2*W,y=(1-p.y)/2*H,ok=labOn&&e.c[3].includes(tag)&&(!o||shown(o))&&p.z<1&&x>0&&x<W&&y>0&&y<H;
+    e.d.hidden=!ok;e.ln.style.display=ok?'':'none';if(ok)vis.push({e,x,y});});
+  // подписи — столбиками у краёв сцены, без наложений; линия — к точке на детали
+  const top=Math.min(H*0.3,120),bot=H-34;
+  [true,false].forEach(left=>{const L=vis.filter(v=>(v.x<W/2)===left).sort((a,b)=>a.y-b.y);let y=top;
+    L.forEach(v=>{v.h=v.e.d.offsetHeight||20;v.w=v.e.d.offsetWidth||80;v.ly=Math.max(v.y-v.h/2,y);y=v.ly+v.h+5;});
+    let lim=bot;for(let i=L.length-1;i>=0;i--){const v=L[i];if(v.ly+v.h>lim)v.ly=lim-v.h;lim=v.ly-5;}
+    L.forEach(v=>{const lx=left?12:W-12-v.w;v.e.d.style.left=lx+'px';v.e.d.style.top=v.ly+'px';
+      v.e.ln.setAttribute('x1',v.x);v.e.ln.setAttribute('y1',v.y);v.e.ln.setAttribute('x2',left?lx+v.w:lx);v.e.ln.setAttribute('y2',v.ly+v.h/2);});});}
 
 // ---------- кнопки вида ----------
 let caseOn=true,wireOn=true,dockOn=true;
-function applyAll(){const k=exp,s=sld;parts.forEach(o=>{const b=o.userData.base,e=o.userData.ex;o.position.set(b.x+e.x*k,b.y+e.y*k+(o.userData.grp==='dock'?0:s*30),b.z+e.z*k+(o.userData.grp==='dock'?0:s*25));if(o.userData.grp==='dock')o.visible=dockOn;});
-  caseM.opacity=caseOn?1:0.12;caseM.depthWrite=caseOn;caseM.needsUpdate=true;wires.visible=wireOn&&exp<0.05;wires.position.set(0,s*30,s*25);}
+function applyAll(){const k=exp,s=sld;parts.forEach(o=>{const b=o.userData.base,e=o.userData.ex;if(o.userData.exRy)o.rotation.y=o.userData.ry+o.userData.exRy*k;o.position.set(b.x+e.x*k,b.y+e.y*k+(o.userData.grp==='dock'?0:s*30),b.z+e.z*k+(o.userData.grp==='dock'?0:s*25));const hd=k<0.5&&HIDE[view]||{};o.visible=!hd[o.userData.grp]&&(o.userData.grp!=='dock'||dockOn&&k<0.05);});
+  caseM.opacity=caseOn||k>0.5?1:0.12;caseM.depthWrite=caseOn||k>0.5;caseM.needsUpdate=true;wires.visible=wireOn&&exp<0.05&&view!=='main';wires.position.set(0,s*30,s*25);}
 const tg=(id,f)=>$(id).addEventListener('click',()=>{const on=$(id).getAttribute('aria-pressed')!=='true';$(id).setAttribute('aria-pressed',String(on));f(on);applyAll();});
-tg('bBox',on=>{caseOn=on;});tg('bWire',on=>{wireOn=on;});tg('bExp',on=>{expT=on?1:0;});tg('bLab',on=>{labOn=on;});tg('bSlide',on=>{sldT=on?1:0;});
-const VIEWS={all:{t:[0,0,25],p:[260,160,420]},dsp:{t:[0,0,48],p:[60,40,380]},front:{t:[40,-70,50],p:[60,-40,200]},main:{t:[0,-45,30],p:[-170,-120,-150]},sens:{t:[0,75,22],p:[90,260,180]},cards:{t:[0,-20,20],p:[-260,60,-120]},dock:{t:[0,-40,0],p:[300,-120,-160]},res:{t:[0,0,25],p:[260,160,420]}};
+tg('bBox',on=>{caseOn=on;if(HIDE[view])view='free';});tg('bWire',on=>{wireOn=on;});tg('bLab',on=>{labOn=on;$('cos').hidden=!on;});tg('bSlide',on=>{sldT=on?1:0;});
+tg('bExp',on=>{expT=on?1:0;if(on){view='exp';sldT=0;$('bSlide').setAttribute('aria-pressed','false');fly(VIEWS.exp);}else go('all');});
+const VIEWS={all:{t:[0,0,25],p:[260,160,420]},dsp:{t:[0,0,48],p:[60,40,380]},front:{t:[40,-70,50],p:[60,-40,200]},main:{t:[12,-42,30],p:[70,5,-330]},sens:{t:[0,75,22],p:[90,260,180]},cards:{t:[-10,-30,25],p:[170,50,-340]},dock:{t:[0,-40,0],p:[300,-120,-160]},res:{t:[0,0,25],p:[260,160,420]},exp:{t:[10,15,-10],p:[190,150,-700]}};
 let tw=null;
-function go(k){const v=VIEWS[k]||VIEWS.all;dockOn=!(k==='main'||k==='cards');caseOn=k==='all'||k==='dsp'||k==='front'||k==='res';$('bBox').setAttribute('aria-pressed',String(caseOn));sldT=k==='dock'?1:0;$('bSlide').setAttribute('aria-pressed',String(k==='dock'));
-  tw={p0:camera.position.clone(),t0:controls.target.clone(),p1:V(...v.p),t1:V(...v.t),st:performance.now()};document.querySelectorAll('[data-go]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.go===k)));applyAll();}
-document.querySelectorAll('[data-go]').forEach(b=>b.addEventListener('click',()=>{go(b.dataset.go);stage.scrollIntoView({behavior:'smooth',block:'start'});}));
+function fly(v){tw={p0:camera.position.clone(),t0:controls.target.clone(),p1:V(...v.p),t1:V(...v.t),st:performance.now()};}
+function go(k){const v=VIEWS[k]||VIEWS.all;view=k;if(k!=='exp'&&expT){expT=0;$('bExp').setAttribute('aria-pressed','false');}
+  dockOn=!(k==='main'||k==='cards');caseOn=k==='all'||k==='dsp'||k==='front'||k==='res';$('bBox').setAttribute('aria-pressed',String(caseOn));sldT=k==='dock'?1:0;$('bSlide').setAttribute('aria-pressed',String(k==='dock'));
+  fly(v);document.querySelectorAll('[data-go]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.go===k)));applyAll();}
+document.querySelectorAll('[data-go]').forEach(b=>b.addEventListener('click',()=>{go(b.dataset.go);if(!b.closest('.tools'))stage.scrollIntoView({behavior:'smooth',block:'start'});}));
 $('bAll').addEventListener('click',()=>go('all'));
 $('bLab').setAttribute('aria-pressed',String(labOn));$('cos').hidden=!labOn;
 camera.position.set(...VIEWS.all.p);controls.target.set(...VIEWS.all.t);controls.update();
