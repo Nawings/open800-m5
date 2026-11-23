@@ -89,12 +89,19 @@ code{font-family:var(--f-mono);font-size:12px}
       <button type="button" id="bPcb" data-go="main" aria-pressed="false">Плата крупно</button>
       <button type="button" id="bWin" data-go="win" aria-pressed="false">Окно и экраны</button>
       <button type="button" id="bBl" data-go="bl" aria-pressed="false">Подсветка</button>
+      <button type="button" id="bWr" data-go="wr" aria-pressed="false">Соединения</button>
+      <button type="button" id="bAsm" data-go="asm" aria-pressed="false">Сборка</button>
       <button type="button" id="bCut" data-go="cut" aria-pressed="false">Разрез</button>
       <button type="button" id="bLab" aria-pressed="true">Подписи</button>
       <button type="button" id="bAll" aria-pressed="false">Весь блок</button>
       <button type="button" id="bSlide" aria-pressed="false">Снять с салазок</button>
     </div>
     <div id="cos"><svg id="lines"></svg></div>
+    <div id="asmP" hidden style="position:absolute;left:16px;right:16px;bottom:36px;max-width:620px;background:color-mix(in srgb,var(--surface) 94%,transparent);border:1px solid var(--accent);border-radius:8px;padding:10px 12px;z-index:3">
+      <div id="asmN" style="font-weight:800;margin-bottom:4px"></div>
+      <div id="asmT" style="font-size:14px;line-height:1.4"></div>
+      <div style="display:flex;gap:8px;margin-top:8px"><button type="button" id="asmB">‹ Назад</button><button type="button" id="asmF">Далее ›</button></div>
+    </div>
     <div class="load" id="load" hidden>загрузка…</div>
     <div class="tip" id="tip" hidden></div>
     <div class="hint">вращать — мышью или пальцем · колесо — ближе · наведите на деталь — что это и чем держится</div>
@@ -207,6 +214,47 @@ code{font-family:var(--f-mono);font-size:12px}
         <li><b>Гнездо micro-SD на плате, карта вставляется снаружи</b> (по замечанию владельца 23.11, плата v6): паз 13 × 2 мм в нижней стенке лицевой коробки, под левой половиной экрана 7,5″, напротив края платы; сверху — клапан чехла из TPU. Гнездо встаёт на место разъёма JS платы v5, под ESP32-S3: правее на лицевой стороне платы стоят кнопки. Гнездо нажимное: нажать на карту ногтем или спичкой — выскочит. Паз смотрит вниз — вода в него не стекает. Отдельный модуль на жгуте и разъём «КАРТА SD» уходят.</li>
         <li><b>Зачем:</b> журнал гонки — ветер, курс, крен, скорость и место 10 раз в секунду, каждая гонка отдельным файлом, около 20 МБ за день. Разобрать на берегу, где потеряли.</li>
         <li>Запись сбрасывается раз в секунду: при пропаже питания теряется не больше секунды. Файлы можно скачать по Wi-Fi.</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>Что с чем соединено <button type="button" data-go="wr">Показать</button></h3>
+      <ul>
+        <li><b>Кнопка «Показать» (или «Соединения» над моделью)</b> убирает корпус и подписывает каждый провод: откуда → куда. Цвета проводов на модели — как в таблице; настоящие жгуты могут быть другого цвета.</li>
+        <li><b>Исправлено 23.11:</b> раньше модель рисовала только 3 жгута из 9 — к хвосту SP13. Провода к компасу, GPS, экрану 4,2″, подсветке, BME280, AS3935 и шлейф 7,5″ не показывались.</li>
+      </ul>
+      <div style="overflow-x:auto"><table>
+            <tr><th>Разъём платы</th><th>Куда</th><th>Что идёт · сколько проводов</th><th>Чем</th><th>Длина, мм</th></tr>
+            <tr><td><span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:#f0b400;margin-right:6px"></span><b>JE7</b></td><td>экран 7,5″</td><td>шлейф FPC самого экрана, 24 контакта</td><td>шлейф экрана, сквозь прорезь платы 18 × 1,6 мм</td><td>—</td></tr>
+            <tr><td><span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:#f5d000;margin-right:6px"></span><b>JE4</b></td><td>экран 4,2″ WeAct</td><td>3,3 В, земля, DIN, CLK, CS, DC, RST, BUSY — 8</td><td>жгут из комплекта экрана, разъём 2,54 → JST-GH 8</td><td>240</td></tr>
+            <tr><td><span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:#2e9d47;margin-right:6px"></span><b>JB</b></td><td>компас BNO085 на полке</td><td>3,3 В, земля, SPI (4), INT, RST, PS0, PS1 — 10</td><td>JST-GH 10, обжать</td><td>160</td></tr>
+            <tr><td><span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:#2f6fd6;margin-right:6px"></span><b>JG</b></td><td>GPS на полке</td><td>3,3 В, земля, TX, RX — 4</td><td>JST-GH 4</td><td>130</td></tr>
+            <tr><td><span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:#16a5a5;margin-right:6px"></span><b>П2</b></td><td>карточка BME280 у задней крышки</td><td>3,3 В, земля, SDA, SCL (+2 запасных) — 6</td><td>JST-GH 6</td><td>130</td></tr>
+            <tr><td><span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:#e06aa0;margin-right:6px"></span><b>П6</b></td><td>карточка AS3935 у левой стенки</td><td>3,3 В, земля, SDA, SCL, прерывание, включение — 6</td><td>JST-GH 6</td><td>170</td></tr>
+            <tr><td><span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:#f0f0f0;margin-right:6px"></span><b>JL</b></td><td>полоска подсветки 7,5″, от неё перемычка к 4,2″</td><td>+5 В, минус к ключу — 2</td><td>JST-GH 2; перемычка — 2 провода по верху за экранами</td><td>100 + 170</td></tr>
+            <tr><td><span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:#d22b2b;margin-right:6px"></span><b>J1</b></td><td>хвост SP13: контакты 1–4</td><td>+12 В, минус, SDA2, SCL2 — 4</td><td>JST-XH 4</td><td>180</td></tr>
+            <tr><td><span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:#ff8c1a;margin-right:6px"></span><b>J2</b></td><td>хвост SP13: контакты 5–7</td><td>+5 В мачты, земля мачты, экран кабеля — 3</td><td>JST-XH 3</td><td>150</td></tr>
+            <tr><td><span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:#f2f2f2;margin-right:6px"></span><b>клемма A B</b></td><td>хвост SP13: контакты 8–9</td><td>данные мачты A, B — витая пара</td><td>под винт</td><td>130</td></tr>
+            <tr><td><b>П1</b></td><td>карточка BH1750 за окном света</td><td>без провода: карточка стоит штырями в гнезде</td><td>—</td><td>—</td></tr>
+            <tr><td><b>кнопки, светодиод, micro-SD</b></td><td>на самой плате</td><td>без проводов</td><td>—</td><td>—</td></tr>
+      </table></div>
+      <ul>
+        <li><b>Длина</b> — по модели плюс около 30 % на укладку, округлена вверх. Провода, кроме хвоста, — внутри корпуса, их можно заказать с запасом и уложить петлёй.</li>
+        <li><b>Хвост SP13 — 9 контактов, все заняты:</b> 1 +12 В, 2 минус, 3 SDA2, 4 SCL2 (из J1) · 5 +5 В мачты, 6 земля мачты, 7 экран кабеля мачты (из J2) · 8 A, 9 B (клемма). Запасных контактов нет: новый провод снаружи — только вместо одного из этих.</li>
+        <li><b>Шлейф 7,5″</b> — это часть экрана, а не отдельная деталь. Как он сложится от кромки экрана к прорези — проверить на настоящем экране до печати держателя.</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>Что не готово к печати <button type="button" data-go="dock">Показать</button></h3>
+      <ul>
+        <li><b>Совпадает:</b> крышка 212 × 178 — точно по коробке; 9 мест винтов — точно над 9 бобышками стенок.</li>
+        <li><b>Уплотнение пересекает винты.</b> Шнур лежит в 5,5 мм от края, винты — в 6,5 мм: шнур проходит прямо через отверстия винтов, шов протечёт. Предложение: плоская прокладка шириной 8 мм по всему торцу с 9 отверстиями под винты — из TPU (печать) или из листовой резины. Винт проходит сквозь прокладку, она обжата вокруг него — вода не проходит. Форма крышки от этого не меняется.</li>
+        <li><b>Две нижние бобышки (X ±50) заходят на 1 мм в рамку кармана крышки.</b> Сдвинуть их на 2 мм к краю.</li>
+        <li><b>Салазки в нынешнем виде не собираются.</b> Блок ставится на 30 мм выше и сдвигается вниз, но: карман крышки закрыт снизу — плита салазок не входит; направляющие (100 мм) не помещаются в пазы в верхнем положении; фланец гнезда SP13 упирается в дно кармана.</li>
+        <li><b>Вилка SP13 не помещается в нишу.</b> Вилка — Ø20 мм и около 50 мм длиной, плюс изгиб кабеля; ниша — 34 мм глубиной.</li>
+        <li><b>Клапан давления закрыт плитой салазок</b> — воздуху некуда выходить. Перенести в нижнюю стенку коробки, мембраной вниз.</li>
+        <li><b>Клапан и гермоввод не заказаны</b> — от них зависят размеры отверстий.</li>
+        <li><b>Защёлка не спроектирована:</b> есть зуб и клавиша, нет толкателя между ними.</li>
+        <li><b>Крепёж платы:</b> у платы 5 отверстий, в закупке 4 винта М2,5 и нет вставок под стойки лица.</li>
       </ul>
     </div>
     <div class="card">
@@ -1377,10 +1425,10 @@ R.s42=add(scr(113.1,81.4,92,89.7,84.8,63.6,t42,'экран WeAct 4,2″, 400 × 
 // мембраны кнопок из TPU — напечатаны заодно с лицом (TPU основным соплом попеременно с ASA); надписи под кнопками
 {const memM=M(0x2f5d6e,{roughness:0.85}),g=new T.Group();
  const txt=t=>{const c=document.createElement('canvas');c.width=256;c.height=56;const q=c.getContext('2d');q.fillStyle='#e9edf0';q.font='800 40px Inter, Arial';q.textAlign='center';q.fillText(t,128,42);const tx=new T.CanvasTexture(c);tx.anisotropy=8;const m=new T.Mesh(new T.PlaneGeometry(22,4.8),new T.MeshBasicMaterial({map:tx,transparent:true,depthWrite:false}));m.renderOrder=5;return m;};
- NAV_BTN.forEach(b=>{const L='кнопка '+b.lab+': '+b.act+'. Мембрана из TPU Ø14 напечатана заодно с лицом — отверстия нет, вода к кнопке не попадает; под ней кнопка 12 × 12 на плате'+(/^Z/.test(b.id)?'. Кнопки «−» и «+» — на втором PCA9555 (0x21): у ESP32-S3 и первого PCA9555 свободных линий нет':'');
+ NAV_BTN.forEach(b=>{const L='кнопка '+b.lab+': '+b.act+'. Мембрана из TPU Ø14 напечатана заодно с лицом — отверстия нет, вода к кнопке не попадает; под ней кнопка 12 × 12 на плате. Надписи на лице нет: назначение задаёт прошивка, его можно поменять без перепечатки'+(/^Z/.test(b.id)?'. Кнопки «−» и «+» — на втором PCA9555 (0x21): у ESP32-S3 и первого PCA9555 свободных линий нет':'');
    const m=new T.Mesh(new T.CylinderGeometry(7,7,2,32),memM);m.rotation.x=Math.PI/2;at(m,Xi(b.x),Yi(b.y),FACE+1);m.userData.label=L;g.add(m);
    const d=new T.Mesh(new T.CylinderGeometry(5.5,6.2,0.8,32),memM);d.rotation.x=Math.PI/2;at(d,Xi(b.x),Yi(b.y),FACE+2.4);d.userData.label=L;g.add(d);
-   const t=txt(b.lab);at(t,Xi(b.x),Yi(b.y)-10.5,FACE+2.05);t.userData.label=L;g.add(t);});
+   /* надписей на лице нет (владелец 23.11: кнопки переназначаются прошивкой; назначение — на малом экране) */});
  NAV_RES.forEach(b=>{const L='резервное место под кнопку (решение владельца 23.11): мембрана-заглушка из TPU заодно с лицом, кнопки под ней пока нет. На плате v6 — посадочное место под кнопку 12 × 12, не запаивается';
    const m=new T.Mesh(new T.CylinderGeometry(7,7,2,32),M(0x3b4a52,{roughness:0.9}));m.rotation.x=Math.PI/2;at(m,Xi(b.x),Yi(b.y),FACE+1);m.userData.label=L;g.add(m);const t=txt('резерв');t.material.opacity=0.6;at(t,Xi(b.x),Yi(b.y)-10.5,FACE+2.05);t.userData.label=L;g.add(t);});
  R.btn=add(g,V(-250,0,240),null,'case');R.btn.userData.exW=V(0,0,190);}
@@ -1466,17 +1514,21 @@ const tailM=M(0x111214,{roughness:0.7});let tailMesh=null;
 const wires=new T.Group();root.add(wires);
 const conn=bd.userData.conn||{};
 const cc=id=>{const c=conn[id];if(!c)return null;const p=c.part;return bp(p.x+p.w/2,p.y+p.h/2,4.5);};
-function wire(id,to,col,l,via){const a=cc(id);if(!a)return;const mid=via||a.clone().lerp(to,0.5);if(!via)mid.z=Math.min(a.z,to.z)-6;const t=new T.Mesh(new T.TubeGeometry(new T.CatmullRomCurve3([a,mid,to]),24,1.1,8,false),M(col,{roughness:0.7}));t.userData.label=l;wires.add(t);}
+const WIRES=[];   // для подписей вида «Соединения»: [текст, точка на проводе]
+const pcbPt=id=>{const p=PCBLIB.BOARDS.data.cockpit.parts.find(q=>q.id===id);return p?bp(p.x+p.w/2,p.y+p.h/2,(p.z||1)+0.5):null;};
+function wire(id,to,col,l,via,tag){const a=cc(id)||pcbPt(id);if(!a){console.warn('нет разъёма',id);return;}const mid=via||a.clone().lerp(to,0.5);if(!via)mid.z=Math.min(a.z,to.z)-6;const cv=new T.CatmullRomCurve3([a,mid,to]);const t=new T.Mesh(new T.TubeGeometry(cv,24,1.1,8,false),M(col,{roughness:0.7}));t.userData.label=l;wires.add(t);if(tag)WIRES.push([tag,cv.getPoint(0.5),Math.round(cv.getLength())]);}
 const GLW=()=>{const p=GLAND.clone();p.z=33;p.applyAxisAngle(V(0,1,0),PHI);p.z+=backZ(0);return p;};
-wire('JB',V(Xi(150),76.8,22),0x2e9d47,'жгут компаса: JST-GH на 10 контактов',V(-8,40,36));
-wire('JG',V(Xi(60),79.9,29),0x2f6fd6,'жгут GPS');
-wire('JE4',V(Xi(170),Yi(150),FACE-8),0xf5d000,'жгут экрана 4,2″');
-wire('JL',V(Xi(1.9),Yi(8),FACE-3.5),0xf0f0f0,'жгут подсветки из JL к полоске светодиодов 7,5″; к полоске 4,2″ — отвод по верху',V(Xi(10),Yi(4),36));
-wire('P2',V(0,-35,backZ(0)+7),0x16a5a5,'жгут карточки BME280 из П2');
-wire('P6',V(-94,-20,30),0xe06aa0,'жгут карточки AS3935 из П6');
-wire('J1',GLW().add(V(-1,0,0)),0xd22b2b,'жгут хвоста SP13: +12 В, минус, вторая шина I²C');
-wire('J2',GLW().add(V(1,0,0)),0xff8c1a,'жгут хвоста SP13: питание мачты');
-wire('KM',GLW().add(V(0,1,0)),0xf2f2f2,'витая пара данных мачты из хвоста SP13');
+wire('JB',V(Xi(150),76.8,22),0x2e9d47,'жгут компаса: JST-GH на 10 контактов',V(-8,40,36),'JB → компас BNO085 · 10 проводов, SPI');
+wire('JG',V(Xi(60),79.9,29),0x2f6fd6,'жгут GPS: JST-GH на 4 контакта — 3,3 В, земля, TX, RX',null,'JG → GPS · 4 провода, UART');
+wire('JE4',V(Xi(170),Yi(150),FACE-8),0xf5d000,'жгут экрана 4,2″: 8 проводов — 3,3 В, земля, DIN, CLK, CS, DC, RST, BUSY',null,'JE4 → экран 4,2″ · 8 проводов, SPI');
+wire('JL',V(Xi(1.9),Yi(8),FACE-3.5),0xf0f0f0,'жгут подсветки из JL к полоске светодиодов 7,5″: 2 провода — +5 В и минус к ключу',V(Xi(10),Yi(4),36),'JL → подсветка 7,5″ · 2 провода');
+{const cv=new T.CatmullRomCurve3([V(Xi(1.9),Yi(166),FACE-3.5),V(Xi(8),Yi(160),38),V(Xi(112),Yi(158),38),V(Xi(119),Yi(163.65),FACE-3.5)]);const t=new T.Mesh(new T.TubeGeometry(cv,40,0.9,8,false),M(0xf0f0f0,{roughness:0.7}));t.userData.label='перемычка подсветки: от конца полоски 7,5″ к полоске 4,2″, 2 провода, по верху за экранами';wires.add(t);WIRES.push(['перемычка подсветки 7,5″ → 4,2″ · 2 провода',cv.getPoint(0.5),Math.round(cv.getLength())]);}
+wire('P2',V(0,-35,backZ(0)+7),0x16a5a5,'жгут карточки BME280 из П2: JST-GH 6, используются 4 — 3,3 В, земля, SDA, SCL',null,'П2 → карточка BME280 · 6 проводов, I²C');
+wire('P6',V(-94,-20,30),0xe06aa0,'жгут карточки AS3935 из П6: JST-GH 6 — 3,3 В, земля, SDA, SCL, прерывание, включение',null,'П6 → карточка AS3935 · 6 проводов, I²C');
+wire('J1',GLW().add(V(-1,0,0)),0xd22b2b,'жгут хвоста SP13: +12 В, минус, вторая шина I²C',null,'J1 → хвост SP13 · +12 В, минус, I²C к INA226');
+wire('J2',GLW().add(V(1,0,0)),0xff8c1a,'жгут хвоста SP13: питание мачты',null,'J2 → хвост SP13 · +5 В мачты, земля, экран');
+wire('KM',GLW().add(V(0,1,0)),0xf2f2f2,'витая пара данных мачты из хвоста SP13',null,'клемма A B → хвост SP13 · данные мачты');
+{const sh=new T.Shape();const y0=-9.6;const pts=[[44.2,y0],[41.2,y0],[38.6,y0],[37.4,y0-1.2],[36.6,y0-3.4],[36.2,-13.9]];const fpcM=M(0xc98a2b,{roughness:0.5,side:T.DoubleSide});const g=new T.Group();for(let i=0;i<pts.length-1;i++){const a=pts[i],c=pts[i+1],len=Math.hypot(c[0]-a[0],c[1]-a[1]);const m=new T.Mesh(new T.BoxGeometry(18,len,0.15),fpcM);m.position.set(0,(a[1]+c[1])/2,(a[0]+c[0])/2);m.rotation.x=Math.atan2(c[0]-a[0],c[1]-a[1]);g.add(m);}g.traverse(o=>{if(o.isMesh)o.userData.label='шлейф экрана 7,5″ (FPC, 24 контакта): с тыльной стороны экрана сквозь прорезь платы 18 × 1,6 мм в разъём JE7 на её тыльной стороне. Как сложить шлейф от кромки экрана — проверить на настоящем экране';});wires.add(g);WIRES.push(['шлейф экрана 7,5″ → JE7 · 24 контакта, сквозь прорезь платы',V(0,-9.6,40),12]);}
 
 // ---------- выноски ----------
 // [надпись, деталь, точка на детали в собранном виде, когда видна: b — блок собран, d — разнесён или смотрим внутрь]
@@ -1487,13 +1539,16 @@ const CO=[['экран 7,5″',R.s75,V(Xi(56),Yi(150),FACE+2),'bd'],['экран
   ['PCA9555 · кнопки и порты',R.bd,PB('EXP'),'dm'],['разъём шлейфа 7,5″',R.bd,PB('JE7'),'dm'],['П2–П6 · порты датчиков',R.bd,PB('P4'),'dm'],['J1 · +12 В и шина к INA226',R.bd,PB('J1'),'dm'],['клемма линии мачты',R.bd,PB('KM'),'dm'],
   ['AS3935 · молнии',R.as,V(-93.5,-20,30),'dc'],['BME280 · давление',R.bme,V(0,-33,backZ(0)+11),'dc'],['BH1750 · свет',R.bh,V(R.bh.userData.base.x,R.bh.userData.base.y+4,FACE-4.5),'dc'],['карта micro-SD',R.sd,V(SD_AT.x,-OH/2+WALL+2,SD_AT.z),'dmc'],
   ['лицевая коробка',R.box,V(-60,70,FACE+2),'d'],['подсветка 7,5″: 7 светодиодов вдоль левой кромки окна',R.pc,V(Xi(1.9),Yi(120),FACE-1.5),'l'],['подсветка 4,2″: 5 светодиодов вдоль верхней кромки',R.pc,V(Xi(160),Yi(163.65),FACE-1.5),'l'],['свет идёт внутри защитного окна и выходит на экран',R.pc,V(Xi(60),Yi(60),FACE-1.5),'l'],['полоска в канале 3 мм у кромки окна',R.pc,V(Xi(1.9),Yi(30),FACE-1.5),'l'],['разъём JL на плате: провод подсветки',R.bd,PB('JL'),'l'],['лицо 2 мм',R.box,V(-46,-40,FACE+1),'x'],['защитное окно',R.pc,V(-46,40,FACE-1.5),'x'],['экран 7,5″',R.s75,V(-46,10,FACE-4.4),'x'],['держатель экранов',R.hold,V(-46,Yi(75.5),FACE-7.7),'x'],['плата',R.bd,V(-46,-70,FACE-9.2),'x'],['ESP32-S3',R.bd,PB('S3'),'x'],['полка GPS',R.shelfG,V(-46,75.2,33),'x'],['GPS',R.gps,V(-46,80,29),'x'],['задняя крышка',R.lid,V(-46,20,backZ(-46)+1.5),'x'],['плита салазок',R.dock,V(-46,-30,backZ(-46)+2),'x'],['стенка рубки',R.dock,V(-46,100,backZ(-46)-6),'x'],['чехол TPU',R.tpu,V(-46,OH/2+0.6,30),'x'],['шнур уплотнения',R.box,V(-46,OH/2-5.5,backZ(-46)+3.3),'x'],['светодиоды подсветки',R.pc,V(Xi(1.9),Yi(60),FACE-1.5),'x'],['лицо: уступы под окна',R.box,V(Xi(109.5),Yi(140),FACE-1.5),'w'],['защитное окно 7,5″ + валик герметика',R.pc,V(Xi(109.45),Yi(120),FACE-1.5),'w'],['защитное окно 4,2″',R.pc,V(Xi(205.5),Yi(140),FACE-1.5),'w'],['экран 7,5″',R.s75,V(Xi(112),Yi(60),FACE-4.4),'w'],['экран 4,2″',R.s42,V(Xi(205),Yi(110),FACE-4.4),'w'],['держатель экранов',R.hold,V(Xi(112),Yi(30),FACE-7.7),'w'],['винт М2,5 сквозь стенку',R.hold,V(IW/2+1,Yi(100),42.6),'w'],['плата',R.bd,bp(5,40,-1),'w'],['задняя крышка',R.lid,V(-40,50,backZ(-40)),'d'],['клапан давления',R.lid,V(0,-12,backZ(0)),'dc'],['шнур уплотнения и вставки М3',R.box,V(-OW/2+5.5,30,backZ(-OW/2+5.5)+3),'d'],['держатель экранов',R.hold,V(Xi(40),Yi(75.5),FACE-7.7),'d'],['защитное окно',R.pc,V(Xi(160),Yi(125),FACE-1.5),'d'],['чехол TPU',R.tpu,V(OW/2+1.2,40,FACE-15),'bd'],['клапан и паз карты SD',R.tpu,V(SD_AT.x,-OH/2-1.6,SD_AT.z),'bd']];
+WIRES.forEach(w=>CO.push([w[0],null,w[1],'r']));
 const cos=$('cos'),lines=$('lines');const coEls=CO.map(c=>{const d=document.createElement('div');d.className='co';d.textContent=c[0];cos.appendChild(d);const ln=document.createElementNS('http://www.w3.org/2000/svg','line');lines.appendChild(ln);return {d,ln,c};});
-let labOn=!matchMedia('(max-width:900px)').matches;
+let labOn=!matchMedia('(max-width:900px)').matches;window.M5WIRES=WIRES;
 let view='all';const INSIDE={main:1,cards:1,sens:1};
 // что прячем в видах «внутрь»: плату крупно смотрим без лицевых деталей, корпуса и салазок
-const HIDE={bl:{case:1,dock:1,cards:1,sens:1},win:{dock:1,cards:1,sens:1},main:{front:1,case:1,dock:1,cards:1,sens:1},cards:{case:1,dock:1},sens:{dock:1}};
+const ASM=[["Лицевая коробка","box,btn,shelfB,shelfG,asG","Коробка напечатана лицом на стол одной деталью: лицо, стенки, мембраны кнопок из TPU, полки компаса и GPS, направляющие карточки AS3935. Паяльником вплавить 9 латунных вставок М3 в бобышки на торце стенок. Положить коробку лицом вниз на мягкое — дальше всё ставится сзади."],["Защитные окна и подсветка","pc,#9","В каналы уступов уложить полоски светодиодов: у окна 7,5″ — вдоль левой кромки, у 4,2″ — вдоль верхней; провода вывести внутрь. Листы поликарбоната — в уступы: матировкой внутрь, плёнкой от УФ наружу. По кромке — валик герметика. Окно датчика света — в своё отверстие. Дать герметику схватиться."],["Экраны","s75,s42","На листы по краю — полоски пористой резины. Экраны — лицом к окнам: 7,5″ шлейфом вправо, к прорези платы; 4,2″ — жгутом к плате."],["Держатель экранов","hold","В 6 приливов держателя заранее вплавить вставки М2,5. Держатель прижимает оба экрана к окнам; 6 винтов М2,5 × 8 с потайной головкой — снаружи сквозь боковые стенки в приливы."],["Плата","bd,v6front,#8,bh,sd","Ещё на столе: карточку BH1750 — в гнездо П1. Шлейф 7,5″ продеть сквозь прорезь платы и защёлкнуть в разъёме JE7 на тыльной стороне. Плату — лицевой стороной к экранам на 3 стойки лица и 2 стойки держателя: светодиод встаёт в отверстие лица, BH1750 — за окно света. Крепёж платы — см. «Что не готово к печати»."],["Компас и GPS","bno,gps,#18","Компас BNO085 — на полку у верхней стенки, 2 винта М2,5 во вставки. GPS — на свою полку антенной вверх, к верхней стенке."],["Карточка AS3935","as","Карточку датчика молний вдвинуть в направляющие на левой стенке."],["Жгуты","@wires","Подключить провода по таблице «Что с чем соединено»: JB — компас, JG — GPS, JE4 — экран 4,2″, JL — подсветка (и перемычка к 4,2″), П6 — AS3935. Жгут П2 и хвост SP13 — на следующем шаге, вместе с крышкой."],["Задняя крышка","lid,bmeG,bme,plug","В крышку заранее: клапан давления, гермоввод с хвостом SP13 (вилка снаружи, в нише), стойки и карточка BME280. Крышку поднести, подключить жгут П2 и хвост: J1, J2, клемма A B. Прокладку — на выступ стенок, 9 винтов М3 × 12 — крест-накрест, без перетяга."],["Чехол TPU","tpu,key","Натянуть чехол по периметру; клавиша защёлки остаётся под ним."],["На салазки","dock","Вилку SP13 — в гнездо салазок, блок — на направляющие и вниз до щелчка защёлки. Геометрия салазок пересматривается — см. «Что не готово к печати»."]];let asmI=0,asmA=1;
+const asmOf=o=>{for(let i=0;i<ASM.length;i++){const ks=ASM[i][1].split(',');for(const k of ks){if(k[0]==='#'?parts[+k.slice(1)]===o:k[0]!=='@'&&R[k]===o)return i;}}return 99;};
+const HIDE={wr:{case:1,dock:1},bl:{case:1,dock:1,cards:1,sens:1},win:{dock:1,cards:1,sens:1},main:{front:1,case:1,dock:1,cards:1,sens:1},cards:{case:1,dock:1},sens:{dock:1}};
 function placeCO(){const r=stage.getBoundingClientRect(),W=r.width,H=r.height;lines.setAttribute('viewBox','0 0 '+W+' '+H);
-  const tag=view==='bl'?'l':view==='win'?'w':view==='cut'?'x':exp>0.5?'d':{main:'m',cards:'c',sens:'s',dock:'k'}[view]||'b',vis=[];
+  const tag=view==='asm'?'-':view==='wr'?'r':view==='bl'?'l':view==='win'?'w':view==='cut'?'x':exp>0.5?'d':{main:'m',cards:'c',sens:'s',dock:'k'}[view]||'b',vis=[];
   coEls.forEach(e=>{const o=e.c[1],p=e.c[2].clone();if(o&&o.userData.base)p.add(o.position).sub(o.userData.base);p.project(camera);
     const x=(p.x+1)/2*W,y=(1-p.y)/2*H,ok=labOn&&e.c[3].includes(tag)&&(!o||shown(o))&&p.z<1&&x>0&&x<W&&y>0&&y<H;
     e.d.hidden=!ok;e.ln.style.display=ok?'':'none';if(ok)vis.push({e,x,y});});
@@ -1508,20 +1563,23 @@ function placeCO(){const r=stage.getBoundingClientRect(),W=r.width,H=r.height;li
 // ---------- кнопки вида ----------
 let caseOn=true,wireOn=true,dockOn=true;
 function applyAll(){const k=exp,s=sld;const Z0=V(0,0,0);const sa=Math.min(1,s*3),sb=Math.max(0,Math.min(1,s*3-1)),sc=Math.max(0,s*3-2);const OFF=V(0,30*sa,0).add(DOCKN.clone().multiplyScalar(90*sb)),POFF=DOCKN.clone().multiplyScalar(40*sc);
-  parts.forEach(o=>{const b=o.userData.base,e=view==='win'?(o.userData.exW||Z0):o.userData.ex;if(o.userData.exRy)o.rotation.y=o.userData.ry+o.userData.exRy*k;const d=o.userData.grp==='dock'?(o.userData.plug?POFF:Z0):OFF;o.position.set(b.x+e.x*k+d.x,b.y+e.y*k+d.y,b.z+e.z*k+d.z);const hd=(view==='win'?HIDE.win:(k<0.5&&HIDE[view]))||{};o.visible=!hd[o.userData.grp]&&(o.userData.grp!=='dock'||dockOn&&k<0.05);});BLFX.forEach(m=>m.visible=view==='bl');[R.s75,R.s42].forEach(o=>o.traverse(m=>{if(m.isMesh&&m.material&&m.material.map)m.material.color.setHex(view==='bl'?0x4a4a48:0xffffff);}));   // в виде «Подсветка» — ночь: экраны темнее, свет виден
-  caseM.opacity=caseOn||k>0.5?1:0.12;tpuM.opacity=caseOn||k>0.5?0.92:0.08;tpuM.depthWrite=caseOn||k>0.5;tpuM.needsUpdate=true;caseM.depthWrite=caseOn||k>0.5;caseM.needsUpdate=true;wires.visible=wireOn&&exp<0.05&&view!=='main';wires.position.copy(OFF);tooth.position.z=7.5-4*Math.min(1,s*6);
+  parts.forEach(o=>{const b=o.userData.base,e=view==='win'?(o.userData.exW||Z0):o.userData.ex;if(o.userData.exRy)o.rotation.y=o.userData.ry+o.userData.exRy*k;const d=o.userData.grp==='dock'?(o.userData.plug?POFF:Z0):OFF;o.position.set(b.x+e.x*k+d.x,b.y+e.y*k+d.y,b.z+e.z*k+d.z);const hd=(view==='win'?HIDE.win:(k<0.5&&HIDE[view]))||{};o.visible=!hd[o.userData.grp]&&(o.userData.grp!=='dock'||dockOn&&k<0.05);});BLFX.forEach(m=>m.visible=view==='bl');
+  if(view==='asm'){const e=1-Math.pow(1-asmA,3);parts.forEach(o=>{const i=asmOf(o),b=o.userData.base;o.visible=i<=asmI;if(i===asmI)o.position.set(b.x,b.y,b.z-90*(1-e));else o.position.copy(b);});}[R.s75,R.s42].forEach(o=>o.traverse(m=>{if(m.isMesh&&m.material&&m.material.map)m.material.color.setHex(view==='bl'?0x4a4a48:0xffffff);}));   // в виде «Подсветка» — ночь: экраны темнее, свет виден
+  caseM.opacity=caseOn||k>0.5?1:0.12;tpuM.opacity=caseOn||k>0.5?0.92:0.08;tpuM.depthWrite=caseOn||k>0.5;tpuM.needsUpdate=true;caseM.depthWrite=caseOn||k>0.5;caseM.needsUpdate=true;wires.visible=(wireOn||view==='wr')&&exp<0.05&&view!=='main';wires.position.copy(OFF);if(view==='asm'){const wi=ASM.findIndex(q=>q[1]==='@wires'),e=1-Math.pow(1-asmA,3);wires.visible=asmI>=wi;wires.position.set(0,0,asmI===wi?-90*(1-e):0);}tooth.position.z=7.5-4*Math.min(1,s*6);
   if(tailMesh){root.remove(tailMesh);tailMesh.geometry.dispose();tailMesh=null;}
   if(R.dock.visible){const g0=GLW().add(OFF),pb=R.plug.localToWorld(V(SOCK.x,SOCK.y,32.5));root.updateMatrixWorld(true);const pb2=R.plug.localToWorld(V(SOCK.x,SOCK.y,32.5));
     tailMesh=new T.Mesh(new T.TubeGeometry(new T.CatmullRomCurve3([g0,g0.clone().add(V(4,-14,-3)),pb2.clone().add(V(12,-6,1)),pb2]),30,3,8,false),tailM);tailMesh.userData.label='хвост SP13 12 см: из гермоввода в дне ниши к вилке; хватает, чтобы отвести блок от стены на 90 мм и снять вилку';root.add(tailMesh);}}
+$('asmB').addEventListener('click',()=>{if(asmI>0){asmI--;asmShow();}});$('asmF').addEventListener('click',()=>{if(asmI<ASM.length-1){asmI++;asmShow();}});
 const tg=(id,f)=>$(id).addEventListener('click',()=>{const on=$(id).getAttribute('aria-pressed')!=='true';$(id).setAttribute('aria-pressed',String(on));f(on);applyAll();});
 tg('bBox',on=>{caseOn=on;if(HIDE[view])view='free';});tg('bWire',on=>{wireOn=on;});tg('bLab',on=>{labOn=on;$('cos').hidden=!on;});tg('bSlide',on=>{sldT=on?1:0;});
 tg('bExp',on=>{expT=on?1:0;if(on){view='exp';sldT=0;$('bSlide').setAttribute('aria-pressed','false');fly(VIEWS.exp);}else go('all');});
-const VIEWS={cut:{t:[-60,0,25],p:[250,15,215]},all:{t:[0,0,25],p:[260,160,420]},dsp:{t:[0,0,48],p:[60,40,380]},front:{t:[40,-70,50],p:[60,-40,200]},main:{t:[12,-42,30],p:[70,5,-330]},sens:{t:[0,76,25],p:[-40,225,-150]},cards:{t:[-10,-30,25],p:[170,50,-340]},dock:{t:[30,-10,40],p:[430,40,170]},res:{t:[0,0,25],p:[260,160,420]},exp:{t:[45,15,-10],p:[230,150,-730]},win:{t:[0,0,125],p:[560,170,300]},bl:{t:[0,0,46],p:[150,90,430]}};
+const VIEWS={cut:{t:[-60,0,25],p:[250,15,215]},all:{t:[0,0,25],p:[260,160,420]},dsp:{t:[0,0,48],p:[60,40,380]},front:{t:[40,-70,50],p:[60,-40,200]},main:{t:[12,-42,30],p:[70,5,-330]},sens:{t:[0,76,25],p:[-40,225,-150]},cards:{t:[-10,-30,25],p:[170,50,-340]},dock:{t:[30,-10,40],p:[430,40,170]},asm:{t:[0,-5,30],p:[-150,170,-290]},res:{t:[0,0,25],p:[260,160,420]},exp:{t:[45,15,-10],p:[230,150,-730]},win:{t:[0,0,125],p:[560,170,300]},bl:{t:[0,0,46],p:[150,90,430]},wr:{t:[0,5,30],p:[-170,150,-250]}};
 let tw=null;
 function fly(v){tw={p0:camera.position.clone(),t0:controls.target.clone(),p1:V(...v.p),t1:V(...v.t),st:performance.now()};}
+function asmShow(){const q=ASM[asmI];$('asmN').textContent='Шаг '+(asmI+1)+' из '+ASM.length+' · '+q[0];$('asmT').textContent=q[2];$('asmB').disabled=asmI===0;$('asmF').disabled=asmI===ASM.length-1;asmA=0;applyAll();}
 function go(k){const v=VIEWS[k]||VIEWS.all;view=k;renderer.clippingPlanes=k==='cut'?[CUT]:[];if(k==='win'){expT=1;}else if(k!=='exp'&&expT){expT=0;}$('bExp').setAttribute('aria-pressed','false');
-  dockOn=!(k==='main'||k==='cards');caseOn=k==='all'||k==='dsp'||k==='front'||k==='res';$('bBox').setAttribute('aria-pressed',String(caseOn));sldT=k==='dock'?1:0;$('bSlide').setAttribute('aria-pressed',String(k==='dock'));
-  fly(v);document.querySelectorAll('[data-go]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.go===k)));applyAll();}
+  dockOn=!(k==='main'||k==='cards');caseOn=k==='asm'||k==='all'||k==='dsp'||k==='front'||k==='res';$('bBox').setAttribute('aria-pressed',String(caseOn));sldT=k==='dock'?1:0;$('bSlide').setAttribute('aria-pressed',String(k==='dock'));
+  $('asmP').hidden=k!=='asm';if(k==='asm')asmShow();fly(v);document.querySelectorAll('[data-go]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.go===k)));applyAll();}
 document.querySelectorAll('[data-go]').forEach(b=>b.addEventListener('click',()=>{go(b.dataset.go);if(!b.closest('.tools'))stage.scrollIntoView({behavior:'smooth',block:'start'});}));
 $('bAll').addEventListener('click',()=>go('all'));
 $('bLab').setAttribute('aria-pressed',String(labOn));$('cos').hidden=!labOn;
@@ -1539,6 +1597,7 @@ new ResizeObserver(resize).observe(stage);resize();applyAll();
 const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
 function frame(now){
   if(sld!==sldT){sld+=Math.sign(sldT-sld)*Math.min(Math.abs(sldT-sld),reduce?1:0.02);applyAll();}
+  if(view==='asm'&&asmA<1){asmA=Math.min(1,asmA+(reduce?1:0.025));applyAll();}
   if(exp!==expT){exp+=Math.sign(expT-exp)*Math.min(Math.abs(expT-exp),reduce?1:0.04);applyAll();}
   if(tw){const k=reduce?1:Math.min(1,(now-tw.st)/900),e=k<0.5?2*k*k:1-Math.pow(-2*k+2,2)/2;camera.position.lerpVectors(tw.p0,tw.p1,e);controls.target.lerpVectors(tw.t0,tw.t1,e);if(k>=1)tw=null;}
   controls.update();renderer.render(scene,camera);placeCO();requestAnimationFrame(frame);}
