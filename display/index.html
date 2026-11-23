@@ -173,12 +173,12 @@ th{font:600 12px var(--f-body);color:var(--muted);text-transform:uppercase;lette
 
   <section class="grp"><h2>Кнопки</h2><div class="tbl"><table>
     <tr><th>Кнопка</th><th>Коротко</th><th>Удержать</th><th>В меню</th></tr>
-    <tr><td><b>БОЛЬШОЙ</b></td><td>следующий вид большого экрана</td><td>1 с — предыдущий вид</td><td>пункт ниже</td></tr>
-    <tr><td><b>МАЛЫЙ</b></td><td>следующий вид малого экрана</td><td>1 с — предыдущий вид</td><td>пункт выше</td></tr>
-    <tr><td><b>− и +</b></td><td>ширина карты: «−» — мельче (больше видно), «+» — крупнее; 250 м, 500 м, 1 км, 2 км, 4 км; масштаб сам не меняется</td><td>—</td><td>—</td></tr>
-    <tr><td><b>СТАРТ</b></td><td>нет отсчёта — пуск; идёт отсчёт — подгонка к ближайшей целой минуте</td><td>3 с — сброс отсчёта</td><td>—</td></tr>
+    <tr><td><b>БОЛЬШОЙ</b></td><td>следующий вид большого экрана</td><td>1 с — предыдущий вид</td><td>—</td></tr>
+    <tr><td><b>МАЛЫЙ</b></td><td>следующий вид малого экрана</td><td>1 с — предыдущий вид</td><td>—</td></tr>
+    <tr><td><b>− и +</b></td><td>ширина карты: «−» — мельче (больше видно), «+» — крупнее; 250 м, 500 м, 1 км, 2 км, 4 км; масштаб сам не меняется</td><td>—</td><td>«−» — пункт ниже, «+» — пункт выше</td></tr>
+    <tr><td><b>СТАРТ</b></td><td>нет отсчёта — пуск; идёт отсчёт — подгонка к ближайшей целой минуте</td><td>3 с — сброс отсчёта</td><td>выполнить пункт или изменить значение</td></tr>
     <tr><td><b>ЛИНИЯ</b></td><td>поставить точку стартовой линии там, где стоит лодка: 1-е нажатие — точка 1, 2-е — точка 2, линия задана. Следующее нажатие начинает новую линию</td><td>3 с — стереть линию</td><td>—</td></tr>
-    <tr><td><b>МЕНЮ</b></td><td>открыть меню; в меню — выполнить пункт или изменить значение</td><td>3 с — выключить прибор; у выключенного — включить</td><td>то же</td></tr>
+    <tr><td><b>МЕНЮ</b></td><td>открыть меню</td><td>3 с — выключить прибор; у выключенного — включить</td><td>выход из меню; 3 с — выключить</td></tr>
   </table></div><p class="note">Проект навигации утверждён владельцем 23.11: нажимает кто-то из экипажа по просьбе рулевого, всё нужное в гонке — одним нажатием.</p></section>
 
   <section class="grp"><h2>Светодиод и подсветка</h2><div class="tbl"><table>
@@ -270,7 +270,7 @@ function drawMain(c,v){c.setTransform(2,0,0,2,0,0);const P=pen(c),{T,fit,H,V,wid
   const mode=v.mode||0;
   // строка состояния: слева вид, справа только предупреждения
   if(v.menu||mode!==5){T('М5',10,29,24,800);T(v.menu?'МЕНЮ':NAMES[mode],62,28,19,700);if(q.alerts.length)fit(q.alerts.join(' · '),470,28,19,800,'right',290);H(0,40,480,2.5);}
-  if(v.menu){const rows=v.menu.rows,sel=v.menu.i,rh=Math.min(58,700/rows.length);rows.forEach((r,i)=>{const y=50+i*rh;if(i===sel){c.fillRect(8,y,464,rh-4);c.fillStyle=PAP;}T(r.t,22,y+rh*0.62,Math.min(24,rh*0.42),800);if(r.v)fit(r.v,458,y+rh*0.62,Math.min(22,rh*0.4),700,'right',230);c.fillStyle=INK;});H(0,758,480);T('БОЛЬШОЙ ↓ · МАЛЫЙ ↑ · МЕНЮ — выполнить или изменить',240,788,18,700,'center');}
+  if(v.menu){const rows=v.menu.rows,sel=v.menu.i,rh=Math.min(58,700/rows.length);rows.forEach((r,i)=>{const y=50+i*rh;if(i===sel){c.fillRect(8,y,464,rh-4);c.fillStyle=PAP;}T(r.t,22,y+rh*0.62,Math.min(24,rh*0.42),800);if(r.v)fit(r.v,458,y+rh*0.62,Math.min(22,rh*0.4),700,'right',230);c.fillStyle=INK;});H(0,758,480);T('− + выбрать · СТАРТ — выполнить · МЕНЮ — выход',240,788,18,700,'center');}
   else if(mode===0){
     T('КУРС',12,66,17,800);T(q.hs,8,184,132,800);if(q.devS){T(q.devS,470,150,66,800,'right');T(q.devS==='…'?'ждём курс':'от базового',470,182,18,700,'right');}
     T((q.ng?'GPS —':'GPS '+q.cog+'°')+' · ветер '+(q.dn?q.NA:q.twd+'°'),12,214,18,600);H(0,226,480);
@@ -444,20 +444,22 @@ const NSM=1+5+2;   // малый экран: Старт, 5 страниц «Па
 const smallStep=d=>{let p=S.sv===0?0:S.sv===1?1+S.sp:S.sv===2?6:7;p=(p+d+NSM)%NSM;if(p===0){S.sv=0;}else if(p<=5){S.sv=1;S.sp=p-1;}else{S.sv=p===6?2:3;}};
 const bigStep=d=>{S.bi=(S.bi+d+ORDER.length)%ORDER.length;S.mode=ORDER[S.bi];};
 const startLen=()=>[5,3,10][MENU[MI('slen')].v]*60;
-const zoomBy=d=>{if(!S.on||S.menu!==null)return;const z=Math.max(0,Math.min(ZOOM.length-1,S.zoom+d));if(z===S.zoom){toast(d<0?'Крупнее некуда: '+ZNAME(ZOOM[z]):'Мельче некуда: '+ZNAME(ZOOM[z]));return;}S.zoom=z;toast('Карта: '+ZNAME(ZOOM[z])+' по ширине');};
+const zoomBy=d=>{if(!S.on)return;if(S.menu!==null){S.menu=(S.menu+(d>0?1:MENU.length-1))%MENU.length;render();return;}   // в меню: «−» — ниже, «+» — выше
+  const z=Math.max(0,Math.min(ZOOM.length-1,S.zoom+d));if(z===S.zoom){toast(d<0?'Крупнее некуда: '+ZNAME(ZOOM[z]):'Мельче некуда: '+ZNAME(ZOOM[z]));return;}S.zoom=z;toast('Карта: '+ZNAME(ZOOM[z])+' по ширине');};
 const SHORT={zin:()=>zoomBy(-1),zout:()=>zoomBy(1),
-  big:()=>{if(!S.on)return;if(S.menu!==null){S.menu=(S.menu+1)%MENU.length;render();return;}bigStep(1);render();},
-  small:()=>{if(!S.on)return;if(S.menu!==null){S.menu=(S.menu+MENU.length-1)%MENU.length;render();return;}smallStep(1);render();},
-  start:()=>{if(!S.on||S.menu!==null)return;if(S.start!=null&&S.start>0){S.start=Math.max(60,Math.round(S.start/60)*60);toast('Подогнано: '+mmss(S.start));}else{S.start=startLen();S.race=null;S.dist=42;S.sv=0;toast('Старт: '+mmss(S.start));}},
+  big:()=>{if(!S.on||S.menu!==null)return;bigStep(1);render();},
+  small:()=>{if(!S.on||S.menu!==null)return;smallStep(1);render();},
+  start:()=>{if(!S.on)return;if(S.menu!==null){menuDo();return;}if(S.start!=null&&S.start>0){S.start=Math.max(60,Math.round(S.start/60)*60);toast('Подогнано: '+mmss(S.start));}else{S.start=startLen();S.race=null;S.dist=42;S.sv=0;toast('Старт: '+mmss(S.start));}},
   line:()=>{if(!S.on||S.menu!==null)return;if(S.ends>=2){S.ends=1;S.lineL=S.lineR=false;toast('Новая линия: точка 1');}else{S.ends++;if(S.ends===2){S.lineL=S.lineR=true;toast('Точка 2: линия задана');}else toast('Точка 1 линии');}},
-  menu:()=>{if(!S.on)return;if(S.menu===null){S.menu=0;render();return;}const r=MENU[S.menu];
+  menu:()=>{if(!S.on)return;S.menu=S.menu===null?0:null;render();}};   // повторное МЕНЮ — выход
+const menuDo=()=>{const r=MENU[S.menu];
     if(r.k==='exit'){S.menu=null;render();}
     else if(r.k==='nextM'){S.leg=Math.min(LAST,S.leg+1);S.menu=null;toast('Следующий: '+COURSE[S.leg].n);}
     else if(r.k==='prevM'){S.leg=Math.max(1,S.leg-1);S.menu=null;toast('Назад: '+COURSE[S.leg].n);}
     else if(r.k==='base'){S.menu=null;settleEnd();S.base[tack()]=S.hdg;toast('Базовый курс: запомнен');}
     else if(r.k==='zero'){S.menu=null;S.heel=0;S.pitch=0;toast('Крен и дифферент: ноль');}
     else if(r.k==='full'){S.menu=null;toast('Полное обновление экранов');}
-    else if(r.o){r.v=(r.v+1)%r.o.length;if(r.k==='light')S.light=r.v;else if(CFG[r.k]!==undefined)CFG[r.k]=r.o[r.v];render();}}};
+    else if(r.o){r.v=(r.v+1)%r.o.length;if(r.k==='light')S.light=r.v;else if(CFG[r.k]!==undefined)CFG[r.k]=r.o[r.v];render();}};
 const LONG={big:[1000,()=>{if(!S.on||S.menu!==null)return false;bigStep(-1);render();}],
   small:[1000,()=>{if(!S.on||S.menu!==null)return false;smallStep(-1);render();}],
   start:[3000,()=>{if(!S.on||S.menu!==null)return false;S.start=null;toast('Отсчёт сброшен');}],
@@ -513,7 +515,7 @@ fig('g2','Увал','+6° от базового',{dev:6,hdg:177});fig('g2','Пр
 fig('g3','Отход','светодиод мигает красным',{mode:2,sig:1,d:4});fig('g3','Заход','светодиод горит зелёным',{mode:2,sig:-1,d:5});fig('g3','Ветер ровный','светодиод погашен',{mode:2,sig:0,d:0});
 fig('gW','Давление падает','−2,1 гПа за 3 часа',{mode:4});fig('gW','Давление падает быстро','предупреждение в строке состояния',{mode:4,p:1004.6,p3:-4.2});fig('gW','Гроза приближается','18 км, 10 минут назад было 26',{mode:4,storm:{km:18,was:26,n:7}});fig('gW','Гроза на «Табло»','предупреждение видно на любом виде',{mode:5,storm:{km:12,was:18,n:11}});
 fig('g4','Норма','лодка 12,7 В, ток 1,8 А, резерв 12,3 В',pw(12.7,12.3),true);fig('g4','Разряд','лодка 11,9 В',Object.assign(pw(11.9,12.3),{cur:2.1}),true);fig('g4','Зарядка','работает двигатель или зарядное',Object.assign(pw(13.8,12.3),{cur:-6.5}),true);fig('g4','На резерве','лодка 10,7 В',pw(10.7,12.3),true);fig('g4','Резерв не подключён','показывается только лодка',pw(12.7,null),true);
-fig('g5','Меню','БОЛЬШОЙ — ниже, МАЛЫЙ — выше, МЕНЮ — выполнить или изменить',{menu:{i:0,rows:rows(12.7,12.3,1.8)}});fig('g5','Меню, строка «Питание»','только просмотр',{menu:{i:13,rows:rows(12.7,12.3,1.8)}});fig('g5','Загрузка','при включении, несколько секунд',{boot:BOOT});fig('g5','Подсказка','коротко после нажатия кнопки',{toast:'Курс запомнен: 96°'});fig('g5','Выключен','кадр остаётся на e-paper без питания',{off:true});fig('g5','Ночь','подсветка красная',{mode:5},false,true);
+fig('g5','Меню','«−» и «+» — выбрать пункт, СТАРТ — выполнить или изменить, МЕНЮ — выход',{menu:{i:0,rows:rows(12.7,12.3,1.8)}});fig('g5','Меню, строка «Питание»','только просмотр',{menu:{i:13,rows:rows(12.7,12.3,1.8)}});fig('g5','Загрузка','при включении, несколько секунд',{boot:BOOT});fig('g5','Подсказка','коротко после нажатия кнопки',{toast:'Курс запомнен: 96°'});fig('g5','Выключен','кадр остаётся на e-paper без питания',{off:true});fig('g5','Ночь','подсветка красная',{mode:5},false,true);
 fig('g6','Нет данных с мачты','нет ветра, сдвига и VMG; курс, скорость и крен работают',{noWind:true});fig('g6','Нет GPS','нет скорости, VMG и истинного ветра',{noGps:true});fig('g6','Нет компаса','нет курса, отклонения, направления и сдвига ветра',{noHdg:true});fig('g6','Нет мачты, «Тактика»','вместо графика надпись',{mode:2,noWind:true});fig('g6','Нет GPS, «Табло»','вымпельный ветер и курс работают',{mode:5,noGps:true});}
 // ---------- тестовый стенд: условия, гонка, расстояние, освещение ----------
 const WX=[['calm','Штиль, 5 уз',{aws:5,awa:48,sog:2.8,hl:5,pi:0.4}],['mid','Умеренно, 12 уз',{aws:12,awa:34,sog:5.4,hl:14,pi:1}],['fresh','Свежо, 20 уз',{aws:20,awa:29,sog:6.8,hl:22,pi:1.6}],['squall','Шквал, 30 уз',{aws:30,awa:32,sog:7.4,hl:34,pi:2.6}],['reach','Галфвинд',{aws:15,awa:90,sog:8.2,hl:18,pi:0.6}],['broad','Бакштаг',{aws:13,awa:135,sog:9.6,hl:8,pi:-1.4}],['dw','Фордевинд',{aws:9,awa:172,sog:6.4,hl:3,pi:-1}]];
