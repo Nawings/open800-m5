@@ -85,17 +85,18 @@ th{font:600 12px var(--f-body);color:var(--muted);text-transform:uppercase;lette
   <div class="stage" id="stage">
     <a class="home" href="../">← Главное меню</a>
     <h1>Дисплей прибора М5</h1>
-    <p class="lead">Тестовый стенд лицевой панели блока F1C в масштабе: слева основной экран 7,5″, справа сверху стартовый 4,2″, под ним четыре кнопки, светодиод заход/отход и окно датчика света. Кнопки работают как настоящие. Выберите условия, запустите гонку и посмотрите на панель с того расстояния, с какого будете смотреть в кокпите. Цифры придуманные: прибор ещё не собран и прошивки нет.</p>
+    <p class="lead">Тестовый стенд лицевой панели блока F1C в масштабе: слева основной экран 7,5″, справа сверху малый 4,2″, под ним пять кнопок, светодиод заход/отход и окно датчика света. Кнопки работают как настоящие. Выберите условия, запустите гонку и посмотрите на панель с того расстояния, с какого будете смотреть в кокпите. Цифры придуманные: прибор ещё не собран и прошивки нет.</p>
     <div class="sim">
       <div class="dev">
         <div class="f1c" id="f1c" role="group" aria-label="Лицевая панель блока F1C, 212 × 178 мм"></div>
         <div class="keys" aria-label="Кнопки панели крупно">
-          <button type="button" class="key" data-k="mode">РЕЖИМ<i></i></button>
+          <button type="button" class="key" data-k="big" aria-label="БОЛЬШОЙ: следующий вид большого экрана; удержать — предыдущий">БОЛЬШОЙ<i></i></button>
+          <button type="button" class="key" data-k="small" aria-label="МАЛЫЙ: следующий вид малого экрана; удержать — предыдущий">МАЛЫЙ<i></i></button>
+          <button type="button" class="key" data-k="start" aria-label="СТАРТ: пуск отсчёта или подгонка к минуте; удержать 3 с — сброс">СТАРТ<i></i></button>
+          <button type="button" class="key" data-k="line" aria-label="ЛИНИЯ: отметить конец стартовой линии; удержать 3 с — стереть">ЛИНИЯ<i></i></button>
           <button type="button" class="key" data-k="menu">МЕНЮ<i></i></button>
-          <button type="button" class="key" data-k="up" aria-label="Вверх; вне меню — запомнить текущий курс как базовый">▲<i></i></button>
-          <button type="button" class="key" data-k="dn" aria-label="Вниз; вне меню — полное обновление экранов">▼<i></i></button>
         </div>
-        <p class="hint" id="kHint">Ноль крена — держать РЕЖИМ 3 с · подсветка — держать ▲ 1 с · включить и выключить — держать МЕНЮ 3 с</p>
+        <p class="hint" id="kHint">удержать БОЛЬШОЙ или МАЛЫЙ 1 с — вид назад · СТАРТ или ЛИНИЯ 3 с — сброс · МЕНЮ 3 с — включить и выключить</p>
       </div>
       <div class="panel">
         <h3>Условия</h3>
@@ -118,7 +119,7 @@ th{font:600 12px var(--f-body);color:var(--muted);text-transform:uppercase;lette
 
   <section class="grp"><h2>На что смотреть на стенде</h2><div class="tbl"><table>
     <tr><th>Вопрос</th><th>Как проверить</th></tr>
-    <tr><td><b>Читается ли «Табло» с места рулевого?</b></td><td>Поставьте «1,5 м» и «2,5 м», запустите гонку, листайте РЕЖИМ до «Табло»</td></tr>
+    <tr><td><b>Читается ли «Табло» с места рулевого?</b></td><td>Поставьте «1,5 м» и «2,5 м», запустите гонку: «Табло» — первый вид, к нему возвращает БОЛЬШОЙ</td></tr>
     <tr><td><b>Понятен ли знак отклонения?</b></td><td>Нажмите «Увал» и «Привод», сделайте поворот оверштаг: знак не должен путаться на другом галсе</td></tr>
     <tr><td><b>Видно ли, что курс запомнен?</b></td><td>Нажмите «Поворот оверштаг»: «…» сменится цифрой примерно через 15 секунд, затем отклоняйтесь и смотрите, что базовый курс не ползёт</td></tr>
     <tr><td><b>Удобен ли стартовый экран?</b></td><td>Нажмите «Старт 5:00» и смотрите только на малый экран: время, расстояние до линии, выгодный конец</td></tr>
@@ -130,24 +131,24 @@ th{font:600 12px var(--f-body);color:var(--muted);text-transform:uppercase;lette
   <section class="grp"><h2>Лицевая панель</h2><div class="tbl"><table>
     <tr><th>Что</th><th>Размер и место</th><th>Зачем</th></tr>
     <tr><td><b>Основной экран 7,5″</b></td><td>e-paper, чёрно-белый, 480 × 800 точек, стоит вертикально слева во всю высоту панели. Модуль 111,2 × 170,2 мм, поле изображения 97,9 × 163,2 мм</td><td>все виды для гонки: «Табло», ветер, тактика, лодка, погода. Частичное обновление ≈ 0,3 с, полное ≈ 3 с</td></tr>
-    <tr><td><b>Малый экран 4,2″</b></td><td>e-paper WeAct, 400 × 300 точек, справа сверху. Модуль 92 × 89,7 мм, уже куплен</td><td>старт: время, линия, выгодный конец; после старта — прошлый галс и питание</td></tr>
-    <tr><td><b>4 кнопки Ø14</b></td><td>в ряд под малым экраном: РЕЖИМ, МЕНЮ, ▲, ▼</td><td>кнопки 12 × 12 на лицевой стороне платы, колпачки Ø14 в панели на уплотнении</td></tr>
-    <tr><td><b>Светодиод</b></td><td>один, трёхцветный, справа над кнопками</td><td>заход и отход ветра видны боковым зрением, без чтения цифр</td></tr>
-    <tr><td><b>Окно датчика света</b></td><td>Ø9, слева над кнопками, за ним BH1750</td><td>в режиме «авто» прибор сам включает подсветку в сумерках и гасит её днём</td></tr>
+    <tr><td><b>Малый экран 4,2″</b></td><td>e-paper WeAct, 400 × 300 точек, справа сверху. Модуль 92 × 89,7 мм, уже куплен</td><td>старт, пары данных, курс к N, погода — листается кнопкой МАЛЫЙ</td></tr>
+    <tr><td><b>5 кнопок</b></td><td>под малым экраном: слева МАЛЫЙ над БОЛЬШОЙ, справа СТАРТ и ЛИНИЯ, МЕНЮ — в углу</td><td>мембраны из TPU Ø14 напечатаны заодно с лицом — отверстий нет; под ними кнопки 12 × 12 поверхностного монтажа на плате</td></tr>
+    <tr><td><b>Светодиод</b></td><td>один, трёхцветный, справа вверху зоны кнопок</td><td>заход и отход ветра видны боковым зрением, без чтения цифр</td></tr>
+    <tr><td><b>Окно датчика света</b></td><td>Ø9, между МАЛЫЙ и светодиодом, за ним BH1750</td><td>в режиме «авто» прибор сам включает подсветку в сумерках и гасит её днём</td></tr>
     <tr><td><b>Панель целиком</b></td><td>212 × 178 мм, корпус F1C</td><td>оба экрана в одной плоскости, за общим окном</td></tr>
   </table></div></section>
 
-  <section class="grp"><h2>Шесть видов основного экрана</h2><p class="note">Листаются кнопкой РЕЖИМ по кругу. Курс и отклонение от базового видны на каждом виде, кроме «Погоды».</p><div class="gal" id="g1"></div></section>
+  <section class="grp"><h2>Семь видов большого экрана</h2><p class="note">Листаются кнопкой БОЛЬШОЙ по кругу: Табло, Основной, Ветер, Тактика, Крен и дифферент, Погода, Карта; удержать 1 с — назад. На «Карте» знаки дистанции из гоночной инструкции (вводятся с телефона по Wi-Fi прибора), следующий знак прибор выбирает сам: ближе «Точности знака» или на траверзе. Подложка — глубины из раздела «Глубины», архив, не для навигации. Курс и отклонение от базового видны на каждом виде, кроме «Погоды».</p><div class="gal" id="g1"></div></section>
 
-  <section class="grp"><h2>Малый экран: старт, гонка, питание</h2><p class="note">Малый экран не листается: до старта на нём отсчёт и линия, после старта — прошлый галс и питание. Старт запускается из меню: «Старт: 5 минут», затем «Подровнять до минуты» по сигналу судьи. Концы линии запоминаются из меню, когда лодка стоит у знака или у судейского судна.</p><div class="gal s" id="gS"></div></section>
+  <section class="grp"><h2>Малый экран: четыре вида</h2><p class="note">Листается кнопкой МАЛЫЙ по кругу: Старт, Пары данных (5 страниц по паре «лодка — ветер» с «Табло»), Курс к N, Погода; удержать 1 с — назад. СТАРТ сам переводит малый экран на «Старт», сигнал старта — на «Пары». Во время отсчёта малый экран можно листать: отсчёт виден в его строке состояния на любом виде. Концы линии — кнопкой ЛИНИЯ у каждого конца; левый и правый прибор определяет по ветру.</p><div class="gal s" id="gS"></div></section>
 
   <section class="grp"><h2>Откуда берутся цифры на «Табло»</h2><p class="note">Шесть значений измеряются датчиками, четыре считает прибор.</p><div class="tbl"><table>
     <tr><th>На экране</th><th>Что это</th><th>Откуда</th><th>От чего зависит точность</th></tr>
     <tr><td><b>Скорость</b></td><td>скорость лодки</td><td>измеряет GPS</td><td>это скорость над грунтом: лага нет, поэтому течение входит в показание</td></tr>
     <tr><td><b>Курс к N</b></td><td>курс относительно севера</td><td>измеряет компас BNO085</td><td>север магнитный; компас надо откалибровать в собранном блоке</td></tr>
     <tr><td><b>Угол к ветру</b></td><td>угол лодки к истинному ветру, Л или П</td><td>считает прибор: вымпельный ветер и скорость</td><td>ошибки флюгера и скорости, см. ниже</td></tr>
-    <tr><td><b>От баз. курса</b></td><td>отклонение от курса, запомненного после поворота: увал +, привод −</td><td>считает прибор: компас и запомненный курс</td><td>курс запоминается один раз и не меняется до следующего поворота, ▲ запоминает текущий курс вручную</td></tr>
-    <tr><td><b>Крен</b></td><td>наклон на борт</td><td>измеряет BNO085</td><td>ноль выставляется у причала: держать РЕЖИМ 3 с</td></tr>
+    <tr><td><b>От баз. курса</b></td><td>отклонение от курса, запомненного после поворота: увал +, привод −</td><td>считает прибор: компас и запомненный курс</td><td>курс запоминается один раз и не меняется до следующего поворота, вручную — МЕНЮ → «Запомнить курс»</td></tr>
+    <tr><td><b>Крен</b></td><td>наклон на борт</td><td>измеряет BNO085</td><td>ноль выставляется у причала: МЕНЮ → «Ноль крена и дифферента»</td></tr>
     <tr><td><b>Вымп. ветер</b></td><td>скорость вымпельного ветра</td><td>измеряют чашки на мачте</td><td>нужна калибровка чашек</td></tr>
     <tr><td><b>Вымп. угол</b></td><td>угол вымпельного ветра, Л или П</td><td>измеряет флюгер на мачте</td><td>ноль флюгера выставляется при установке. При крене 20° флюгер покажет 30° вместо 31,6°, прошивка должна поправлять это по крену</td></tr>
     <tr><td><b>Ист. ветер</b></td><td>скорость истинного ветра</td><td>считает прибор: вымпельный ветер и скорость</td><td>ошибки чашек и скорости</td></tr>
@@ -155,7 +156,7 @@ th{font:600 12px var(--f-body);color:var(--muted);text-transform:uppercase;lette
     <tr><td><b>Дифферент</b></td><td>наклон на нос или на корму</td><td>измеряет BNO085</td><td>ноль — вместе с креном</td></tr>
   </table></div><p class="note">Расчётный пример на лавировке: вымпельный ветер 14 уз под 30° при скорости 6 уз дают истинный ветер 9,3 уз под 49°. Ошибка флюгера 2° даёт ошибку угла к ветру 2,8°. Течение или ошибка скорости 0,5 уз дают 2,4° по углу и 0,3 уз по скорости ветра. Без GPS истинный ветер посчитать нельзя, на экране будет прочерк.</p></section>
 
-  <section class="grp"><h2>Курс и базовый курс</h2><p class="note">Большое число — курс по компасу, относительно севера. Рядом отклонение от базового: увал +, привод −, на обоих галсах одинаково. Базовый курс — это один запомненный курс, он не усредняется на ходу. После поворота вместо отклонения стоит «…»: прибор ждёт, пока лодка ляжет на курс. Первые 5 секунд после поворота не учитываются. Затем, как только курс 10 секунд подряд держится в коридоре 10°, прибор запоминает его и больше не меняет до следующего поворота. Запоминается середина этих 10 секунд, чтобы рыскание на волне не попало в базовый курс. Если за 60 секунд курс так и не устоялся, запоминается средний курс за последние 15 секунд. Поворотом считается смена галса или изменение курса больше чем на 60° за минуту. Кнопка ▲ вне меню запоминает текущий курс сразу.</p><div class="gal" id="g2"></div></section>
+  <section class="grp"><h2>Курс и базовый курс</h2><p class="note">Большое число — курс по компасу, относительно севера. Рядом отклонение от базового: увал +, привод −, на обоих галсах одинаково. Базовый курс — это один запомненный курс, он не усредняется на ходу. После поворота вместо отклонения стоит «…»: прибор ждёт, пока лодка ляжет на курс. Первые 5 секунд после поворота не учитываются. Затем, как только курс 10 секунд подряд держится в коридоре 10°, прибор запоминает его и больше не меняет до следующего поворота. Запоминается середина этих 10 секунд, чтобы рыскание на волне не попало в базовый курс. Если за 60 секунд курс так и не устоялся, запоминается средний курс за последние 15 секунд. Поворотом считается смена галса или изменение курса больше чем на 60° за минуту. Вручную курс запоминается пунктом МЕНЮ «Запомнить курс».</p><div class="gal" id="g2"></div></section>
 
   <section class="grp"><h2>Сдвиг ветра</h2><p class="note">Сравнивается направление истинного ветра со средним за последние минуты. Порог задаётся в меню. Отход — ветер повернул в вашу пользу, заход — против. Сдвиг показывают и цифры на виде «Тактика», и светодиод на панели.</p><div class="gal" id="g3"></div></section>
 
@@ -168,15 +169,13 @@ th{font:600 12px var(--f-body);color:var(--muted);text-transform:uppercase;lette
   <section class="grp"><h2>Когда нет данных</h2><p class="note">Вместо цифры прочерк: прибор не показывает старое значение как текущее. Остальные данные работают.</p><div class="gal" id="g6"></div></section>
 
   <section class="grp"><h2>Кнопки</h2><div class="tbl"><table>
-    <tr><th>Кнопка</th><th>Вне меню</th><th>В меню</th></tr>
-    <tr><td><b>РЕЖИМ</b></td><td>следующий вид основного экрана</td><td>нет действия</td></tr>
-    <tr><td><b>МЕНЮ</b></td><td>открыть меню</td><td>выполнить пункт или изменить значение; на пункте «Выход» — закрыть меню</td></tr>
-    <tr><td><b>▲</b></td><td>запомнить текущий курс как базовый</td><td>пункт выше</td></tr>
-    <tr><td><b>▼</b></td><td>полное обновление обоих экранов: убирает следы старых кадров e-paper</td><td>пункт ниже</td></tr>
-    <tr><td><b>▲, держать 1 с</b></td><td>подсветка по кругу: авто, выключена, 30, 60, 100 %</td><td>—</td></tr>
-    <tr><td><b>РЕЖИМ, держать 3 с</b></td><td>ноль крена и дифферента</td><td>—</td></tr>
-    <tr><td><b>МЕНЮ, держать 3 с</b></td><td>выключить прибор; у выключенного — включить</td><td>то же</td></tr>
-  </table></div><p class="note">Какая кнопка включает прибор и сколько её держать — предложение, окончательно решается в прошивке.</p></section>
+    <tr><th>Кнопка</th><th>Коротко</th><th>Удержать</th><th>В меню</th></tr>
+    <tr><td><b>БОЛЬШОЙ</b></td><td>следующий вид большого экрана</td><td>1 с — предыдущий вид</td><td>пункт ниже</td></tr>
+    <tr><td><b>МАЛЫЙ</b></td><td>следующий вид малого экрана</td><td>1 с — предыдущий вид</td><td>пункт выше</td></tr>
+    <tr><td><b>СТАРТ</b></td><td>нет отсчёта — пуск; идёт отсчёт — подгонка к ближайшей целой минуте</td><td>3 с — сброс отсчёта</td><td>—</td></tr>
+    <tr><td><b>ЛИНИЯ</b></td><td>отметить конец стартовой линии там, где стоит лодка; левый или правый — прибор решает по ветру; при заданной линии — заменить ближний конец</td><td>3 с — стереть линию</td><td>—</td></tr>
+    <tr><td><b>МЕНЮ</b></td><td>открыть меню; в меню — выполнить пункт или изменить значение</td><td>3 с — выключить прибор; у выключенного — включить</td><td>то же</td></tr>
+  </table></div><p class="note">Проект навигации утверждён владельцем 23.11: нажимает кто-то из экипажа по просьбе рулевого, всё нужное в гонке — одним нажатием.</p></section>
 
   <section class="grp"><h2>Светодиод и подсветка</h2><div class="tbl"><table>
     <tr><th>Что</th><th>Как выглядит</th><th>Когда</th></tr>
@@ -184,7 +183,7 @@ th{font:600 12px var(--f-body);color:var(--muted);text-transform:uppercase;lette
     <tr><td><b>Светодиод красный</b></td><td>мигает</td><td>отход: ветер повернул в вашу пользу, сдвиг больше порога</td></tr>
     <tr><td><b>Светодиод погашен</b></td><td>—</td><td>ветер ровный, или нет данных с мачты</td></tr>
     <tr><td><b>Подсветка «авто»</b></td><td>включается по датчику света</td><td>в сумерках — 60 %, ночью — 30 %, днём выключена</td></tr>
-    <tr><td><b>Подсветка вручную</b></td><td>выключена, 30, 60, 100 %</td><td>▲ держать 1 с или пункт меню. Цвет подсветки ещё не выбран; на стенде — красный, он не слепит ночью</td></tr>
+    <tr><td><b>Подсветка вручную</b></td><td>выключена, 30, 60, 100 %</td><td>пункт МЕНЮ «Подсветка». Цвет подсветки ещё не выбран; на стенде — красный, он не слепит ночью</td></tr>
   </table></div></section>
 
   <section class="grp"><h2>Строка состояния и меню</h2><div class="tbl"><table>
@@ -195,8 +194,8 @@ th{font:600 12px var(--f-body);color:var(--muted);text-transform:uppercase;lette
     <tr><td><b>РАЗРЯД</b></td><td>заряд источника 25 % и меньше</td></tr>
     <tr><td><b>зарядка</b></td><td>напряжение лодки выше 13,2 В</td></tr>
     <tr><td><b>НА РЕЗЕРВЕ</b></td><td>лодка ниже напряжения резерва минус 0,7 В</td></tr>
-    <tr><td><b>Меню: Старт</b></td><td>запустить отсчёт 5 минут; подровнять до минуты по сигналу</td></tr>
-    <tr><td><b>Меню: Линия</b></td><td>запомнить левый или правый конец стартовой линии по GPS</td></tr>
+    <tr><td><b>Меню: Длина отсчёта</b></td><td>5, 3 или 10 минут; по умолчанию 5</td></tr><tr><td><b>Меню: Точность знака</b></td><td>3, 5, 10, 15, 20, 30 м; по умолчанию 10. Знак засчитывается, когда лодка ближе этого или прошла его траверз</td></tr><tr><td><b>Меню: Окно траверза</b></td><td>50, 100 или 30 м — как далеко от знака засчитывается траверз</td></tr><tr><td><b>Меню: Следующий и предыдущий знак</b></td><td>если автоматика ошиблась</td></tr><tr><td><b>Меню: Запомнить курс, Ноль крена и дифферента, Обновить экраны</b></td><td>базовый курс вручную; ноль у причала; полная перерисовка e-paper</td></tr>
+    
     <tr><td><b>Меню: Подсветка</b></td><td>авто, выключена, 30, 60, 100 %</td></tr>
     <tr><td><b>Меню: Скорость</b></td><td>узлы или м/с</td></tr>
     <tr><td><b>Меню: Порог сдвига</b></td><td>2, 3 или 5°</td></tr>
@@ -238,8 +237,14 @@ function rose(c,P,v,q,cx,cy,R){const k=R/60,{T}=P;c.lineWidth=1.8*Math.max(1,k*0
 function stern(c,v,x,y,k){c.save();c.translate(x,y);c.lineWidth=1.2;c.setLineDash([4,4]);c.beginPath();c.moveTo(-58*k,4*k);c.lineTo(58*k,4*k);c.stroke();c.setLineDash([]);c.rotate(v.heel*DG);c.lineWidth=2.6*Math.max(1,k*0.6);c.beginPath();c.moveTo(-30*k,0);c.quadraticCurveTo(0,20*k,30*k,0);c.closePath();c.stroke();c.beginPath();c.moveTo(0,-2*k);c.lineTo(0,-36*k);c.stroke();c.lineWidth=3.4*Math.max(1,k*0.6);c.beginPath();c.moveTo(0,10*k);c.lineTo(0,31*k);c.stroke();c.restore();}
 function prof(c,v,x,y,k){c.save();c.translate(x,y);c.lineWidth=1.2;c.setLineDash([4,4]);c.beginPath();c.moveTo(-58*k,3*k);c.lineTo(58*k,3*k);c.stroke();c.setLineDash([]);c.rotate(v.pitch*3*DG);c.lineWidth=2.6*Math.max(1,k*0.6);c.beginPath();c.moveTo(-46*k,-4*k);c.lineTo(48*k,-4*k);c.quadraticCurveTo(38*k,10*k,20*k,11*k);c.lineTo(-38*k,11*k);c.closePath();c.stroke();c.beginPath();c.moveTo(4*k,-5*k);c.lineTo(4*k,-33*k);c.stroke();c.lineWidth=3.4*Math.max(1,k*0.6);c.beginPath();c.moveTo(0,11*k);c.lineTo(-5*k,27*k);c.stroke();c.restore();}
 function shift(c,P,v,q,X,Y,s){const {T}=P;if(q.dn){T('нет данных',X,Y+40*s,20*s,800);}else if(v.sig){const up=v.sig>0,ax=X+24*s,ay=Y+40*s;c.beginPath();if(up){c.moveTo(ax,ay-24*s);c.lineTo(ax+20*s,ay+6*s);c.lineTo(ax-20*s,ay+6*s);}else{c.moveTo(ax,ay+24*s);c.lineTo(ax+20*s,ay-6*s);c.lineTo(ax-20*s,ay-6*s);}c.closePath();c.fill();T(up?'ОТХОД':'ЗАХОД',X+52*s,Y+26*s,16*s,800);T(Math.round(v.d)+'°',X+52*s,Y+66*s,40*s,800);}else T('ровный',X,Y+46*s,28*s,800);}
+// карта: условные знаки в метрах от лодки; генеральный курс — отрезок между знаками
+const MAPD={leg:1,P:[-40,420],N:[120,-500],B:[40,60]};
+function mapCalc(v){const m=v.map||MAPD,P=m.P,N=m.N,B=m.B,dx=N[0]-P[0],dy=N[1]-P[1],L=Math.hypot(dx,dy);
+  const xte=(dx*(B[1]-P[1])-dy*(B[0]-P[0]))/L*-1,bx=N[0]-B[0],by=N[1]-B[1];
+  return {leg:m.leg,P,N,B,xte,dist:Math.hypot(bx,by),brg:(Math.atan2(bx,by)/DG+360)%360};}
 // ===== основной экран 7,5″: 480 × 800 точек, стоит вертикально =====
-const NAMES=['ОСНОВНОЙ','ВЕТЕР','ТАКТИКА','ЛОДКА','ПОГОДА','ТАБЛО'];
+const NAMES=['ОСНОВНОЙ','ВЕТЕР','ТАКТИКА','КРЕН И ДИФФЕРЕНТ','ПОГОДА','ТАБЛО','КАРТА'];
+const ORDER=[5,0,1,2,3,4,6];   // порядок листания кнопкой БОЛЬШОЙ (перечень владельца 23.11)
 function drawMain(c,v){const P=pen(c),{T,fit,H,V,wid}=P,q=calc(v);
   c.save();c.fillStyle=PAP;c.fillRect(0,0,480,800);c.fillStyle=INK;c.strokeStyle=INK;c.lineJoin='round';c.lineCap='round';
   if(v.off){T('М5',240,330,130,800,'center');T('выключен',240,400,40,700,'center');H(90,430,300);T('включить — держать МЕНЮ 3 с',240,474,20,600,'center');T('e-paper хранит этот кадр без питания',240,504,17,600,'center');c.restore();return;}
@@ -247,7 +252,7 @@ function drawMain(c,v){const P=pen(c),{T,fit,H,V,wid}=P,q=calc(v);
   const mode=v.mode||0;
   // строка состояния: слева вид, справа только предупреждения
   if(v.menu||mode!==5){T('М5',10,29,24,800);T(v.menu?'МЕНЮ':NAMES[mode],62,28,19,700);if(q.alerts.length)fit(q.alerts.join(' · '),470,28,19,800,'right',290);H(0,40,480,2.5);}
-  if(v.menu){const rows=v.menu.rows,sel=v.menu.i,rh=Math.min(58,700/rows.length);rows.forEach((r,i)=>{const y=50+i*rh;if(i===sel){c.fillRect(8,y,464,rh-4);c.fillStyle=PAP;}T(r.t,22,y+rh*0.62,Math.min(24,rh*0.42),800);if(r.v)fit(r.v,458,y+rh*0.62,Math.min(22,rh*0.4),700,'right',230);c.fillStyle=INK;});H(0,758,480);T('▲ ▼ выбрать · МЕНЮ — выполнить или изменить',240,788,18,700,'center');}
+  if(v.menu){const rows=v.menu.rows,sel=v.menu.i,rh=Math.min(58,700/rows.length);rows.forEach((r,i)=>{const y=50+i*rh;if(i===sel){c.fillRect(8,y,464,rh-4);c.fillStyle=PAP;}T(r.t,22,y+rh*0.62,Math.min(24,rh*0.42),800);if(r.v)fit(r.v,458,y+rh*0.62,Math.min(22,rh*0.4),700,'right',230);c.fillStyle=INK;});H(0,758,480);T('БОЛЬШОЙ ↓ · МАЛЫЙ ↑ · МЕНЮ — выполнить или изменить',240,788,18,700,'center');}
   else if(mode===0){
     T('КУРС',12,66,17,800);T(q.hs,8,184,132,800);if(q.devS){T(q.devS,470,150,66,800,'right');T(q.devS==='…'?'ждём курс':'от базового',470,182,18,700,'right');}
     T((q.ng?'GPS —':'GPS '+q.cog+'°')+' · ветер '+(q.dn?q.NA:q.twd+'°'),12,214,18,600);H(0,226,480);
@@ -286,6 +291,27 @@ function drawMain(c,v){const P=pen(c),{T,fit,H,V,wid}=P,q=calc(v);
     H(0,564,480);T('ГРОЗА · ДАТЧИК МОЛНИЙ',12,592,17,800);
     if(v.storm){T(v.storm.km+' км',8,700,104,800);T(v.storm.was>v.storm.km?'приближается':v.storm.was<v.storm.km?'удаляется':'на месте',470,640,26,800,'right');T('10 мин назад: '+v.storm.was+' км',470,674,20,600,'right');T('расстояние — оценка датчика, шаг несколько км',12,744,17,600);T('за 10 минут молний: '+v.storm.n,12,774,17,600);}
     else{T('гроз нет',12,690,64,800);T('ближе 40 км молний не было',12,736,20,600);}}
+  else if(mode===6){// КАРТА: знаки дистанции, генеральный курс, лодка, линия до знака; подложка — изобаты 4 оттенками серого
+    const m=mapCalc(v),Y0=44,MH=516,xs=[m.P[0],m.N[0],m.B[0]],ys=[m.P[1],m.N[1],m.B[1]],mx=(Math.min(...xs)+Math.max(...xs))/2,my=(Math.min(...ys)+Math.max(...ys))/2,k=Math.min(0.6,400/Math.max(1,Math.max(...xs)-Math.min(...xs)),(MH-110)/Math.max(1,Math.max(...ys)-Math.min(...ys))),cx=240,cy=Y0+MH/2-10,px=p=>[cx+(p[0]-mx)*k,cy-(p[1]-my)*k];   // кадр: оба знака и лодка
+    c.save();c.beginPath();c.rect(0,Y0,480,MH);c.clip();
+    c.fillStyle='#a9a79e';c.beginPath();c.moveTo(0,Y0);c.lineTo(170,Y0);c.bezierCurveTo(140,170,60,250,0,300);c.closePath();c.fill();
+    c.beginPath();c.moveTo(480,Y0+300);c.bezierCurveTo(410,400,396,480,480,560);c.closePath();c.fill();c.fillStyle=INK;
+    [[2,'#17171b',[],24],[5,'#55554f',[],58],[8,'#8c8a82',[7,5],96]].forEach(r=>{c.strokeStyle=r[1];c.setLineDash(r[2]);c.lineWidth=1.6;c.beginPath();c.moveTo(0,Y0+300+r[3]);c.bezierCurveTo(60+r[3],250+r[3]*0.4,150+r[3],170,190+r[3],Y0);c.stroke();
+      c.beginPath();c.moveTo(480,Y0+300-r[3]*0.8);c.bezierCurveTo(400-r[3],400,386-r[3],480,480-r[3]*0.3,560);c.stroke();c.setLineDash([]);c.fillStyle=r[1];T(r[0]+' м',150+r[3]*0.9,Y0+150,13,700);c.fillStyle=INK;});
+    c.strokeStyle=INK;const P=px(m.P),N=px(m.N),Bp=px(m.B);
+    c.lineWidth=2;c.setLineDash([10,7]);c.beginPath();c.moveTo(P[0],P[1]);c.lineTo(N[0],N[1]);c.stroke();c.setLineDash([]);
+    c.lineWidth=3;c.beginPath();c.moveTo(Bp[0],Bp[1]);c.lineTo(N[0],N[1]);c.stroke();
+    [[P,m.leg],[N,m.leg+1]].forEach(q=>{c.fillStyle=PAP;c.beginPath();c.arc(q[0][0],q[0][1],12,0,7);c.fill();c.fillStyle=INK;c.lineWidth=2.4;c.beginPath();c.arc(q[0][0],q[0][1],12,0,7);c.stroke();T(String(q[1]),q[0][0],q[0][1]+6,16,800,'center');});
+    if(!q.ng){c.save();c.translate(Bp[0],Bp[1]);c.rotate((v.noHdg?0:v.hdg)*DG);c.lineWidth=2;c.beginPath();c.moveTo(0,-16);c.lineTo(9,12);c.lineTo(0,7);c.lineTo(-9,12);c.closePath();c.fill();c.setLineDash([3,5]);c.beginPath();c.moveTo(0,-16);c.lineTo(0,-80);c.stroke();c.setLineDash([]);c.restore();}
+    c.lineWidth=2;c.beginPath();c.moveTo(452,Y0+44);c.lineTo(452,Y0+14);c.stroke();c.beginPath();c.moveTo(452,Y0+8);c.lineTo(446,Y0+20);c.lineTo(458,Y0+20);c.closePath();c.fill();T('С',452,Y0+62,15,800,'center');
+    c.lineWidth=2.4;c.beginPath();c.moveTo(16,Y0+MH-18);c.lineTo(16+200*k,Y0+MH-18);c.stroke();T('200 м',16,Y0+MH-26,14,700);T('знак засчитается: ближе '+(v.markR||10)+' м или на траверзе',16,Y0+MH-44,14,700);
+    T('глубины: архив, не для навигации',470,Y0+MH-12,12,600,'right');c.restore();
+    H(0,Y0+MH,480,2.5);const y1=Y0+MH;
+    if(q.ng){T('нет GPS — карта без лодки',240,y1+80,26,800,'center');}
+    else{T('ЗНАК '+(m.leg+1)+' · ДО НЕГО',12,y1+28,15,800);T(m.dist>=1000?f1(m.dist/1000)+' км':Math.round(m.dist)+' м',12,y1+92,62,800);
+      T('НА ЗНАК',300,y1+28,15,800);T(Math.round(m.brg)+'°',300,y1+92,62,800);H(0,y1+110,480);
+      T('ОТ ГЕНЕРАЛЬНОГО КУРСА',12,y1+136,15,800);T((m.xte>0?'+':m.xte<0?'−':'')+Math.abs(Math.round(m.xte))+' м',12,y1+198,56,800);T(Math.abs(m.xte)<1?'на линии':m.xte>0?'правее':'левее',12,y1+222,17,700);
+      T('КУРС К N',300,y1+136,15,800);T(q.hs,300,y1+198,56,800);}}
   else{// ТАБЛО: 10 величин, всё место цифрам
     const hh=42,rh=(800-hh)/5,cw=240;T('M5 ТАБЛО',10,30,22,800);if(q.alerts.length)fit(q.alerts.join(' · '),470,29,18,800,'right',300);
     H(0,hh,480);V(cw-1,hh,800-hh);
@@ -295,35 +321,46 @@ function drawMain(c,v){const P=pen(c),{T,fit,H,V,wid}=P,q=calc(v);
     C.forEach((col,ci)=>col.forEach((cl,ri)=>{const x0=ci*cw,y0=hh+ri*rh;if(ri)H(x0,y0,cw);T(cl[0],x0+8,y0+lab*1.3,lab,800);if(cl[2])T(cl[2],x0+cw-8,y0+lab*1.3,lab,700,'right');T(cl[1],x0+8,y0+lab*1.6+(rh-lab*1.6+fs*0.727)/2,fs,800);}));}
   if(v.toast){c.font='800 28px '+F;const tw=Math.min(460,c.measureText(v.toast).width+40);c.fillStyle=INK;c.fillRect(240-tw/2,356,tw,76);c.fillStyle=PAP;fit(v.toast,240,405,28,800,'center',tw-24);c.fillStyle=INK;}
   c.restore();}
-// ===== малый экран 4,2″: 400 × 300 точек — старт, после старта прошлый галс и питание =====
+// ===== малый экран 4,2″: 400 × 300 точек — 4 вида, листаются кнопкой МАЛЫЙ: Старт, Пары данных (5 страниц), Угол к северу, Погода =====
+const SNAMES=['СТАРТ','ПАРЫ','КУРС К N','ПОГОДА'];
+function pairsOf(v,q){return [[['СКОРОСТЬ, '+q.U,q.GS(v.sog),''],['ВЫМП. ВЕТЕР, '+q.U,q.W(v.aws),'']],[['КУРС К N',q.hs,''],['ВЫМП. УГОЛ',q.deg(v.awa,q.nw),q.nw?'':side(v.awa)]],
+  [['УГОЛ К ВЕТРУ',q.deg(q.twa,q.tn),q.tn?'':side(q.twa)],['ИСТ. ВЕТЕР, '+q.U,q.TW(q.tws),'']],[['ОТ БАЗ. КУРСА',q.devS||q.NA,''],['ИСТ. НАПРАВЛЕНИЕ',q.dn?q.NA:q.twd+'°','']],[['КРЕН',q.heelS,q.heelW],['ДИФФЕРЕНТ',q.pitchS,q.pitchW]]];}
 function drawSmall(c,v){const P=pen(c),{T,fit,H,V}=P,q=calc(v);
   c.save();c.fillStyle=PAP;c.fillRect(0,0,400,300);c.fillStyle=INK;c.strokeStyle=INK;c.lineJoin='round';c.lineCap='round';
   if(v.off){T('М5 выключен',200,160,34,800,'center');c.restore();return;}
   if(v.boot){T('М5',200,150,80,800,'center');T('загрузка…',200,196,22,700,'center');c.restore();return;}
-  const st=v.start!=null&&v.start>0,race=v.race!=null;
-  // строка состояния: режим слева, источник питания справа
-  T(st?'СТАРТ':race?'ГОНКА '+mmss(v.race):'ГОТОВ',8,20,17,800);
+  const st=v.start!=null&&v.start>0,race=v.race!=null,sv=v.sv||0,PAIRS=pairsOf(v,q),sp=Math.min(v.sp||0,PAIRS.length-1);
+  // строка состояния: вид слева, отсчёт виден на любом виде, справа источник питания
+  T(sv===1?'ПАРЫ '+(sp+1)+'/'+PAIRS.length:sv===0?(st?'СТАРТ':race?'ГОНКА '+mmss(v.race):'ГОТОВ'):SNAMES[sv],8,20,17,800);
+  if(st&&sv!==0){c.fillRect(150,4,100,20);c.fillStyle=PAP;T('−'+mmss(v.start),200,20,17,800,'center');c.fillStyle=INK;}
   c.lineWidth=1.6;c.strokeRect(316,6,22,11);c.fillRect(338,9,2.6,5);if(v.chg){T('зар',394,19,14,800,'right');}else{c.fillRect(318,8,18*q.bp/100,7);T(q.bp+' %',394,19,14,800,'right');}
-  fit([v.cfg.wifi==='вкл'?'Wi-Fi':'',v.cfg.sd==='выкл'?'':'SD'].filter(Boolean).join(' · '),308,19,13,700,'right',70);H(0,27,400);
+  if(!(st&&sv!==0))fit([v.cfg.wifi==='вкл'?'Wi-Fi':'',v.cfg.sd==='выкл'?'':'SD'].filter(Boolean).join(' · '),308,19,13,700,'right',70);H(0,27,400);
   const pwrLine=()=>{const big=v.onRes?'НА РЕЗЕРВЕ':q.low?'РАЗРЯД':v.chg?'зарядка':'питание';T(big,8,206,15,800);
     fit('лодка '+f1(v.boat||0)+' В'+(v.cur!=null&&!v.onRes?' · '+f1(v.cur)+' А':''),8,244,30,800,'left',384);
     fit(v.res!=null?'резерв '+f1(v.res)+' В'+(v.onRes?' · от него работает прибор':''):'резерв не подключён',8,272,18,700,'left',384);
     if(v.storm&&v.storm.km<=40)fit('гроза '+v.storm.km+' км'+(v.storm.was>v.storm.km?', приближается':''),8,294,16,800,'left',384);};
-  if(st){const rem=v.start,line=v.lineL&&v.lineR;fit(line?'линия ✓':'линия '+(v.lineL?'Л ✓':'Л —')+' '+(v.lineR?'П ✓':'П —'),170,20,15,800,'center',110);
+  const lineTxt=()=>{const n=v.ends||0;return n>=2?'линия ✓':n===1?'линия: 1 конец ✓':'линия не задана';};
+  if(sv===0&&st){const rem=v.start,line=(v.ends||0)>=2;fit(lineTxt(),170,20,15,800,'center',110);
     T('−'+mmss(rem),200,150,118,800,'center');H(0,166,400);V(199,166,90);
     T('ДО ЛИНИИ',8,186,14,800);T('НА ЛИНИИ ЧЕРЕЗ',209,186,14,800);
     const dist=line&&!v.noGps?Math.max(0,Math.round(v.dist)):null,eta=dist==null?null:dist/Math.max(0.5,v.sog*0.5144);
     T(dist==null?'—':dist+' м',8,240,50,800);T(eta==null?'—':mmss(eta),209,240,50,800);if(eta!=null&&eta<rem-5)T('рано на '+mmss(rem-eta),209,254,13,700);H(0,258,400);
-    fit(line?'выгоднее ▶ '+(v.fav>0?'правый':'левый')+' конец, +'+Math.abs(v.fav)+' м · перекос '+Math.abs(v.skew)+'°':'линия не задана: МЕНЮ → Линия',8,280,17,800,'left',384);
+    fit(line?'выгоднее ▶ '+(v.fav>0?'правый':'левый')+' конец, +'+Math.abs(v.fav)+' м · перекос '+Math.abs(v.skew)+'°':'отметьте концы: ЛИНИЯ у каждого конца',8,280,17,800,'left',384);
     fit('ветер '+(q.dn?'—':q.twd+'°')+' · '+(q.tn?'—':q.spd(q.tws)+' '+q.U),8,298,14,700,'left',384);}
-  else{T('ПРОШЛЫЙ ГАЛС',8,50,15,800);const g=v.prev;
-    const cell=(X,Y,t,val)=>{T(t,X,Y,13,800);fit(val,X,Y+38,38,800,'left',180);};
-    cell(8,74,'ДЛИТЕЛЬНОСТЬ',g?mmss(g.dur):'—');cell(208,74,'КУРС',g?n360(g.hdg)+'°':'—');cell(8,136,'СР. СКОРОСТЬ',g?q.spd(g.sog)+' '+q.U:'—');cell(208,136,'VMG',g?q.spd(g.vmg)+' '+q.U:'—');
-    V(199,58,124);H(0,186,400);pwrLine();}
+  else if(sv===0){T(race?'идёт гонка':'отсчёт не запущен',8,58,16,800);T(race?mmss(v.race):'СТАРТ',8,122,58,800);fit(race?'с момента старта':'нажмите СТАРТ — '+(v.startLen||5)+' мин',8,150,16,700,'left',384);
+    fit(lineTxt()+((v.ends||0)>=2?' · выгоднее '+(v.fav>0?'правый':'левый')+' конец':' · ЛИНИЯ — у каждого конца'),8,182,16,800,'left',384);H(0,190,400);pwrLine();}
+  else if(sv===1){const pr=PAIRS[sp];V(199,27,273);pr.forEach((cl,i)=>{const x0=i*200;T(cl[0],x0+8,52,15,800);if(cl[2])T(cl[2],x0+192,52,15,700,'right');fit(cl[1],x0+100,210,120,800,'center',184);});
+    T(['ЛОДКА','ВЕТЕР'][0],8,290,13,700);T('ВЕТЕР',392,290,13,700,'right');}
+  else if(sv===2){T('КУРС ПО КОМПАСУ, ОТ СЕВЕРА',8,50,14,800);T(q.hs,8,160,104,800);if(q.devS){T(q.devS,392,120,40,800,'right');T(q.devS==='…'?'ждём курс':'от базового',392,146,14,700,'right');}
+    rose(c,P,v,q,320,226,54);fit('GPS '+(q.ng?'—':q.cog+'°')+' · ветер '+(q.dn?'—':q.twd+'°'),8,200,17,700,'left',240);T('север — магнитный',8,236,14,600);}
+  else{T('ДАВЛЕНИЕ, гПа',8,50,14,800);T(v.p==null?q.NA:f1(v.p),8,124,66,800);const p3=v.p3;
+    if(p3!=null){T((p3>0?'+':p3<0?'−':'')+f1(Math.abs(p3))+' за 3 ч',392,96,22,800,'right');T(Math.abs(p3)<1.6?'ровное':p3<0?(p3<=-3.6?'падает быстро':'падает'):'растёт',392,124,18,700,'right');}
+    H(0,140,400);V(199,140,90);T('ВОЗДУХ НА ТОПЕ',8,162,13,800);T(v.air==null?q.NA:f1(v.air)+'°',8,214,44,800);T('ВЛАЖНОСТЬ',209,162,13,800);T(v.hum==null?q.NA:Math.round(v.hum)+' %',209,214,44,800);H(0,230,400);
+    T('ГРОЗА',8,254,13,800);fit(v.storm?v.storm.km+' км, '+(v.storm.was>v.storm.km?'приближается':'не приближается'):'гроз нет ближе 40 км',8,286,24,800,'left',384);}
   c.restore();}
 
 // ---------- лицевая панель F1C: те же координаты, что на странице «Компоновка блока» (мм от левого нижнего угла внутри стенки 3 мм) ----------
-const PW=212,PH=178,WALL=3,PNL={main:{x:0.9,y:0.9,w:111.2,h:170.2,aw:97.9,ah:163.2},small:{x:113.1,y:81.4,w:92,h:89.7,aw:84.8,ah:63.6},btn:[[125.1,13,'РЕЖИМ','mode'],[148.1,13,'МЕНЮ','menu'],[171.1,13,'▲','up'],[194.1,13,'▼','dn']],bh:[127.1,52],led:[191.1,52]};
+const PW=212,PH=178,WALL=3,PNL={main:{x:0.9,y:0.9,w:111.2,h:170.2,aw:97.9,ah:163.2},small:{x:113.1,y:81.4,w:92,h:89.7,aw:84.8,ah:63.6},btn:[[129,62,'МАЛЫЙ','small'],[129,36,'БОЛЬШОЙ','big'],[165,36,'СТАРТ','start'],[194,36,'ЛИНИЯ','line'],[190,13,'МЕНЮ','menu']],bh:[165,62],led:[194,62]};   // места — проект навигации, утверждён 23.11
 const pct=(x,y)=>({left:(WALL+x)/PW*100+'%',bottom:(WALL+y)/PH*100+'%'});
 const box=document.getElementById('f1c');
 function addScreen(s,cw,ch,label){const m=document.createElement('div');m.className='mod';Object.assign(m.style,pct(s.x,s.y),{width:s.w/PW*100+'%',height:s.h/PH*100+'%'});const g=document.createElement('div');g.className='glass';m.appendChild(g);
@@ -343,11 +380,13 @@ function pc(v,t){if(v<=t[0][0])return 0;for(let i=1;i<t.length;i++)if(v<=t[i][0]
 const pw=(b,r)=>{const onRes=r!=null&&b<r-0.7;return {boat:b,res:r,onRes,chg:b>=13.2,batt:onRes?pc(r+0.3,LI):pc(b,LD)};};
 const LIGHT=['авто','выкл','30 %','60 %','100 %'];
 const CFG={unit:'узлы',wifi:'выкл',sd:'вкл'};
-const MENU=[{t:'Старт: 5 минут',k:'start',act:1},{t:'Старт: подровнять до минуты',k:'sync',act:1},{t:'Линия: левый конец здесь',k:'lineL',act:1},{t:'Линия: правый конец здесь',k:'lineR',act:1},
+const MENU=[{t:'Длина отсчёта',k:'slen',o:['5 мин','3 мин','10 мин'],v:0},{t:'Точность знака',k:'markR',o:['10 м','15 м','20 м','30 м','3 м','5 м'],v:0},{t:'Окно траверза',k:'abeam',o:['50 м','100 м','30 м'],v:0},
+  {t:'Следующий знак',k:'nextM',act:1},{t:'Предыдущий знак',k:'prevM',act:1},{t:'Запомнить курс',k:'base',act:1},{t:'Ноль крена и дифферента',k:'zero',act:1},{t:'Обновить экраны',k:'full',act:1},
   {t:'Подсветка',k:'light',o:LIGHT,v:0},{t:'Скорость',k:'unit',o:['узлы','м/с'],v:0},{t:'Порог сдвига',k:'shift',o:['2°','3°','5°'],v:1},{t:'Wi-Fi',k:'wifi',o:['выкл','вкл'],v:0},{t:'Запись на карту',k:'sd',o:['вкл','выкл'],v:0},{t:'Питание',k:'pwr',ro:1},{t:'Выход',k:'exit'}];
+const MI=k=>MENU.findIndex(m=>m.k===k);
 const pwTxt=(b,r,cur)=>'лодка '+f1(b)+' В'+(cur!=null?' · '+f1(cur)+' А':'')+(r!=null?' · резерв '+f1(r)+' В':'');
 const rows=(b,r,cur)=>MENU.map(m=>({t:m.t,v:m.ro?pwTxt(b,r,cur):m.act?'▶':m.o?m.o[m.v]:''}));
-const S={aws:17.4,awa:28.5,hdg:177,sog:6.1,heel:-14,pitch:1.2,sig:1,d:3,boatV:12.7,resV:12.3,cur:1.8,mode:0,menu:null,noWind:false,noGps:false,noHdg:false,toast:null,boot:null,on:true,light:0,
+const S={aws:17.4,awa:28.5,hdg:177,sog:6.1,heel:-14,pitch:1.2,sig:1,d:3,boatV:12.7,resV:12.3,cur:1.8,mode:5,bi:0,sv:0,sp:0,ends:2,leg:1,menu:null,noWind:false,noGps:false,noHdg:false,toast:null,boot:null,on:true,light:0,
   base:{'1':183,'-1':183},aim:{'1':183,'-1':183},swing:0,settling:false,start:null,race:null,lineL:true,lineR:true,dist:42,fav:12,skew:8,prev:{dur:252,hdg:181,sog:6.2,vmg:4.8},p:1012.4,p3:-2.1,air:14.2,hum:78,storm:null};
 const tack=()=>S.awa<0?-1:1;
 function wrap(a){return ((a+540)%360)-180;}
@@ -358,7 +397,7 @@ function spreadHdg(a){const r=a[0],d=a.map(x=>wrap(x-r));return Math.max(...d)-M
 function settleStart(){sett={t:0,buf:[]};S.settling=true;}
 function settleEnd(){sett=null;S.settling=false;}
 function view(){const m=S.menu;return Object.assign({aws:S.aws,awa:S.awa,hdg:S.hdg,sog:S.sog,heel:S.heel,pitch:S.pitch,sig:S.sig,d:S.d,dev:dev(),settling:S.settling,mode:S.mode,cfg:CFG,noWind:S.noWind,noGps:S.noGps,noHdg:S.noHdg,toast:S.toast,boot:S.boot,off:!S.on,
-  start:S.start,race:S.race,lineL:S.lineL,lineR:S.lineR,dist:S.dist,fav:S.fav,skew:S.skew,prev:S.prev,cur:S.cur,p:S.p,p3:S.p3,air:S.air,hum:S.hum,storm:S.storm,
+  sv:S.sv,sp:S.sp,ends:S.ends,startLen:[5,3,10][MENU[MI('slen')].v],markR:parseInt(MENU[MI('markR')].o[MENU[MI('markR')].v]),map:Object.assign({},MAPD,{leg:S.leg}),start:S.start,race:S.race,lineL:S.lineL,lineR:S.lineR,dist:S.dist,fav:S.fav,skew:S.skew,prev:S.prev,cur:S.cur,p:S.p,p3:S.p3,air:S.air,hum:S.hum,storm:S.storm,
   menu:m===null?null:{i:m,rows:rows(S.boatV,S.resV,S.cur)}},pw(S.boatV,S.resV));}
 // освещение и подсветка: в режиме «авто» уровень задаёт датчик света
 const AMB=[['day','День'],['sun','Яркое солнце'],['dusk','Сумерки'],['night','Ночь']];let amb='day';
@@ -372,18 +411,27 @@ let toastT=0;function toast(s,ms){S.toast=s;clearTimeout(toastT);render();toastT
 // ---------- кнопки: короткое и долгое нажатие ----------
 const BOOT=[['Мачта','связь есть'],['GPS','поиск спутников'],['Компас','калибровка'],['Датчики','давление, свет, молнии'],['Питание','лодка 12,7 В']];
 let bootT=0;function power(){S.on=!S.on;S.menu=null;clearTimeout(bootT);if(S.on){S.boot=BOOT;render();bootT=setTimeout(()=>{S.boot=null;render();},1800);}else{S.boot=null;render();}}
+const NSM=1+5+2;   // малый экран: Старт, 5 страниц «Пар», Курс к N, Погода — по кругу
+const smallStep=d=>{let p=S.sv===0?0:S.sv===1?1+S.sp:S.sv===2?6:7;p=(p+d+NSM)%NSM;if(p===0){S.sv=0;}else if(p<=5){S.sv=1;S.sp=p-1;}else{S.sv=p===6?2:3;}};
+const bigStep=d=>{S.bi=(S.bi+d+ORDER.length)%ORDER.length;S.mode=ORDER[S.bi];};
+const startLen=()=>[5,3,10][MENU[MI('slen')].v]*60;
 const SHORT={
-  mode:()=>{if(!S.on||S.menu!==null)return;S.mode=(S.mode+1)%6;render();},
+  big:()=>{if(!S.on)return;if(S.menu!==null){S.menu=(S.menu+1)%MENU.length;render();return;}bigStep(1);render();},
+  small:()=>{if(!S.on)return;if(S.menu!==null){S.menu=(S.menu+MENU.length-1)%MENU.length;render();return;}smallStep(1);render();},
+  start:()=>{if(!S.on||S.menu!==null)return;if(S.start!=null&&S.start>0){S.start=Math.max(60,Math.round(S.start/60)*60);toast('Подогнано: '+mmss(S.start));}else{S.start=startLen();S.race=null;S.dist=42;S.sv=0;toast('Старт: '+mmss(S.start));}},
+  line:()=>{if(!S.on||S.menu!==null)return;if(S.ends<2){S.ends++;if(S.ends===2){S.lineL=S.lineR=true;toast('Линия задана: концы по ветру');}else toast('Конец линии запомнен');}else toast('Ближний конец заменён');},
   menu:()=>{if(!S.on)return;if(S.menu===null){S.menu=0;render();return;}const r=MENU[S.menu];
     if(r.k==='exit'){S.menu=null;render();}
-    else if(r.k==='start'){S.start=300;S.race=null;S.dist=42;S.menu=null;toast('Старт: 5:00');}
-    else if(r.k==='sync'){S.menu=null;if(S.start!=null&&S.start>0){S.start=Math.max(60,Math.round(S.start/60)*60);toast('Подровнено: '+mmss(S.start));}else toast('Старт не запущен');}
-    else if(r.k==='lineL'||r.k==='lineR'){S[r.k]=true;S.menu=null;toast(r.k==='lineL'?'Левый конец запомнен':'Правый конец запомнен');}
-    else if(r.o){r.v=(r.v+1)%r.o.length;if(r.k==='light')S.light=r.v;else CFG[r.k]=r.o[r.v];render();}},
-  up:()=>{if(!S.on)return;if(S.menu!==null){S.menu=(S.menu+MENU.length-1)%MENU.length;render();}else{settleEnd();S.base[tack()]=S.hdg;toast('Базовый курс: запомнен');}},
-  dn:()=>{if(!S.on)return;if(S.menu!==null){S.menu=(S.menu+1)%MENU.length;render();}else toast('Полное обновление экранов');}};
-const LONG={up:[1000,()=>{if(!S.on||S.menu!==null)return false;S.light=(S.light+1)%5;MENU[4].v=S.light;toast('Подсветка: '+LIGHT[S.light]);}],
-  mode:[3000,()=>{if(!S.on||S.menu!==null)return false;S.heel=0;S.pitch=0;toast('Крен и дифферент: ноль');}],
+    else if(r.k==='nextM'){S.leg++;S.menu=null;toast('Знак '+(S.leg+1)+' — следующий');}
+    else if(r.k==='prevM'){S.leg=Math.max(1,S.leg-1);S.menu=null;toast('Знак '+(S.leg+1)+' — назад');}
+    else if(r.k==='base'){S.menu=null;settleEnd();S.base[tack()]=S.hdg;toast('Базовый курс: запомнен');}
+    else if(r.k==='zero'){S.menu=null;S.heel=0;S.pitch=0;toast('Крен и дифферент: ноль');}
+    else if(r.k==='full'){S.menu=null;toast('Полное обновление экранов');}
+    else if(r.o){r.v=(r.v+1)%r.o.length;if(r.k==='light')S.light=r.v;else if(CFG[r.k]!==undefined)CFG[r.k]=r.o[r.v];render();}}};
+const LONG={big:[1000,()=>{if(!S.on||S.menu!==null)return false;bigStep(-1);render();}],
+  small:[1000,()=>{if(!S.on||S.menu!==null)return false;smallStep(-1);render();}],
+  start:[3000,()=>{if(!S.on||S.menu!==null)return false;S.start=null;toast('Отсчёт сброшен');}],
+  line:[3000,()=>{if(!S.on||S.menu!==null)return false;S.ends=0;S.lineL=S.lineR=false;toast('Линия стёрта');}],
   menu:[3000,()=>{power();}]};
 function bind(el,k){let t=0,fired=false,down=false,bar=el.querySelector('i'),t0=0,raf=0;
   const prog=()=>{if(!down||!bar||!LONG[k])return;bar.style.width=Math.min(100,(performance.now()-t0)/LONG[k][0]*100)+'%';raf=requestAnimationFrame(prog);};
@@ -394,12 +442,12 @@ function bind(el,k){let t=0,fired=false,down=false,bar=el.querySelector('i'),t0=
 Object.keys(pk).forEach(k=>bind(pk[k],k));document.querySelectorAll('.key').forEach(b=>bind(b,b.dataset.k));
 // ---------- сценарии ----------
 let cur='norm';const SC=[
- ['norm','Норма',()=>{Object.assign(S,{boatV:12.7,resV:12.3,cur:1.8,noWind:false,noGps:false,noHdg:false,sig:1,d:3,hdg:177,awa:Math.abs(S.awa)||28.5,light:0,storm:null,p:1012.4,p3:-2.1,air:14.2,hum:78});S.base={'1':183,'-1':183};S.aim={'1':183,'-1':183};S.swing=0;settleEnd();MENU[4].v=0;}],
+ ['norm','Норма',()=>{Object.assign(S,{boatV:12.7,resV:12.3,cur:1.8,noWind:false,noGps:false,noHdg:false,sig:1,d:3,hdg:177,awa:Math.abs(S.awa)||28.5,light:0,storm:null,p:1012.4,p3:-2.1,air:14.2,hum:78});S.base={'1':183,'-1':183};S.aim={'1':183,'-1':183};S.swing=0;settleEnd();MENU[MI('light')].v=0;}],
  ['up','Увал +6°',()=>{S.hdg=(wrap(S.base[tack()]-tack()*6)+360)%360;}],
  ['dn','Привод −4°',()=>{S.hdg=(wrap(S.base[tack()]+tack()*4)+360)%360;}],
  ['lift','Отход',()=>{S.sig=1;S.d=4;}],['head','Заход',()=>{S.sig=-1;S.d=5;}],['flat','Ветер ровный',()=>{S.sig=0;S.d=0;}],
- ['start','Старт 5:00',()=>{S.start=300;S.race=null;S.dist=42;S.lineL=true;S.lineR=true;}],
- ['storm','Гроза 18 км',()=>{S.storm={km:18,was:26,n:7};}],['pfall','Давление падает',()=>{S.p=1004.6;S.p3=-4.2;S.mode=4;}],
+ ['start','Старт 5:00',()=>{S.start=300;S.race=null;S.dist=42;S.lineL=true;S.lineR=true;S.ends=2;S.sv=0;}],['mark','Знак пройден',()=>{S.leg++;S.bi=ORDER.indexOf(6);S.mode=6;toast('Знак пройден: дальше знак '+(S.leg+1));}],
+ ['storm','Гроза 18 км',()=>{S.storm={km:18,was:26,n:7};}],['pfall','Давление падает',()=>{S.p=1004.6;S.p3=-4.2;S.mode=4;S.bi=ORDER.indexOf(4);}],
  ['low','Разряд',()=>{S.boatV=11.9;}],['chg','Зарядка',()=>{S.boatV=13.8;S.cur=-6.5;}],['res','На резерве',()=>{S.boatV=10.7;}],['nores','Без резерва',()=>{S.resV=null;S.boatV=12.7;}],
  ['nw','Нет мачты',()=>{S.noWind=true;S.noGps=false;S.noHdg=false;}],['ng','Нет GPS',()=>{S.noGps=true;S.noWind=false;S.noHdg=false;}],['nh','Нет компаса',()=>{S.noHdg=true;S.noWind=false;S.noGps=false;}]
 ];
@@ -412,21 +460,26 @@ function syncSl(){SL.forEach(a=>{const r=inp[a[0]];r.i.value=S[a[0]];r.o.textCon
 const B=Object.assign({aws:17.4,awa:28.5,hdg:177,sog:6.1,heel:-14,pitch:1.2,sig:1,d:3,dev:6,cfg:CFG,mode:0,start:null,race:754,lineL:true,lineR:true,dist:42,fav:12,skew:8,prev:{dur:252,hdg:181,sog:6.2,vmg:4.8},cur:1.8,p:1012.4,p3:-2.1,air:14.2,hum:78,storm:null},pw(12.7,12.3));
 function fig(box,cap,txt,o,small,night){const f=document.createElement('figure');if(night)f.className='night';const c=document.createElement('canvas');c.className=small?'s':'p';c.width=small?800:960;c.height=small?600:1600;c.setAttribute('role','img');c.setAttribute('aria-label',cap);f.appendChild(c);const fc=document.createElement('figcaption');fc.innerHTML='<b>'+cap+'</b>'+(txt?'. '+txt:'');f.appendChild(fc);$(box).appendChild(f);const x=c.getContext('2d');x.scale(2,2);(small?drawSmall:drawMain)(x,Object.assign({},B,o));}
 function gallery(){document.querySelectorAll('.gal').forEach(g=>g.innerHTML='');
+fig('g1','Табло','10 величин: слева лодка, справа ветер, только цифры',{mode:5});
 fig('g1','Основной','курс, ветер, скорость, VMG, крен, дифферент, сдвиг',{mode:0});
 fig('g1','Ветер','роза на полэкрана, истинный и вымпельный',{mode:1});
 fig('g1','Тактика','направление ветра за 10 минут, сдвиг, VMG',{mode:2});
-fig('g1','Лодка','крен и дифферент крупно',{mode:3});
+fig('g1','Крен и дифферент','крупно',{mode:3});
 fig('g1','Погода','давление и его ход за сутки, воздух на топе, гроза',{mode:4});
-fig('g1','Табло','10 величин: слева лодка, справа ветер, только цифры',{mode:5});
-fig('gS','Старт','отсчёт, расстояние до линии, когда будем на ней, выгодный конец',{start:222,race:null},true);
-fig('gS','Старт, линия не задана','концы линии запоминаются из меню',{start:184,race:null,lineR:false},true);
-fig('gS','Гонка','после старта: прошлый галс и питание',{},true);
-fig('gS','Гонка, гроза рядом','строка грозы появляется при молниях ближе 40 км',{storm:{km:18,was:26,n:7}},true);
+fig('g1','Карта','знаки дистанции, генеральный курс, лодка, линия до знака, отклонение в метрах',{mode:6});
+fig('gS','Старт','отсчёт, расстояние до линии, когда будем на ней, выгодный конец',{start:222,race:null,sv:0,ends:2},true);
+fig('gS','Старт, один конец линии','второй конец — ЛИНИЯ у другого конца',{start:184,race:null,sv:0,ends:1},true);
+fig('gS','Старт, отсчёт не запущен','СТАРТ — пуск; питание',{start:null,race:null,sv:0},true);
+fig('gS','Пары 1/5','скорость и вымпельный ветер',{sv:1,sp:0},true);
+fig('gS','Пары 3/5','угол к ветру и истинный ветер',{sv:1,sp:2},true);
+fig('gS','Пары во время отсчёта','отсчёт виден в строке состояния',{sv:1,sp:4,start:131,race:null},true);
+fig('gS','Курс к N','курс по компасу от севера крупно',{sv:2},true);
+fig('gS','Погода','давление, воздух на топе, гроза',{sv:3,storm:{km:18,was:26,n:7}},true);
 fig('g2','Увал','+6° от базового',{dev:6,hdg:177});fig('g2','Привод','−4° от базового',{dev:-4,hdg:187});fig('g2','На базовом курсе','0°, сразу после того как курс запомнен',{dev:0,hdg:183});fig('g2','Ложимся на курс','вместо отклонения «…», курс ещё не запомнен',{settling:true,hdg:96});
 fig('g3','Отход','светодиод мигает красным',{mode:2,sig:1,d:4});fig('g3','Заход','светодиод горит зелёным',{mode:2,sig:-1,d:5});fig('g3','Ветер ровный','светодиод погашен',{mode:2,sig:0,d:0});
 fig('gW','Давление падает','−2,1 гПа за 3 часа',{mode:4});fig('gW','Давление падает быстро','предупреждение в строке состояния',{mode:4,p:1004.6,p3:-4.2});fig('gW','Гроза приближается','18 км, 10 минут назад было 26',{mode:4,storm:{km:18,was:26,n:7}});fig('gW','Гроза на «Табло»','предупреждение видно на любом виде',{mode:5,storm:{km:12,was:18,n:11}});
 fig('g4','Норма','лодка 12,7 В, ток 1,8 А, резерв 12,3 В',pw(12.7,12.3),true);fig('g4','Разряд','лодка 11,9 В',Object.assign(pw(11.9,12.3),{cur:2.1}),true);fig('g4','Зарядка','работает двигатель или зарядное',Object.assign(pw(13.8,12.3),{cur:-6.5}),true);fig('g4','На резерве','лодка 10,7 В',pw(10.7,12.3),true);fig('g4','Резерв не подключён','показывается только лодка',pw(12.7,null),true);
-fig('g5','Меню','▲ ▼ выбрать, МЕНЮ выполнить или изменить',{menu:{i:0,rows:rows(12.7,12.3,1.8)}});fig('g5','Меню, строка «Питание»','только просмотр',{menu:{i:9,rows:rows(12.7,12.3,1.8)}});fig('g5','Загрузка','при включении, несколько секунд',{boot:BOOT});fig('g5','Подсказка','коротко после нажатия кнопки',{toast:'Курс запомнен: 96°'});fig('g5','Выключен','кадр остаётся на e-paper без питания',{off:true});fig('g5','Ночь','подсветка красная',{mode:5},false,true);
+fig('g5','Меню','БОЛЬШОЙ — ниже, МАЛЫЙ — выше, МЕНЮ — выполнить или изменить',{menu:{i:0,rows:rows(12.7,12.3,1.8)}});fig('g5','Меню, строка «Питание»','только просмотр',{menu:{i:13,rows:rows(12.7,12.3,1.8)}});fig('g5','Загрузка','при включении, несколько секунд',{boot:BOOT});fig('g5','Подсказка','коротко после нажатия кнопки',{toast:'Курс запомнен: 96°'});fig('g5','Выключен','кадр остаётся на e-paper без питания',{off:true});fig('g5','Ночь','подсветка красная',{mode:5},false,true);
 fig('g6','Нет данных с мачты','нет ветра, сдвига и VMG; курс, скорость и крен работают',{noWind:true});fig('g6','Нет GPS','нет скорости, VMG и истинного ветра',{noGps:true});fig('g6','Нет компаса','нет курса, отклонения, направления и сдвига ветра',{noHdg:true});fig('g6','Нет мачты, «Тактика»','вместо графика надпись',{mode:2,noWind:true});fig('g6','Нет GPS, «Табло»','вымпельный ветер и курс работают',{mode:5,noGps:true});}
 // ---------- тестовый стенд: условия, гонка, расстояние, освещение ----------
 const WX=[['calm','Штиль, 5 уз',{aws:5,awa:48,sog:2.8,hl:5,pi:0.4}],['mid','Умеренно, 12 уз',{aws:12,awa:34,sog:5.4,hl:14,pi:1}],['fresh','Свежо, 20 уз',{aws:20,awa:29,sog:6.8,hl:22,pi:1.6}],['squall','Шквал, 30 уз',{aws:30,awa:32,sog:7.4,hl:34,pi:2.6}],['reach','Галфвинд',{aws:15,awa:90,sog:8.2,hl:18,pi:0.6}],['broad','Бакштаг',{aws:13,awa:135,sog:9.6,hl:8,pi:-1.4}],['dw','Фордевинд',{aws:9,awa:172,sog:6.4,hl:3,pi:-1}]];
@@ -443,7 +496,7 @@ let raceT=0,rt=0;const rn=a=>(Math.random()-0.5)*2*a;
 function turn(){const prev=tack(),n=(S.aim[prev]+(prev>0?84:-84)+360)%360;S.prev={dur:120+Math.round(Math.random()*240),hdg:S.base[prev],sog:S.sog+rn(0.3),vmg:Math.max(0,S.sog*0.78+rn(0.3))};S.awa=-S.awa;S.heel=-S.heel;const s=tack();S.aim[s]=n;S.swing=-s*12;S.hdg=(n+S.swing+360)%360;settleStart();S.menu=null;toast('Поворот: ждём курс',1800);}
 function settleTick(){if(!sett||!S.on||S.noHdg)return;if(!raceT){S.swing*=0.72;S.hdg=(S.aim[tack()]+S.swing+rn(1)+360)%360;}sett.t++;if(sett.t>SETTLE.skip)sett.buf.push(S.hdg);const r=sett.buf.slice(-SETTLE.win);let src=null;if(r.length>=SETTLE.win&&spreadHdg(r)<=SETTLE.band)src=r;else if(sett.t>=SETTLE.max&&sett.buf.length)src=sett.buf.slice(-SETTLE.fall);if(src){S.base[tack()]=meanHdg(src);settleEnd();toast('Курс запомнен: '+Math.round(S.base[tack()])+'°',2200);}else render();}
 // часы прибора: отсчёт до старта и время гонки идут всегда, даже без имитации
-function clock(){if(!S.on)return;if(S.start!=null&&S.start>0){S.start--;S.dist=Math.max(0,S.dist-S.sog*0.5144*0.55);if(S.start===0){S.start=null;S.race=0;toast('СТАРТ',2000);return;}render();}else if(S.race!=null){S.race++;if(!raceT&&!sett)render();}}
+function clock(){if(!S.on)return;if(S.start!=null&&S.start>0){S.start--;S.dist=Math.max(0,S.dist-S.sog*0.5144*0.55);if(S.start===0){S.start=null;S.race=0;S.sv=1;S.sp=0;toast('СТАРТ',2000);return;}render();}else if(S.race!=null){S.race++;if(!raceT&&!sett)render();}}
 setInterval(()=>{clock();settleTick();},1000);
 function step(){rt++;const w=W0(),s=tack(),b=S.aim[s];
   S.aws=Math.max(0,w.aws+2*Math.sin(rt/5)+rn(0.6));S.awa=s*(w.awa+3*Math.sin(rt/7)+rn(1));S.sog=Math.max(0,w.sog+0.5*Math.sin(rt/6)+rn(0.15));
