@@ -166,7 +166,7 @@ ul.notes{margin:0;padding-left:18px;display:grid;gap:8px;max-width:80ch}
       <ul class="notes">
         <li><b>Из чего складывается глубина</b> (от лица внутрь): окно 3 мм, экран 3,2 мм, зазор под шлейф 3 мм, плата 1,6 мм, модули в гнёздах до 17,2 мм (LM2596), задняя стенка 3 мм — около 31 мм. Клин даёт 35 мм слева и 50 мм справа.</li>
         <li><b>Самые высокие модули — в самой глубокой части:</b> LM2596 и TPS63020 стоят на плате справа, если смотреть спереди. Подробно — разрез на странице «Платы».</li>
-        <li><b>Паз салазок напечатан в задней стенке:</b> салазки не добавляют толщины.</li>
+        <li><b>Салазки лежат в кармане задней крышки:</b> блок не становится толще. Ниша под вилку SP13 — выше платы, гнездо SP13 в салазках смотрит в отверстие Ø25 в стенке рубки за блоком.</li>
         <li><b>Компас и GPS</b> — на полках у верхней стенки: GPS видит небо сквозь пластик, компас далеко от катушек преобразователей.</li>
       </ul>
     </div>
@@ -181,7 +181,7 @@ ul.notes{margin:0;padding-left:18px;display:grid;gap:8px;max-width:80ch}
     <div id="c3d" class="draw" style="padding:0;overflow:hidden;border-radius:6px"></div>
     <p class="read" id="c3txt"></p>
     <p class="small">Вращать — мышью или пальцем, колесо — ближе. Лицевая панель F1C плоская, 212 × 178 мм. Клиновидная задняя стенка увеличивает глубину примерно с 35 мм слева до 50 мм справа и опирается на скругление рубки.</p>
-    <p class="small">Снизу и по бокам блока отверстий нет. USB-C и карта памяти — внутри, под задней крышкой: прошивка и журналы гонок идут по Wi-Fi, кабель нужен только при ремонте. Тумблера нет: МЕНЮ, нажатая 3 секунды, включает и выключает прибор.</p>
+    <p class="small">Карта памяти вставляется снаружи — в паз нижней стенки под клапаном чехла. USB-C — внутри: прошивка и журналы гонок идут по Wi-Fi, кабель нужен только при ремонте. Тумблера нет: МЕНЮ, нажатая 3 секунды, включает и выключает прибор.</p>
   </section>
 
   <section class="sheet" aria-labelledby="hp">
@@ -189,8 +189,8 @@ ul.notes{margin:0;padding-left:18px;display:grid;gap:8px;max-width:80ch}
     <div class="tbl"><table id="bed"></table></div>
     <ul class="notes">
       <li><b>Материал — ASA:</b> не боится солнца и солёной воды, держит до 90–100 °C. PETG на солнце желтеет и ползёт, PLA размягчается около 55 °C.</li>
-      <li><b>Герметичность как у IP67 без покупной коробки:</b> передняя рамка и корпус стягиваются винтами М3 в латунные вставки через уплотнитель — шнур из силиконовой резины в канавке или напечатанная прокладка из TPU. Стенки 3 мм, 4–5 периметров, без щелей между слоями.</li>
-      <li><b>Окно перед экранами:</b> поликарбонат или оргстекло 3 мм, вырезанное по размеру, на уплотнителе. Сверху — плёнка от ультрафиолета: e-paper не любит прямой ультрафиолет.</li>
+      <li><b>Герметичность как у IP67 без покупной коробки:</b> две детали — лицевая коробка (лицо и стенки одной деталью) и задняя крышка; 9 винтов М3 сзади в латунные вставки, шнур из силиконовой резины Ø2 в канавке выступа по торцу стенок. На лице швов нет. Поверх стенок — чехол из TPU 1–1,5 мм, он закрывает шов крышки и паз карты. Стенки 3 мм, 4–5 периметров, без щелей между слоями.</li>
+      <li><b>Защитные окна перед экранами:</b> два листа поликарбоната 3 мм, по одному на экран, в уступах лица изнутри, на валике герметика; их прижимают экраны и держатель экранов. Сверху — плёнка от ультрафиолета: e-paper не любит прямой ультрафиолет.</li>
       <li><b>Если корпус больше стола принтера:</b> печатаем из двух половин и соединяем на шпильках и клею, а снаружи шов закрывает рамка. Это надёжно, но добавляет один шов, который нужно уплотнить.</li>
       <li><b>Клапан выравнивания давления</b> для датчика BME280 — в задней стенке, в нише салазок: туда не бьют брызги. Разъёмов снизу больше нет: кабель уходит назад, в переборку.</li>
     </ul>
@@ -202,7 +202,7 @@ ul.notes{margin:0;padding-left:18px;display:grid;gap:8px;max-width:80ch}
       <li><b>Купить экран 7,5″</b> — голую панель 800 × 480 класса GDEY075T7 / GDEM075T42: её шлейф входит прямо в плату (решение 22.11). Сверить сторону контактов шлейфа и номиналы преобразователя по паспорту.</li>
       <li><b>Кнопки:</b> четыре колпачка Ø14 под экраном 4,2″, под ними — кнопки 12 × 12 с высоким толкателем на лицевой стороне платы; колпачки уплотнены в панели.</li>
       <li><b>Картонный макет с клином</b> — плоский фасад 212 × 178 и клиновидная спина 35→50 мм — приложить к рубке; затем пробная рамка: зазор от модуля до стенки 0,9 мм.</li>
-      <li><b>Модель корпуса для печати:</b> лицевая рамка, корпус, полки компаса и GPS, салазки. Какой стол принтера нужен — в таблице «Печать корпуса»; на меньшем столе корпус собирается из двух половин.</li>
+      <li><b>Модель корпуса для печати:</b> лицевая коробка с полками компаса и GPS, задняя крышка с карманом под салазки, держатель экранов, салазки, чехол из TPU. Какой стол принтера нужен — в таблице «Печать корпуса»; на меньшем столе корпус собирается из двух половин.</li>
     </ul>
   </section>
 </div>
@@ -384,13 +384,13 @@ if(document.fonts&&document.fonts.ready)document.fonts.ready.then(()=>{measure()
   const gel=M(0xdfe3e6,{roughness:0.5,side:THREE.DoubleSide}),dark=M(0x23272c),cop=M(0xc9a64a,{metalness:0.6,roughness:0.35}),steel=M(0x9aa2aa,{metalness:0.6,roughness:0.35}),cab=M(0x2b2f35);
   // переборка: кормовая стенка рубки, 10 мм; отверстие Ø25 за блоком
   const shp=new THREE.Shape();shp.moveTo(-200,-190);shp.lineTo(200,-190);shp.lineTo(200,170);shp.lineTo(-200,170);shp.lineTo(-200,-190);
-  const HY=-50,hole=new THREE.Path();hole.absarc(0,HY,12.5,0,Math.PI*2,true);shp.holes.push(hole);
+  /*r3-23.11*/const HY=30,SX=29,hole=new THREE.Path();hole.absarc(SX,HY,12.5,0,Math.PI*2,true);shp.holes.push(hole);
   const bg=new THREE.ExtrudeGeometry(shp,{depth:10,bevelEnabled:false,curveSegments:24});bg.translate(0,0,-10);S.add(new THREE.Mesh(bg,gel));
   // салазки под плоской частью, правый край опирается на клиновидную спину
-  const dk=M(0x3a4048);S.add(bx(170,160,5,dk,-15,-10,2.5));
-  [-1,1].forEach(s=>{S.add(bx(8,150,6,dk,-15+s*75,-10,8));S.add(bx(4,150,3,dk,-15+s*70,-10,12.5));});
-  [[-80,55],[50,55],[-80,-70],[50,-70]].forEach(p=>S.add(cyl(3.5,2,steel,p[0],p[1],5.6)));
-  const latch=bx(30,8,9,M(0xd9a441),0,-91,9.5);S.add(latch);   // зуб защёлки на пружине
+  const dk=M(0x3a4048);S.add(bx(156,144,5,dk,-8,-4,2.5));
+  [-80,60].forEach(x=>{S.add(bx(8,100,6,dk,x,-10,8));S.add(bx(12,100,2,dk,x,-10,12));});
+  [[-70,50],[50,50],[-70,-58],[50,-58]].forEach(p=>S.add(cyl(3.5,2,steel,p[0],p[1],5.6)));
+  const latch=bx(24,6,5,M(0xd9a441),0,-67,7.5);S.add(latch);   // зуб защёлки на пружине
   // единый корпус F1C: фасад плоский, клиновидная спина плавно увеличивает глубину с 35 до 50 мм
   const U=new THREE.Group();S.add(U);
   {const w=W/2,h=H/2,backL=0,backR=-EX,pos=new Float32Array([-w,-h,D,w,-h,D,w,h,D,-w,h,D,-w,-h,backL,w,-h,backR,w,h,backR,-w,h,backL]),ix=[0,1,2,0,2,3,5,4,7,5,7,6,4,0,3,4,3,7,1,5,6,1,6,2,3,2,6,3,6,7,4,5,1,4,1,0],g=new THREE.BufferGeometry();
@@ -399,16 +399,16 @@ if(document.fonts&&document.fonts.ready)document.fonts.ready.then(()=>{measure()
   U.add(bx(111.2,170.2,1.2,dark,-46.5,0,D-3));U.add(bx(97.9,163.2,.25,M(0xe9ece6),-46.5,0,D-2.25));
   U.add(bx(92,89.7,1.2,dark,56.1,40.25,D-3));U.add(bx(84.8,63.6,.25,M(0xe9ece6),56.1,40.25,D-2.25));
   [22.1,45.1,68.1,91.1].forEach(x=>U.add(cyl(7,4,M(0x8f99a3),x,-73,D-1)));
-  U.add(bx(100,126,1.6,M(0x2e7d4f,{transparent:true,opacity:0.7}),-30,0,14));
+  U.add(bx(180,78,1.6,M(0x2e7d4f,{transparent:true,opacity:0.7}),12,-46,25));   // плата v5 в нижней части
   // ниша в спине блока под вилку SP13: 46 × 80 × 22, открыта к переборке
-  U.add(bx(46,80,1.5,M(0x5a626b,{transparent:true,opacity:0.55}),0,HY,22.5));
-  [-1,1].forEach(s=>U.add(bx(1.5,80,22,M(0x5a626b,{transparent:true,opacity:0.55}),s*23,HY,11)));
+  U.add(bx(46,60,1.5,M(0x5a626b,{transparent:true,opacity:0.55}),SX,HY,22.5));
+  [-1,1].forEach(s=>U.add(bx(1.5,60,22,M(0x5a626b,{transparent:true,opacity:0.55}),SX+s*23,HY,11)));
   const relBtn=bx(26,4,12,M(0xd62828),0,-H/2-1.5,20);U.add(relBtn);   // клавиша защёлки на нижней грани
   // ---- R3: гнездо SP13 в салазках, вилка на коротком хвосте из спины блока
   const R3=new THREE.Group();S.add(R3);
-  const sock=cyl(11,22,M(0x8a9099,{metalness:0.5}),0,HY,-4);R3.add(sock);   // гнездо на панель: корпус сквозь Ø25 в каюту, фланец на плите
-  R3.add(cyl(14,2.5,steel,0,HY,6));
-  R3.add(tube([V(0,HY,-16),V(0,HY,-40),V(30,HY-60,-90),V(40,-260,-150)],4,cab));   // кабель от гнезда — в каюту к резервному блоку
+  const sock=cyl(11,22,M(0x8a9099,{metalness:0.5}),SX,HY,-4);R3.add(sock);   // гнездо на панель: корпус сквозь Ø25 в каюту, фланец на плите
+  R3.add(cyl(14,2.5,steel,SX,HY,6));
+  R3.add(tube([V(SX,HY,-16),V(SX,HY,-40),V(30,HY-60,-90),V(40,-260,-150)],4,cab));   // кабель от гнезда — в каюту к резервному блоку
   const plug=new THREE.Group();R3.add(plug);plug.add(cyl(11,26,dark,0,0,0));plug.add(cyl(12.5,8,M(0x3a3f45),0,0,-9));
   let tail3=null;
   // ---- R1: хвост сквозь переборку, разъём SP13 в каюте
@@ -416,34 +416,34 @@ if(document.fonts&&document.fonts.ready)document.fonts.ready.then(()=>{measure()
   const plugA=new THREE.Group(),plugB=new THREE.Group();R1.add(plugA,plugB);
   plugA.add(new THREE.Mesh(new THREE.CylinderGeometry(11,11,34,20),dark));plugB.add(new THREE.Mesh(new THREE.CylinderGeometry(11,11,30,20),M(0x8a9099,{metalness:0.5})));
   const PA0=V(60,-170,-110),PB0=V(60,-170+32,-110);plugA.position.copy(PA0);plugB.position.copy(PB0);
-  const grommet=new THREE.Mesh(new THREE.TorusGeometry(13,3,8,24),dark);grommet.position.set(0,HY,-10);R1.add(grommet);
+  const grommet=new THREE.Mesh(new THREE.TorusGeometry(13,3,8,24),dark);grommet.position.set(SX,HY,-10);R1.add(grommet);
   R1.add(tube([V(60,-185,-110),V(60,-230,-110),V(40,-300,-160)],4,cab));
   let tail=null;
   // ---- R2: контакты в салазках, кабель от них сразу в каюту
   const R2=new THREE.Group();S.add(R2);
-  R2.add(bx(44,14,8,cab,0,HY,9));for(let i=0;i<8;i++)R2.add(bx(3,3,2,cop,-17.5+i*5,HY,14));
-  const pads=new THREE.Group();U.add(pads);for(let i=0;i<8;i++)pads.add(bx(3.5,5,0.6,cop,-17.5+i*5,HY,0.4));
-  R2.add(tube([V(0,HY,-2),V(0,HY,-30),V(0,HY-40,-60),V(30,-220,-120)],4,cab));
+  R2.add(bx(44,14,8,cab,SX,HY,9));for(let i=0;i<8;i++)R2.add(bx(3,3,2,cop,SX-17.5+i*5,HY,14));
+  const pads=new THREE.Group();U.add(pads);for(let i=0;i<8;i++)pads.add(bx(3.5,5,0.6,cop,SX-17.5+i*5,HY,0.4));
+  R2.add(tube([V(SX,HY,-2),V(SX,HY,-30),V(SX,HY-40,-60),V(30,-220,-120)],4,cab));
   // подписи
   const L=new THREE.Group();S.add(L);
   const L1=[lbl('переборка 10 мм',V(-190,150,-5)),lbl('каюта',V(80,90,-170)),lbl('кокпит',V(80,120,110)),lbl('салазки: направляющие и защёлка',V(90,-105,12))];
-  const LR3=[lbl('гнездо SP13 в салазках',V(16,HY-14,8)),lbl('вилка SP13 на хвосте 12 см, в нише спины',V(28,HY+30,24)),lbl('клавиша защёлки снизу',V(16,-H/2-12,24)),lbl('к резервному блоку',V(45,-260,-150))];
-  const LR1=[lbl('отверстие Ø25 за блоком',V(14,HY-14,-12)),lbl('разъём SP13 — в каюте',V(75,-150,-110)),lbl('к резервному блоку',V(45,-280,-150))];
-  const LR2=[lbl('контакты в салазках',V(26,HY,16)),lbl('кабель сразу в каюту',V(40,-230,-150))];
+  const LR3=[lbl('гнездо SP13 в салазках',V(SX+16,HY-14,8)),lbl('вилка SP13 на хвосте 12 см, в нише спины',V(SX+28,HY+30,24)),lbl('клавиша защёлки снизу',V(16,-H/2-12,24)),lbl('к резервному блоку',V(45,-260,-150))];
+  const LR1=[lbl('отверстие Ø25 за блоком',V(SX+14,HY-14,-12)),lbl('разъём SP13 — в каюте',V(75,-150,-110)),lbl('к резервному блоку',V(45,-280,-150))];
+  const LR2=[lbl('контакты в салазках',V(SX+26,HY,16)),lbl('кабель сразу в каюту',V(40,-230,-150))];
   [...L1,...LR3,...LR1,...LR2].forEach(s=>L.add(s));
   // состояние
   const st={v:'r3',off:0,goal:0};
-  function tailPath(){const t=st.off,ub=V(0,HY+60*Math.min(1,t*2),60*Math.max(0,t*2-1)+0.5),pa=plugA.position;
-    const mid=t<0.01?V(0,HY,-40):V(0,HY,-14);
-    return [V(ub.x,ub.y,ub.z+2),V(0,ub.y,ub.z-2>0?ub.z-2:-1),V(0,HY,-6),mid,V(pa.x,pa.y+30,pa.z),V(pa.x,pa.y+17,pa.z)];}
+  function tailPath(){const t=st.off,ub=V(SX,HY+60*Math.min(1,t*2),60*Math.max(0,t*2-1)+0.5),pa=plugA.position;
+    const mid=t<0.01?V(SX,HY,-40):V(SX,HY,-14);
+    return [V(ub.x,ub.y,ub.z+2),V(SX,ub.y,ub.z-2>0?ub.z-2:-1),V(SX,HY,-6),mid,V(pa.x,pa.y+30,pa.z),V(pa.x,pa.y+17,pa.z)];}
   function update(){const t=st.off,v=st.v;
     if(v==='r3'){// R3: клавиша → вверх на 30 мм (зуб выходит из паза) → от стены на 90 мм (хвост 12 см) → вилка снимается с гнезда
       const a=Math.min(1,t*3),b=Math.max(0,Math.min(1,t*3-1)),c=Math.max(0,t*3-2);
-      latch.position.y=-91-6*Math.min(1,t*6);relBtn.position.y=-H/2-1.5+2*Math.min(1,t*6);
-      U.position.set(0,30*a,90*b);plug.position.set(0,HY,14+40*c);
+      latch.position.z=7.5-4*Math.min(1,t*6);relBtn.position.y=-H/2-1.5+2*Math.min(1,t*6);
+      U.position.set(0,30*a,90*b);plug.position.set(SX,HY,14+40*c);
       if(tail3){R3.remove(tail3);tail3.geometry.dispose();}
       const ub=U.position,pp=plug.position;tail3=tube([V(pp.x,pp.y,pp.z+13),V(pp.x,pp.y,pp.z+18),V(ub.x+4,ub.y+HY+20,ub.z+16),V(ub.x+10,ub.y+HY+38,ub.z+20)],3.2,cab);R3.add(tail3);}
-    else{latch.position.y=-91;relBtn.position.y=-H/2-1.5;U.position.set(0,60*Math.min(1,t*2),60*Math.max(0,t*2-1));}
+    else{latch.position.z=7.5;relBtn.position.y=-H/2-1.5;U.position.set(0,60*Math.min(1,t*2),60*Math.max(0,t*2-1));}
     R3.visible=v==='r3';R1.visible=v==='r1';R2.visible=v==='r2';pads.visible=v==='r2';LR3.forEach(s=>s.visible=v==='r3');LR1.forEach(s=>s.visible=v==='r1');LR2.forEach(s=>s.visible=v==='r2');
     if(v==='r1'){plugA.position.copy(PA0);plugB.position.copy(PB0).add(V(0,40*Math.min(1,t*3),0));
       const pa=plugA.position.clone().lerp(V(0,-40,-30),Math.max(0,t*1.5-0.5));plugA.position.copy(pa);
