@@ -146,7 +146,7 @@ code{font-family:var(--f-mono);font-size:12px}
         <li><b>Модули — вторым этажом в цанговых гнёздах:</b> ESP32-S3 N16R8 антенной вверх (прижимная планка на 2 винтах), TPS63020, LM2596, ADM2483 на переходнике. Снимаются рукой.</li>
         <li><b>Мачта развязана:</b> ADM2483 (2500 В) и B0505S (1500 В), своя земля в середине платы.</li>
         <li><b>Расширитель PCA9555</b> даёт включение и прерывание шести портов датчиков и кнопки РЕЖИМ, ▲, ▼.</li>
-        <li><b>Плата будет доработана (v6), разводка ниже — v5:</b> гнездо micro-SD встанет на нижний край платы напротив паза в нижней стенке; исправить два резистора с одинаковым обозначением RLG. ESP32-S3 остаётся на месте (решение 23.11). Зона кнопок — после проекта навигации.</li>
+        <li><b>Плата будет доработана (v6), разводка ниже — v5:</b> гнездо micro-SD встанет на нижний край платы на место разъёма JS, напротив паза в нижней стенке лицевой коробки; исправить два резистора с одинаковым обозначением RLG. ESP32-S3 остаётся на месте (решение 23.11). Зона кнопок — после проекта навигации.</li>
         <li>Раскладка, дорожки, проверка разводки, ножки и жгуты — на странице <a href="../boards/">«Платы прибора М5»</a>.</li>
       </ul>
     </div>
@@ -179,7 +179,7 @@ code{font-family:var(--f-mono);font-size:12px}
     <div class="card">
       <h3>Карта памяти <button type="button" data-go="main">Показать</button></h3>
       <ul>
-        <li><b>Гнездо micro-SD на плате, карта вставляется снаружи</b> (по замечанию владельца 23.11, плата v6): паз 13 × 2 мм в нижней стенке напротив края платы, сверху — клапан чехла из TPU. Гнездо нажимное: нажать на карту ногтем или спичкой — выскочит. Паз смотрит вниз — вода в него не стекает. Отдельный модуль на жгуте и разъём «КАРТА SD» уходят.</li>
+        <li><b>Гнездо micro-SD на плате, карта вставляется снаружи</b> (по замечанию владельца 23.11, плата v6): паз 13 × 2 мм в нижней стенке лицевой коробки, под левой половиной экрана 7,5″, напротив края платы; сверху — клапан чехла из TPU. Гнездо встаёт на место разъёма JS платы v5, под ESP32-S3: правее за платой стоят кнопки 12 × 12, их выводы проходят сквозь плату. Гнездо нажимное: нажать на карту ногтем или спичкой — выскочит. Паз смотрит вниз — вода в него не стекает. Отдельный модуль на жгуте и разъём «КАРТА SD» уходят.</li>
         <li><b>Зачем:</b> журнал гонки — ветер, курс, крен, скорость и место 10 раз в секунду, каждая гонка отдельным файлом, около 20 МБ за день. Разобрать на берегу, где потеряли.</li>
         <li>Запись сбрасывается раз в секунду: при пропаже питания теряется не больше секунды. Файлы можно скачать по Wi-Fi.</li>
       </ul>
@@ -1185,6 +1185,7 @@ const Xi=x=>x-IW/2,Yi=y=>y-IH/2;            // внутренние коорди
 // ---------- корпус: вариант А (23.11) — лицевая коробка и задняя крышка ----------
 // Задняя плоскость наклонена: глубина 35 мм слева, 50 справа. Крышка и выступ под шнур лежат в этой плоскости (поворот вокруг Y на PHI).
 const caseM=M(0x2a3138,{roughness:0.6,transparent:true,opacity:1});
+const SD_AT=V(-64,-OH/2,FACE-12.5);   // паз карты: напротив гнезда на нижнем краю платы v6 (место разъёма JS платы v5)
 const PHI=Math.atan(15/OW),BOSS=[[-99.5,-82.5],[99.5,-82.5],[99.5,82.5],[-99.5,82.5],[-50,82.5],[50,82.5],[-50,-82.5],[50,-82.5],[-99.5,0],[99.5,0]];
 const inPlane=(g,z)=>{g.rotation.y=PHI;g.position.set(0,0,backZ(0)+(z||0));return g;};   // группа в наклонной задней плоскости
 const ring=(ox,oy,ix,iy,d,m)=>{const sh=new T.Shape();sh.moveTo(-ox,-oy);sh.lineTo(ox,-oy);sh.lineTo(ox,oy);sh.lineTo(-ox,oy);sh.lineTo(-ox,-oy);const p=new T.Path();p.moveTo(-ix,-iy);p.lineTo(ix,-iy);p.lineTo(ix,iy);p.lineTo(-ix,iy);p.lineTo(-ix,-iy);sh.holes.push(p);return new T.Mesh(new T.ExtrudeGeometry(sh,{depth:d,bevelEnabled:false}),m);};
@@ -1199,8 +1200,9 @@ const BOXL='лицевая коробка из ASA — лицо и 4 стенк�
   [[125.1,13,7],[148.1,13,7],[171.1,13,7],[194.1,13,7],[127.1,52,4.5],[191.1,52,2.6]].forEach(c=>{const p=new T.Path();p.absarc(Xi(c[0]),Yi(c[1]),c[2],0,Math.PI*2,true);sh.holes.push(p);});
   const face=new T.Mesh(new T.ExtrudeGeometry(sh,{depth:2,bevelEnabled:false}),caseM);face.position.z=FACE;g.add(face);
   // стенки: левая и правая — прямоугольники, верх и низ — трапеции по клину
-  const wallTB=y=>{const q=new T.Shape();q.moveTo(-w,zl);q.lineTo(w,zr);q.lineTo(w,FACE);q.lineTo(-w,FACE);q.lineTo(-w,zl);const m=new T.Mesh(new T.ExtrudeGeometry(q,{depth:WALL,bevelEnabled:false}),caseM);m.rotation.x=Math.PI/2;m.position.y=y;return m;};
-  g.add(wallTB(h),wallTB(-h+WALL));
+  const wallTB=(y,slot)=>{const q=new T.Shape();q.moveTo(-w,zl);q.lineTo(w,zr);q.lineTo(w,FACE);q.lineTo(-w,FACE);q.lineTo(-w,zl);
+    if(slot){const p=new T.Path();p.moveTo(SD_AT.x-6.5,SD_AT.z-1);p.lineTo(SD_AT.x+6.5,SD_AT.z-1);p.lineTo(SD_AT.x+6.5,SD_AT.z+1);p.lineTo(SD_AT.x-6.5,SD_AT.z+1);p.lineTo(SD_AT.x-6.5,SD_AT.z-1);q.holes.push(p);}const m=new T.Mesh(new T.ExtrudeGeometry(q,{depth:WALL,bevelEnabled:false}),caseM);m.rotation.x=Math.PI/2;m.position.y=y;return m;};
+  g.add(wallTB(h),wallTB(-h+WALL,true));
   g.add(at(box(WALL,OH-2*WALL,FACE-zl,caseM),-w+WALL/2,0,(FACE+zl)/2),at(box(WALL,OH-2*WALL,FACE-zr,caseM),w-WALL/2,0,(FACE+zr)/2));
   // стойки платы от лица — три отверстия платы в зоне кнопок (два других — за экраном 7,5″, их держит держатель экранов)
   [[3.5,3.5],[4,75.5],[87,19]].forEach(q=>{const c=cylZ(3,9.2,caseM);at(c,102-q[0],q[1]-85,FACE-4.6);g.add(c);});
@@ -1220,7 +1222,7 @@ const BOXL='лицевая коробка из ASA — лицо и 4 стенк�
   const gl=cylZ(6.5,4,M(0x17181b,{roughness:0.6}));at(gl,0,-40,-0.5);gl.userData.label='гермоввод хвоста SP13 в задней крышке';g.add(gl);
   R.lid=add(inPlane(g,0),V(225,10,-60),null,'case');R.vent=R.lid;}
 // ---------- чехол из TPU по периметру: боковые стенки и губа на край лицевой рамки ----------
-const tpuM=M(0x2f5d6e,{roughness:0.85,transparent:true,opacity:0.92});const SD_AT=V(40,-OH/2,FACE-12.5);   // паз карты: место уточнится в плате v6
+const tpuM=M(0x2f5d6e,{roughness:0.85,transparent:true,opacity:0.92});
 {const t=1.2,zf=FACE+2,w=OW/2,h=OH/2,zl=backZ(-w),zr=backZ(w),g=new T.Group();
   const band=y=>{const sh=new T.Shape();sh.moveTo(-w-t,zl);sh.lineTo(w+t,zr);sh.lineTo(w+t,zf);sh.lineTo(-w-t,zf);sh.lineTo(-w-t,zl);const m=new T.Mesh(new T.ExtrudeGeometry(sh,{depth:t,bevelEnabled:false}),tpuM);m.rotation.x=Math.PI/2;m.position.y=y;return m;};
   g.add(band(h+t),band(-h));
@@ -1285,7 +1287,9 @@ const chip=(g,w,h,d,y,col,l)=>g.add(lab(at(box(w,h,d,M(col||0x15171a,{roughness:
  a.rotation.y=Math.PI/2;at(a,-IW/2+4,-20,25);R.as=add(a,V(-30,-125,-80),null,'cards');R.as.userData.exRy=Math.PI/2;   // в разнесённом виде — лицом к камере
  const h=card('карточка BH1750 — датчик освещённости: яркость подсветки экранов по свету; в гнезде П1 на лицевой стороне платы, прямо за окном панели','BH1750','свет',g=>chip(g,3,1.6,0.6,6,0x26282c,'BH1750: окно датчика света'));
  const pp=bp(77.9,51,-6.5);at(h,pp.x,pp.y+8,FACE-5.6);R.bh=add(h,V(-60,-120,40),null,'cards');R.bh.userData.exRy=Math.PI;
- const sd=box(25,22,2,M(0x17181c,{roughness:0.5}),'модуль micro-SD на жгуте — так в плате v5. В плате v6 его заменит гнездо на краю платы, а карта будет вставляться снаружи через паз в нижней стенке. Зачем: журнал гонки 10 раз в секунду — разобрать на берегу');at(sd,60,-60,backZ(60)+5);R.sd=add(sd,V(85,-75,-120),null,'cards');}
+ const sd=new T.Group();sd.add(lab(at(box(11,15,0.8,M(0x2b2d33,{roughness:0.5})),0,0,0),'карта micro-SD в нажимном гнезде на нижнем краю платы (плата v6, на месте разъёма JS): вставляется снаружи через паз 13 × 2 мм в нижней стенке лицевой коробки, под клапаном чехла. Нажать ногтем или спичкой — выскочит. Зачем: журнал гонки 10 раз в секунду — разобрать на берегу'));
+ sd.add(lab(at(box(14,13,1.8,M(0xb7bcc2,{metalness:0.7,roughness:0.35})),0,1.5,1.3),'нажимное гнездо micro-SD на плате v6'));
+ at(sd,SD_AT.x,-OH/2+WALL+7.5,SD_AT.z);R.sd=add(sd,V(0,-60,0),null,'board');}
 // ---------- салазки и хвост SP13 ----------
 const dock=new T.Group();
 dock.add(lab(at(box(140,150,6,M(0x5a636c,{roughness:0.6})),0,-5,-3),'салазки на стенке рубки: блок надвигается сверху, пружинная защёлка как у аккумулятора шуруповёрта; 4 потайных винта М4 сквозь переборку'));
@@ -1315,7 +1319,7 @@ const CO=[['экран 7,5″',R.s75,V(Xi(56),Yi(150),FACE+2),'bd'],['экран
   ['компас BNO085',R.bno,V(Xi(150),Yi(158)+3,22),'bds'],['GPS',R.gps,V(Xi(60),Yi(161)+9,22),'bds'],['салазки',R.dock,V(55,-70,0),'b'],
   ['ESP32-S3 · процессор и Wi-Fi',R.bd,PB('S3'),'dmc'],['LM2596 · 12 → 5 В',R.bd,PB('LM'),'dm'],['TPS63020 · 5 → 3,3 В',R.bd,PB('TPS'),'dm'],['ADM2483 · приём с мачты',R.bd,PB('ISO'),'dm'],['B0505S · питание мачты',R.bd,PB('DCI'),'dm'],
   ['PCA9555 · кнопки и порты',R.bd,PB('EXP'),'dm'],['разъём шлейфа 7,5″',R.bd,PB('JE7'),'dm'],['П2–П6 · порты датчиков',R.bd,PB('P4'),'dm'],['J1 · +12 В и шина к INA226',R.bd,PB('J1'),'dm'],['клемма линии мачты',R.bd,PB('KM'),'dm'],
-  ['AS3935 · молнии',R.as,V(-IW/2+6,-20,25),'dc'],['BME280 · давление',R.bme,V(0,-33,backZ(0)+4),'dc'],['BH1750 · свет',R.bh,V(R.bh.userData.base.x,R.bh.userData.base.y+4,FACE-4.5),'dc'],['карта micro-SD',R.sd,V(60,-60,backZ(60)+6),'dc'],
+  ['AS3935 · молнии',R.as,V(-IW/2+6,-20,25),'dc'],['BME280 · давление',R.bme,V(0,-33,backZ(0)+4),'dc'],['BH1750 · свет',R.bh,V(R.bh.userData.base.x,R.bh.userData.base.y+4,FACE-4.5),'dc'],['карта micro-SD',R.sd,V(SD_AT.x,-OH/2+WALL+2,SD_AT.z),'dmc'],
   ['лицевая коробка',R.box,V(-60,70,FACE+2),'d'],['задняя крышка',R.lid,V(-40,50,backZ(-40)),'d'],['клапан давления',R.lid,V(0,-12,backZ(0)),'dc'],['шнур уплотнения и вставки М3',R.box,V(-OW/2+5.5,30,backZ(-OW/2+5.5)+3),'d'],['держатель экранов',R.hold,V(Xi(40),Yi(75.5),FACE-7.7),'d'],['окно PC 3 мм',R.pc,V(Xi(160),Yi(125),FACE-1.5),'d'],['чехол TPU',R.tpu,V(OW/2+1.2,40,FACE-15),'bd'],['клапан и паз карты SD',R.tpu,V(SD_AT.x,-OH/2-1.6,SD_AT.z),'bd']];
 const cos=$('cos'),lines=$('lines');const coEls=CO.map(c=>{const d=document.createElement('div');d.className='co';d.textContent=c[0];cos.appendChild(d);const ln=document.createElementNS('http://www.w3.org/2000/svg','line');lines.appendChild(ln);return {d,ln,c};});
 let labOn=!matchMedia('(max-width:900px)').matches;
