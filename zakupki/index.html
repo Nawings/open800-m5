@@ -7,7 +7,7 @@
 <title>Закупки М5</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500&family=Onest:wght@400;500;600;700&family=JetBrains+Mono:wght@400&display=swap">
 <style>
-/* Снимок списка покупок; правится на странице claude.ai «Закупки М5» */
+/* Закупки М5: данные — zakupki/data.json в репозитории сайта, фото — zakupki/photos/. Правка — через GitHub API по ключу владельца. */
 :root{
   --bg:#edf1f3; --surface:#ffffff; --ink:#14202b; --muted:#536373; --line:#d3dbe1; --accent:#0d6b78; --accent-bg:#e0eff1;
   --buy:#a8740a; --buy-bg:#fbf1dc; --ord:#2f5fb8; --ord-bg:#e3ecfa; --arr:#2f7d4f; --arr-bg:#e1f2e7; --skip:#6b7680; --skip-bg:#eceff2; --bad:#b8352a;
@@ -16,7 +16,7 @@
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--bg:#0e151b;--surface:#162029;--ink:#e2e9ee;--muted:#93a3b0;--line:#27343f;--accent:#4db6c2;--accent-bg:#123238;--buy:#e0b13a;--buy-bg:#2e2611;--ord:#7da6ee;--ord-bg:#16243b;--arr:#6cc08d;--arr-bg:#132b1d;--skip:#93a3b0;--skip-bg:#1d2833;--bad:#ec6a5c;color-scheme:dark}}
 :root[data-theme="dark"]{--bg:#0e151b;--surface:#162029;--ink:#e2e9ee;--muted:#93a3b0;--line:#27343f;--accent:#4db6c2;--accent-bg:#123238;--buy:#e0b13a;--buy-bg:#2e2611;--ord:#7da6ee;--ord-bg:#16243b;--arr:#6cc08d;--arr-bg:#132b1d;--skip:#93a3b0;--skip-bg:#1d2833;--bad:#ec6a5c;color-scheme:dark}
 body{background:var(--bg);color:var(--ink);font:15px/1.45 var(--f-body);margin:0}
-.wrap{max-width:1100px;margin:0 auto;padding-block:24px 48px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:grid;gap:18px}
+.wrap{max-width:1100px;margin:0 auto;padding-block:24px 48px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:grid;gap:16px}
 .stage{position:relative;padding-right:150px}
 @media (max-width:900px){.stage{padding-right:0;padding-top:44px}}
 h1{font:500 22px/1.2 var(--f-display);margin:0;text-wrap:balance}
@@ -26,25 +26,41 @@ h1{font:500 22px/1.2 var(--f-display);margin:0;text-wrap:balance}
 .tile b{font:600 20px/1.2 var(--f-body);font-variant-numeric:tabular-nums}
 .tile span{font:12px var(--f-mono);color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
 .tile small{color:var(--muted);font-size:12.5px}
+.tile input{font:600 18px var(--f-body);width:100%;box-sizing:border-box;background:transparent;color:var(--ink);border:1px dashed var(--line);border-radius:4px;padding:2px 6px}
+.auth{background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:10px 12px;display:flex;flex-wrap:wrap;gap:8px;align-items:center;font-size:13.5px}
+.auth input{flex:1 1 260px;min-width:0;font:13px var(--f-mono);padding:6px 8px;border:1px solid var(--line);border-radius:4px;background:var(--bg);color:var(--ink)}
+.auth details{flex-basis:100%;color:var(--muted)}
+.auth ol{margin:6px 0 0;padding-left:20px;display:grid;gap:3px}
+.msg{font-size:13px}.msg.err{color:var(--bad)}.msg.ok{color:var(--arr)}
 .filters{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
 .chip{font:600 13px var(--f-body);border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:999px;padding:5px 11px;cursor:pointer}
 .chip[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-bg)}
 .filters input{flex:1 1 180px;min-width:0;font:14px var(--f-body);padding:6px 10px;border:1px solid var(--line);border-radius:6px;background:var(--surface);color:var(--ink)}
-.chip:focus-visible,input:focus-visible,a:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+button{font:600 13px var(--f-body);background:var(--accent-bg);color:var(--ink);border:1px solid var(--accent);padding:6px 11px;border-radius:4px;cursor:pointer}
+button.ghost{background:transparent;border-color:var(--line)}
+button:disabled{opacity:.5;cursor:default}
+.chip:focus-visible,input:focus-visible,select:focus-visible,button:focus-visible,a:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 section h2{font:600 12px var(--f-mono);text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin:6px 0 8px;display:flex;justify-content:space-between;gap:8px}
 .list{display:grid;gap:6px}
-.row{background:var(--surface);border:1px solid var(--line);border-left:4px solid var(--st,var(--line));border-radius:6px;padding:8px 10px;display:grid;grid-template-columns:110px minmax(0,1fr) 110px 50px;gap:6px 12px;align-items:start}
+.row{background:var(--surface);border:1px solid var(--line);border-left:4px solid var(--st,var(--line));border-radius:6px;padding:8px 10px;display:grid;grid-template-columns:120px minmax(0,1fr) 120px auto;gap:6px 12px;align-items:start}
 .row[data-s="buy"]{--st:var(--buy);--sb:var(--buy-bg)}.row[data-s="ordered"]{--st:var(--ord);--sb:var(--ord-bg)}.row[data-s="arrived"]{--st:var(--arr);--sb:var(--arr-bg)}.row[data-s="skip"]{--st:var(--skip);--sb:var(--skip-bg)}
-@media (max-width:720px){.row{grid-template-columns:1fr auto}.row .main{grid-column:1/-1;order:-1}}
+@media (max-width:720px){.row{grid-template-columns:1fr 1fr}.row .main{grid-column:1/-1;order:-1}}
 .st{font:600 12.5px var(--f-body);color:var(--st);background:var(--sb);border-radius:4px;padding:3px 7px;justify-self:start}
+.row select{font:600 13px var(--f-body);border-radius:4px;padding:4px 6px;border:1px solid var(--st);background:var(--surface);color:var(--ink);width:100%}
 .main{min-width:0;display:grid;gap:2px}.name{font-weight:600}.meta{font-size:12.5px;color:var(--muted)}
-.price{text-align:right;font-weight:600;font-variant-numeric:tabular-nums}
-.acts{text-align:right}
+.price{text-align:right;font-weight:600;font-variant-numeric:tabular-nums;display:flex;gap:4px;align-items:center;justify-content:flex-end}
+.price input{width:100%;min-width:0;font:600 14px var(--f-body);text-align:right;padding:4px 6px;border:1px solid var(--line);border-radius:4px;background:transparent;color:var(--ink)}
+.acts{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end;align-items:center}
 .tag{display:inline-block;font:600 11px var(--f-mono);padding:1px 6px;border-radius:3px;margin-right:4px;vertical-align:1px}
-.tag.spare{background:var(--skip-bg);color:var(--skip)}.tag.ok{background:var(--arr-bg);color:var(--arr)}.tag.bad{background:var(--buy-bg);color:var(--bad)}
+.tag.spare{background:var(--skip-bg);color:var(--skip)}.tag.bad{background:var(--buy-bg);color:var(--bad)}
 .photos{grid-column:1/-1;display:flex;flex-wrap:wrap;gap:6px}
-.ph{width:72px;height:72px;border-radius:4px;overflow:hidden;border:1px solid var(--line);display:block}.ph img{width:100%;height:100%;object-fit:cover;display:block}
+.photos:empty{display:none}
+.ph{position:relative;width:76px;height:76px;border-radius:4px;overflow:hidden;border:1px solid var(--line);background:var(--bg)}
+.ph a,.ph img{display:block;width:100%;height:100%;object-fit:cover}
+.ph button{position:absolute;top:2px;right:2px;padding:0 6px;font-size:13px;line-height:20px;background:rgba(0,0,0,.6);color:#fff;border:0}
+.ph.busy::after{content:"…";position:absolute;inset:0;display:grid;place-items:center;background:rgba(0,0,0,.45);color:#fff;font-weight:700}
 .note{font-size:13px;color:var(--muted);margin:0}
+.state{padding:14px;border:1px dashed var(--line);border-radius:6px;color:var(--muted);text-align:center}
 a{color:var(--accent)}
 [hidden]{display:none!important}
 .home{position:absolute;top:0;right:0;padding:8px 12px;border-radius:4px;border:1px solid var(--accent);background:var(--surface);color:var(--ink);font:600 13px var(--f-body);text-decoration:none}
@@ -54,435 +70,135 @@ a{color:var(--accent)}
   <div class="stage" id="stage">
     <a class="home" href="../">← Главное меню</a>
     <h1>Закупки М5</h1>
-    <p class="sub">Всё, что нужно купить для прибора, что уже заказано и пришло, и сколько потрачено. Список обновлён 24.11.2026, 12:21 (МСК). Отмечать покупки и загружать фото — на <a href="https://claude.ai/artifact/KbXrrZAXNprVVG5Zvqmvu7" target="_blank" rel="noopener">рабочей странице на claude.ai</a> (нужен вход владельца); сюда изменения попадают при обновлении сайта.</p>
+    <p class="sub">Всё, что нужно купить для прибора, что уже заказано и что пришло, и сколько потрачено. <b>Фото детали — подтверждение, что она на руках:</b> после загрузки фото позиция сама становится «Пришло».</p>
   </div>
   <div class="sum">
-    <div class="tile"><span>Потрачено</span><b>13 391 ₽</b><small>24 позиций заказано или пришло</small></div>
-    <div class="tile"><span>Ещё купить</span><b>цены не внесены</b><small>44 позиций, из них 44 без цены</small></div>
-    <div class="tile"><span>Бюджет проекта</span><b>—</b><small>не задан</small></div>
-    <div class="tile"><span>Пришло</span><b>8 из 24</b><small>с фото: 0 из 8</small></div>
+    <div class="tile"><span>Потрачено</span><b id="tSpent">—</b><small id="tSpentN"></small></div>
+    <div class="tile"><span>Ещё купить</span><b id="tLeft">—</b><small id="tLeftN"></small></div>
+    <div class="tile"><span>Бюджет проекта</span><b id="tLimB">—</b><input id="tLim" type="number" inputmode="numeric" min="0" step="100" placeholder="задать, ₽" hidden aria-label="Бюджет проекта, ₽"><small id="tRest"></small></div>
+    <div class="tile"><span>На руках (с фото)</span><b id="tArr">—</b><small id="tArrN"></small></div>
+  </div>
+  <div class="auth" id="auth">
+    <span id="authTxt">Смотреть может каждый. Загружать фото и указывать цены — после входа владельца.</span>
+    <button type="button" id="bLogin">Войти для правки</button>
+    <div id="loginBox" hidden style="flex-basis:100%;display:flex;flex-wrap:wrap;gap:8px">
+      <input id="tok" type="password" autocomplete="off" placeholder="ключ GitHub: github_pat_…" aria-label="Ключ доступа GitHub">
+      <button type="button" id="bTok">Сохранить ключ</button>
+      <details><summary>Где взять ключ (один раз на устройство)</summary><ol>
+        <li>github.com → аватар → Settings → Developer settings → Personal access tokens → <b>Fine-grained tokens</b> → Generate new token.</li>
+        <li>Repository access: <b>Only select repositories</b> → Nawings/open800-m5.</li>
+        <li>Permissions → Repository permissions → <b>Contents: Read and write</b>. Срок — например, 1 год.</li>
+        <li>Скопировать ключ и вставить сюда. Он хранится только в этом браузере.</li></ol></details>
+    </div>
+    <span class="msg" id="msg" role="status" aria-live="polite"></span>
   </div>
   <div class="filters" role="toolbar" aria-label="Фильтр">
     <button type="button" class="chip" data-f="all" aria-pressed="true">Все</button>
     <button type="button" class="chip" data-f="buy" aria-pressed="false">Купить</button>
     <button type="button" class="chip" data-f="ordered" aria-pressed="false">Заказано</button>
     <button type="button" class="chip" data-f="arrived" aria-pressed="false">Пришло</button>
+    <button type="button" class="chip" data-f="nophoto" aria-pressed="false">Пришло, но без фото</button>
     <button type="button" class="chip" data-f="skip" aria-pressed="false">Не покупаем</button>
     <input id="q" type="search" placeholder="Поиск: SP13, винты, ESP32…" aria-label="Поиск">
   </div>
-  <div id="out"><section><h2><span>Блок в кокпите — модули</span><span>11 · 2 854 ₽</span></h2><div class="list"><div class="row" data-s="arrived" data-ph="0" data-q="esp32-s3-devkitc-1 n16r8 плата кокпита на модуле цветной светодиод на линии карты памяти — отпаять 1">
-  <span class="st">Пришло</span>
-  <div class="main"><div class="name">ESP32-S3-DevKitC-1 N16R8</div><div class="meta">× 1 · плата кокпита</div><div class="meta">на модуле цветной светодиод на линии карты памяти — отпаять</div></div>
-  <div class="price">727 ₽</div>
-  <div class="acts"><a href="../boards/">3D ↗</a></div>
-  </div>
-<div class="row" data-s="arrived" data-ph="0" data-q="компас bno085 (gy-bno08x) полка компаса сверить порядок контактов с jb 1">
-  <span class="st">Пришло</span>
-  <div class="main"><div class="name">Компас BNO085 (GY-BNO08X)</div><div class="meta">× 1 · полка компаса</div><div class="meta">сверить порядок контактов с JB</div></div>
-  <div class="price">1 297 ₽</div>
-  <div class="acts"><a href="../cockpit/">3D ↗</a></div>
-  </div>
-<div class="row" data-s="arrived" data-ph="0" data-q="экран e-paper 4,2″ weact, ч/б малый экран цена в заказе не найдена 1">
-  <span class="st">Пришло</span>
-  <div class="main"><div class="name">Экран e-paper 4,2″ WeAct, ч/б</div><div class="meta">× 1 · малый экран</div><div class="meta">цена в заказе не найдена</div></div>
-  <div class="price"><span class="meta">цена —</span></div>
-  <div class="acts"><a href="../display/">3D ↗</a></div>
-  </div>
-<div class="row" data-s="arrived" data-ph="0" data-q="tps63020 3,3 в (модуль) плата кокпита нужно 1 + 1 запас 3">
-  <span class="st">Пришло</span>
-  <div class="main"><div class="name">TPS63020 3,3 В (модуль)</div><div class="meta">× 3 · плата кокпита</div><div class="meta">нужно 1 + 1 запас</div></div>
-  <div class="price">142 ₽</div>
-  <div class="acts"><a href="../boards/">3D ↗</a></div>
-  </div>
-<div class="row" data-s="ordered" data-ph="0" data-q="gps quescan an181 (u-blox m10) полка gps сверить порядок контактов с jg 1">
-  <span class="st">Заказано</span>
-  <div class="main"><div class="name">GPS QUESCAN AN181 (u-blox M10)</div><div class="meta">× 1 · полка GPS</div><div class="meta">сверить порядок контактов с JG</div></div>
-  <div class="price">688 ₽</div>
-  <div class="acts"><a href="../cockpit/">3D ↗</a></div>
-  </div>
-<div class="row" data-s="buy" data-ph="0" data-q="экран e-paper 7,5″ 800 × 480 (gdey075t7 или gdem075t42) большой экран сначала паспорт: порядок выводов шлейфа 1">
-  <span class="st">Купить</span>
-  <div class="main"><div class="name">Экран e-paper 7,5″ 800 × 480 (GDEY075T7 или GDEM075T42)</div><div class="meta">× 1 · большой экран</div><div class="meta">сначала паспорт: порядок выводов шлейфа</div></div>
-  <div class="price"><span class="meta">цена —</span></div>
-  <div class="acts"><a href="../display/">3D ↗</a></div>
-  </div>
-<div class="row" data-s="buy" data-ph="0" data-q="lm2596hv, модуль 43 × 21, 4 отверстия плата кокпита после прихода — фото обеих сторон и размеры 1">
-  <span class="st">Купить</span>
-  <div class="main"><div class="name">LM2596HV, модуль 43 × 21, 4 отверстия</div><div class="meta">× 1 · плата кокпита</div><div class="meta">после прихода — фото обеих сторон и размеры</div></div>
-  <div class="price"><span class="meta">цена —</span></div>
-  <div class="acts"><a href="../boards/">3D ↗</a></div>
-  </div>
-<div class="row" data-s="buy" data-ph="0" data-q="b0505s-1wr3 питание мачты  1">
-  <span class="st">Купить</span>
-  <div class="main"><div class="name">B0505S-1WR3</div><div class="meta">× 1 · питание мачты</div></div>
-  <div class="price"><span class="meta">цена —</span></div>
-  <div class="acts"><a href="../boards/">3D ↗</a></div>
-  </div>
-<div class="row" data-s="buy" data-ph="0" data-q="adm2483 soic-16 + переходник на dip-16 приём данных мачты  1">
-  <span class="st">Купить</span>
-  <div class="main"><div class="name">ADM2483 SOIC-16 + переходник на DIP-16</div><div class="meta">× 1 · приём данных мачты</div></div>
-  <div class="price"><span class="meta">цена —</span></div>
-  <div class="acts"><a href="../boards/">3D ↗</a></div>
-  </div>
-<div class="row" data-s="buy" data-ph="0" data-q="карточки bme280, bh1750 (gy-302), as3935 свои карточки 30 × 20  по 1">
-  <span class="st">Купить</span>
-  <div class="main"><div class="name">Карточки BME280, BH1750 (GY-302), AS3935</div><div class="meta">× по 1 · свои карточки 30 × 20</div></div>
-  <div class="price"><span class="meta">цена —</span></div>
-  <div class="acts"><a href="../cockpit/">3D ↗</a></div>
-  </div>
-<div class="row" data-s="buy" data-ph="0" data-q="клапан выравнивания давления (eptfe) нижняя стенка коробки размер отверстия — по купленному 1">
-  <span class="st">Купить</span>
-  <div class="main"><div class="name">Клапан выравнивания давления (ePTFE)</div><div class="meta">× 1 · нижняя стенка коробки</div><div class="meta">размер отверстия — по купленному</div></div>
-  <div class="price"><span class="meta">цена —</span></div>
-  <div class="acts"><a href="../cockpit/">3D ↗</a></div>
-  </div></div></section>
-<section><h2><span>Плата кокпита — мелкие детали</span><span>15 · 323 ₽</span></h2><div class="list"><div class="row" data-s="ordered" data-ph="0" data-q="smbj5.0a кокпит × 2, топ × 1  50">
-  <span class="st">Заказано</span>
-  <div class="main"><div class="name">SMBJ5.0A</div><div class="meta">× 50 · кокпит × 2, топ × 1</div></div>
-  <div class="price">234 ₽</div>
-  <div class="acts"><a href="../boards/">3D ↗</a></div>
-  </div>
-<div class="row" data-s="ordered" data-ph="0" data-q="pptc 0,2 а питание мачты  10">
-  <span class="st">Заказано</span>
-  <div class="main"><div class="name">PPTC 0,2 А</div><div class="meta">× 10 · питание мачты</div></div>
-  <div class="price">89 ₽</div>
-  <div class="acts"><a href="../boards/">3D ↗</a></div>
-  </div>
-<div class="row" data-s="ordered" data-ph="0" data-q="набор 600 резисторов + 200 светодиодов  скорее выводные — для 0805 не годятся; проверить 1">
-  <span class="st">Заказано</span>
-  <div class="main"><div class="name">Набор 600 резисторов + 200 светодиодов</div><div class="meta">× 1</div><div class="meta">скорее выводные — для 0805 не годятся; проверить</div></div>
-  <div class="price"><span class="meta">цена —</span></div>
-  <div class="acts"></div>
-  </div>
-<div class="row" data-s="buy" data-ph="0" data-q="pca9555d плата кокпита v6: второй — для «−» и «+» 2">
-  <span class="st">Купить</span>
-  <div class="main"><div class="name">PCA9555D</div><div class="meta">× 2 · плата кокпита</div><div class="meta">v6: второй — для «−» и «+»</div></div>
-  <div class="price"><span class="meta">цена —</span></div>
-  <div class="acts"><a href="../boards/">3D ↗</a></div>
-  </div>
-<div class="row" data-s="buy" data-ph="0" data-q="ap2112k-3.3 кокпит + топ  2">
-  <span class="st">Купить</span>
-  <div class="main"><div class="name">AP2112K-3.3</div><div class="meta">× 2 · кокпит + топ</div></div>
-  <div class="price"><span class="meta">цена —</span></div>
-  <div class="acts"><a href="../boards/">3D ↗</a></div>
-  </div>
-<div class="row" data-s="buy" data-ph="0" data-q="p-ключ ≥ 40 в (вместо ao3401a), ao3400a, 2n7002 × 4, si1308edl плата кокпита v6: p-ключ на 40 в по списку">
-  <span class="st">Купить</span>
-  <div class="main"><div class="name">P-ключ ≥ 40 В (вместо AO3401A), AO3400A, 2N7002 × 4, SI1308EDL</div><div class="meta">× по списку · плата кокпита</div><div class="meta">v6: P-ключ на 40 В</div></div>
-  <div class="price"><span class="meta">цена —</span></div>
-  <div class="acts"><a href="../boards/">3D ↗</a></div>
-  </div>
-<div class="row" data-s="buy" data-ph="0" data-q="sm712 кокпит + топ в заказах не найден 2">
-  <span class="st">Купить</span>
-  <div class="main"><div class="name">SM712</div><div class="meta">× 2 · кокпит + топ</div><div class="meta">в заказах не найден</div></div>
-  <div class="price"><span class="meta">цена —</span></div>
-  <div class="acts"><a href="../boards/">3D ↗</a></div>
-  </div>
-<div class="row" data-s="buy" data-ph="0" data-q="smbj24a, ss34 × 2, mbr0530 × 3, 1n4148w × 2, bzt52c10 × 2, pesd3v3s2ut плата кокпита v6: второй стабилитрон 10 в на en_g по списку">
-  <span class="st">Купить</span>
-  <div class="main"><div class="name">SMBJ24A, SS34 × 2, MBR0530 × 3, 1N4148W × 2, BZT52C10 × 2, PESD3V3S2UT</div><div class="meta">× по списку · плата кокпита</div><div class="meta">v6: второй стабилитрон 10 В на EN_G</div></div>
-  <div class="price"><span class="meta">цена —</span></div>
-  <div class="acts"><a href="../boards/">3D ↗</a></div>
-  </div>
-<div class="row" data-s="buy" data-ph="0" data-q="pptc 1,1 а на 30 в и выше вход 12 в  1">
-  <span class="st">Купить</span>
-  <div class="main"><div class="name">PPTC 1,1 А на 30 В и выше</div><div class="meta">× 1 · вход 12 В</div></div>
-  <div class="price"><span class="meta">цена —</span></div>
-  <div class="acts"><a href="../boards/">3D ↗</a></div>
-  </div>
-<div class="row" data-s="buy" data-ph="0" data-q="наборы 0805: резисторы и конденсаторы; 470 мкф, дроссель 68 мкгн, 0,47 ом плата кокпита v6: 27 ком для делителя меню, 10 ком, 1–10 мом наборы">
-  <span class="st">Купить</span>
-  <div class="main"><div class="name">Наборы 0805: резисторы и конденсаторы; 470 мкФ, дроссель 68 мкГн, 0,47 Ом</div><div class="meta">× наборы · плата кокпита</div><div class="meta">v6: 27 кОм для делителя МЕНЮ, 10 кОм, 1–10 МОм</div></div>
-  <div class="price"><span class="meta">цена —</span></div>
-  <div class="acts"><a href="../boards/">3D ↗</a></div>
-  </div>
-<div class="row" data-s="buy" data-ph="0" data-q="кнопки 12 × 12 поверхностного монтажа лицо блока  5">
-  <span class="st">Купить</span>
-  <div class="main"><div class="name">Кнопки 12 × 12 поверхностного монтажа</div><div class="meta">× 5 · лицо блока</div></div>
-  <div class="price"><span class="meta">цена —</span></div>
-  <div class="acts"><a href="../cockpit/">3D ↗</a></div>
-  </div>
-<div class="row" data-s="buy" data-ph="0" data-q="светодиод rgb 5 мм, общий анод лицо блока  1">
-  <span class="st">Купить</span>
-  <div class="main"><div class="name">Светодиод RGB 5 мм, общий анод</div><div class="meta">× 1 · лицо блока</div></div>
-  <div class="price"><span class="meta">цена —</span></div>
-  <div class="acts"><a href="../cockpit/">3D ↗</a></div>
-  </div>
-<div class="row" data-s="buy" data-ph="0" data-q="гнездо 2,54 × 6 низкое 4,3 мм; гнездо micro-sd нажимное; fpc 24 шаг 0,5 плата кокпита  по 1">
-  <span class="st">Купить</span>
-  <div class="main"><div class="name">Гнездо 2,54 × 6 низкое 4,3 мм; гнездо micro-SD нажимное; FPC 24 шаг 0,5</div><div class="meta">× по 1 · плата кокпита</div></div>
-  <div class="price"><span class="meta">цена —</span></div>
-  <div class="acts"><a href="../boards/">3D ↗</a></div>
-  </div>
-<div class="row" data-s="buy" data-ph="0" data-q="jst-gh и jst-xh с вилками, клемма 5,08 × 2 жгуты  по списку">
-  <span class="st">Купить</span>
-  <div class="main"><div class="name">JST-GH и JST-XH с вилками, клемма 5,08 × 2</div><div class="meta">× по списку · жгуты</div></div>
-  <div class="price"><span class="meta">цена —</span></div>
-  <div class="acts"><a href="../cockpit/">3D ↗</a></div>
-  </div>
-<div class="row" data-s="buy" data-ph="0" data-q="цанговые полоски 2,54 под модули  по списку">
-  <span class="st">Купить</span>
-  <div class="main"><div class="name">Цанговые полоски 2,54</div><div class="meta">× по списку · под модули</div></div>
-  <div class="price"><span class="meta">цена —</span></div>
-  <div class="acts"><a href="../boards/">3D ↗</a></div>
-  </div></div></section>
-<section><h2><span>Корпус F1C и салазки</span><span>8 · 0 ₽</span></h2><div class="list"><div class="row" data-s="buy" data-ph="0" data-q="пластик asa и tpu корпус, капсула, чехол пробы — pla по месту">
-  <span class="st">Купить</span>
-  <div class="main"><div class="name">Пластик ASA и TPU</div><div class="meta">× по месту · корпус, капсула, чехол</div><div class="meta">пробы — PLA</div></div>
-  <div class="price"><span class="meta">цена —</span></div>
-  <div class="acts"><a href="../layouts/">3D ↗</a></div>
-  </div>
-<div class="row" data-s="buy" data-ph="0" data-q="поликарбонат 3 мм + плёнка от уф окна экранов  2 листа">
-  <span class="st">Купить</span>
-  <div class="main"><div class="name">Поликарбонат 3 мм + плёнка от УФ</div><div class="meta">× 2 листа · окна экранов</div></div>
-  <div class="price"><span class="meta">цена —</span></div>
-  <div class="acts"><a href="../cockpit/">3D ↗</a></div>
-  </div>
-<div class="row" data-s="buy" data-ph="0" data-q="латунные вставки м3 × 9 и м2,5 × 12 коробка, держатель экранов  21">
-  <span class="st">Купить</span>
-  <div class="main"><div class="name">Латунные вставки М3 × 9 и М2,5 × 12</div><div class="meta">× 21 · коробка, держатель экранов</div></div>
-  <div class="price"><span class="meta">цена —</span></div>
-  <div class="acts"><a href="../cockpit/">3D ↗</a></div>
-  </div>
-<div class="row" data-s="buy" data-ph="0" data-q="винты a4: м3 × 12 × 9, м2,5 × 8 потай × 6, м2,5 × 4, м4 потай × 4, м3 × 8 × 2 коробка, салазки  по списку">
-  <span class="st">Купить</span>
-  <div class="main"><div class="name">Винты A4: М3 × 12 × 9, М2,5 × 8 потай × 6, М2,5 × 4, М4 потай × 4, М3 × 8 × 2</div><div class="meta">× по списку · коробка, салазки</div></div>
-  <div class="price"><span class="meta">цена —</span></div>
-  <div class="acts"><a href="../dock/">3D ↗</a></div>
-  </div>
-<div class="row" data-s="buy" data-ph="0" data-q="пористая резина полосками, герметик нейтральный экраны, окна  —">
-  <span class="st">Купить</span>
-  <div class="main"><div class="name">Пористая резина полосками, герметик нейтральный</div><div class="meta">× — · экраны, окна</div></div>
-  <div class="price"><span class="meta">цена —</span></div>
-  <div class="acts"><a href="../cockpit/">3D ↗</a></div>
-  </div>
-<div class="row" data-s="buy" data-ph="0" data-q="sp13 на 9 контактов: sp1312/p9 (в крышку) + sp1311/s9 (в плиту) крышка и салазки проверить: снимается ли накидная гайка вилки 1 пара">
-  <span class="st">Купить</span>
-  <div class="main"><div class="name">SP13 на 9 контактов: SP1312/P9 (в крышку) + SP1311/S9 (в плиту)</div><div class="meta">× 1 пара · крышка и салазки</div><div class="meta">проверить: снимается ли накидная гайка вилки</div></div>
-  <div class="price"><span class="meta">цена —</span></div>
-  <div class="acts"><a href="../dock/">3D ↗</a></div>
-  </div>
-<div class="row" data-s="buy" data-ph="0" data-q="колпачок на вилку sp13 в салазках салазки когда блок снят, на вилке +12 в 1">
-  <span class="st">Купить</span>
-  <div class="main"><div class="name">Колпачок на вилку SP13 в салазках</div><div class="meta">× 1 · салазки</div><div class="meta">когда блок снят, на вилке +12 В</div></div>
-  <div class="price"><span class="meta">цена —</span></div>
-  <div class="acts"><a href="../dock/">3D ↗</a></div>
-  </div>
-<div class="row" data-s="buy" data-ph="0" data-q="полоска боковых светодиодов подсветки подсветка экранов после выбора цвета —">
-  <span class="st">Купить</span>
-  <div class="main"><div class="name">Полоска боковых светодиодов подсветки</div><div class="meta">× — · подсветка экранов</div><div class="meta">после выбора цвета</div></div>
-  <div class="price"><span class="meta">цена —</span></div>
-  <div class="acts"><a href="../cockpit/">3D ↗</a></div>
-  </div></div></section>
-<section><h2><span>Резервный блок</span><span>10 · 0 ₽</span></h2><div class="list"><div class="row" data-s="arrived" data-ph="0" data-q="аккумуляторы samsung inr18650-30q резервный блок у владельца 3">
-  <span class="st">Пришло</span>
-  <div class="main"><div class="name">Аккумуляторы Samsung INR18650-30Q</div><div class="meta">× 3 · резервный блок</div><div class="meta">у владельца</div></div>
-  <div class="price"><span class="meta">цена —</span></div>
-  <div class="acts"><a href="../boat/">3D ↗</a></div>
-  </div>
-<div class="row" data-s="buy" data-ph="0" data-q="коробка резервного блока резервный блок не выбрана — проект блока впереди 1">
-  <span class="st">Купить</span>
-  <div class="main"><div class="name">Коробка резервного блока</div><div class="meta">× 1 · резервный блок</div><div class="meta">не выбрана — проект блока впереди</div></div>
-  <div class="price"><span class="meta">цена —</span></div>
-  <div class="acts"><a href="../boat/">3D ↗</a></div>
-  </div>
-<div class="row" data-s="buy" data-ph="0" data-q="плата защиты bms 3s резервный блок  1">
-  <span class="st">Купить</span>
-  <div class="main"><div class="name">Плата защиты BMS 3S</div><div class="meta">× 1 · резервный блок</div></div>
-  <div class="price"><span class="meta">цена —</span></div>
-  <div class="acts"><a href="../boat/">3D ↗</a></div>
-  </div>
-<div class="row" data-s="buy" data-ph="0" data-q="держатель на 3 × 18650 резервный блок  1">
-  <span class="st">Купить</span>
-  <div class="main"><div class="name">Держатель на 3 × 18650</div><div class="meta">× 1 · резервный блок</div></div>
-  <div class="price"><span class="meta">цена —</span></div>
-  <div class="acts"><a href="../boat/">3D ↗</a></div>
-  </div>
-<div class="row" data-s="buy" data-ph="0" data-q="предохранитель 3 а с держателем ввод от щитка, p+ элементов  2">
-  <span class="st">Купить</span>
-  <div class="main"><div class="name">Предохранитель 3 А с держателем</div><div class="meta">× 2 · ввод от щитка, P+ элементов</div></div>
-  <div class="price"><span class="meta">цена —</span></div>
-  <div class="acts"><a href="../boat/">3D ↗</a></div>
-  </div>
-<div class="row" data-s="buy" data-ph="0" data-q="гнездо 5,5 × 2,1 и зарядное 12,6 в 1 а резервный блок  1">
-  <span class="st">Купить</span>
-  <div class="main"><div class="name">Гнездо 5,5 × 2,1 и зарядное 12,6 В 1 А</div><div class="meta">× 1 · резервный блок</div></div>
-  <div class="price"><span class="meta">цена —</span></div>
-  <div class="acts"><a href="../boat/">3D ↗</a></div>
-  </div>
-<div class="row" data-s="buy" data-ph="0" data-q="триггер usb-c pd 9 в + xl6009 резервный блок  1">
-  <span class="st">Купить</span>
-  <div class="main"><div class="name">Триггер USB-C PD 9 В + XL6009</div><div class="meta">× 1 · резервный блок</div></div>
-  <div class="price"><span class="meta">цена —</span></div>
-  <div class="acts"><a href="../boat/">3D ↗</a></div>
-  </div>
-<div class="row" data-s="buy" data-ph="0" data-q="ina226 × 2, шунт 10 а, стабилизатор 3,3 в, диоды ss34, 1n5404 резервный блок; шунт — на минусе  по списку">
-  <span class="st">Купить</span>
-  <div class="main"><div class="name">INA226 × 2, шунт 10 А, стабилизатор 3,3 В, диоды SS34, 1N5404</div><div class="meta">× по списку · резервный блок; шунт — на минусе</div></div>
-  <div class="price"><span class="meta">цена —</span></div>
-  <div class="acts"><a href="../boat/">3D ↗</a></div>
-  </div>
-<div class="row" data-s="buy" data-ph="0" data-q="предохранитель 10 а у плюса аккумулятора — советую аккумулятор лодки  1">
-  <span class="st">Купить</span>
-  <div class="main"><div class="name">Предохранитель 10 А у плюса аккумулятора — советую</div><div class="meta">× 1 · аккумулятор лодки</div></div>
-  <div class="price"><span class="meta">цена —</span></div>
-  <div class="acts"><a href="../boat/">3D ↗</a></div>
-  </div>
-<div class="row" data-s="buy" data-ph="0" data-q="sp13 на 5 контактов (мачта) резервный блок разъём к прибору у блока решается в проекте блока 1 пара">
-  <span class="st">Купить</span>
-  <div class="main"><div class="name">SP13 на 5 контактов (мачта)</div><div class="meta">× 1 пара · резервный блок</div><div class="meta">разъём к прибору у блока решается в проекте блока</div></div>
-  <div class="price"><span class="meta">цена —</span></div>
-  <div class="acts"><a href="../boat/">3D ↗</a></div>
-  </div></div></section>
-<section><h2><span>Топ мачты, флюгер, кронштейн</span><span>9 · 1 283 ₽</span></h2><div class="list"><div class="row" data-s="arrived" data-ph="0" data-q="esp32-c3 supermini плата топа 1 + 1 запас 2">
-  <span class="st">Пришло</span>
-  <div class="main"><div class="name">ESP32-C3 SuperMini</div><div class="meta">× 2 · плата топа</div><div class="meta">1 + 1 запас</div></div>
-  <div class="price">149 ₽</div>
-  <div class="acts"><a href="../capsule/">3D ↗</a></div>
-  </div>
-<div class="row" data-s="arrived" data-ph="0" data-q="as5600 с магнитом флюгер пришла 30.10 1">
-  <span class="st">Пришло</span>
-  <div class="main"><div class="name">AS5600 с магнитом</div><div class="meta">× 1 · флюгер</div><div class="meta">пришла 30.10</div></div>
-  <div class="price">209 ₽</div>
-  <div class="acts"><a href="../vane/">3D ↗</a></div>
-  </div>
-<div class="row" data-s="arrived" data-ph="0" data-q="max3485 — модули ttl-rs485 топ как модуль не нужен: микросхему выпаять на переходник sop-8 2">
-  <span class="st">Пришло</span>
-  <div class="main"><div class="name">MAX3485 — модули TTL-RS485</div><div class="meta">× 2 · топ</div><div class="meta">как модуль не нужен: микросхему выпаять на переходник SOP-8</div></div>
-  <div class="price">81 ₽</div>
-  <div class="acts"><a href="../capsule/">3D ↗</a></div>
-  </div>
-<div class="row" data-s="ordered" data-ph="0" data-q="mt6701 — энкодер чашек чашки анемометра 121 + 142 ₽ 2">
-  <span class="st">Заказано</span>
-  <div class="main"><div class="name">MT6701 — энкодер чашек</div><div class="meta">× 2 · чашки анемометра</div><div class="meta">121 + 142 ₽</div></div>
-  <div class="price">263 ₽</div>
-  <div class="acts"><a href="../vane/">3D ↗</a></div>
-  </div>
-<div class="row" data-s="ordered" data-ph="0" data-q="гироскоп gy-50 (l3g4200d) топ заказ 30.10, итого 581 ₽ 5">
-  <span class="st">Заказано</span>
-  <div class="main"><div class="name">Гироскоп GY-50 (L3G4200D)</div><div class="meta">× 5 · топ</div><div class="meta">заказ 30.10, итого 581 ₽</div></div>
-  <div class="price">581 ₽</div>
-  <div class="acts"><a href="../capsule/">3D ↗</a></div>
-  </div>
-<div class="row" data-s="buy" data-ph="0" data-q="max3485 sop-8 + переходник на dip-8 топ можно взять из купленного модуля 1">
-  <span class="st">Купить</span>
-  <div class="main"><div class="name">MAX3485 SOP-8 + переходник на DIP-8</div><div class="meta">× 1 · топ</div><div class="meta">можно взять из купленного модуля</div></div>
-  <div class="price"><span class="meta">цена —</span></div>
-  <div class="acts"><a href="../capsule/">3D ↗</a></div>
-  </div>
-<div class="row" data-s="buy" data-ph="0" data-q="sht40 (модуль) будка на топе  1">
-  <span class="st">Купить</span>
-  <div class="main"><div class="name">SHT40 (модуль)</div><div class="meta">× 1 · будка на топе</div></div>
-  <div class="price"><span class="meta">цена —</span></div>
-  <div class="acts"><a href="../capsule/">3D ↗</a></div>
-  </div>
-<div class="row" data-s="buy" data-ph="0" data-q="нержавейка 316l: площадка, труба ø32, вынос ø25; pom-c ø30; винты m5 кронштейн сварка по заказу —">
-  <span class="st">Купить</span>
-  <div class="main"><div class="name">Нержавейка 316L: площадка, труба Ø32, вынос Ø25; POM-C Ø30; винты M5</div><div class="meta">× — · кронштейн</div><div class="meta">сварка по заказу</div></div>
-  <div class="price"><span class="meta">цена —</span></div>
-  <div class="acts"><a href="../welded-mount/">3D ↗</a></div>
-  </div>
-<div class="row" data-s="buy" data-ph="0" data-q="флюгер и капсула: карбон, подшипники 683 × 4, вставки, кольцо, pc, эпоксидка флюгер состав — на странице «флюгер» по списку">
-  <span class="st">Купить</span>
-  <div class="main"><div class="name">Флюгер и капсула: карбон, подшипники 683 × 4, вставки, кольцо, PC, эпоксидка</div><div class="meta">× по списку · флюгер</div><div class="meta">состав — на странице «Флюгер»</div></div>
-  <div class="price"><span class="meta">цена —</span></div>
-  <div class="acts"><a href="../vane/">3D ↗</a></div>
-  </div></div></section>
-<section><h2><span>Кабели и разъёмы</span><span>5 · 104 ₽</span></h2><div class="list"><div class="row" data-s="ordered" data-ph="0" data-q="гермовводы pg7 капсула, резервный блок  10">
-  <span class="st">Заказано</span>
-  <div class="main"><div class="name">Гермовводы PG7</div><div class="meta">× 10 · капсула, резервный блок</div></div>
-  <div class="price">104 ₽</div>
-  <div class="acts"><a href="../capsule/">3D ↗</a></div>
-  </div>
-<div class="row" data-s="buy" data-ph="0" data-q="кабель rvsp 4 × 24awg, витая пара в экране мачта покупать последним, по замеренной трассе ≈ 20 м">
-  <span class="st">Купить</span>
-  <div class="main"><div class="name">Кабель RVSP 4 × 24AWG, витая пара в экране</div><div class="meta">× ≈ 20 м · мачта</div><div class="meta">покупать последним, по замеренной трассе</div></div>
-  <div class="price"><span class="meta">цена —</span></div>
-  <div class="acts"><a href="../boat/">3D ↗</a></div>
-  </div>
-<div class="row" data-s="buy" data-ph="0" data-q="разъёмы m12 5p, обе половинки топ и подволок контакт 5 — экран 2 пары + запас">
-  <span class="st">Купить</span>
-  <div class="main"><div class="name">Разъёмы M12 5P, обе половинки</div><div class="meta">× 2 пары + запас · топ и подволок</div><div class="meta">контакт 5 — экран</div></div>
-  <div class="price"><span class="meta">цена —</span></div>
-  <div class="acts"><a href="../welded-mount/">3D ↗</a></div>
-  </div>
-<div class="row" data-s="buy" data-ph="0" data-q="кабель 8 жил 0,25 мм², витые пары в экране резервный блок → прибор  3 м">
-  <span class="st">Купить</span>
-  <div class="main"><div class="name">Кабель 8 жил 0,25 мм², витые пары в экране</div><div class="meta">× 3 м · резервный блок → прибор</div></div>
-  <div class="price"><span class="meta">цена —</span></div>
-  <div class="acts"><a href="../boat/">3D ↗</a></div>
-  </div>
-<div class="row" data-s="buy" data-ph="0" data-q="пвс 2 × 0,75 щиток → резервный блок  по месту">
-  <span class="st">Купить</span>
-  <div class="main"><div class="name">ПВС 2 × 0,75</div><div class="meta">× по месту · щиток → резервный блок</div></div>
-  <div class="price"><span class="meta">цена —</span></div>
-  <div class="acts"><a href="../boat/">3D ↗</a></div>
-  </div></div></section>
-<section><h2><span>Платы на заказ</span><span>1 · 0 ₽</span></h2><div class="list"><div class="row" data-s="buy" data-ph="0" data-q="платы кокпита v6 и топа, pcbwave.com  после переразводки v6 и переноса в kicad по 5">
-  <span class="st">Купить</span>
-  <div class="main"><div class="name">Платы кокпита v6 и топа, pcbwave.com</div><div class="meta">× по 5</div><div class="meta">после переразводки v6 и переноса в KiCad</div></div>
-  <div class="price"><span class="meta">цена —</span></div>
-  <div class="acts"><a href="../boards/">3D ↗</a></div>
-  </div></div></section>
-<section><h2><span>Куплено, но больше не нужно</span><span>8 · 8 468 ₽</span></h2><div class="list"><div class="row" data-s="ordered" data-ph="0" data-q="lipo 6000 ма·ч  прибор питается от лодки 2">
-  <span class="st">Заказано</span>
-  <div class="main"><div class="name"><span class="tag spare">не нужно</span>LiPo 6000 мА·ч</div><div class="meta">× 2</div><div class="meta">прибор питается от лодки</div></div>
-  <div class="price">1 538 ₽</div>
-  <div class="acts"></div>
-  </div>
-<div class="row" data-s="ordered" data-ph="0" data-q="tp4056 type-c   10">
-  <span class="st">Заказано</span>
-  <div class="main"><div class="name"><span class="tag spare">не нужно</span>TP4056 Type-C</div><div class="meta">× 10</div></div>
-  <div class="price">165 ₽</div>
-  <div class="acts"></div>
-  </div>
-<div class="row" data-s="ordered" data-ph="0" data-q="mt3608 повышающий  питание мачты — b0505s 5">
-  <span class="st">Заказано</span>
-  <div class="main"><div class="name"><span class="tag spare">не нужно</span>MT3608 повышающий</div><div class="meta">× 5</div><div class="meta">питание мачты — B0505S</div></div>
-  <div class="price">147 ₽</div>
-  <div class="acts"></div>
-  </div>
-<div class="row" data-s="ordered" data-ph="0" data-q="коробка ip67 малая  капсула печатная 1">
-  <span class="st">Заказано</span>
-  <div class="main"><div class="name"><span class="tag spare">не нужно</span>Коробка IP67 малая</div><div class="meta">× 1</div><div class="meta">капсула печатная</div></div>
-  <div class="price">521 ₽</div>
-  <div class="acts"></div>
-  </div>
-<div class="row" data-s="ordered" data-ph="0" data-q="магниты 6 × 2,5, 50 шт.  магниты пришли с as5600 и mt6701 1">
-  <span class="st">Заказано</span>
-  <div class="main"><div class="name"><span class="tag spare">не нужно</span>Магниты 6 × 2,5, 50 шт.</div><div class="meta">× 1</div><div class="meta">магниты пришли с AS5600 и MT6701</div></div>
-  <div class="price">2 130 ₽</div>
-  <div class="acts"></div>
-  </div>
-<div class="row" data-s="ordered" data-ph="0" data-q="переходники sot23-sip3  sm712 паяются прямо в плату 20">
-  <span class="st">Заказано</span>
-  <div class="main"><div class="name"><span class="tag spare">не нужно</span>Переходники SOT23-SIP3</div><div class="meta">× 20</div><div class="meta">SM712 паяются прямо в плату</div></div>
-  <div class="price">140 ₽</div>
-  <div class="acts"></div>
-  </div>
-<div class="row" data-s="ordered" data-ph="0" data-q="разъёмы m12 4p, обе половинки, 5 пар  с 24.11 нужны m12 5p 5">
-  <span class="st">Заказано</span>
-  <div class="main"><div class="name"><span class="tag spare">не нужно</span>Разъёмы M12 4P, обе половинки, 5 пар</div><div class="meta">× 5</div><div class="meta">с 24.11 нужны M12 5P</div></div>
-  <div class="price">1 509 ₽</div>
-  <div class="acts"></div>
-  </div>
-<div class="row" data-s="ordered" data-ph="0" data-q="флюгер и чашки misol  969 + 1349 ₽; нужны ли при печатном флюгере — уточнить 2">
-  <span class="st">Заказано</span>
-  <div class="main"><div class="name"><span class="tag spare">не нужно</span>Флюгер и чашки Misol</div><div class="meta">× 2</div><div class="meta">969 + 1349 ₽; нужны ли при печатном флюгере — уточнить</div></div>
-  <div class="price">2 318 ₽</div>
-  <div class="acts"><a href="../vane/">3D ↗</a></div>
-  </div></div></section>
-<section><h2><span>Прочее</span><span>1 · 359 ₽</span></h2><div class="list"><div class="row" data-s="ordered" data-ph="0" data-q="провод для накрутки 30awg, 280 м монтаж, макет  1">
-  <span class="st">Заказано</span>
-  <div class="main"><div class="name">Провод для накрутки 30AWG, 280 м</div><div class="meta">× 1 · монтаж, макет</div></div>
-  <div class="price">359 ₽</div>
-  <div class="acts"></div>
-  </div></div></section></div>
-  <p class="note">«Потрачено» — сумма цен позиций «Заказано» и «Пришло», включая купленное, что больше не нужно. «Ещё купить» — сумма известных цен позиций «Купить». Цены — за всю строку, в рублях.</p>
+  <div id="out"><div class="state">Загружаю список…</div></div>
+  <p class="note">«Потрачено» — сумма цен позиций «Заказано» и «Пришло», включая купленное, что больше не нужно. «Ещё купить» — сумма известных цен позиций «Купить». Цены — за всю строку, в рублях. На позицию — до 5 фото; фото уменьшаются до 1600 точек по длинной стороне. После правки страница у других обновится примерно за минуту.</p>
 </div>
+<input type="file" id="file" accept="image/*" multiple hidden>
 <script>
-(()=>{let f='all',q='';const rows=[...document.querySelectorAll('.row')];
-const apply=()=>{rows.forEach(r=>{r.hidden=!((f==='all'||r.dataset.s===f)&&(!q||r.dataset.q.includes(q)));});document.querySelectorAll('section').forEach(s=>{s.hidden=![...s.querySelectorAll('.row')].some(r=>!r.hidden);});};
-document.querySelectorAll('.chip').forEach(c=>c.addEventListener('click',()=>{f=c.dataset.f;document.querySelectorAll('.chip').forEach(x=>x.setAttribute('aria-pressed',String(x===c)));apply();}));
-document.getElementById('q').addEventListener('input',e=>{q=e.target.value.trim().toLowerCase();apply();});})();
+(()=>{
+const $=id=>document.getElementById(id);
+const OWNER='Nawings',REPO='open800-m5',BR='main',DATA='zakupki/data.json',PH='zakupki/photos/';
+const API='https://api.github.com/repos/'+OWNER+'/'+REPO+'/contents/';
+const RAW='https://raw.githubusercontent.com/'+OWNER+'/'+REPO+'/'+BR+'/';
+const MAXPH=5;
+const SECS=[['cockpit','Блок в кокпите — модули'],['pcb','Плата кокпита — мелкие детали'],['case','Корпус F1C и салазки'],['reserve','Резервный блок'],['top','Топ мачты, флюгер, кронштейн'],['cable','Кабели и разъёмы'],['boards','Платы на заказ'],['extra','Куплено, но больше не нужно'],['other','Прочее']];
+const SECN=Object.fromEntries(SECS);
+const ST={buy:'Купить',ordered:'Заказано',arrived:'Пришло',skip:'Не покупаем'};
+let D=null,sha=null,token=null,filter='all',q='',photoFor=null,queue=Promise.resolve(),fresh={};
+const ls={get:k=>{try{return localStorage.getItem(k);}catch(e){return null;}},set:(k,v)=>{try{v==null?localStorage.removeItem(k):localStorage.setItem(k,v);}catch(e){}}};
+const rub=n=>n==null?'—':Math.round(n).toLocaleString('ru-RU')+' ₽';
+const num=v=>{const n=typeof v==='number'?v:parseFloat(String(v==null?'':v).replace(/\s/g,'').replace(',','.'));return Number.isFinite(n)?n:null;};
+const el=(t,a={},...k)=>{const e=document.createElement(t);for(const[x,v]of Object.entries(a)){if(x==='text')e.textContent=v;else if(x.startsWith('on'))e.addEventListener(x.slice(2),v);else if(v!==false&&v!=null)e.setAttribute(x,v===true?'':v);}k.flat().forEach(c=>c!=null&&e.append(c));return e;};
+const say=(t,cls)=>{$('msg').textContent=t||'';$('msg').className='msg'+(cls?' '+cls:'');};
+// ---------- GitHub ----------
+const b64e=bytes=>{let s='';for(let i=0;i<bytes.length;i+=0x8000)s+=String.fromCharCode.apply(null,bytes.subarray(i,i+0x8000));return btoa(s);};
+const b64d=s=>{const b=atob(s.replace(/\s/g,''));const u=new Uint8Array(b.length);for(let i=0;i<b.length;i++)u[i]=b.charCodeAt(i);return u;};
+async function gh(method,path,body){
+  const h={'Accept':'application/vnd.github+json'};if(token)h.Authorization='Bearer '+token;if(body)h['Content-Type']='application/json';
+  const r=await fetch(API+path+(method==='GET'?'?ref='+BR+'&t='+Date.now():''),{method,headers:h,body:body?JSON.stringify(body):undefined,cache:'no-store'});
+  if(!r.ok){const e=new Error('GitHub '+r.status);e.status=r.status;throw e;}return r.status===204?null:r.json();}
+async function loadData(){
+  try{const j=await gh('GET',DATA);sha=j.sha;D=JSON.parse(new TextDecoder().decode(b64d(j.content)));return;}catch(e){if(token&&e.status===401){logout();say('Ключ не подошёл или истёк — войдите заново.','err');}}
+  const r=await fetch('data.json?t='+Date.now(),{cache:'no-store'});D=await r.json();sha=null;}
+// одна запись за раз; при конфликте — перечитать и применить правку заново
+function commit(msg,mutate){
+  queue=queue.then(async()=>{for(let k=0;k<3;k++){
+    if(!sha)await loadData();mutate(D);D.updated=new Date().toISOString();
+    try{const r=await gh('PUT',DATA,{message:msg,branch:BR,sha,content:b64e(new TextEncoder().encode(JSON.stringify(D,null,1)+'\n'))});sha=r.content.sha;render();say('Сохранено: '+msg,'ok');return;}
+    catch(e){if(e.status===409||e.status===422){sha=null;continue;}say('Не сохранилось ('+e.message+'). Обновите страницу.','err');return;}}}).catch(()=>{});
+  return queue;}
+// ---------- фото ----------
+async function shrink(file){
+  const img=await new Promise((res,rej)=>{const i=new Image();i.onload=()=>res(i);i.onerror=()=>rej(new Error('не картинка'));i.src=URL.createObjectURL(file);});
+  const k=Math.min(1,1600/Math.max(img.naturalWidth,img.naturalHeight)),c=document.createElement('canvas');c.width=Math.round(img.naturalWidth*k);c.height=Math.round(img.naturalHeight*k);
+  c.getContext('2d').drawImage(img,0,0,c.width,c.height);URL.revokeObjectURL(img.src);
+  const blob=await new Promise(r=>c.toBlob(r,'image/jpeg',0.85));return {bytes:new Uint8Array(await blob.arrayBuffer()),url:URL.createObjectURL(blob)};}
+$('file').addEventListener('change',async e=>{
+  const files=[...e.target.files];e.target.value='';const it=D.items.find(x=>x.id===photoFor);if(!it||!token)return;
+  const room=MAXPH-(it.photos||[]).length;if(room<=0){say('У позиции уже '+MAXPH+' фото — удалите лишнее.','err');return;}
+  const take=files.slice(0,room);if(files.length>room)say('Загружу только '+room+': больше '+MAXPH+' фото на позицию нельзя.','err');
+  const done=[];
+  for(const f of take){try{say('Загружаю фото: '+it.name+'…');const s=await shrink(f);const name=it.id+'-'+Date.now().toString(36)+'.jpg';
+      await gh('PUT',PH+name,{message:'Фото: '+it.name,branch:BR,content:b64e(s.bytes)});fresh[name]=s.url;done.push(name);}
+    catch(err){say('Фото не загрузилось ('+err.message+').','err');}}
+  if(done.length)commit('фото '+it.name,d=>{const x=d.items.find(y=>y.id===it.id);if(!x)return;x.photos=(x.photos||[]).concat(done).slice(0,MAXPH);if(x.status!=='skip')x.status='arrived';});});
+async function delPhoto(it,name,btn){btn.closest('.ph').classList.add('busy');
+  try{const f=await gh('GET',PH+name);await gh('DELETE',PH+name,{message:'Удалено фото: '+it.name,branch:BR,sha:f.sha});}catch(e){if(e.status!==404){say('Не удалилось ('+e.message+').','err');btn.closest('.ph').classList.remove('busy');return;}}
+  commit('удалено фото '+it.name,d=>{const x=d.items.find(y=>y.id===it.id);if(!x)return;x.photos=(x.photos||[]).filter(p=>p!==name);if(!x.photos.length&&x.status==='arrived')x.status='ordered';});}
+// ---------- вид ----------
+function summary(){
+  let spent=0,nSp=0,left=0,nL=0,nNo=0,arr=0,nPh=0;
+  D.items.forEach(i=>{const p=num(i.price);if(i.status==='ordered'||i.status==='arrived'){nSp++;if(p!=null)spent+=p;}
+    if(i.status==='buy'){nL++;if(p!=null)left+=p;else nNo++;}if(i.status==='arrived'){arr++;if((i.photos||[]).length)nPh++;}});
+  $('tSpent').textContent=rub(spent);$('tSpentN').textContent=nSp+' позиций заказано или пришло';
+  $('tLeft').textContent=nL&&nNo===nL?'цены не внесены':rub(left)+(nNo?' +':'');$('tLeftN').textContent=nL+' позиций'+(nNo?', из них '+nNo+' без цены':'');
+  $('tArr').textContent=nPh+' из '+arr;$('tArrN').textContent='отмечено «Пришло»: '+arr+'; без фото: '+(arr-nPh);
+  const lim=num(D.budget);$('tLimB').textContent=rub(lim);$('tLimB').hidden=!!token;$('tLim').hidden=!token;if(document.activeElement!==$('tLim'))$('tLim').value=lim==null?'':lim;
+  $('tRest').textContent=lim==null?'не задан':'остаток '+rub(lim-spent)+' · после всех покупок '+rub(lim-spent-left);}
+const phUrl=n=>fresh[n]||(RAW+PH+encodeURIComponent(n));
+function row(i){
+  const tags=[];if(i.spare)tags.push(el('span',{class:'tag spare',text:'не нужно'}));if(i.status==='arrived'&&!(i.photos||[]).length)tags.push(el('span',{class:'tag bad',text:'нет фото'}));
+  const meta=[i.qty?'× '+i.qty:'',i.where||''].filter(Boolean).join(' · ');
+  const stEl=token?el('select',{'aria-label':'Статус: '+i.name,onchange:e=>{const v=e.target.value;commit(ST[v]+': '+i.name,d=>{const x=d.items.find(y=>y.id===i.id);if(x)x.status=v;});}},Object.entries(ST).map(([k,v])=>el('option',{value:k,selected:i.status===k},v))):el('span',{class:'st',text:ST[i.status]||i.status});
+  const price=token?el('div',{class:'price'},el('input',{type:'text',inputmode:'decimal',value:num(i.price)==null?'':num(i.price),placeholder:'цена','aria-label':'Цена, ₽: '+i.name,onchange:e=>{const v=num(e.target.value);commit('цена '+i.name,d=>{const x=d.items.find(y=>y.id===i.id);if(x)x.price=v;});}}),el('span',{class:'meta',text:'₽'}))
+    :el('div',{class:'price'},num(i.price)==null?el('span',{class:'meta',text:'цена —'}):rub(num(i.price)));
+  const n=(i.photos||[]).length;
+  const acts=el('div',{class:'acts'},token&&i.status!=='skip'?el('button',{type:'button',class:'ghost',disabled:n>=MAXPH,text:n>=MAXPH?MAXPH+' фото':'Фото + ('+n+'/'+MAXPH+')',onclick:()=>{photoFor=i.id;$('file').click();}}):null,
+    i.model?el('a',{href:'../'+i.model,class:'meta',text:'3D ↗'}):null);
+  return el('div',{class:'row','data-s':i.status},stEl,
+    el('div',{class:'main'},el('div',{class:'name'},tags,i.name||''),meta?el('div',{class:'meta',text:meta}):null,i.note?el('div',{class:'meta',text:i.note}):null),
+    price,acts,
+    el('div',{class:'photos'},(i.photos||[]).map(p=>el('div',{class:'ph'},el('a',{href:phUrl(p),target:'_blank',rel:'noopener'},el('img',{src:phUrl(p),alt:'Фото: '+i.name,loading:'lazy'})),
+      token?el('button',{type:'button','aria-label':'Удалить фото',title:'Удалить фото',text:'×',onclick:e=>{const b=e.currentTarget;if(b.dataset.sure)delPhoto(i,p,b);else{b.dataset.sure='1';b.textContent='удалить?';}}}):null))));}
+function render(){
+  if(!D)return;summary();const out=$('out');out.textContent='';const ql=q.toLowerCase();
+  const ok=i=>(filter==='all'||(filter==='nophoto'?i.status==='arrived'&&!(i.photos||[]).length:i.status===filter))&&(!ql||[i.name,i.where,i.note,i.qty].join(' ').toLowerCase().includes(ql));
+  let any=false;
+  for(const[s,sn]of SECS){const g=D.items.filter(i=>(SECN[i.sec]?i.sec:'other')===s&&ok(i)).sort((a,b)=>(a.order||0)-(b.order||0));if(!g.length)continue;any=true;
+    out.append(el('section',{},el('h2',{},el('span',{text:sn}),el('span',{text:g.length+' · '+rub(g.reduce((a,i)=>a+(num(i.price)||0),0))})),el('div',{class:'list'},g.map(row))));}
+  if(!any)out.append(el('div',{class:'state',text:'Под фильтр ничего не попало.'}));}
+// ---------- вход ----------
+function setAuth(){$('bLogin').textContent=token?'Выйти':'Войти для правки';$('authTxt').textContent=token?'Режим правки: цены, статусы и фото сохраняются в репозиторий сайта.':'Смотреть может каждый. Загружать фото и указывать цены — после входа владельца.';$('loginBox').hidden=true;render();}
+function logout(){token=null;ls.set('m5gh',null);setAuth();}
+$('bLogin').addEventListener('click',()=>{if(token){logout();say('');return;}$('loginBox').hidden=!$('loginBox').hidden;if(!$('loginBox').hidden)$('tok').focus();});
+$('bTok').addEventListener('click',async()=>{const t=$('tok').value.trim();if(!t)return;say('Проверяю ключ…');
+  try{const r=await fetch('https://api.github.com/repos/'+OWNER+'/'+REPO,{headers:{Authorization:'Bearer '+t,Accept:'application/vnd.github+json'}});const j=await r.json();
+    if(!r.ok||!j.permissions||!j.permissions.push){say('Ключ не даёт права записи в '+OWNER+'/'+REPO+'. Проверьте «Contents: Read and write».','err');return;}
+    token=t;ls.set('m5gh',t);$('tok').value='';await loadData();setAuth();say('Вход выполнен.','ok');}catch(e){say('Не удалось проверить ключ ('+e.message+').','err');}});
+$('tLim').addEventListener('change',e=>{const v=num(e.target.value);commit('бюджет',d=>{d.budget=v;});});
+document.querySelectorAll('.chip').forEach(c=>c.addEventListener('click',()=>{filter=c.dataset.f;document.querySelectorAll('.chip').forEach(x=>x.setAttribute('aria-pressed',String(x===c)));render();}));
+let qt;$('q').addEventListener('input',e=>{clearTimeout(qt);qt=setTimeout(()=>{q=e.target.value.trim();render();},150);});
+(async()=>{token=ls.get('m5gh');try{await loadData();}catch(e){$('out').textContent='';$('out').append(el('div',{class:'state',text:'Список не загрузился. Обновите страницу.'}));return;}setAuth();})();
+})();
 </script>
