@@ -1,5 +1,5 @@
 {
- "updated": "2026-11-24T10:41:51.007Z",
+ "updated": "2026-11-24T11:04:39.496Z",
  "budget": null,
  "items": [
   {
@@ -160,15 +160,16 @@
    "id": "smbj5",
    "model": "boards/",
    "name": "SMBJ5.0A",
-   "note": "заказ AliExpress 30.10 (50 шт., 234 ₽) отменён; брать в ЧИП и ДИП вместе с ADM2483, 8 ₽/шт.; нужно 3",
+   "note": "заказ ЧИП и ДИП 24.11, оплачен; самовывоз Н. Новгород, 26.11; нужно 3",
    "order": 12,
    "photos": [],
-   "price": 40,
-   "qty": "5",
+   "price": 80,
+   "qty": "10",
    "sec": "pcb",
    "spare": false,
-   "status": "buy",
-   "where": "кокпит × 2, топ × 1"
+   "status": "ordered",
+   "where": "кокпит × 2, топ × 1",
+   "shop": "ЧИП и ДИП"
   },
   {
    "id": "pptc02",
@@ -384,15 +385,16 @@
    "id": "adm2483",
    "model": "boards/",
    "name": "ADM2483BRWZ (широкий SOIC-16) — паяется прямо на плату v6",
-   "note": "оригинал у надёжного продавца (ЧИП и ДИП); переходник не нужен (решение 24.11)",
+   "note": "заказ ЧИП и ДИП 24.11, оплачен; самовывоз Н. Новгород, 26.11; 1 + запас; паяется прямо на плату v6",
    "order": 28,
    "photos": [],
-   "price": null,
+   "price": 940,
    "qty": "2",
    "sec": "cockpit",
    "spare": false,
-   "status": "buy",
-   "where": "приём данных мачты"
+   "status": "ordered",
+   "where": "приём данных мачты",
+   "shop": "ЧИП и ДИП"
   },
   {
    "id": "cards",
@@ -425,44 +427,47 @@
   {
    "id": "pca9555",
    "model": "boards/",
-   "name": "PCA9555D",
-   "note": "v6: второй — для «−» и «+»",
+   "name": "PCA9555D,112 (SO-24)",
+   "note": "заказ ЧИП и ДИП 24.11, оплачен; самовывоз Н. Новгород, 29.11 (предоплата); 2 + запас (второй — для «−» и «+» на v6)",
    "order": 31,
    "photos": [],
-   "price": null,
-   "qty": "2",
+   "price": 1020,
+   "qty": "3",
    "sec": "pcb",
    "spare": false,
-   "status": "buy",
-   "where": "плата кокпита"
+   "status": "ordered",
+   "where": "плата кокпита",
+   "shop": "ЧИП и ДИП"
   },
   {
    "id": "ap2112",
    "model": "boards/",
-   "name": "AP2112K-3.3",
-   "note": "",
+   "name": "AP2112K-3.3TRG1",
+   "note": "заказ ЧИП и ДИП 24.11, оплачен; самовывоз Н. Новгород, 24.11; кокпит + топ + запас",
    "order": 32,
    "photos": [],
-   "price": null,
-   "qty": "2",
+   "price": 60,
+   "qty": "3",
    "sec": "pcb",
    "spare": false,
-   "status": "buy",
-   "where": "кокпит + топ"
+   "status": "ordered",
+   "where": "кокпит + топ",
+   "shop": "ЧИП и ДИП"
   },
   {
    "id": "mosfets",
    "model": "boards/",
-   "name": "P-ключ ≥ 40 В (вместо AO3401A), AO3400A, 2N7002 × 4, SI1308EDL",
-   "note": "v6: P-ключ на 40 В",
+   "name": "AO3400A ×4, SI2302 ×5 (вместо всех 2N7002), SI1308EDL-T1-GE3 ×5",
+   "note": "заказ ЧИП и ДИП 24.11, оплачен; самовывоз Н. Новгород, 24–26.11; 24 + 15 + 195 ₽",
    "order": 33,
    "photos": [],
-   "price": null,
+   "price": 234,
    "qty": "по списку",
    "sec": "pcb",
    "spare": false,
-   "status": "buy",
-   "where": "плата кокпита"
+   "status": "ordered",
+   "where": "плата кокпита",
+   "shop": "ЧИП и ДИП"
   },
   {
    "id": "sm712",
@@ -481,16 +486,17 @@
   {
    "id": "diodes",
    "model": "boards/",
-   "name": "SMBJ24A, SS34 × 2, MBR0530 × 3, 1N4148W × 2, BZT52C10 × 2, PESD3V3S2UT",
-   "note": "v6: второй стабилитрон 10 В на EN_G",
+   "name": "SMBJ24A ×10, SS34A (SMA) ×10, MBR0530 ×10, 1N4148W ×10, BZT52C10 ×10, PESD3V3S2UT,215 ×5",
+   "note": "заказ ЧИП и ДИП 24.11, оплачен; самовывоз Н. Новгород, 26.11; 90 + 60 + 40 + 40 + 60 + 65 ₽",
    "order": 35,
    "photos": [],
-   "price": null,
+   "price": 355,
    "qty": "по списку",
    "sec": "pcb",
    "spare": false,
-   "status": "buy",
-   "where": "плата кокпита"
+   "status": "ordered",
+   "where": "плата кокпита",
+   "shop": "ЧИП и ДИП"
   },
   {
    "id": "pptc11",
@@ -953,6 +959,20 @@
    "spare": false,
    "status": "buy",
    "where": ""
+  },
+  {
+   "id": "pmos40",
+   "sec": "pcb",
+   "name": "P-канальный ключ ≥ 40 В, SOT-23 (вместо AO3401A)",
+   "qty": "3",
+   "price": null,
+   "status": "buy",
+   "where": "вход 12 В",
+   "model": "boards/",
+   "note": "v6: SMBJ24A пропускает выброс до ≈ 39 В, AO3401A — только 30 В",
+   "spare": false,
+   "order": 33.5,
+   "photos": []
   }
  ]
 }
