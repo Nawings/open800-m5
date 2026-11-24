@@ -1,0 +1,260 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" href="data:,">
+<meta charset="utf-8">
+<title>Салазки и крышка</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500&family=Onest:wght@400;500;600;800&family=JetBrains+Mono:wght@400&display=swap">
+<style>
+/* Салазки и задняя крышка блока F1C, вариант А. Детали — те же STL, что идут в печать (tools/cad/dock.mjs) */
+:root{
+  --bg:#edf1f3; --surface:#ffffff; --ink:#14202b; --muted:#536373; --line:#d3dbe1; --accent:#0d6b78; --accent-bg:#e0eff1;
+  --good:#2f7d4f; --warn:#a8740a; --bad:#b8352a;
+  --f-display:"Unbounded","Arial Black",system-ui,sans-serif; --f-body:"Onest",system-ui,-apple-system,"Segoe UI",sans-serif; --f-mono:"JetBrains Mono",ui-monospace,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--bg:#0e151b;--surface:#162029;--ink:#e2e9ee;--muted:#93a3b0;--line:#27343f;--accent:#4db6c2;--accent-bg:#123238;--good:#6cc08d;--warn:#e0b13a;--bad:#ec6a5c;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0e151b;--surface:#162029;--ink:#e2e9ee;--muted:#93a3b0;--line:#27343f;--accent:#4db6c2;--accent-bg:#123238;--good:#6cc08d;--warn:#e0b13a;--bad:#ec6a5c;color-scheme:dark}
+html,body{height:100%}
+body{background:var(--bg);color:var(--ink);font:15px/1.5 var(--f-body);margin:0}
+.app{height:100vh;display:grid;grid-template-columns:minmax(0,1fr) 440px}
+@media (max-width:900px){.app{height:auto;grid-template-columns:minmax(0,1fr)}}
+.stage{position:relative;min-width:0;overflow:hidden;height:100vh}
+@media (max-width:900px){.stage{height:70vh;min-height:420px}}
+#view{position:absolute;inset:0;width:100%;height:100%;display:block;touch-action:none}
+.badge{position:absolute;left:max(16px,env(safe-area-inset-left,0px));top:14px;display:grid;gap:2px;pointer-events:none;max-width:calc(100% - 32px)}
+.badge h1{font:500 20px/1.2 var(--f-display);margin:0}
+.badge span{font:12px var(--f-mono);color:var(--muted)}
+.tools{position:absolute;left:max(16px,env(safe-area-inset-left,0px));top:74px;display:flex;flex-wrap:wrap;gap:6px;max-width:calc(100% - 32px);z-index:3}
+.tools .sep{flex-basis:100%;height:0}
+.load{position:absolute;right:16px;bottom:36px;font:12px var(--f-mono);color:var(--muted)}
+.hint{position:absolute;left:max(16px,env(safe-area-inset-left,0px));right:16px;bottom:12px;font:12px var(--f-mono);color:var(--muted);pointer-events:none}
+.tip{position:absolute;pointer-events:none;background:var(--surface);color:var(--ink);border:1px solid var(--accent);padding:5px 9px;font:13px/1.4 var(--f-body);border-radius:4px;max-width:320px;box-shadow:0 4px 14px rgba(0,0,0,.25);z-index:5}
+.err{position:absolute;inset:0;display:grid;place-items:center;text-align:center;padding:24px;color:var(--muted)}
+.panel{background:var(--surface);border-left:1px solid var(--line);overflow-y:auto;padding-block:18px 28px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:grid;gap:14px;align-content:start;grid-auto-rows:max-content}
+@media (max-width:900px){.panel{border-left:0;border-top:1px solid var(--line);overflow:visible}}
+.panel h2{font:600 12px var(--f-mono);text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin:10px 0 0}
+.lead{font:500 15.5px/1.45 var(--f-body);margin:0}
+button{font:600 13px var(--f-body);background:var(--accent-bg);color:var(--ink);border:1px solid var(--accent);padding:7px 12px;border-radius:4px;cursor:pointer}
+button[aria-pressed="false"]{background:color-mix(in srgb,var(--surface) 88%,transparent);border-color:var(--line)}
+button:disabled{opacity:.5;cursor:default}
+button:focus-visible,a:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.card{border:1px solid var(--line);border-radius:6px;padding:10px 12px;display:grid;gap:6px}
+.card h3{font:600 15px/1.3 var(--f-body);margin:0;display:flex;justify-content:space-between;gap:8px;align-items:baseline}
+.card h3 button{padding:4px 9px;font-size:12px}
+.card ul,.card ol{margin:0;padding-left:18px;display:grid;gap:4px;font-size:13.5px}
+.tbl{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:12.5px}
+td,th{border-top:1px solid var(--line);padding:5px 4px;vertical-align:top;text-align:left}
+th{font:600 11px var(--f-mono);color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
+.note{font-size:13px;color:var(--muted);margin:0}
+.dl{display:flex;flex-wrap:wrap;gap:6px}
+.dl button{font-size:12px;padding:5px 9px}
+code{font-family:var(--f-mono);font-size:12px}
+[hidden]{display:none!important}
+.home{position:absolute;top:14px;right:16px;z-index:6;padding:8px 12px;border-radius:4px;border:1px solid var(--accent);background:var(--surface);color:var(--ink);font:600 13px var(--f-body);text-decoration:none}
+.home:hover,.home:focus-visible{background:var(--accent);color:var(--surface);outline:none}
+@media (max-width:900px){.home{top:10px;left:16px;right:auto}.badge{top:54px}.tools{top:114px}.views{top:116px}.stage>h1{padding-right:0;padding-top:44px}}
+</style>
+<div class="app">
+  <div class="stage" id="stage">
+    <a class="home" href="../">← Главное меню</a>
+    <canvas id="view" aria-label="3D-модель салазок и задней крышки блока F1C"></canvas>
+    <div class="badge"><h1>Салазки и крышка</h1><span id="sub">вариант А · разъём SP13</span></div>
+    <div class="tools" role="toolbar" aria-label="Управление моделью">
+      <button type="button" id="vSP" aria-pressed="true">Разъём SP13</button>
+      <button type="button" id="vPO" aria-pressed="false">Пружинные контакты</button>
+      <span class="sep"></span>
+      <button type="button" id="bOn">Надеть</button>
+      <button type="button" id="bOff">Снять</button>
+      <button type="button" id="bExp" aria-pressed="false">Разнести</button>
+      <button type="button" id="bCut" aria-pressed="false">Разрез по разъёму</button>
+      <button type="button" id="bBox" aria-pressed="true">Корпус</button>
+      <button type="button" id="bWall" aria-pressed="true">Стенка</button>
+      <span class="sep"></span>
+      <button type="button" data-v="all">Общий вид</button>
+      <button type="button" data-v="pocket">Карман</button>
+      <button type="button" data-v="latch">Защёлка</button>
+      <button type="button" data-v="conn">Разъём</button>
+    </div>
+    <div class="tip" id="tip" hidden></div>
+    <div class="load" id="load">загрузка деталей…</div>
+    <div class="hint">крутить — мышь или палец · приблизить — колесо или щипок · наведите на деталь — подпись</div>
+  </div>
+  <aside class="panel">
+    <p class="lead">Блок F1C надевается прямо на плиту салазок — без сдвига вниз. Разъём, конусы и защёлка находятся в кармане задней крышки, между блоком и стенкой рубки. Снаружи их не видно.</p>
+    <p class="note">Это модель для выбора и пробной печати, а не окончательная. Посадку и ход защёлки проверила программа (53 проверки). Размеры разъёмов — приблизительные: их надо сверить по купленным деталям.</p>
+
+    <h2>Какой разъём</h2>
+    <div class="card">
+      <h3>Сравнение <button type="button" data-v="conn">Показать</button></h3>
+      <div class="tbl"><table>
+        <tr><th></th><th>SP13 на 9 контактов</th><th>Пружинные контакты</th></tr>
+        <tr><td><b>В крышке блока</b></td><td>панельное гнездо SP1312/P9 со штырями, гайка изнутри</td><td>ряд из 10 подпружиненных штырей с шагом 2,54 мм, вклеен в дно кармана</td></tr>
+        <tr><td><b>В плите салазок</b></td><td>кабельная вилка SP1311/S9 с гнёздами — в печатном держателе</td><td>плата с 10 золочёными площадками в углублении плиты</td></tr>
+        <tr><td><b>Отверстие в стенке</b></td><td>Ø25 — держатель с вилкой проходит в каюту</td><td>Ø10 — только кабель</td></tr>
+        <tr><td><b>Попадание</b></td><td>нужно ±0,3 мм — его дают конусы</td><td>площадки 1,8 × 3 мм прощают ±0,8 мм</td></tr>
+        <tr><td><b>Вода</b></td><td>контакты закрыты корпусом разъёма</td><td>стык открыт, защищает только карман под губой чехла</td></tr>
+        <tr><td><b>Когда блок снят</b></td><td>+12 В на гнёздах вилки — они утоплены, закрыть колпачком</td><td>+12 В на открытых площадках — колпачок обязателен, иначе солёная вода разъест их током</td></tr>
+        <tr><td><b>Главный риск</b></td><td>с накидной гайкой вилка прямо не наденется — гайку надо снять. Проверить на купленной паре</td><td>коррозия площадок и штырей; новая закупка</td></tr>
+        <tr><td><b>Закупка</b></td><td>пара SP13-9 уже в списке, нужна гнездо-со-штырями + вилка-с-гнёздами</td><td>ряд штырей 10 × 2,54 (ход 1,5 мм) и плата площадок</td></tr>
+      </table></div>
+      <p class="note">Если гайка SP13 снимается, я бы взял SP13: контакты закрыты, детали уже в закупке. Если не снимается — пружинные контакты.</p>
+    </div>
+
+    <h2>Как пользоваться</h2>
+    <div class="card">
+      <h3>Надеть и снять <button type="button" data-v="latch">Показать</button></h3>
+      <ol>
+        <li><b>Надеть:</b> блок поднести к плите — конусы сами поймают его — и прижать до щелчка. Зубья ползуна заскакивают за 2 перемычки плиты.</li>
+        <li><b>Снять:</b> нажать клавишу снизу блока, у самой стенки, на 3,6 мм вверх (сквозь чехол) — и потянуть блок на себя.</li>
+        <li><b>Когда блок снят</b> — колпачок на разъём плиты.</li>
+      </ol>
+    </div>
+
+    <h2>Детали</h2>
+    <div class="card">
+      <h3>Печатные — кнопки скачивают STL</h3>
+      <div class="tbl"><table>
+        <tr><th>Деталь</th><th>Размер, мм</th><th>Как печатать</th></tr>
+        <tr><td><b>Задняя крышка</b> (своя на каждый разъём)</td><td>212 × 178, карман 160 × 148 × 5</td><td>ASA; наружной стороной на стол, поддержки в кармане</td></tr>
+        <tr><td><b>Плита салазок</b> (своя на каждый разъём)</td><td>156 × 140 × 5, конусы Ø8</td><td>ASA; стороной к стенке на стол, конусы вверх</td></tr>
+        <tr><td><b>Ползун защёлки</b> с пружиной-змейкой</td><td>10 × 168 × 7</td><td>PETG или ASA; плашмя</td></tr>
+        <tr><td><b>Держатель вилки SP13</b></td><td>Ø36 × 29</td><td>ASA; фланцем на стол</td></tr>
+        <tr><td><b>Прокладка</b></td><td>212 × 178, ширина 8, толщина 1,5</td><td>TPU 95A</td></tr>
+      </table></div>
+      <div class="dl" id="dl"></div>
+      <p class="note">Для пробной печати из дешёвого пластика хватит одной крышки, одной плиты и ползуна. Так проверяются посадка, попадание разъёма и щелчок, без печати всей коробки.</p>
+    </div>
+    <div class="card">
+      <h3>Крепёж и покупное</h3>
+      <ul>
+        <li>4 потайных винта М4 из нержавейки A4 — плита к стенке рубки; под плиту — герметик.</li>
+        <li>9 винтов М3 × 12 A4 — крышка к коробке, в латунные вставки.</li>
+        <li>2 винта М3 × 8 — держатель вилки к плите (только SP13).</li>
+        <li>Колпачок на разъём плиты.</li>
+      </ul>
+    </div>
+
+    <h2>Что изменилось против прежней крышки</h2>
+    <div class="card">
+      <ul>
+        <li><b>Нет хвоста SP13, гермоввода и ниши.</b> Разъём стоит прямо в дне кармана, провода от него идут сразу к J1, J2 и клемме A B.</li>
+        <li><b>Прокладка шириной 8 мм</b> с 9 отверстиями под винты — вместо шнура, который проходил сквозь винты.</li>
+        <li><b>Две нижние бобышки</b> (X ±50) сдвинуты на 2 мм к краю: Y −84,5 вместо −82,5. Раньше они заходили в рамку кармана. Это правка и лицевой коробки.</li>
+        <li><b>Клапан давления</b> — в нижней стенке коробки, мембраной вниз. В кармане его закрыла бы плита.</li>
+        <li><b>Защёлка спроектирована:</b> ползун в пазу дна кармана, 2 зуба, пружина-змейка, клавиша — нижний конец ползуна.</li>
+      </ul>
+    </div>
+
+    <h2>Проверить на пробной печати</h2>
+    <div class="card">
+      <ul>
+        <li>Снимается ли накидная гайка вилки SP13 и держится ли вилка в держателе на стяжке.</li>
+        <li>Хватает ли упругости пружины-змейки и не ломается ли она — в дешёвом пластике она может треснуть, тогда заменить её стальной пружиной.</li>
+        <li>Под нижним пазом ползуна у кромки крышки остаётся 1 мм пластика под прокладкой — не продавливается ли он.</li>
+        <li>Не мешают ли чашки конусов и ребро ползуна внутри блока плате и проводам — модель платы здесь не показана.</li>
+        <li>Задняя стенка F1C на самом деле наклонная (клин 15 мм), а здесь коробка нарисована прямой — на детали крышки это не влияет.</li>
+      </ul>
+    </div>
+  </aside>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/STLLoader.js"></script>
+<script>
+(()=>{
+const $=id=>document.getElementById(id);
+const stage=$('stage'),canvas=$('view');
+if(!window.THREE){stage.insertAdjacentHTML('beforeend','<div class="err">Не загрузилась библиотека 3D. Проверьте интернет и обновите страницу.</div>');return;}
+const T=THREE,V=(x,y,z)=>new T.Vector3(x,y,z);
+const renderer=new T.WebGLRenderer({canvas,antialias:true});renderer.setPixelRatio(Math.min(devicePixelRatio,2));renderer.localClippingEnabled=true;
+const scene=new T.Scene(),camera=new T.PerspectiveCamera(35,1,1,5000);
+const controls=new T.OrbitControls(camera,canvas);controls.enableDamping=true;
+scene.add(new T.HemisphereLight(0xffffff,0x8090a0,0.75));const dl=new T.DirectionalLight(0xffffff,0.75);dl.position.set(200,300,400);scene.add(dl);const dl2=new T.DirectionalLight(0xffffff,0.35);dl2.position.set(-300,-100,-300);scene.add(dl2);
+const dark=()=>document.documentElement.dataset.theme==='dark'||(document.documentElement.dataset.theme!=='light'&&matchMedia('(prefers-color-scheme: dark)').matches);
+const setBg=()=>{scene.background=new T.Color(getComputedStyle(document.body).backgroundColor);};setBg();try{matchMedia('(prefers-color-scheme: dark)').addEventListener('change',setBg);}catch(e){}
+// модель в мм: x вправо, y вверх, z — от стенки рубки внутрь блока; поворачиваем так, чтобы стенка стояла вертикально, блок — к зрителю
+const root=new T.Group();scene.add(root);
+const wallG=new T.Group(),blockG=new T.Group(),slG=new T.Group();root.add(wallG);root.add(blockG);blockG.add(slG);
+const cut=new T.Plane(V(-1,0,0),29);
+const mat=(c,o={})=>new T.MeshStandardMaterial(Object.assign({color:c,roughness:0.6,metalness:0,side:T.DoubleSide},o));
+// [файл, группа, цвет, подпись, вариант ('sp' | 'po' | ''), сдвиг при разносе]
+const PARTS=[
+ ['wall_sp',wallG,0xe9ebe6,'стенка рубки (плоская), отверстие Ø25 под держатель с вилкой','sp',[0,0,-25],{transparent:true,opacity:0.28,depthWrite:false}],
+ ['wall_po',wallG,0xe9ebe6,'стенка рубки (плоская), отверстие Ø10 под кабель','po',[0,0,-25],{transparent:true,opacity:0.28,depthWrite:false}],
+ ['plate_sp',wallG,0x3a4048,'плита салазок 156 × 140 × 5 (ASA) на 4 потайных винтах М4: 2 конуса Ø8 ловят блок, 2 перемычки держат зубья защёлки','sp',[0,0,0]],
+ ['plate_po',wallG,0x3a4048,'плита салазок 156 × 140 × 5 (ASA) на 4 потайных винтах М4: 2 конуса Ø8 ловят блок, 2 перемычки держат зубья защёлки, углубление под плату площадок','po',[0,0,0]],
+ ['m4',wallG,0xb8c0c8,'потайной винт М4 A4 сквозь плиту в стенку рубки (4 шт.)','',[0,0,-12],{metalness:0.6,roughness:0.35}],
+ ['holder',wallG,0x8a7558,'держатель вилки SP13 (ASA): трубка в отверстии стенки, фланец на 2 винтах М3 к плите; вилку в каюте стягивает стяжка по прорезям','sp',[0,0,-45]],
+ ['plug_sp',wallG,0x23272c,'вилка SP13 на кабеле, SP1311/S9 с гнёздами, без накидной гайки: приходит из каюты, под +12 В, когда блок снят — колпачок','sp',[0,0,-75]],
+ ['pads',wallG,0x1f6f3a,'плата площадок 34 × 10: 10 золочёных площадок 1,8 × 3, утоплены на 0,8 мм ниже плиты','po',[0,0,-30]],
+ ['pads_au',wallG,0xd4af37,'площадки контактов, золото: под +12 В, когда блок снят — колпачок обязателен','po',[0,0,-30],{metalness:0.8,roughness:0.3}],
+ ['cable_po',wallG,0x222428,'кабель от площадок в каюту, через отверстие Ø10','po',[0,0,-60]],
+ ['lid_sp',blockG,0x6f8798,'задняя крышка 212 × 178 (ASA) для разъёма SP13: карман под плиту, чашки конусов, паз ползуна; 9 винтов М3 в латунные вставки коробки','sp',[0,0,0]],
+ ['lid_po',blockG,0x6f8798,'задняя крышка 212 × 178 (ASA) для пружинных контактов: карман под плиту, чашки конусов, паз ползуна, окно под ряд штырей','po',[0,0,0]],
+ ['gasket',blockG,0x2b2d30,'прокладка TPU шириной 8 мм, толщиной 1,5, с 9 отверстиями под винты: винт проходит сквозь неё, вода — нет','',[0,0,30]],
+ ['m3',blockG,0xb8c0c8,'винт М3 × 12 A4 — крышка к коробке (9 шт.)','',[0,0,-15],{metalness:0.6,roughness:0.35}],
+ ['rec_sp',blockG,0x9aa2aa,'гнездо SP13 на панель, SP1312/P9 со штырями: фланец снаружи в кармане, гайка изнутри; провода сразу к J1, J2 и клемме A B','sp',[0,0,-30],{metalness:0.5,roughness:0.4}],
+ ['pogo',blockG,0x4a4d52,'ряд из 10 подпружиненных штырей 2,54 мм, ход 1,5: вклеен в окно дна кармана, фланец изнутри; поджатие к площадкам 1 мм','po',[0,0,-30]]];
+const SLIDER=['slider',slG,0xd62828,'ползун защёлки (PETG/ASA): 2 зуба цепляются за перемычки плиты, пружина-змейка тянет вниз; нижний конец — клавиша. Нажать вверх на 3,6 мм — зубья отпускают, блок снимается','',[0,0,-8]];
+const meshes=[];
+let variant='sp',exp=0,expT=0,on=1,onT=0.0,press=0,pressT=0,cutOn=false,anim=null;
+// корпус-призрак: 212 × 178, глубина до лица — для масштаба
+const ghost=new T.LineSegments(new T.EdgesGeometry(new T.BoxGeometry(212,178,44)),new T.LineBasicMaterial({color:0x7f8c99}));ghost.position.set(0,0,4.5+22);blockG.add(ghost);
+const ghostF=new T.Mesh(new T.BoxGeometry(212,178,44),mat(0x9fb0bf,{transparent:true,opacity:0.08,depthWrite:false}));ghostF.position.copy(ghost.position);ghostF.userData.label='лицевая коробка F1C (здесь без наклона задней стенки): стоит на прокладке, 9 бобышек с латунными вставками';blockG.add(ghostF);
+const loader=new T.STLLoader();
+const b64=t=>{const s=atob(t.trim()),u=new Uint8Array(s.length);for(let i=0;i<s.length;i++)u[i]=s.charCodeAt(i);return u.buffer;};
+const RAW={};
+const load=p=>fetch('stl/'+p[0]+'.txt').then(r=>{if(!r.ok)throw r.status;return r.text();}).then(t=>{RAW[p[0]]=t;const g=loader.parse(b64(t));g.computeVertexNormals();
+  const m=new T.Mesh(g,mat(p[2],p[6]||{}));m.userData={label:p[3],v:p[4],ex:V(...p[5]),f:p[0]};p[1].add(m);meshes.push(m);});
+Promise.all(PARTS.concat([SLIDER]).map(load)).then(()=>{$('load').hidden=true;apply();}).catch(e=>{$('load').textContent='не загрузились детали ('+e+')';});
+// ---------- состояние ----------
+function apply(){
+  meshes.forEach(m=>{const v=m.userData.v;m.visible=!v||v===variant;if(/^wall_/.test(m.userData.f))m.visible=m.visible&&wallOn;
+    m.position.copy(m.userData.ex).multiplyScalar(exp);m.material.clippingPlanes=cutOn?[cut]:[];m.material.needsUpdate=true;});
+  ghost.visible=ghostF.visible=boxOn&&exp<0.5;
+  blockG.position.set(0,0,(1-on)*90+exp*70);
+  slG.position.set(0,press*3.6,0);
+}
+let boxOn=true,wallOn=true;
+const VIEWS={all:{t:[0,0,45],p:[430,150,150]},pocket:{t:[-10,0,90],p:[160,-120,-120]},latch:{t:[-20,-45,90],p:[110,-170,-30]},conn:{t:[29,30,10],p:[260,150,130]}};
+let fly=null;function go(k){const v=VIEWS[k];const b=k==='all';if(boxOn!==b){boxOn=b;$('bBox').setAttribute('aria-pressed',String(b));}const wv=!(k==='pocket'||k==='latch');if(wallOn!==wv){wallOn=wv;$('bWall').setAttribute('aria-pressed',String(wv));}if((k==='pocket'||k==='latch')&&on>0.5&&!anim){on=0;$('bOn').disabled=false;$('bOff').disabled=true;}apply();fly={t0:controls.target.clone(),p0:camera.position.clone(),t1:V(...v.t),p1:V(...v.p),k:0};}
+camera.position.set(...VIEWS.all.p);controls.target.set(...VIEWS.all.t);
+// анимация «надеть» / «снять»
+function play(dir){anim={dir,k:0};$('bOn').disabled=$('bOff').disabled=true;}
+const st=(a,b,x)=>Math.min(1,Math.max(0,(x-a)/(b-a)));
+function stepAnim(dt){if(!anim)return;anim.k=Math.min(1,anim.k+dt/2.4);const k=anim.k;
+  if(anim.dir>0){on=1-0.9*(1-k);on=k<0.85?k/0.85:1;const gap=(1-on)*90;press=gap<6&&gap>0.3?1:0;}   // зубья наезжают на перемычки и заскакивают
+  else{press=k<0.75?1:0;on=k<0.15?1:1-st(0.15,0.9,k);}
+  apply();if(k>=1){anim=null;press=0;apply();$('bOn').disabled=on>0.99;$('bOff').disabled=on<0.01;}}
+$('bOn').addEventListener('click',()=>play(1));$('bOff').addEventListener('click',()=>play(-1));
+on=0;$('bOff').disabled=true;   // начинаем со снятым блоком: видно карман и плиту
+const tg=(id,f)=>$(id).addEventListener('click',()=>{const v=$(id).getAttribute('aria-pressed')!=='true';$(id).setAttribute('aria-pressed',String(v));f(v);apply();});
+tg('bExp',v=>{expT=v?1:0;});tg('bCut',v=>{cutOn=v;});tg('bBox',v=>{boxOn=v;});tg('bWall',v=>{wallOn=v;});
+const setV=v=>{variant=v;$('vSP').setAttribute('aria-pressed',String(v==='sp'));$('vPO').setAttribute('aria-pressed',String(v==='po'));$('sub').textContent='вариант А · '+(v==='sp'?'разъём SP13':'пружинные контакты');apply();};
+$('vSP').addEventListener('click',()=>setV('sp'));$('vPO').addEventListener('click',()=>setV('po'));
+document.querySelectorAll('[data-v]').forEach(b=>b.addEventListener('click',()=>{go(b.dataset.v);if(b.dataset.v==='conn'&&!cutOn)$('bCut').click();if(!b.closest('.tools'))stage.scrollIntoView({behavior:'smooth',block:'start'});}));
+// скачать STL печатных деталей
+[['lid_sp','крышка · SP13'],['lid_po','крышка · пружинные'],['plate_sp','плита · SP13'],['plate_po','плита · пружинные'],['slider','ползун'],['holder','держатель вилки'],['gasket','прокладка']].forEach(([f,n])=>{
+  const b=document.createElement('button');b.type='button';b.textContent=n+' .stl';b.addEventListener('click',()=>{const t=RAW[f];if(!t)return;const u=URL.createObjectURL(new Blob([b64(t)],{type:'model/stl'}));const a=document.createElement('a');a.href=u;a.download='open800-'+f+'.stl';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),2000);});$('dl').appendChild(b);});
+// подписи при наведении
+const ray=new T.Raycaster(),mouse=new T.Vector2(),tip=$('tip');
+canvas.addEventListener('pointermove',ev=>{const r=canvas.getBoundingClientRect();mouse.set((ev.clientX-r.left)/r.width*2-1,-(ev.clientY-r.top)/r.height*2+1);ray.setFromCamera(mouse,camera);
+  const hs=ray.intersectObjects(meshes.concat([ghostF]).filter(m=>m.visible&&m.parent.visible),false).filter(h=>!cutOn||h.point.x<=29.01).filter(h=>h.object.material.opacity>0.5||h.object===ghostF);
+  const h=hs.find(x=>x.object!==ghostF)||hs[0];
+  if(h&&h.object.userData.label){tip.textContent=h.object.userData.label;tip.hidden=false;let x=ev.clientX-r.left+14,y=ev.clientY-r.top+14;x=Math.min(x,r.width-tip.offsetWidth-8);y=Math.min(y,r.height-tip.offsetHeight-8);tip.style.left=x+'px';tip.style.top=y+'px';}else tip.hidden=true;});
+canvas.addEventListener('pointerleave',()=>{tip.hidden=true;});
+// ---------- цикл ----------
+function size(){const w=stage.clientWidth,h=stage.clientHeight;renderer.setSize(w,h,false);camera.aspect=w/h;camera.updateProjectionMatrix();}
+new ResizeObserver(size).observe(stage);size();
+const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;let last=performance.now();
+function frame(now){const dt=Math.min(0.05,(now-last)/1000);last=now;
+  if(exp!==expT){exp+=Math.sign(expT-exp)*Math.min(Math.abs(expT-exp),reduce?1:dt*2);apply();}
+  if(anim){if(reduce)anim.k=0.999;stepAnim(dt);}
+  if(fly){fly.k=Math.min(1,fly.k+(reduce?1:dt*1.6));const e=1-Math.pow(1-fly.k,3);controls.target.lerpVectors(fly.t0,fly.t1,e);camera.position.lerpVectors(fly.p0,fly.p1,e);if(fly.k>=1)fly=null;}
+  controls.update();renderer.render(scene,camera);requestAnimationFrame(frame);}
+requestAnimationFrame(frame);
+})();
+</script>
