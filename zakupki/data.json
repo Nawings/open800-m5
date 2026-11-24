@@ -1,5 +1,5 @@
 {
- "updated": "2026-11-24T10:39:48.479Z",
+ "updated": "2026-11-24T10:41:51.007Z",
  "budget": null,
  "items": [
   {
@@ -174,14 +174,14 @@
    "id": "pptc02",
    "model": "boards/",
    "name": "PPTC 0,2 А",
-   "note": "AliExpress 1005007037598455, вариант 0.2A, 10 шт.; выводные, шаг выводов 5 мм",
+   "note": "на руках (владелец, 24.11); AliExpress 1005007037598455, вариант 0.2A, 10 шт.; нужно 1, 9 в запасе",
    "order": 13,
    "photos": [],
-   "price": 89,
+   "price": 79,
    "qty": "10",
    "sec": "pcb",
    "spare": false,
-   "status": "ordered",
+   "status": "arrived",
    "where": "питание мачты"
   },
   {
