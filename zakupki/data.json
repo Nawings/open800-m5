@@ -1,5 +1,5 @@
 {
- "updated": "2026-11-24T10:31:50.866Z",
+ "updated": "2026-11-24T10:36:35.617Z",
  "budget": null,
  "items": [
   {
@@ -160,14 +160,14 @@
    "id": "smbj5",
    "model": "boards/",
    "name": "SMBJ5.0A",
-   "note": "",
+   "note": "заказ AliExpress 30.10 (50 шт., 234 ₽) отменён; брать в ЧИП и ДИП вместе с ADM2483, 8 ₽/шт.; нужно 3",
    "order": 12,
    "photos": [],
-   "price": 234,
-   "qty": "50",
+   "price": 40,
+   "qty": "5",
    "sec": "pcb",
    "spare": false,
-   "status": "ordered",
+   "status": "buy",
    "where": "кокпит × 2, топ × 1"
   },
   {
