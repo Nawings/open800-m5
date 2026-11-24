@@ -52,7 +52,7 @@ section h2{font:600 12px var(--f-mono);text-transform:uppercase;letter-spacing:.
 .price input{width:100%;min-width:0;font:600 14px var(--f-body);text-align:right;padding:4px 6px;border:1px solid var(--line);border-radius:4px;background:transparent;color:var(--ink)}
 .acts{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end;align-items:center}
 .tag{display:inline-block;font:600 11px var(--f-mono);padding:1px 6px;border-radius:3px;margin-right:4px;vertical-align:1px}
-.tag.spare{background:var(--skip-bg);color:var(--skip)}.tag.bad{background:var(--buy-bg);color:var(--bad)}
+.tag.spare{background:var(--skip-bg);color:var(--skip)}.tag.bad{background:var(--buy-bg);color:var(--bad)}.tag.shop{background:var(--ord-bg);color:var(--ord)}
 .photos{grid-column:1/-1;display:flex;flex-wrap:wrap;gap:6px}
 .photos:empty{display:none}
 .ph{position:relative;width:76px;height:76px;border-radius:4px;overflow:hidden;border:1px solid var(--line);background:var(--bg)}
@@ -168,7 +168,7 @@ function summary(){
   $('tRest').textContent=lim==null?'не задан':'остаток '+rub(lim-spent)+' · после всех покупок '+rub(lim-spent-left);}
 const phUrl=n=>fresh[n]||(RAW+PH+encodeURIComponent(n));
 function row(i){
-  const tags=[];if(i.spare)tags.push(el('span',{class:'tag spare',text:'не нужно'}));if(i.status==='arrived'&&!(i.photos||[]).length)tags.push(el('span',{class:'tag bad',text:'нет фото'}));
+  const tags=[];if(i.shop)tags.push(el('span',{class:'tag shop',text:i.shop}));if(i.spare)tags.push(el('span',{class:'tag spare',text:'не нужно'}));if(i.status==='arrived'&&!(i.photos||[]).length)tags.push(el('span',{class:'tag bad',text:'нет фото'}));
   const meta=[i.qty?'× '+i.qty:'',i.where||''].filter(Boolean).join(' · ');
   const stEl=token?el('select',{'aria-label':'Статус: '+i.name,onchange:e=>{const v=e.target.value;commit(ST[v]+': '+i.name,d=>{const x=d.items.find(y=>y.id===i.id);if(x)x.status=v;});}},Object.entries(ST).map(([k,v])=>el('option',{value:k,selected:i.status===k},v))):el('span',{class:'st',text:ST[i.status]||i.status});
   const price=token?el('div',{class:'price'},el('input',{type:'text',inputmode:'decimal',value:num(i.price)==null?'':num(i.price),placeholder:'цена','aria-label':'Цена, ₽: '+i.name,onchange:e=>{const v=num(e.target.value);commit('цена '+i.name,d=>{const x=d.items.find(y=>y.id===i.id);if(x)x.price=v;});}}),el('span',{class:'meta',text:'₽'}))
