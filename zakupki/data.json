@@ -1,5 +1,5 @@
 {
- "updated": "2026-11-24T12:08:23.560Z",
+ "updated": "2026-11-24T12:11:26.259Z",
  "budget": null,
  "items": [
   {
@@ -1040,6 +1040,20 @@
    "spare": false,
    "status": "buy",
    "where": "кокпит и топ"
+  },
+  {
+   "id": "crimper",
+   "model": "cockpit/",
+   "name": "Обжимник SN-28B (или аналог) для контактов XH",
+   "note": "ДОЗАКАЗАТЬ, AliExpress ≈ 600–1 000 ₽. У владельца нет (24.11). Нужен для набора XH «XH2.54»: J1, J2, JL, T1. Тот же обжимник берёт Dupont и JST PH; для GH не нужен — провода GH готовые",
+   "order": 41.5,
+   "photos": [],
+   "price": null,
+   "qty": "1",
+   "sec": "pcb",
+   "spare": false,
+   "status": "buy",
+   "where": "жгуты"
   }
  ]
 }
