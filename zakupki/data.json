@@ -1,5 +1,5 @@
 {
- "updated": "2026-11-24T09:28:47.925Z",
+ "updated": "2026-11-24T10:18:04.115Z",
  "budget": null,
  "items": [
   {
@@ -383,12 +383,12 @@
   {
    "id": "adm2483",
    "model": "boards/",
-   "name": "ADM2483 SOIC-16 + переходник на DIP-16",
-   "note": "",
+   "name": "ADM2483BRWZ (широкий SOIC-16) — паяется прямо на плату v6",
+   "note": "оригинал у надёжного продавца (ЧИП и ДИП); переходник не нужен (решение 24.11)",
    "order": 28,
    "photos": [],
    "price": null,
-   "qty": "1",
+   "qty": "2",
    "sec": "cockpit",
    "spare": false,
    "status": "buy",
