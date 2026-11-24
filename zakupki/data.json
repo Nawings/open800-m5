@@ -1,5 +1,5 @@
 {
- "updated": "2026-11-24T10:18:04.115Z",
+ "updated": "2026-11-24T10:31:50.866Z",
  "budget": null,
  "items": [
   {
@@ -468,14 +468,14 @@
    "id": "sm712",
    "model": "boards/",
    "name": "SM712",
-   "note": "в заказах не найден",
+   "note": "пришло 20 шт. (нужно 2: кокпит + топ, 18 в запасе); 24.11",
    "order": 34,
    "photos": [],
-   "price": null,
-   "qty": "2",
+   "price": 390,
+   "qty": "20",
    "sec": "pcb",
    "spare": false,
-   "status": "buy",
+   "status": "arrived",
    "where": "кокпит + топ"
   },
   {
