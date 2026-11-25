@@ -65,6 +65,7 @@ code{font-family:var(--f-mono);font-size:12px}
     <div class="tools" role="toolbar" aria-label="Управление моделью">
       <button type="button" id="vSP" aria-pressed="true">Разъём SP13</button>
       <button type="button" id="vPO" aria-pressed="false">Пружинные контакты</button>
+      <button type="button" id="vB" aria-pressed="false">Вариант Б: пазы и вертушок</button>
       <span class="sep"></span>
       <button type="button" id="bOn">Надеть</button>
       <button type="button" id="bOff">Снять</button>
@@ -85,6 +86,19 @@ code{font-family:var(--f-mono);font-size:12px}
   <aside class="panel">
     <p class="lead">Блок F1C надевается прямо на плиту салазок — без сдвига вниз. Разъём, конусы и защёлка находятся в кармане задней крышки, между блоком и стенкой рубки. Снаружи их не видно.</p>
     <p class="note">Это модель для выбора и пробной печати, а не окончательная. Посадку и ход защёлки проверила программа (63 проверки). Размеры разъёмов — приблизительные: их надо сверить по купленным деталям.</p>
+
+    <h2>Вариант Б: блок на пазах, сверху вертушок</h2>
+    <div class="card">
+      <h3>Как держится (25.11, после поломки ползуна) <button type="button" id="goB">Показать</button></h3>
+      <ul>
+        <li><b>Надеть:</b> поднести блок к стенке на 17 мм выше рабочего места — 2 крюка крышки входят в окна пазов плиты — и опустить: крюки съезжают по пазам и встают на их дно, головки крюков заходят за губы паза. Блок висит на крюках, от стенки его не оторвать.</li>
+        <li><b>Запереть:</b> повернуть барашек на верхней стенке блока на 90° — язычок заходит в окно шейки плиты, которая выступает над блоком на 15 мм. Поднять блок теперь нельзя: язычок упирается в верх окна. Барашек держится трением на шайбе TPU.</li>
+        <li><b>Разъём SP13 — вручную снизу:</b> гнездо в нижней стенке блока осью вниз, вилка вставляется рукой. Жёсткий кабель внутрь блока не заходит: висит снаружи и уходит в стенку рубки ниже блока — отверстие лучше на 5–6 см ниже, чтобы кабель лёг петлёй без излома.</li>
+        <li><b>Снять:</b> отсоединить вилку, повернуть барашек, поднять блок на 17 мм и отвести от стенки.</li>
+        <li><b>Проверено программой</b> (14 проверок, tools/cad/dock_b.mjs): крюки входят в окна, блок съезжает без задевания, не отрывается от стенки, не опускается ниже, барашек поворачивается 0…90° без задевания и запирает подъём, открытый — блок снимается.</li>
+        <li><b>Что ещё нужно:</b> в верхней стенке корпуса F1C — 2 латунные вставки М3 под основание вертушка; в нижней — отверстие под гнездо SP13 (панельное SP1312/P9); над блоком на стенке рубки — 20 мм свободного места под шейку плиты. Пружинная защёлка и конусы в варианте Б не нужны.</li>
+      </ul>
+    </div>
 
     <h2>Какой разъём</h2>
     <div class="card">
@@ -180,10 +194,16 @@ const setBg=()=>{scene.background=new T.Color(getComputedStyle(document.body).ba
 // модель в мм: x вправо, y вверх, z — от стенки рубки внутрь блока; поворачиваем так, чтобы стенка стояла вертикально, блок — к зрителю
 const root=new T.Group();scene.add(root);
 const wallG=new T.Group(),blockG=new T.Group(),slG=new T.Group();root.add(wallG);root.add(blockG);blockG.add(slG);
+const kG=new T.Group(),kG2=new T.Group();kG.position.set(-8,0,12);kG2.position.set(8,0,-12);kG.add(kG2);blockG.add(kG);   /*var-b*/ // барашек вертушка: поворот вокруг вертикальной оси (x −8, z 12)
 const cut=new T.Plane(V(-1,0,0),29);
 const mat=(c,o={})=>new T.MeshStandardMaterial(Object.assign({color:c,roughness:0.6,metalness:0,side:T.DoubleSide},o));
 // [файл, группа, цвет, подпись, вариант ('sp' | 'po' | ''), сдвиг при разносе]
 const PARTS=[
+ ['b_plate',wallG,0x3a4048,'вариант Б: плита 156 × 162 × 5 на 5 потайных винтах М4 — 2 паза-«замочные скважины» под крюки крышки и шейка над блоком с окном под язычок вертушка','b',[0,0,0]],
+ ['b_lid',blockG,0x6f8798,'вариант Б: задняя крышка — карман под плиту, 2 крюка (ножка 6, головка 13 × 10) и прорезь под шейку плиты; конусов и паза защёлки нет','b',[0,0,0]],
+ ['b_latch_base',blockG,0x4a505a,'основание вертушка: на верхней стенке блока, 2 винта М3 во вставки корпуса F1C; ось — винт М4 снизу','b',[0,30,0]],
+ ['b_latch_washer',kG2,0x2f3a46,'шайба TPU 1 мм: трение держит барашек в положении «заперто» и «открыто»','b',[0,40,0]],
+ ['b_latch_knob',kG2,0xd62828,'барашек с язычком: поворот на 90° — язычок заходит в окно шейки плиты, блок не поднять','b',[0,55,0]],
  ['wall_sp',wallG,0xe9ebe6,'стенка рубки (плоская), отверстие Ø25 под держатель с вилкой','sp',[0,0,-25],{transparent:true,opacity:0.28,depthWrite:false}],
  ['wall_po',wallG,0xe9ebe6,'стенка рубки (плоская), отверстие Ø10 под кабель','po',[0,0,-25],{transparent:true,opacity:0.28,depthWrite:false}],
  ['plate_sp',wallG,0x3a4048,'плита салазок 156 × 140 × 5 (ASA) на 4 потайных винтах М4: 2 конуса Ø8 ловят блок, 2 перемычки держат зубья защёлки','sp',[0,0,0]],
@@ -215,10 +235,11 @@ const load=p=>fetch('stl/'+p[0]+'.txt').then(r=>{if(!r.ok)throw r.status;return 
 Promise.all(PARTS.concat([SLIDER]).map(load)).then(()=>{$('load').hidden=true;apply();}).catch(e=>{$('load').textContent='не загрузились детали ('+e+')';});
 // ---------- состояние ----------
 function apply(){
-  meshes.forEach(m=>{const v=m.userData.v;m.visible=!v||v===variant;if(/^wall_/.test(m.userData.f))m.visible=m.visible&&wallOn;
+  meshes.forEach(m=>{const v=m.userData.v,f=m.userData.f;m.visible=variant==='b'?(v==='b'||f==='gasket'||f==='m3'):((!v||v===variant)&&v!=='b');if(/^wall_/.test(m.userData.f))m.visible=m.visible&&wallOn;
     m.position.copy(m.userData.ex).multiplyScalar(exp);m.material.clippingPlanes=cutOn?[cut]:[];m.material.needsUpdate=true;});
   ghost.visible=ghostF.visible=boxOn&&exp<0.5;
-  blockG.position.set(0,0,(1-on)*90+exp*70);
+  if(variant==='b'){const a=Math.min(1,on/0.5),b=Math.max(0,(on-0.5)/0.4);blockG.position.set(0,17*(1-Math.min(1,b)),(1-a)*90+exp*70);kG.rotation.y=on>0.97?0:-Math.PI/2;slG.visible=false;}   // подход к стенке поднятым на 17 мм, спуск по пазам, барашек запирает
+  else{blockG.position.set(0,0,(1-on)*90+exp*70);slG.visible=true;}
   slG.position.set(0,press*3.6,0);
 }
 let boxOn=true,wallOn=true;
@@ -236,11 +257,12 @@ $('bOn').addEventListener('click',()=>play(1));$('bOff').addEventListener('click
 on=0;$('bOff').disabled=true;   // начинаем со снятым блоком: видно карман и плиту
 const tg=(id,f)=>$(id).addEventListener('click',()=>{const v=$(id).getAttribute('aria-pressed')!=='true';$(id).setAttribute('aria-pressed',String(v));f(v);apply();});
 tg('bExp',v=>{expT=v?1:0;});tg('bCut',v=>{cutOn=v;});tg('bBox',v=>{boxOn=v;});tg('bWall',v=>{wallOn=v;});
-const setV=v=>{variant=v;$('vSP').setAttribute('aria-pressed',String(v==='sp'));$('vPO').setAttribute('aria-pressed',String(v==='po'));$('sub').textContent='вариант А · '+(v==='sp'?'разъём SP13':'пружинные контакты');apply();};
+const setV=v=>{variant=v;$('vSP').setAttribute('aria-pressed',String(v==='sp'));$('vPO').setAttribute('aria-pressed',String(v==='po'));$('vB').setAttribute('aria-pressed',String(v==='b'));$('sub').textContent=v==='b'?'вариант Б · пазы и вертушок, SP13 вручную снизу':'вариант А · '+(v==='sp'?'разъём SP13':'пружинные контакты');apply();};
+$('vB').addEventListener('click',()=>setV('b'));$('goB').addEventListener('click',()=>{setV('b');go('all');stage.scrollIntoView({behavior:'smooth',block:'start'});});
 $('vSP').addEventListener('click',()=>setV('sp'));$('vPO').addEventListener('click',()=>setV('po'));
 document.querySelectorAll('[data-v]').forEach(b=>b.addEventListener('click',()=>{go(b.dataset.v);if(b.dataset.v==='conn'&&!cutOn)$('bCut').click();if(!b.closest('.tools'))stage.scrollIntoView({behavior:'smooth',block:'start'});}));
 // скачать STL печатных деталей
-[['lid_sp','крышка · SP13'],['lid_po','крышка · пружинные'],['plate_sp','плита · SP13'],['plate_po','плита · пружинные'],['slider','ползун'],['holder','держатель вилки'],['gasket','прокладка']].forEach(([f,n])=>{
+[['b_lid','Б: крышка'],['b_plate','Б: плита'],['b_latch_base','Б: основание вертушка'],['b_latch_knob','Б: барашек'],['b_latch_washer','Б: шайба TPU'],['lid_sp','крышка · SP13'],['lid_po','крышка · пружинные'],['plate_sp','плита · SP13'],['plate_po','плита · пружинные'],['slider','ползун'],['holder','держатель вилки'],['gasket','прокладка']].forEach(([f,n])=>{
   const b=document.createElement('button');b.type='button';b.textContent=n+' .stl';b.addEventListener('click',()=>{const t=RAW[f];if(!t)return;const u=URL.createObjectURL(new Blob([b64(t)],{type:'model/stl'}));const a=document.createElement('a');a.href=u;a.download='open800-'+f+'.stl';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),2000);});$('dl').appendChild(b);});
 // подписи при наведении
 const ray=new T.Raycaster(),mouse=new T.Vector2(),tip=$('tip');
