@@ -1195,8 +1195,8 @@ add(rod(V(-7,0,-30),V(-12,0,-30),2,brass,12),root,V(-18,0,-110),'термовс�
 [0,120,240].forEach((a,i)=>{const c=Math.cos(a*D),n=Math.sin(a*D);add(rod(V(4*c,4*n,-32),V(42.9*c,42.9*n,-32),1.5,carbon,10),root,V(16*c,16*n,-110),'спица Ø3 чашки, карбон, '+(i+1)+' из 3');});
 
 // ---------- узел трубки: одинаковый у капсулы и у мачты ----------
-function tubeJoint(parent,zs,flat,tubeZ0,tubeZ1,tubeEx,spacerEx,tubeLabel){
-  add(cylZ(12.5,tubeZ0,tubeZ1,cl(carbon),32),parent,V(0,0,tubeEx),tubeLabel);
+function tubeJoint(parent,zs,flat,tubeZ0,tubeZ1,tubeEx,spacerEx,tubeLabel,tubeMat){
+  add(cylZ(12.5,tubeZ0,tubeZ1,tubeMat||cl(carbon),32),parent,V(0,0,tubeEx),tubeLabel);
   zs.forEach((z,i)=>{const n=(i+1)+' из 2',st=cl(steel),al=cl(alu);
     add(G(rod(V(0,-flat-1.2,z),V(0,flat+6.2,z),2.5,st,16),rod(V(0,-flat-4.7,z),V(0,-flat-1.2,z),4.2,st,6)),parent,V(0,-70,0),'болт М5 × 45, '+n);
     add(rod(V(0,-flat-1.2,z),V(0,-flat,z),7.5,st,24),parent,V(0,-42,0),'широкая шайба М5 × 15 под головку, '+n);
@@ -1206,14 +1206,23 @@ function tubeJoint(parent,zs,flat,tubeZ0,tubeZ1,tubeEx,spacerEx,tubeLabel){
 }
 const padG=at_pad();root.add(padG);
 add(cylZ(6.3,-8,3,M(0x1c1d22),24),padG,V(0,0,62),'гермоввод PG7: кабель из трубки в капсулу');
-tubeJoint(padG,[18,38],15.5,3,700,135,70,'труба выноса AISI 316L 25 × 1: входит в гнездо на 45 мм, съёмная; длина ≈ 0,74 м до приёмной трубы сварного узла на мачте');   /*bme-top*/
+tubeJoint(padG,[18,38],15.5,3,700,135,70,'труба выноса AISI 316L 25 × 1: входит в гнездо на 45 мм, съёмная; длина ≈ 0,74 м до приёмной трубы сварного узла на мачте; здесь полупрозрачная — видно кабель внутри',M(0xc9ced3,{metalness:0.5,roughness:0.3,transparent:true,opacity:0.22,depthWrite:false,side:THREE.DoubleSide}));   /*bme-top*/ /*boom-cable*/
+// ---------- кабель внутри выноса (в системе гермоввода: z — вдоль трубы к мачте, −x — вниз, к дну трубы) ----------
+{const cabM=M(0x2b2d31,{roughness:0.7}),mainM=M(0x4a4f57,{roughness:0.7}),tube=(pts,r,m)=>new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts.map(p=>V(p[0],p[1],p[2])),false,'centripetal'),96,r,10,false),m);
+  add(tube([[0,0,-8],[0,0,3],[-5,0,12],[-9,0,26],[-9,0,300],[-9,0,578]],2.25,cabM),padG,V(0,0,0),'кабель 8 жил в экране, Ø4,5, внутри выноса по дну трубы: 4 жилы — кабель мачты, 4 — BME280; от гермоввода PG7 до будки у мачты');
+  add(tube([[-9,0,578],[-9.5,0,620],[-9.5,0,700]],1.8,mainM),padG,V(0,0,0),'кабель мачты, 4 жилы (+5 В, A, земля, B): после выхода жил BME280 идёт дальше к разъёму M12 в приёмной трубе сварного узла');
+  add(tube([[-9,0,576],[-10.5,0,581],[-12.5,0,584],[-14,0,584.5]],1.6,cabM),padG,V(0,0,0),'4 жилы BME280 уходят из кабеля вниз, сквозь стенку трубы через резиновую втулку');}
 // ---------- будка BME280 у корня выноса (25.11): ось выноса на 0,62 м от оси капсулы — (0,0,62) + 620·d, d = (−cos20°, 0, −sin20°)
-{const d20=20*D,sx=-620*Math.cos(d20),sz=62-620*Math.sin(d20),zt=sz-12.5,zc=zt-28,wht=M(0xeef0ec,{roughness:0.7});
+{const d20=20*D,sx=-620*Math.cos(d20),sz=62-620*Math.sin(d20),zt=sz-12.5,zc=zt-28,wht=M(0xeef0ec,{roughness:0.7,transparent:true,opacity:0.35,depthWrite:false,side:THREE.DoubleSide});   // полупрозрачно: видно карточку и жилы
   for(let i=0;i<6;i++){const z=zc+16-i*5.8;add(at(cylZ(24-i*0.8,z-1.1,z+1.1,wht,32),sx,0),root,V(0,0,-20),'будка датчика воздуха: печатные кольца-жалюзи — тень от солнца и обдув ветром (схема, размеры ещё не нарисованы)');}
   add(at(cylZ(2.2,zc+16,zt+0.5,wht,12),sx,0),root,V(0,0,-20),'подвес будки к трубе выноса (хомут на Ø25 ещё не нарисован)');
   const bm=PCBLIB.bme280();bm.rotation.x=Math.PI/2;bm.position.set(sx,0,zc+2);add(bm,root,V(0,0,-20),'BME280 на карточке GY-BME280 3,3 В: давление, температура, влажность воздуха; адрес 0x76');
   const gr=new THREE.Mesh(new THREE.TorusGeometry(3.2,1.2,8,20),M(0x111214,{roughness:0.8}));gr.position.set(sx,0,zt);add(gr,root,V(0,0,-10),'резиновая втулка в отверстии трубы выноса: выход 4 жил BME280 из кабеля в будку');
-  add(G(rod(V(sx,0,zt+4),V(sx,0,zt-1),1.6,M(0x2b2d31,{roughness:0.6}),10),rod(V(sx,0,zt-1),V(sx,0,zc+5),1.6,M(0x2b2d31,{roughness:0.6}),10)),root,V(0,0,-20),'4 жилы BME280 (3,3 В, земля, SDA, SCL): из кабеля 8 жил внутри выноса — в будку');}
+  add(G(rod(V(sx,0,zt+4),V(sx,0,zt-1),1.6,M(0x2b2d31,{roughness:0.6}),10),rod(V(sx,0,zt-1),V(sx,0,zc+9),1.6,M(0x2b2d31,{roughness:0.6}),10)),root,V(0,0,-20),'4 жилы BME280 (3,3 В, земля, SDA, SCL): из кабеля 8 жил внутри выноса — в будку');
+  // в будке жилы расходятся к выводам карточки GY-BME280: VIN, GND, SCL, SDA (шаг 2,54); CSB и SDO — перемычками на карточке (I²C, адрес 0x76)
+  [['VIN','#f2a33a','3,3 В'],['GND','#26282c','земля'],['SCL','#2fa84f','I²C, такт'],['SDA','#2f7fe0','I²C, данные']].forEach((w,k)=>{const ys=(k-2.5)*2.54;
+    const c=new THREE.CatmullRomCurve3([V(sx,0,zc+9),V(sx-1.5,1.5,zc+7),V(sx-4.7,4,zc+2+ys+1.5),V(sx-4.7,3.6,zc+2+ys)],false,'centripetal');
+    add(new THREE.Mesh(new THREE.TubeGeometry(c,24,0.35,6,false),M(new THREE.Color(w[1]).getHex(),{roughness:0.6})),root,V(0,0,-20),'жила BME280 → вывод '+w[0]+' карточки: '+w[2]);});}
 
 // ---------- кронштейн мачты ----------
 (function(){
