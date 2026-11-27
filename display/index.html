@@ -7,7 +7,7 @@
 <title>Дисплей прибора М5</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500&family=Onest:wght@400;500;600&family=JetBrains+Mono:wght@400;600&family=Inter:wght@600;700;800&display=swap">
 <style>
-/* Стенд лицевой панели F1C: оба экрана живые, ниже раскладка экранов и таблицы управления. Стиль — общий для страниц проекта */
+/* Стенд двух блоков (большой — правый борт, малый — левый): оба экрана живые, кнопки на верхних торцах; ниже раскладка экранов и таблицы управления. Стиль — общий для страниц проекта */ /*two2711*/
 :root{
   --bg:#edf1f3; --surface:#ffffff; --ink:#14202b; --muted:#536373; --line:#d3dbe1; --accent:#0d6b78; --accent-bg:#e0eff1;
   --abs:#c9cdc9; --abs2:#a9aeab; --abs-ink:#1c2228; --key:#b8bfc5; --key2:#7f878e;
@@ -24,9 +24,15 @@ h2{font:500 18px/1.3 var(--f-display);margin:0 0 4px;text-wrap:balance}
 .lead{margin:0;max-width:72ch;color:var(--muted)}
 .sim{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:20px;align-items:start}
 @media (max-width:980px){.sim{grid-template-columns:minmax(0,1fr)}}
-/* лицевая панель F1C в масштабе */
+/* два блока в одном масштабе: лица и верхние торцы в развёртке (27.11) */
 .dev{display:grid;gap:12px;min-width:0;justify-items:center}
-.f1c{position:relative;width:100%;max-width:100%;aspect-ratio:212/178;background:linear-gradient(160deg,#39424b,#22292f);border-radius:2.4%/2.85%;container-type:inline-size;box-shadow:0 2px 10px rgba(0,0,0,.25);transition:width .2s}
+.bench{width:100%;max-width:100%;display:grid;gap:6px;transition:width .2s}
+.pan{position:relative;width:100%;aspect-ratio:290/226;container-type:inline-size}
+.face{position:absolute;background:linear-gradient(160deg,#39424b,#22292f);border-radius:2.07cqw;box-shadow:0 2px 10px rgba(0,0,0,.25)}
+.top{position:absolute;background:linear-gradient(180deg,#2a3138,#434c55);border-radius:.7cqw .7cqw .25cqw .25cqw;border-bottom:.25cqw dashed #8c969f}
+.gapm{position:absolute;border-left:1px dashed var(--line);border-right:1px dashed var(--line);display:grid;place-items:center;font:600 max(10px,1.2cqw)/1.2 var(--f-body);color:var(--muted);text-align:center}
+.sides{display:grid;grid-template-columns:6fr 98fr 60fr 120fr 6fr;font-size:12.5px;line-height:1.3;color:var(--muted);text-align:center}
+.sides b{display:block;color:var(--ink);font-weight:600;text-transform:uppercase;letter-spacing:.04em;font-size:12px}
 .mod{position:absolute;background:transparent}
 .glass{display:none}
 .act{position:absolute;overflow:hidden;box-shadow:0 0 0 .4cqw #12161a;border-radius:.15cqw;background:#dcdad1}
@@ -37,14 +43,17 @@ h2{font:500 18px/1.3 var(--f-display);margin:0 0 4px;text-wrap:balance}
 .pk::before{content:"";position:absolute;inset:-35%}
 .pk:active{background:#5e6870}
 .pk:focus-visible,.key:focus-visible,.btn:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
-.pl{position:absolute;transform:translate(-50%,50%);font:700 2.1cqw/1 var(--f-body);color:#c9d0d6;white-space:nowrap;pointer-events:none;letter-spacing:.02em}
+.pl{position:absolute;transform:translate(-50%,50%);font:700 1.15cqw/1 var(--f-body);color:#c9d0d6;white-space:nowrap;pointer-events:none;letter-spacing:.02em}
+.pl.lt{transform:translate(0,50%);font-weight:600;font-size:max(6px,1.15cqw)}.pl.rt{transform:translate(-100%,50%);font-weight:600;font-size:max(6px,1.15cqw)}
+@container (max-width:520px){.pl.bl{display:none}}   /* на телефоне подписи кнопок на торцах не читаются — они в ряду кнопок ниже, в том же порядке */
+.kg{flex-basis:100%;text-align:center;font:600 11px var(--f-body);color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-top:2px}
 .rled{position:absolute;transform:translate(-50%,50%);border-radius:50%;background:#11161b;box-shadow:inset 0 0 .4cqw #000;border:.25cqw solid #59636d}
 .rled.g{background:#3df06a;box-shadow:0 0 2.2cqw #3df06a;border-color:#3df06a}
 .rled.r{animation:blink 1s steps(1) infinite}
 @keyframes blink{0%{background:#ff4436;box-shadow:0 0 2.2cqw #ff4436;border-color:#ff4436}50%{background:#11161b;box-shadow:inset 0 0 .4cqw #000;border-color:#59636d}}
 @media (prefers-reduced-motion:reduce){.rled.r{animation:none;background:#ff4436;box-shadow:0 0 2.2cqw #ff4436;border-color:#ff4436}}
 .bh{position:absolute;transform:translate(-50%,50%);border-radius:50%;background:radial-gradient(circle at 38% 35%,#cfe2ea,#56707c 60%,#2b3a42);border:.25cqw solid #1b2328}
-/* кнопки панели крупно — для телефона и для удобства */
+/* кнопки обоих блоков крупно — для телефона и для удобства */
 .keys{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;align-items:center}
 .key{min-width:64px;min-height:48px;padding:0 12px;border-radius:24px;border:2px solid var(--key2);background:radial-gradient(circle at 40% 35%,#eef1f3,var(--key));font:700 13px var(--f-body);color:var(--abs-ink);cursor:pointer;position:relative;overflow:hidden}
 .key:active{background:var(--key2);color:#fff}
@@ -86,17 +95,22 @@ th{font:600 12px var(--f-body);color:var(--muted);text-transform:uppercase;lette
   <div class="stage" id="stage">
     <a class="home" href="../">← Главное меню</a>
     <h1>Дисплей прибора М5</h1>
-    <p class="lead">Тестовый стенд лицевой панели блока F1C в масштабе: слева основной экран 7,5″, справа сверху малый 4,2″, под ним семь кнопок, светодиод заход/отход и окно датчика света. Кнопки работают как настоящие. Выберите условия, запустите гонку и посмотрите на панель с того расстояния, с какого будете смотреть в кокпите. Цифры придуманные: прибор ещё не собран и прошивки нет.</p>
+    <p class="lead">Тестовый стенд двух блоков в масштабе, вид из кокпита. На левом борту — малый блок с экраном 4,2″, на правом — большой с экраном 7,5″; у каждого свой светодиод заход/отход. Кнопки — на верхних торцах блоков: на рисунке торец показан над лицом, как будто откинут вверх. Кнопки работают как настоящие. Выберите условия, запустите гонку и посмотрите на блоки с того расстояния, с какого будете смотреть в кокпите. Цифры придуманные: прибор ещё не собран и прошивки нет.</p>
     <div class="sim">
       <div class="dev">
-        <div class="f1c" id="f1c" role="group" aria-label="Лицевая панель блока F1C, 212 × 178 мм"></div>
-        <div class="keys" aria-label="Кнопки панели крупно">
-          <button type="button" class="key" data-k="big" aria-label="БОЛЬШОЙ: следующий вид большого экрана; удержать — предыдущий">БОЛЬШОЙ<i></i></button>
+        <div class="bench" id="bench">
+          <div class="pan" id="pan" role="group" aria-label="Два блока в масштабе, вид из кокпита: слева малый блок 98 × 104 мм на левом борту, справа большой блок 120 × 186 мм на правом борту; над каждым лицом — его верхний торец с кнопками в развёртке; промежуток между блоками сжат"></div>
+          <div class="sides" aria-hidden="true"><span></span><span><b>левый борт</b>малый блок 98&nbsp;×&nbsp;104</span><span>вход ≈&nbsp;66&nbsp;см, на&nbsp;рисунке сжат</span><span><b>правый борт</b>большой блок 120&nbsp;×&nbsp;186</span><span></span></div>
+        </div>
+        <div class="keys" aria-label="Кнопки обоих блоков крупно">
+          <span class="kg">малый блок, левый борт</span>
           <button type="button" class="key" data-k="small" aria-label="МАЛЫЙ: следующий вид малого экрана; удержать — предыдущий">МАЛЫЙ<i></i></button>
-          <button type="button" class="key" data-k="start" aria-label="СТАРТ: пуск отсчёта или подгонка к минуте; удержать 3 с — сброс">СТАРТ<i></i></button>
-          <button type="button" class="key" data-k="line" aria-label="ЛИНИЯ: отметить конец стартовой линии; удержать 3 с — стереть">ЛИНИЯ<i></i></button>
+          <span class="kg">большой блок, правый борт</span>
+          <button type="button" class="key" data-k="big" aria-label="БОЛЬШОЙ: следующий вид большого экрана; удержать — предыдущий">БОЛЬШОЙ<i></i></button>
           <button type="button" class="key" data-k="zout" aria-label="Карта мельче">−<i></i></button>
           <button type="button" class="key" data-k="zin" aria-label="Карта крупнее">+<i></i></button>
+          <button type="button" class="key" data-k="start" aria-label="СТАРТ: пуск отсчёта или подгонка к минуте; удержать 3 с — сброс">СТАРТ<i></i></button>
+          <button type="button" class="key" data-k="line" aria-label="ЛИНИЯ: отметить конец стартовой линии; удержать 3 с — стереть">ЛИНИЯ<i></i></button>
           <button type="button" class="key" data-k="menu">МЕНЮ<i></i></button>
         </div>
         <p class="hint" id="kHint">удержать БОЛЬШОЙ или МАЛЫЙ 1 с — вид назад · СТАРТ или ЛИНИЯ 3 с — сброс · МЕНЮ 3 с — включить и выключить</p>
@@ -109,7 +123,7 @@ th{font:600 12px var(--f-body);color:var(--muted);text-transform:uppercase;lette
         <p class="hint" id="runTxt">Цифры меняются раз в секунду, лодку качает, ветер смещается, каждые 40 секунд поворот.</p>
         <h3>Откуда смотрит рулевой</h3>
         <div class="chips" id="dist"></div>
-        <p class="hint">Размер посчитан для панели 212 мм, если вы сидите в 60 см от монитора.</p>
+        <p class="hint">Блоки в натуральную величину, если вы сидите в 60 см от монитора; промежуток между ними (вход) сжат.</p>
         <h3>Освещение</h3>
         <div class="chips" id="amb"></div>
         <h3>События</h3>
@@ -126,19 +140,21 @@ th{font:600 12px var(--f-body);color:var(--muted);text-transform:uppercase;lette
     <tr><td><b>Понятен ли знак отклонения?</b></td><td>Нажмите «Увал» и «Привод», сделайте поворот оверштаг: знак не должен путаться на другом галсе</td></tr>
     <tr><td><b>Видно ли, что курс запомнен?</b></td><td>Нажмите «Поворот оверштаг»: «…» сменится цифрой примерно через 15 секунд, затем отклоняйтесь и смотрите, что базовый курс не ползёт</td></tr>
     <tr><td><b>Удобен ли стартовый экран?</b></td><td>Нажмите «Старт 5:00» и смотрите только на малый экран: время, расстояние до линии, выгодный конец</td></tr>
-    <tr><td><b>Хватает ли одного светодиода?</b></td><td>Запустите гонку и смотрите только на светодиод: зелёный — заход, мигающий красный — отход</td></tr>
+    <tr><td><b>Хватает ли светодиода?</b></td><td>Запустите гонку и смотрите только на светодиоды: зелёный — заход, мигающий красный — отход. Их два, по одному в блоке, горят одинаково (предложение, не утверждено)</td></tr>
     <tr><td><b>Удобно ли ночью и на солнце?</b></td><td>Меняйте освещение: в режиме «авто» подсветка включается сама по датчику света</td></tr>
     <tr><td><b>Чего не хватает и что лишнее?</b></td><td>Напишите, что убрать или укрупнить: экраны легко перестроить</td></tr>
   </table></div></section>
 
-  <section class="grp"><h2>Лицевая панель</h2><div class="tbl"><table>
+  <section class="grp"><h2>Два блока: лицо и верхний торец</h2><p class="note">Решение 26–27.11: вместо одного блока F1C 212 × 178 с двумя экранами — два тонких блока на кормовой стенке рубки по обе стороны входа. Снаружи только экраны, кнопки, светодиоды и салазки; основная плата — внутри каюты, за большим блоком. Блоки снимаются каждый раз, уходя с лодки. Размеры лица — в мм, начало координат — левый нижний угол лица. Помечено «предложение, не утверждено» — то, что владелец ещё не подтвердил.</p><div class="tbl"><table>
     <tr><th>Что</th><th>Размер и место</th><th>Зачем</th></tr>
-    <tr><td><b>Основной экран 7,5″</b></td><td>e-paper, чёрно-белый, 480 × 800 точек, стоит вертикально слева во всю высоту панели. Модуль 111,2 × 170,2 мм, поле изображения 97,9 × 163,2 мм</td><td>все виды для гонки: «Табло», ветер, тактика, лодка, погода. Частичное обновление ≈ 0,3 с, полное ≈ 3 с</td></tr>
-    <tr><td><b>Малый экран 4,2″</b></td><td>e-paper WeAct, 400 × 300 точек, справа сверху. Модуль 92 × 89,7 мм, уже куплен</td><td>старт, пары данных, курс к N, погода — листается кнопкой МАЛЫЙ</td></tr>
-    <tr><td><b>7 кнопок</b></td><td>сетка 3 × 3 под малым экраном, шаг 31,5 мм по горизонтали и 26 мм по вертикали: сверху МАЛЫЙ, «−», «+»; в середине БОЛЬШОЙ, СТАРТ, ЛИНИЯ; внизу светодиод, окно датчика света и МЕНЮ</td><td>мембраны из TPU Ø14 напечатаны заодно с лицом — отверстий нет; под ними кнопки 12 × 12 поверхностного монтажа. «−» и «+» — масштаб карты</td></tr>
-    <tr><td><b>Светодиод</b></td><td>один, трёхцветный, слева внизу зоны кнопок</td><td>заход и отход ветра видны боковым зрением, без чтения цифр</td></tr>
-    <tr><td><b>Окно датчика света</b></td><td>Ø9, внизу посередине зоны кнопок, за ним BH1750</td><td>в режиме «авто» прибор сам включает подсветку в сумерках и гасит её днём</td></tr>
-    <tr><td><b>Панель целиком</b></td><td>212 × 178 мм, корпус F1C</td><td>оба экрана в одной плоскости, за общим окном</td></tr>
+    <tr><td><b>Большой блок, правый борт</b></td><td>лицо 120 × 186, углы R 6, глубина 32 (с плитой салазок 5 — 37 от стенки). На стенке справа от входа: левый край в 20 мм от направляющей щитов, верх в 40 мм ниже края крыши — над кнопками остаётся место для пальца</td><td>основной экран и шесть кнопок из семи</td></tr>
+    <tr><td><b>Основной экран 7,5″</b></td><td>e-paper, чёрно-белый, 480 × 800 точек, стоит вертикально почти во всё лицо большого блока: x 4,4…115,6, y 4…174,2. Модуль 111,2 × 170,2 мм, поле изображения 97,9 × 163,2 мм</td><td>все виды для гонки: «Табло», ветер, тактика, лодка, погода. Частичное обновление ≈ 0,3 с, полное ≈ 3 с</td></tr>
+    <tr><td><b>Малый блок, левый борт</b></td><td>лицо 98 × 104, углы R 6, глубина 24 (с плитой салазок 5 — 29 от стенки). На стенке слева от входа: правый край в 20 мм от направляющей, верх в 60 мм ниже края крыши — выше мешает скругление угла рубки</td><td>малый экран и кнопка МАЛЫЙ. Процессора и своей платы нет: готовые модули на макетной плате, покрытой лаком</td></tr>
+    <tr><td><b>Малый экран 4,2″</b></td><td>e-paper WeAct, 400 × 300 точек, лёжа: x 3…95, y 3…92,7. Модуль 92 × 89,7 мм, поле 84,8 × 63,6 мм, уже куплен</td><td>старт, пары данных, курс к N, погода — листается кнопкой МАЛЫЙ</td></tr>
+    <tr><td><b>Кнопки — на верхних торцах</b></td><td>не на лице, а на торце блока (решение 27.11). Большой блок: торец 120 × 32, шесть кнопок Ø11 в ряд по центру глубины, шаг 18 мм, слева направо БОЛЬШОЙ, «−», «+», СТАРТ, ЛИНИЯ, МЕНЮ (порядок — предложение, не утверждено). Малый блок: торец 98 × 24, кнопка МАЛЫЙ Ø11 по центру</td><td>мембраны из TPU, подписи — гравировкой на торце за кнопками. Сверху, а не снизу: нажатие прижимает блок к салазкам, подписи видны сверху (предложение, не утверждено; снизу — запасной вариант). «−» и «+» — масштаб карты</td></tr>
+    <tr><td><b>Светодиоды</b></td><td>два трёхцветных, по одному в блоке, в узкой полосе лица над экраном: в большом — (20; 180), в малом — (15; 98). Полоса над экраном — предложение, не утверждено</td><td>заход и отход ветра видны боковым зрением с обоих бортов, без чтения цифр. Оба показывают одно и то же — предложение, не утверждено</td></tr>
+    <tr><td><b>Окно датчика света</b></td><td>Ø6, в полосе над экраном большого блока, (100; 180), за ним BH1750 (предложение, не утверждено). Можно перенести на верхний торец, чтобы смотрело в небо, — решить при конструировании</td><td>в режиме «авто» прибор сам включает подсветку в сумерках и гасит её днём</td></tr>
+    <tr><td><b>Крепление</b></td><td>за каждым блоком на стенке — плита салазок толщиной 5, на 4 мм меньше лица с каждой стороны; в ней площадки пружинных контактов 2 × 5 и отверстие Ø6 под кабель. Конструкция защёлки — в работе</td><td>надел блок — контакт есть; снятый блок прибор замечает и снимает питание с площадок</td></tr>
   </table></div></section>
 
   <section class="grp"><h2>Семь видов большого экрана</h2><p class="note">Листаются кнопкой БОЛЬШОЙ по кругу: Табло, Основной, Ветер, Тактика, Крен и дифферент, Погода, Карта; удержать 1 с — назад. На «Карте» знаки дистанции из гоночной инструкции (вводятся с телефона по Wi-Fi прибора), следующий знак прибор выбирает сам: ближе «Точности знака» или на траверзе. Подложка — все изобаты из раздела «Глубины» (через 0,5–1 м, от 0,5 до 12 м; архив 2022, не для навигации), целые метры подписаны; берег — изобата 0,5 м, жирной линией. Там, где архив не покрывает реку, берега на карте нет; мели 2 м и меньше залиты и заштрихованы. В углу карты — глубина под лодкой; если по курсу в пределах 250 м мель — «МЕЛЬ ЧЕРЕЗ … м», это же предупреждение видно в строке состояния любого вида. Масштаб постоянный — он не меняется сам; кнопки «−» и «+» выбирают ширину карты: 250 м, 500 м, 1 км, 2 км, 4 км. Карта ориентирована по северу, лодка — у центра со сдвигом к следующему знаку. Кнопка «Демо: Ока и Волга» в «Событиях» проводит лодку по дистанции Молитовский мост — Стрелка — Борский мост — обратно (15,3 км, время ускорено в 40 раз; у Стрелки дистанция огибает косу): знаки засчитываются сами. Курс и отклонение от базового видны на каждом виде, кроме «Погоды».</p><div class="gal" id="g1"></div></section>
@@ -148,7 +164,7 @@ th{font:600 12px var(--f-body);color:var(--muted);text-transform:uppercase;lette
   <section class="grp"><h2>Откуда берутся цифры на «Табло»</h2><p class="note">Шесть значений измеряются датчиками, четыре считает прибор.</p><div class="tbl"><table>
     <tr><th>На экране</th><th>Что это</th><th>Откуда</th><th>От чего зависит точность</th></tr>
     <tr><td><b>Скорость</b></td><td>скорость лодки</td><td>измеряет GPS</td><td>это скорость над грунтом: лага нет, поэтому течение входит в показание</td></tr>
-    <tr><td><b>Курс к N</b></td><td>курс относительно севера</td><td>измеряет компас BNO085</td><td>север магнитный; компас надо откалибровать в собранном блоке</td></tr>
+    <tr><td><b>Курс к N</b></td><td>курс относительно севера</td><td>измеряет компас BNO085</td><td>север магнитный; компас надо откалибровать в собранном большом блоке (компас в большом блоке — предложение, не утверждено)</td></tr>
     <tr><td><b>Угол к ветру</b></td><td>угол лодки к истинному ветру, Л или П</td><td>считает прибор: вымпельный ветер и скорость</td><td>ошибки флюгера и скорости, см. ниже</td></tr>
     <tr><td><b>От баз. курса</b></td><td>отклонение от курса, запомненного после поворота: увал +, привод −</td><td>считает прибор: компас и запомненный курс</td><td>курс запоминается один раз и не меняется до следующего поворота, вручную — МЕНЮ → «Запомнить курс»</td></tr>
     <tr><td><b>Крен</b></td><td>наклон на борт</td><td>измеряет BNO085</td><td>ноль выставляется у причала: МЕНЮ → «Ноль крена и дифферента»</td></tr>
@@ -161,11 +177,11 @@ th{font:600 12px var(--f-body);color:var(--muted);text-transform:uppercase;lette
 
   <section class="grp"><h2>Курс и базовый курс</h2><p class="note">Большое число — курс по компасу, относительно севера. Рядом отклонение от базового: увал +, привод −, на обоих галсах одинаково. Базовый курс — это один запомненный курс, он не усредняется на ходу. После поворота вместо отклонения стоит «…»: прибор ждёт, пока лодка ляжет на курс. Первые 5 секунд после поворота не учитываются. Затем, как только курс 10 секунд подряд держится в коридоре 10°, прибор запоминает его и больше не меняет до следующего поворота. Запоминается середина этих 10 секунд, чтобы рыскание на волне не попало в базовый курс. Если за 60 секунд курс так и не устоялся, запоминается средний курс за последние 15 секунд. Поворотом считается смена галса или изменение курса больше чем на 60° за минуту. Вручную курс запоминается пунктом МЕНЮ «Запомнить курс».</p><div class="gal" id="g2"></div></section>
 
-  <section class="grp"><h2>Сдвиг ветра</h2><p class="note">Сравнивается направление истинного ветра со средним за последние минуты. Порог задаётся в меню. Отход — ветер повернул в вашу пользу, заход — против. Сдвиг показывают и цифры на виде «Тактика», и светодиод на панели.</p><div class="gal" id="g3"></div></section>
+  <section class="grp"><h2>Сдвиг ветра</h2><p class="note">Сравнивается направление истинного ветра со средним за последние минуты. Порог задаётся в меню. Отход — ветер повернул в вашу пользу, заход — против. Сдвиг показывают и цифры на виде «Тактика», и светодиоды на обоих блоках.</p><div class="gal" id="g3"></div></section>
 
-  <section class="grp"><h2>Погода</h2><p class="note">Давление меряет BME280 в блоке, температуру и влажность воздуха — SHT40 в будке под выносом на топе мачты: в блоке её исказил бы нагрев. Датчик молний AS3935 в блоке слышит грозу на 1–40 км и оценивает расстояние; прибор пишет, приближается ли она. Ход давления копится, только пока прибор включён. По шкале морских прогнозов падение 1,6–3,5 гПа за 3 часа — «падает», 3,6–6 — «падает быстро», больше 6 — «очень быстро». Гроза ближе 20 км и быстрое падение давления видны в строке состояния на любом виде.</p><div class="gal" id="gW"></div></section>
+  <section class="grp"><h2>Погода</h2><p class="note">Давление меряет BME280 на основной плате внутри каюты, температуру и влажность воздуха — SHT40 в будке под выносом на топе мачты: у прибора её исказил бы нагрев. Датчик молний AS3935 на основной плате слышит грозу на 1–40 км и оценивает расстояние; прибор пишет, приближается ли она. Ход давления копится, только пока прибор включён. По шкале морских прогнозов падение 1,6–3,5 гПа за 3 часа — «падает», 3,6–6 — «падает быстро», больше 6 — «очень быстро». Гроза ближе 20 км и быстрое падение давления видны в строке состояния на любом виде.</p><div class="gal" id="gW"></div></section>
 
-  <section class="grp"><h2>Питание</h2><p class="note">На малом экране: напряжение лодки и ток, который берёт от неё лодка (датчик тока INA226 в ящике щитка), напряжение резерва, значок и проценты источника, от которого прибор работает сейчас. Предупреждения «РАЗРЯД» и «НА РЕЗЕРВЕ» повторяются в строке состояния основного экрана.</p><div class="gal s" id="g4"></div></section>
+  <section class="grp"><h2>Питание</h2><p class="note">На малом экране: напряжение лодки и ток, который берёт от неё лодка (датчик тока INA226 на основной плате внутри каюты), напряжение резерва, значок и проценты источника, от которого прибор работает сейчас. Предупреждения «РАЗРЯД» и «НА РЕЗЕРВЕ» повторяются в строке состояния основного экрана.</p><div class="gal s" id="g4"></div></section>
 
   <section class="grp"><h2>Меню и системные экраны</h2><div class="gal" id="g5"></div></section>
 
@@ -173,20 +189,21 @@ th{font:600 12px var(--f-body);color:var(--muted);text-transform:uppercase;lette
 
   <section class="grp"><h2>Кнопки</h2><div class="tbl"><table>
     <tr><th>Кнопка</th><th>Коротко</th><th>Удержать</th><th>В меню</th></tr>
-    <tr><td><b>БОЛЬШОЙ</b></td><td>следующий вид большого экрана</td><td>1 с — предыдущий вид</td><td>—</td></tr>
-    <tr><td><b>МАЛЫЙ</b></td><td>следующий вид малого экрана</td><td>1 с — предыдущий вид</td><td>—</td></tr>
-    <tr><td><b>− и +</b></td><td>ширина карты: «−» — мельче (больше видно), «+» — крупнее; 250 м, 500 м, 1 км, 2 км, 4 км; масштаб сам не меняется</td><td>—</td><td>«−» — пункт ниже, «+» — пункт выше</td></tr>
-    <tr><td><b>СТАРТ</b></td><td>нет отсчёта — пуск; идёт отсчёт — подгонка к ближайшей целой минуте</td><td>3 с — сброс отсчёта</td><td>выполнить пункт или изменить значение</td></tr>
-    <tr><td><b>ЛИНИЯ</b></td><td>поставить точку стартовой линии там, где стоит лодка: 1-е нажатие — точка 1, 2-е — точка 2, линия задана. Следующее нажатие начинает новую линию</td><td>3 с — стереть линию</td><td>—</td></tr>
-    <tr><td><b>МЕНЮ</b></td><td>открыть меню</td><td>3 с — выключить прибор; у выключенного — включить</td><td>выход из меню; 3 с — выключить</td></tr>
-  </table></div><p class="note">Проект навигации утверждён владельцем 23.11: нажимает кто-то из экипажа по просьбе рулевого, всё нужное в гонке — одним нажатием.</p></section>
+    <tr><td><b>БОЛЬШОЙ</b><br>большой блок</td><td>следующий вид большого экрана</td><td>1 с — предыдущий вид</td><td>—</td></tr>
+    <tr><td><b>МАЛЫЙ</b><br>малый блок</td><td>следующий вид малого экрана</td><td>1 с — предыдущий вид</td><td>—</td></tr>
+    <tr><td><b>− и +</b><br>большой блок</td><td>ширина карты: «−» — мельче (больше видно), «+» — крупнее; 250 м, 500 м, 1 км, 2 км, 4 км; масштаб сам не меняется</td><td>—</td><td>«−» — пункт ниже, «+» — пункт выше</td></tr>
+    <tr><td><b>СТАРТ</b><br>большой блок</td><td>нет отсчёта — пуск; идёт отсчёт — подгонка к ближайшей целой минуте</td><td>3 с — сброс отсчёта</td><td>выполнить пункт или изменить значение</td></tr>
+    <tr><td><b>ЛИНИЯ</b><br>большой блок</td><td>поставить точку стартовой линии там, где стоит лодка: 1-е нажатие — точка 1, 2-е — точка 2, линия задана. Следующее нажатие начинает новую линию</td><td>3 с — стереть линию</td><td>—</td></tr>
+    <tr><td><b>МЕНЮ</b><br>большой блок</td><td>открыть меню</td><td>3 с — выключить прибор; у выключенного — включить</td><td>выход из меню; 3 с — выключить</td></tr>
+  </table></div><p class="note">Проект навигации утверждён владельцем 23.11: нажимает кто-то из экипажа по просьбе рулевого, всё нужное в гонке — одним нажатием. Все кнопки — на верхних торцах блоков (27.11): МАЛЫЙ — на малом блоке у левого борта, остальные шесть — на большом у правого, в ряд слева направо БОЛЬШОЙ, «−», «+», СТАРТ, ЛИНИЯ, МЕНЮ (порядок — предложение, не утверждено).</p></section>
 
   <section class="grp"><h2>Светодиод и подсветка</h2><div class="tbl"><table>
     <tr><th>Что</th><th>Как выглядит</th><th>Когда</th></tr>
+    <tr><td><b>Два светодиода</b></td><td>по одному в каждом блоке, в полосе над экраном</td><td>горят одинаково, видно с обоих бортов — предложение, не утверждено</td></tr>
     <tr><td><b>Светодиод зелёный</b></td><td>горит ровно</td><td>заход: ветер повернул против, сдвиг больше порога</td></tr>
     <tr><td><b>Светодиод красный</b></td><td>мигает</td><td>отход: ветер повернул в вашу пользу, сдвиг больше порога</td></tr>
     <tr><td><b>Светодиод погашен</b></td><td>—</td><td>ветер ровный, или нет данных с мачты</td></tr>
-    <tr><td><b>Подсветка «авто»</b></td><td>включается по датчику света</td><td>в сумерках — 60 %, ночью — 30 %, днём выключена</td></tr>
+    <tr><td><b>Подсветка «авто»</b></td><td>включается по датчику света в большом блоке (предложение, не утверждено)</td><td>в сумерках — 60 %, ночью — 30 %, днём выключена</td></tr>
     <tr><td><b>Подсветка вручную</b></td><td>выключена, 30, 60, 100 %</td><td>пункт МЕНЮ «Подсветка». Цвет подсветки ещё не выбран; на стенде — красный, он не слепит ночью</td></tr>
   </table></div></section>
 
@@ -194,7 +211,7 @@ th{font:600 12px var(--f-body);color:var(--muted);text-transform:uppercase;lette
     <tr><th>Элемент</th><th>Что показывает</th></tr>
     <tr><td><b>Основной экран, слева</b></td><td>«М5» и текущий вид</td></tr>
     <tr><td><b>Основной экран, справа</b></td><td>только предупреждения: гроза ближе 20 км, давление падает быстро, НА РЕЗЕРВЕ, РАЗРЯД</td></tr>
-    <tr><td><b>Малый экран, справа</b></td><td>значок и проценты источника, Wi-Fi, запись на карту</td></tr>
+    <tr><td><b>Малый экран, справа</b></td><td>значок и проценты источника, Wi-Fi, запись на карту micro-SD</td></tr>
     <tr><td><b>РАЗРЯД</b></td><td>заряд источника 25 % и меньше</td></tr>
     <tr><td><b>зарядка</b></td><td>напряжение лодки выше 13,2 В</td></tr>
     <tr><td><b>НА РЕЗЕРВЕ</b></td><td>лодка ниже напряжения резерва минус 0,7 В</td></tr>
@@ -204,10 +221,10 @@ th{font:600 12px var(--f-body);color:var(--muted);text-transform:uppercase;lette
     <tr><td><b>Меню: Скорость</b></td><td>узлы или м/с</td></tr>
     <tr><td><b>Меню: Порог сдвига</b></td><td>2, 3 или 5°</td></tr>
     <tr><td><b>Меню: Wi-Fi</b></td><td>выключен или включён, прибавляет к расходу около 34 мА</td></tr>
-    <tr><td><b>Меню: Запись на карту</b></td><td>включена или выключена</td></tr>
+    <tr><td><b>Меню: Запись на карту</b></td><td>включена или выключена. Карта micro-SD — на основной плате внутри каюты, снаружи её нет</td></tr>
     <tr><td><b>Меню: Питание</b></td><td>напряжение и ток лодки, напряжение резерва, только просмотр</td></tr>
   </table></div></section>
-  <p class="note">Это проект интерфейса. Скорость обновления e-paper и читаемость на солнце можно оценить только на настоящих экранах. Как устроен сам блок: <a href="../cockpit/">«Блок в кокпите»</a>.</p>
+  <p class="note">Это проект интерфейса. Скорость обновления e-paper и читаемость на солнце можно оценить только на настоящих экранах. Как устроены блоки и основная плата: <a href="../cockpit/">«Блок в кокпите»</a>.</p>
 </div>
 <script>
 (function(){
@@ -387,21 +404,31 @@ function drawSmall(c,v){c.setTransform(2,0,0,2,0,0);const P=pen(c),{T,fit,H,V}=P
     T('ГРОЗА',8,254,13,800);fit(v.storm?v.storm.km+' км, '+(v.storm.was>v.storm.km?'приближается':'не приближается'):'гроз нет ближе 40 км',8,286,24,800,'left',384);}
   c.restore();}
 
-// ---------- лицевая панель F1C: те же координаты, что на странице «Компоновка блока» (мм от левого нижнего угла внутри стенки 3 мм) ----------
-const PW=212,PH=178,WALL=3,PNL={main:{x:0.9,y:0.9,w:111.2,h:170.2,aw:97.9,ah:163.2},small:{x:113.1,y:81.4,w:92,h:89.7,aw:84.8,ah:63.6},btn:[[128,65,'МАЛЫЙ','small'],[159.5,65,'−','zout'],[191,65,'+','zin'],[128,39,'БОЛЬШОЙ','big'],[159.5,39,'СТАРТ','start'],[191,39,'ЛИНИЯ','line'],[191,13,'МЕНЮ','menu']],bh:[159.5,13],led:[128,13]};   // сетка 3 × 3, шаг 31,5 × 26 мм (23.11)   // места — проект навигации, утверждён 23.11
-const pct=(x,y)=>({left:(WALL+x)/PW*100+'%',bottom:(WALL+y)/PH*100+'%'});
-const box=document.getElementById('f1c');
+// ---------- два блока в одном масштабе (спецификация 27.11): мм рисунка от левого нижнего угла, промежуток (вход) сжат до 60 мм ----------
+// большой блок — лицо 120 × 186 с началом (164; 4), торец 120 × 32 над ним; малый — лицо 98 × 104 с началом (6; 66), торец 98 × 24.
+// Верх малого на 20 мм ниже верха большого: на стенке 60 и 40 мм ниже края крыши.
+const PW=290,PH=226,BIG={x:164,y:4,w:120,h:186,d:32},SML={x:6,y:66,w:98,h:104,d:24};
+const PNL={main:{x:BIG.x+4.4,y:BIG.y+4,w:111.2,h:170.2,aw:97.9,ah:163.2},small:{x:SML.x+3,y:SML.y+3,w:92,h:89.7,aw:84.8,ah:63.6},
+  btn:[...['БОЛЬШОЙ','−','+','СТАРТ','ЛИНИЯ','МЕНЮ'].map((t,i)=>[BIG.x+15+18*i,BIG.y+BIG.h+BIG.d/2,t,['big','zout','zin','start','line','menu'][i],BIG.d]),[SML.x+SML.w/2,SML.y+SML.h+SML.d/2,'МАЛЫЙ','small',SML.d]],
+  led:[[BIG.x+20,BIG.y+180],[SML.x+15,SML.y+98]],bh:[BIG.x+100,BIG.y+180]};   // порядок кнопок и полоса над экраном — предложение, не утверждено
+const pct=(x,y)=>({left:x/PW*100+'%',bottom:y/PH*100+'%'});
+const box=document.getElementById('pan');
+const rect=(cls,x,y,w,h,title)=>{const e=document.createElement('div');e.className=cls;Object.assign(e.style,pct(x,y),{width:w/PW*100+'%',height:h/PH*100+'%'});if(title)e.title=title;box.appendChild(e);return e;};
+rect('face',SML.x,SML.y,SML.w,SML.h,'малый блок, левый борт: лицо 98 × 104 мм');rect('top',SML.x,SML.y+SML.h,SML.w,SML.d,'верхний торец малого блока 98 × 24 мм (развёртка)');
+rect('face',BIG.x,BIG.y,BIG.w,BIG.h,'большой блок, правый борт: лицо 120 × 186 мм');rect('top',BIG.x,BIG.y+BIG.h,BIG.w,BIG.d,'верхний торец большого блока 120 × 32 мм (развёртка)');
+rect('gapm',SML.x+SML.w+8,40,PW-SML.x-SML.w-BIG.w-SML.x-16,150).textContent='вход';
 function addScreen(s,cw,ch,label){const m=document.createElement('div');m.className='mod';Object.assign(m.style,pct(s.x,s.y),{width:s.w/PW*100+'%',height:s.h/PH*100+'%'});const g=document.createElement('div');g.className='glass';m.appendChild(g);
   const a=document.createElement('div');a.className='act';Object.assign(a.style,{left:(s.w-s.aw)/2/s.w*100+'%',bottom:(s.h-s.ah)/2/s.h*100+'%',width:s.aw/s.w*100+'%',height:s.ah/s.h*100+'%'});
   const c=document.createElement('canvas');c.width=cw*2;c.height=ch*2;c.setAttribute('role','img');c.setAttribute('aria-label',label);a.appendChild(c);const t=document.createElement('div');t.className='tint';a.appendChild(t);m.appendChild(a);box.appendChild(m);const x=c.getContext('2d');x.scale(2,2);return {c,x,t};}
-const SM=addScreen(PNL.main,480,800,'Основной экран 7,5″'),SS=addScreen(PNL.small,400,300,'Малый экран 4,2″');
+const SM=addScreen(PNL.main,480,800,'Основной экран 7,5″ большого блока'),SS=addScreen(PNL.small,400,300,'Малый экран 4,2″ малого блока');
 [SM,SS].forEach(s=>s.c.addEventListener('contextrestored',()=>render()));   // браузер выгрузил canvas в фоне — перерисовать
-const pk={};PNL.btn.forEach(b=>{const e=document.createElement('button');e.type='button';e.className='pk';e.dataset.k=b[3];e.setAttribute('aria-label',b[2]);Object.assign(e.style,pct(b[0],b[1]),{width:14/PW*100+'%',aspectRatio:'1'});box.appendChild(e);pk[b[3]]=e;
-  const l=document.createElement('span');l.className='pl';l.textContent=b[2];Object.assign(l.style,pct(b[0],b[1]+11.5));box.appendChild(l);});
-const led=document.createElement('span');led.className='rled';led.title='светодиод заход / отход';Object.assign(led.style,pct(PNL.led[0],PNL.led[1]),{width:8/PW*100+'%',aspectRatio:'1'});box.appendChild(led);
-{const l=document.createElement('span');l.className='pl';l.textContent='заход · отход';Object.assign(l.style,pct(PNL.led[0],PNL.led[1]+8));box.appendChild(l);}
-const bh=document.createElement('span');bh.className='bh';bh.title='окно датчика света BH1750';Object.assign(bh.style,pct(PNL.bh[0],PNL.bh[1]),{width:9/PW*100+'%',aspectRatio:'1'});box.appendChild(bh);
-{const l=document.createElement('span');l.className='pl';l.textContent='свет';Object.assign(l.style,pct(PNL.bh[0],PNL.bh[1]+8));box.appendChild(l);}
+const lab=(t,x,y,cls)=>{const l=document.createElement('span');l.className='pl'+(cls?' '+cls:'');l.textContent=t;Object.assign(l.style,pct(x,y));box.appendChild(l);};
+// кнопки Ø11 по центру глубины торца, подпись гравировкой за кнопкой (ближе к стенке — на развёртке выше)
+const pk={};PNL.btn.forEach(b=>{const e=document.createElement('button');e.type='button';e.className='pk';e.dataset.k=b[3];e.setAttribute('aria-label',b[2]+(b[3]==='small'?' (малый блок)':' (большой блок)'));Object.assign(e.style,pct(b[0],b[1]),{width:11/PW*100+'%',aspectRatio:'1'});box.appendChild(e);pk[b[3]]=e;
+  lab(b[2],b[0],b[1]+(b[4]>30?10.5:8.6),'bl');});
+const leds=PNL.led.map((p,i)=>{const e=document.createElement('span');e.className='rled';e.title='светодиод заход / отход, '+(i?'малый блок':'большой блок');Object.assign(e.style,pct(p[0],p[1]),{width:5/PW*100+'%',aspectRatio:'1'});box.appendChild(e);lab('заход · отход',p[0]+5,p[1],'lt');return e;});
+const bh=document.createElement('span');bh.className='bh';bh.title='окно датчика света BH1750 (предложение, не утверждено)';Object.assign(bh.style,pct(PNL.bh[0],PNL.bh[1]),{width:6/PW*100+'%',aspectRatio:'1'});box.appendChild(bh);
+lab('свет',PNL.bh[0]-5,PNL.bh[1],'rt');
 
 // ---------- состояние прибора ----------
 const LD=[[11.8,0],[12,25],[12.2,50],[12.4,75],[12.7,100]],LI=[[9,0],[10.2,7],[10.8,22],[11.1,40],[11.4,58],[11.7,72],[12,83],[12.6,100]];
@@ -434,7 +461,7 @@ function lightLevel(){if(!S.on)return 0;if(S.light===0)return amb==='dusk'?0.65:
 function ambF(){const o=lightLevel();return amb==='sun'?'brightness(1.12) contrast(.82)':amb==='dusk'?'brightness('+(0.5+o*0.45)+')':amb==='night'?'brightness('+(0.08+o*0.85)+')':'';}
 let render=function(){const v=view();drawMain(SM.x,v);drawSmall(SS.x,v);
   const o=lightLevel(),f=ambF();[SM,SS].forEach(s=>{s.t.style.opacity=o?0.22+o*0.4:0;s.c.style.filter=f;});
-  const nw=S.noWind||!S.on;led.classList.toggle('g',!nw&&S.sig<0);led.classList.toggle('r',!nw&&S.sig>0);
+  const nw=S.noWind||!S.on;leds.forEach(led=>{led.classList.toggle('g',!nw&&S.sig<0);led.classList.toggle('r',!nw&&S.sig>0);});   // оба светодиода показывают одно и то же — предложение, не утверждено
   document.querySelectorAll('[data-s]').forEach(b=>b.setAttribute('aria-pressed',String(cur===b.dataset.s)));syncSl();};
 let toastT=0;function toast(s,ms){S.toast=s;clearTimeout(toastT);render();toastT=setTimeout(()=>{S.toast=null;render();},ms||1500);}
 // ---------- кнопки: короткое и долгое нажатие ----------
@@ -522,9 +549,9 @@ const WX=[['calm','Штиль, 5 уз',{aws:5,awa:48,sog:2.8,hl:5,pi:0.4}],['mid
 let wx='mid';const W0=()=>WX.find(a=>a[0]===wx)[2];
 function setWx(k){wx=k;const w=W0(),s=tack();S.aws=w.aws;S.awa=s*w.awa;S.sog=w.sog;S.heel=-s*w.hl;S.pitch=w.pi;S.noWind=false;S.menu=null;marks();render();}
 function chips(id,arr,cb,attr){const bx=$(id);arr.forEach(a=>{const b=document.createElement('button');b.type='button';b.className='btn';b.textContent=a[1];b.dataset[attr]=a[0];b.setAttribute('aria-pressed','false');b.onclick=()=>cb(a[0]);bx.appendChild(b);});}
-// панель 212 мм с расстояния D, монитор в 60 см: ширина на экране = 212 · 600 / D мм, 96 точек на дюйм
+// блоки в натуральную величину с расстояния D, монитор в 60 см: ширина рисунка на экране = PW · 600 / D мм, 96 точек на дюйм
 const DIST=[['full','Крупно',0],['d06','Рядом, 60 см',600],['d15','1,5 м',1500],['d25','2,5 м',2500]];let dist='full';
-function setDist(k){dist=k;const D=DIST.find(a=>a[0]===k)[2];box.style.width=D?Math.round(212*600/D*96/25.4)+'px':'';marks();}
+function setDist(k){dist=k;const D=DIST.find(a=>a[0]===k)[2];$('bench').style.width=D?Math.round(PW*600/D*96/25.4)+'px':'';marks();}
 function setAmb(k){amb=k;marks();render();}
 function marks(){document.querySelectorAll('[data-wx]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.wx===wx)));document.querySelectorAll('[data-di]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.di===dist)));document.querySelectorAll('[data-am]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.am===amb)));}
 chips('wx',WX,setWx,'wx');chips('dist',DIST,setDist,'di');chips('amb',AMB,setAmb,'am');

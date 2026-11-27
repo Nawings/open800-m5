@@ -4,7 +4,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="icon" href="data:,">
 <meta charset="utf-8">
-<title>Салазки и крышка</title>
+<title>Салазки F1C (архив)</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500&family=Onest:wght@400;500;600;800&family=JetBrains+Mono:wght@400&display=swap">
 <style>
@@ -53,6 +53,10 @@ th{font:600 11px var(--f-mono);color:var(--muted);text-transform:uppercase;lette
 .dl button{font-size:12px;padding:5px 9px}
 code{font-family:var(--f-mono);font-size:12px}
 [hidden]{display:none!important}
+.archive{border:2px solid var(--warn);background:color-mix(in srgb,var(--warn) 13%,var(--surface));border-radius:6px;padding:10px 12px;margin:0;font:14px/1.45 var(--f-body)}
+.archive b{font-weight:800}
+.archive a{color:var(--accent)}
+.stale{color:var(--bad);font-weight:600}
 .home{position:absolute;top:14px;right:16px;z-index:6;padding:8px 12px;border-radius:4px;border:1px solid var(--accent);background:var(--surface);color:var(--ink);font:600 13px var(--f-body);text-decoration:none}
 .home:hover,.home:focus-visible{background:var(--accent);color:var(--surface);outline:none}
 @media (max-width:900px){.home{top:10px;left:16px;right:auto}.badge{top:54px}.tools{top:114px}.views{top:116px}.stage>h1{padding-right:0;padding-top:44px}}
@@ -61,7 +65,7 @@ code{font-family:var(--f-mono);font-size:12px}
   <div class="stage" id="stage">
     <a class="home" href="../">← Главное меню</a>
     <canvas id="view" aria-label="3D-модель салазок и задней крышки блока F1C"></canvas>
-    <div class="badge"><h1>Салазки и крышка</h1><span id="sub">вариант А · разъём SP13</span></div>
+    <div class="badge"><h1>Салазки F1C · архив</h1><span id="sub">архив F1C · вариант А · разъём SP13</span></div>
     <div class="tools" role="toolbar" aria-label="Управление моделью">
       <button type="button" id="vSP" aria-pressed="true">Разъём SP13</button>
       <button type="button" id="vPO" aria-pressed="false">Пружинные контакты</button>
@@ -84,10 +88,11 @@ code{font-family:var(--f-mono);font-size:12px}
     <div class="hint">крутить — мышь или палец · приблизить — колесо или щипок · наведите на деталь — подпись</div>
   </div>
   <aside class="panel">
-    <p class="lead">Блок F1C надевается прямо на плиту салазок — без сдвига вниз. Разъём, конусы и защёлка находятся в кармане задней крышки, между блоком и стенкой рубки. Снаружи их не видно.</p>
-    <p class="note">Это модель для выбора и пробной печати, а не окончательная. Посадку и ход защёлки проверила программа (63 проверки). Размеры разъёмов — приблизительные: их надо сверить по купленным деталям.</p>
+    <p class="archive" role="note"><b>Архив: салазки для корпуса F1C (до 26.11).</b> Корпуса F1C больше нет: в кокпите будут два тонких съёмных блока — большой с экраном 7,5″ справа от входа и малый с экраном 4,2″ слева, основная плата — внутри каюты. Для двух новых блоков салазки проектируются заново — <b>пружинные контакты 2 × 5</b> (шаг 2,54): штыри в блоке, площадки в плите салазок на стенке; сквозь стенку — только кабель, без разъёма и гермоввода. Новая плита салазок — на странице <a href="../cockpit/">«Блок в кокпите»</a> (конструкция в работе). Варианты А и Б, разъём SP13 с колпачком, задняя крышка 212 × 178 и списки покупок ниже — <b>не делаем и не покупаем</b>. 3D-модель и STL оставлены как архив.</p>
+    <p class="lead">Как было задумано для F1C: блок надевался прямо на плиту салазок — без сдвига вниз. Разъём, конусы и защёлка — в кармане задней крышки, между блоком и стенкой рубки.</p>
+    <p class="note">Модель была для выбора и пробной печати под F1C. Посадку и ход защёлки проверила программа (63 проверки).</p>
 
-    <h2>Вариант Б: блок на пазах, сверху вертушок</h2>
+    <h2>Вариант Б: блок на пазах, сверху вертушок (архив F1C)</h2>
     <div class="card">
       <h3>Как держится (25.11, после поломки ползуна) <button type="button" id="goB">Показать</button></h3>
       <ul>
@@ -96,11 +101,11 @@ code{font-family:var(--f-mono);font-size:12px}
         <li><b>Разъём SP13 — вручную снизу:</b> гнездо в нижней стенке блока осью вниз, вилка вставляется рукой. Жёсткий кабель внутрь блока не заходит: висит снаружи и уходит в стенку рубки ниже блока — отверстие лучше на 5–6 см ниже, чтобы кабель лёг петлёй без излома.</li>
         <li><b>Снять:</b> отсоединить вилку, повернуть барашек, поднять блок на 17 мм и отвести от стенки.</li>
         <li><b>Проверено программой</b> (14 проверок, tools/cad/dock_b.mjs): крюки входят в окна, блок съезжает без задевания, не отрывается от стенки, не опускается ниже, барашек поворачивается 0…90° без задевания и запирает подъём, открытый — блок снимается.</li>
-        <li><b>Что ещё нужно:</b> в верхней стенке корпуса F1C — 2 латунные вставки М3 под основание вертушка; в нижней — отверстие под гнездо SP13 (панельное SP1312/P9); над блоком на стенке рубки — 20 мм свободного места под шейку плиты. Пружинная защёлка и конусы в варианте Б не нужны.</li>
+        <li><span class="stale">Не делаем (27.11):</span> <b>что ещё было нужно:</b> в верхней стенке корпуса F1C — 2 латунные вставки М3 под основание вертушка; в нижней — отверстие под гнездо SP13 (панельное SP1312/P9); над блоком на стенке рубки — 20 мм свободного места под шейку плиты. Пружинная защёлка и конусы в варианте Б не нужны.</li>
       </ul>
     </div>
 
-    <h2>Какой разъём</h2>
+    <h2>Какой разъём (сравнение для F1C)</h2>
     <div class="card">
       <h3>Сравнение <button type="button" data-v="conn">Показать</button></h3>
       <div class="tbl"><table>
@@ -114,10 +119,10 @@ code{font-family:var(--f-mono);font-size:12px}
         <tr><td><b>Главный риск</b></td><td>с накидной гайкой вилка прямо не наденется — гайку надо снять. Проверить на купленной паре</td><td>коррозия площадок и штырей; новая закупка</td></tr>
         <tr><td><b>Закупка</b></td><td>пара SP13-9 уже в списке, нужна гнездо-со-штырями + вилка-с-гнёздами</td><td>ряд штырей 10 × 2,54 (ход 1,5 мм) и плата площадок</td></tr>
       </table></div>
-      <p class="note"><b>Выбран SP13</b> (24.11). Пружинные контакты остаются на модели для сравнения. Перед окончательной печатью проверить на купленной паре, снимается ли накидная гайка вилки.</p>
+      <p class="note">24.11 для F1C был выбран SP13. <span class="stale">27.11 решение другое:</span> для двух новых блоков — пружинные контакты 2 × 5; SP13, колпачок SP13 и гермоввод PG9 не покупаем.</p>
     </div>
 
-    <h2>Как пользоваться</h2>
+    <h2>Как пользоваться (архив F1C)</h2>
     <div class="card">
       <h3>Надеть и снять <button type="button" data-v="latch">Показать</button></h3>
       <ol>
@@ -129,7 +134,7 @@ code{font-family:var(--f-mono);font-size:12px}
 
     <h2>Детали</h2>
     <div class="card">
-      <h3>Печатные — кнопки скачивают STL (в положении модели)</h3>
+      <h3>Печатные — архив F1C, не печатать. Кнопки скачивают STL (в положении модели)</h3>
       <div class="tbl"><table>
         <tr><th>Деталь</th><th>Размер, мм</th><th>Как печатать</th></tr>
         <tr><td><b>Задняя крышка</b> (своя на каждый разъём)</td><td>212 × 178, карман 160 × 148 × 5</td><td>ASA; наружной стороной на стол, поддержки в кармане</td></tr>
@@ -140,20 +145,21 @@ code{font-family:var(--f-mono);font-size:12px}
         <tr><td><b>Прокладка</b></td><td>212 × 178, ширина 8, толщина 1,5</td><td>TPU 95A</td></tr>
       </table></div>
       <div class="dl" id="dl"></div>
-      <p class="note">Для пробной печати из дешёвого пластика хватит одной крышки, одной плиты и ползуна. Так проверяются посадка, попадание разъёма и щелчок, без печати всей коробки.</p>
-      <p class="note"><b>Пробная печать в PLA:</b> крышка — наружной стороной на стол, поддержки только в кармане (дно кармана — мост 160 × 148). Плита — стороной к стенке на стол, без поддержек. Ползун — на боку, без поддержек. Держатель — фланцем на стол. Слой 0,2, 4 стенки, заполнение 25 %. Пружина-змейка в PLA может треснуть — напечатать 2 ползуна.</p>
+      <p class="note"><span class="stale">Не делаем (27.11):</span> для пробной печати из дешёвого пластика хватило бы одной крышки, одной плиты и ползуна. Так проверяются посадка, попадание разъёма и щелчок, без печати всей коробки.</p>
+      <p class="note"><span class="stale">Не делаем (27.11):</span> <b>пробная печать в PLA:</b> крышка — наружной стороной на стол, поддержки только в кармане (дно кармана — мост 160 × 148). Плита — стороной к стенке на стол, без поддержек. Ползун — на боку, без поддержек. Держатель — фланцем на стол. Слой 0,2, 4 стенки, заполнение 25 %. Пружина-змейка в PLA может треснуть — напечатать 2 ползуна.</p>
     </div>
     <div class="card">
-      <h3>Крепёж и покупное</h3>
+      <h3>Крепёж и покупное — для F1C, не покупаем</h3>
       <ul>
         <li>4 потайных винта М4 из нержавейки A4 — плита к стенке рубки; под плиту — герметик.</li>
         <li>9 винтов М3 × 12 A4 — крышка к коробке, в латунные вставки.</li>
         <li>2 винта М3 × 8 — держатель вилки к плите (только SP13).</li>
         <li>Колпачок на разъём плиты.</li>
       </ul>
+      <p class="note"><span class="stale">Не делаем (27.11):</span> список был под F1C. Крепёж плит для двух новых блоков появится вместе с новой конструкцией салазок.</p>
     </div>
 
-    <h2>Что изменилось против прежней крышки</h2>
+    <h2>Что изменилось против прежней крышки (история F1C)</h2>
     <div class="card">
       <ul>
         <li><b>Нет хвоста SP13, гермоввода и ниши.</b> Разъём стоит прямо в дне кармана, провода от него идут сразу к J1, J2 и клемме A B.</li>
@@ -164,7 +170,7 @@ code{font-family:var(--f-mono);font-size:12px}
       </ul>
     </div>
 
-    <h2>Проверить на пробной печати</h2>
+    <h2>Что собирались проверить на пробной печати (F1C, не актуально)</h2>
     <div class="card">
       <ul>
         <li>Снимается ли накидная гайка вилки SP13 и держится ли вилка в держателе на стяжке.</li>
@@ -257,7 +263,7 @@ $('bOn').addEventListener('click',()=>play(1));$('bOff').addEventListener('click
 on=0;$('bOff').disabled=true;   // начинаем со снятым блоком: видно карман и плиту
 const tg=(id,f)=>$(id).addEventListener('click',()=>{const v=$(id).getAttribute('aria-pressed')!=='true';$(id).setAttribute('aria-pressed',String(v));f(v);apply();});
 tg('bExp',v=>{expT=v?1:0;});tg('bCut',v=>{cutOn=v;});tg('bBox',v=>{boxOn=v;});tg('bWall',v=>{wallOn=v;});
-const setV=v=>{variant=v;$('vSP').setAttribute('aria-pressed',String(v==='sp'));$('vPO').setAttribute('aria-pressed',String(v==='po'));$('vB').setAttribute('aria-pressed',String(v==='b'));$('sub').textContent=v==='b'?'вариант Б · пазы и вертушок, SP13 вручную снизу':'вариант А · '+(v==='sp'?'разъём SP13':'пружинные контакты');apply();};
+const setV=v=>{variant=v;$('vSP').setAttribute('aria-pressed',String(v==='sp'));$('vPO').setAttribute('aria-pressed',String(v==='po'));$('vB').setAttribute('aria-pressed',String(v==='b'));$('sub').textContent='архив F1C · '+(v==='b'?'вариант Б · пазы и вертушок, SP13 вручную снизу':'вариант А · '+(v==='sp'?'разъём SP13':'пружинные контакты'));apply();};
 $('vB').addEventListener('click',()=>setV('b'));$('goB').addEventListener('click',()=>{setV('b');go('all');stage.scrollIntoView({behavior:'smooth',block:'start'});});
 $('vSP').addEventListener('click',()=>setV('sp'));$('vPO').addEventListener('click',()=>setV('po'));
 document.querySelectorAll('[data-v]').forEach(b=>b.addEventListener('click',()=>{go(b.dataset.v);if(b.dataset.v==='conn'&&!cutOn)$('bCut').click();if(!b.closest('.tools'))stage.scrollIntoView({behavior:'smooth',block:'start'});}));
