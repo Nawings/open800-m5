@@ -184,11 +184,13 @@ lab(plate.add(at(box(112,178,5,asaPlate),0,93,2.5)),'плита салазок, 
  const ring=new T.Mesh(new T.TorusGeometry(12,1.4,8,32),tpu);ring.scale.set(1,0.75,1);g.add(ring);g.position.set(0,95,5);plate.add(lab(g,'площадки пружинных контактов 2 × 5, позолота; вокруг — уплотнение из TPU 85A: пока блок стоит, вода на площадки не попадает'));}
 // ---------- блок ----------
 const block=new T.Group();scene.add(block);
-const shellM=M(0x2a333b,{transparent:true,opacity:1});
+const shellM=M(0x141618,{transparent:true,opacity:1,roughness:0.8});   // корпус — чёрный ASA (27.11)
 const shell=lab(at(box(120,186,18,shellM),0,93,9),'большой блок, ASA: лицо 120 × 186, 18 мм от стенки; плита салазок — в кармане спинки, вместе с ней; окно — поликарбонат 2 мм, спинка — 2 мм ASA');block.add(shell);
 {const c=document.createElement('canvas');c.width=222;c.height=340;const q=c.getContext('2d');q.fillStyle='#e6e4dc';q.fillRect(0,0,222,340);q.fillStyle='#14161a';q.font='700 22px Onest, Arial';q.fillText('М5 ТАБЛО',10,28);q.fillRect(0,36,222,2);
  [['5,4','12,0'],['177°','34°'],['56°','8,1'],['+6°','233°']].forEach((r,i)=>{q.font='700 42px Onest, Arial';q.fillText(r[0],10,90+i*70);q.fillText(r[1],118,90+i*70);q.fillRect(0,100+i*70,222,1);});q.fillRect(110,38,2,302);
  const scr=new T.Mesh(new T.PlaneGeometry(98,163),new T.MeshBasicMaterial({map:new T.CanvasTexture(c)}));scr.position.set(0,86,18.05);block.add(lab(scr,'экран 7,5″ стоя под окном'));}
+{const c=document.createElement('canvas');c.width=600;c.height=160;const q=c.getContext('2d');q.fillStyle='#ffffff';q.textAlign='center';q.font='800 66px Onest, Arial, sans-serif';q.fillText('M5 Race',300,78);q.font='600 34px Onest, Arial, sans-serif';q.fillText('Создано для гонок',300,138);
+ const nm=new T.Mesh(new T.PlaneGeometry(60,16),new T.MeshBasicMaterial({map:new T.CanvasTexture(c),transparent:true}));nm.position.set(0,176,18.06);nm.userData.keep=true;block.add(lab(nm,'надпись «M5 Race» и слоган «Создано для гонок» — заподлицо белым ASA на чёрном корпусе (печать вторым цветом), буквы 5 и 3 мм'));}
 block.add(lab(at(cylZ(2.5,1,M(0x3df06a,{emissive:0x1d7a35})),-40,180,18.2),'светодиод RGB: заход / отход'));
 block.add(lab(at(cylZ(3,1,M(0xbfe3ee)),40,180,18.2),'окно датчика света'));
 ['БОЛЬШОЙ','−','+','СТАРТ','ЛИНИЯ','МЕНЮ'].forEach((n,i)=>{const b=new T.Mesh(new T.CylinderGeometry(5.5,5.5,1.4,24),tpu);b.position.set(-45+i*18,186.7,9);block.add(lab(b,'кнопка '+n+' на верхнем торце (мембрана TPU 85A)'));});
@@ -272,7 +274,7 @@ document.querySelectorAll('[data-go]').forEach(b=>b.addEventListener('click',()=
 $('aClose').onclick=()=>setAct(0);$('aOpen').onclick=()=>setAct(1);$('aLift').onclick=()=>setAct(2);
 $('rBtn').onclick=()=>{REL='btn';$('rBtn').setAttribute('aria-pressed','true');$('rClip').setAttribute('aria-pressed','false');};
 $('rClip').onclick=()=>{REL='clip';$('rBtn').setAttribute('aria-pressed','false');$('rClip').setAttribute('aria-pressed','true');};
-$('aGlass').onclick=()=>{glass=!glass;shellM.opacity=glass?0.25:1;shellM.depthWrite=!glass;block.traverse(o=>{if(o.isMesh&&o.material.map){o.material.transparent=true;o.material.opacity=glass?0.12:1;o.material.needsUpdate=true;}});$('aGlass').setAttribute('aria-pressed',String(glass));};
+$('aGlass').onclick=()=>{glass=!glass;shellM.opacity=glass?0.25:1;shellM.depthWrite=!glass;block.traverse(o=>{if(o.isMesh&&o.material.map&&!o.userData.keep){o.material.transparent=true;o.material.opacity=glass?0.12:1;o.material.needsUpdate=true;}});$('aGlass').setAttribute('aria-pressed',String(glass));};
 setV(6);
 // подсказки
 const tip=$('tip'),ray=new T.Raycaster(),mp=new T.Vector2();

@@ -1722,7 +1722,7 @@ buildWires(WIRES.top,topG,true);buildWires(WIRES.cp,cpG,false);
   NC[k].forEach(n=>h+='<tr><td colspan="3" class="nc">'+n+'</td></tr>');});
   $('wireTable').innerHTML='<table class="parts"><tbody>'+h+'</tbody></table>';})();
 $('wireLegend').innerHTML=Object.values(WC).map(l=>'<div><i class="w" style="background:'+l[1]+'"></i>'+l[0]+'</div>').join('');
-const CL=[['капсула, флюгер, чашки (как на фото)','#2a2d33'],['карбоновая штанга','#17191c'],['платы датчиков и связи','#1f4f91'],['платы AS5600 и защиты','#1d6a3a'],['магниты на осях','#9b2335'],['корпуса внешних блоков','#2a3138']];
+const CL=[['капсула, флюгер, чашки (как на фото)','#2a2d33'],['карбоновая штанга','#17191c'],['платы датчиков и связи','#1f4f91'],['платы AS5600 и защиты','#1d6a3a'],['магниты на осях','#9b2335'],['корпуса внешних блоков, чёрный ASA','#141618']];
 $('legend').innerHTML=CL.map(l=>'<div><i style="background:'+l[1]+'"></i>'+l[0]+'</div>').join('');
 
 // ---------- вид ----------
@@ -1924,7 +1924,7 @@ function layDraw(c,v,dv){dv=dv||LDV0;const k=4,q=c.getContext('2d');q.clearRect(
   const VAL=[[['СКОРОСТЬ, уз',f1c(dv.sog),''],['КУРС К N',Math.round(dv.hdg)+'°',''],['УГОЛ К ВЕТРУ',Math.round(Math.abs(twa))+'°',SL(twa)],['ОТ БАЗ. КУРСА',(dB>=0?'+':'−')+Math.abs(dB)+'°',dB>=0?'увал':'привод'],['КРЕН',Math.round(Math.abs(hl))+'°',Math.abs(hl)<0.5?'':hl>0?'на правый':'на левый']],[['ВЫМП. ВЕТЕР, уз',f1c(dv.aws),''],['ВЫМП. УГОЛ',Math.round(Math.abs(dv.awa))+'°',SL(dv.awa)],['ИСТ. ВЕТЕР, уз',f1c(tws),''],['ИСТ. НАПРАВЛЕНИЕ',twd+'°',''],['ДИФФЕРЕНТ',f1c(Math.abs(pt))+'°',Math.abs(pt)<0.05?'':pt>0?'на нос':'на корму']]];
   const rem=300-(dv.t%300),dist=Math.max(0,42-(dv.t%300)*0.12),eta=dist/Math.max(0.5,dv.sog*0.5144);
   const rr=(x,y,w,h,r)=>{q.beginPath();q.moveTo(x+r,y);q.arcTo(x+w,y,x+w,y+h,r);q.arcTo(x+w,y+h,x,y+h,r);q.arcTo(x,y+h,x,y,r);q.arcTo(x,y,x+w,y,r);q.closePath();};
-  q.fillStyle='#2a3138';rr(0,0,c.width,c.height,8*k);q.fill();
+  q.fillStyle='#141618';rr(0,0,c.width,c.height,8*k);q.fill();   // лицо блока — чёрный ASA (27.11)
   const X=x=>(v.wall+x)*k,Y=y=>(v.wall+v.H-y)*k,B=(s,px)=>{q.font='700 '+px+'px Arial, sans-serif';return s;};
   // всё место — цифрам: шапка в одну тонкую строку, без строки «лодка / ветер»; знаки П/Л, увал, нос — в строке подписи. Шрифт Inter (как Гельветика)
   const F='Inter, Arial, sans-serif';
@@ -1976,7 +1976,7 @@ function pogo(g,b){const gold=M(0xd4af37,{metalness:0.8,roughness:0.3}),pg=new T
   g.add(lab(pg,'пружинные контакты (pogo pin) 2 × 5, шаг 2,54: штыри в дне кармана спинки встают на площадки плиты салазок — надел блок, контакт есть'));}
 // корпус, лицо с картинкой экрана, кнопки на верхнем торце, светодиод   /*btntop2711*/
 function blockShell(b,o){const g=blkG(b);
-  const body=new THREE.Mesh(new THREE.ExtrudeGeometry(rrShape(0,0,b.W,b.H,6),{depth:b.D,bevelEnabled:false,curveSegments:8}),M(0x2a3138,{roughness:0.55}));body.position.z=0;
+  const body=new THREE.Mesh(new THREE.ExtrudeGeometry(rrShape(0,0,b.W,b.H,6),{depth:b.D,bevelEnabled:false,curveSegments:8}),M(0x141618,{roughness:0.9}));body.position.z=0;
   lab(body,o.body);body.userData.shell=true;body.userData.op=0.22;SHELLS.push(body);g.add(body);
   const ed=new THREE.LineSegments(new THREE.EdgesGeometry(body.geometry,30),new THREE.LineBasicMaterial({color:0x7e8992}));ed.position.z=0;ed.userData.noPick=true;g.add(ed);
   const c=document.createElement('canvas');c.width=b.W*4;c.height=b.H*4;layDraw(c,o.v);const tex=new THREE.CanvasTexture(c);tex.anisotropy=8;tex.userData={c,v:o.v};LAYTEX.push(tex);
@@ -1993,10 +1993,14 @@ function blockShell(b,o){const g=blkG(b);
    o.btn.forEach((n,i)=>q.fillText(n[0],o.bx[i]*k,Math.max(1.8,b.D/2-8.5)*k));const t=new THREE.CanvasTexture(cv);t.anisotropy=8;
    const pl=new THREE.Mesh(new THREE.PlaneGeometry(b.W,b.D),new THREE.MeshStandardMaterial({map:t,transparent:true,roughness:0.6,depthWrite:false}));pl.rotation.x=-Math.PI/2;
    putB(g,pl,b.W/2,b.H+0.08,b.D/2,'подписи кнопок гравировкой на верхнем торце '+o.who+', за кнопками: читаются сверху');}
+  if(o.name){const k=12,cv=document.createElement('canvas');cv.width=b.W*k;cv.height=b.H*k;const q=cv.getContext('2d');q.fillStyle='#ffffff';q.textAlign='center';q.textBaseline='alphabetic';   /*name2711*/
+    o.name.forEach(t=>{q.font='800 '+(t[3]/0.72*k)+'px Inter, Arial, sans-serif';q.fillText(t[0],t[1]*k,(b.H-t[2])*k);});
+    const tx=new THREE.CanvasTexture(cv);tx.anisotropy=8;const pn=new THREE.Mesh(new THREE.PlaneGeometry(b.W,b.H),new THREE.MeshStandardMaterial({map:tx,transparent:true,roughness:0.9,depthWrite:false}));
+    putB(g,pn,b.W/2,b.H/2,b.D+0.35,'надпись M5 Race / Создано для гонок — заподлицо белым ASA на чёрном (печать вторым цветом)');}
   reg(g,cpG,{s:o.s,e:[-0.10,0,0]});g.traverse(m=>{if(m.userData.rgb)RGBL.push(m.material);});return g;}
 // ---- большой блок: правый борт, справа от входа
 slidePlate(BLK.big,'большого блока',8);
-blockShell(BLK.big,{s:11,who:'большого блока',led:[20,180],win:[100,180],bx:[15,33,51,69,87,105],
+blockShell(BLK.big,{s:11,who:'большого блока',name:[['M5 Race',60,179.6,5],['Создано для гонок',60,175.6,2.9]],led:[20,180],win:[100,180],bx:[15,33,51,69,87,105],
   btn:[['БОЛЬШОЙ','листает виды большого экрана'],['−','масштаб карты, уменьшить значение'],['+','масштаб карты, увеличить значение'],['СТАРТ','стартовый отсчёт'],['ЛИНИЯ','отметить концы стартовой линии'],['МЕНЮ','меню; держать 3 с — включить или выключить прибор']],
   v:{OW:120,OH:186,W:120,H:186,wall:0,E:[{k:'scr',x:4.4,y:4,w:111.2,h:170.2,aw:97.9,ah:163.2,role:'main'},{k:'led',x:20,y:180,c:'m'}]},
   body:'корпус большого блока: 120 × 186 мм, ≈ 18 мм от стенки, углы R 6, ASA; задняя стенка 2 мм, медленная печать. Плита салазок уходит в карман спинки — блок не толще на плиту. GPS в блоке нет (27.11). Снимается каждый раз, уходя с лодки',
@@ -2014,7 +2018,7 @@ blockShell(BLK.big,{s:11,who:'большого блока',led:[20,180],win:[100
   reg(g,cpG,{s:11,e:[-0.05,0,0]});}
 // ---- малый блок: левый борт, слева от входа
 slidePlate(BLK.small,'малого блока',8);
-blockShell(BLK.small,{s:12,who:'малого блока',led:[15,98],bx:[49],btn:[['МАЛЫЙ','листает виды только малого экрана']],
+blockShell(BLK.small,{s:12,who:'малого блока',name:[['M5 Race',57,96.6,3.5]],led:[15,98],bx:[49],btn:[['МАЛЫЙ','листает виды только малого экрана']],
   v:{OW:98,OH:104,W:98,H:104,wall:0,E:[{k:'scr',x:3,y:3,w:92,h:89.7,aw:84.8,ah:63.6,role:'small'},{k:'led',x:15,y:98,c:'m'}]},
   body:'корпус малого блока: 98 × 104 мм, 22 мм от стенки, углы R 6, ASA; задняя стенка 2 мм, медленная печать. Плита салазок в кармане спинки. Можно довести до ≈ 18 мм, если припаять провода к модулю WeAct вместо штыревого разъёма (не решено). Снимается каждый раз, уходя с лодки',
   face:'малый блок (левый борт, слева от входа): экран 4,2″ WeAct лёжа, 400 × 300 — старт. Лицо 98 × 104, 22 мм от стенки (плита салазок в кармане спинки); окно — поликарбонат 2 мм. Правый край — в 20 мм от направляющей, верх — в 60 мм ниже края крыши: выше мешает скругление угла рубки. Процессора нет. Закрывает старое отверстие Ø20'});
@@ -2041,9 +2045,10 @@ const TRAY={x:CAB_AFT+0.028,y:0.755,z:0.455};
     o.userData.label=l;});
   bd.position.set(5,6,8);g.add(bd);
   // GPS — у верхнего края лотка, антенной вверх, на дальнем от LM2596 конце (LM2596 — у конца лотка к правому борту); над антенной — пластиковая крышка
-  putB(g,box(25,7,25,M(0x23252a,{roughness:0.5})),162,93.5,15.5,'GPS QUESCAN AN181 в лотке основной платы (решение 27.11, окончательно): у верхнего края лотка, антенной вверх, на другом конце от LM2596 и дросселей питания — их помехи ухудшают приём. Скорость и курс 10 раз в секунду. Сигнал идёт сквозь крышу рубки (стеклопластик, ≈ 0,5–2 дБ) — проверить на лодке: 10 мин в лотке и 10 мин снаружи, сравнить спутники и уровень сигнала');
-  putB(g,box(25,0.6,25,M(0xc9a227,{metalness:0.5,roughness:0.4})),162,97.3,15.5,'керамическая антенна GPS 25 × 25: смотрит вверх, в крышу рубки');
-  putB(g,box(32,1.5,30,M(0xe8ecef,{transparent:true,opacity:0.45,roughness:0.4})),162,99.5,15,'крышка лотка над антенной GPS — пластик, не металл: металл закрыл бы спутники');
+  putB(g,box(25,1.6,25,M(0x1f6fd0,{roughness:0.45})),162,90.8,15.5,'GPS QUESCAN AN181 в лотке основной платы (решение 27.11, окончательно): у верхнего края лотка, антенной вверх, на другом конце от LM2596 и дросселей питания — их помехи ухудшают приём. Скорость и курс 10 раз в секунду. Сигнал идёт сквозь крышу рубки (стеклопластик, ≈ 0,5–2 дБ) — проверить на лодке: 10 мин в лотке и 10 мин снаружи, сравнить спутники и уровень сигнала');
+  putB(g,box(25,4,25,M(0xd8dad6,{roughness:0.6})),162,93.6,15.5,'керамическая антенна GPS 25 × 25: смотрит вверх, в крышу рубки');
+  putB(g,box(13,0.3,13,M(0xd4af37,{metalness:0.7,roughness:0.3})),162,95.75,15.5,'серебрёный (на модели золотистый) квадрат керамической антенны GPS: смотрит вверх, в крышу рубки');   /*gpsvis2711*/
+  putB(g,box(32,1.5,30,M(0xe8ecef,{transparent:true,opacity:0.18,roughness:0.4,depthWrite:false})),162,97.6,15,'крышка лотка над антенной GPS — пластик, не металл: металл закрыл бы спутники');
   // карточки датчиков на жгутах из портов основной платы — под лотком, место на модели — схема
   putB(g,box(24,18,1.6,M(0x6a3fa0,{roughness:0.5})),30,-13,3,'AS3935 — датчик молний: гроза на 1–40 км и приближается ли она. На основной плате внутри каюты (спецификация 27.11), карточкой на жгуте, подальше от Wi-Fi ESP32-S3 и LM2596; место на модели — схема');
   putB(g,box(15,12,1.6,M(0x5a2a86,{roughness:0.5})),68,-11,3,'BME280 — барометр на основной плате внутри каюты: давление в каюте равно наружному, падение больше 3,5 гПа за 3 часа предупреждает о шквале. Температура и влажность у него — воздуха в каюте. Место на модели — схема');
@@ -2059,6 +2064,13 @@ const TRAY={x:CAB_AFT+0.028,y:0.755,z:0.455};
     'кабель малого блока, ≈ 1,2 м: 8 жил из 10 (26AWG в экране, Ø ≈ 5 мм) — +5 В, земля, SCK, MOSI, CS, DC, SDA, SCL; 2 контакта свободны. Внутри каюты: сквозь стенку слева от входа, вверх и над входом под крышей рубки — к основной плате'),cpG,{s:12,w:true});
   [-0.25,0,0.18].forEach(z=>{const k=box(0.012,0.008,0.014,M(0x9aa0a6,{roughness:0.6}));k.position.set(A+0.06,0.969,z);reg(lab(k,'клипса кабеля малого блока под крышей рубки, над входом'),cpG,{s:12,w:true});});}
 // точки для камеры
+// выноска «GPS (антенна вверх)» — постоянная на видах «Основная плата» и «Внутри», как подписи других деталей
+const gpsTag=new THREE.Group();cpG.add(gpsTag);gpsTag.visible=false;
+{const P=V(TRAY.x+0.0155,TRAY.y+0.0965,TRAY.z-0.162),T=P.clone().add(V(0.03,0.075,0.04));
+ const c=document.createElement('canvas');c.width=512;c.height=112;const q=c.getContext('2d');q.fillStyle='rgba(14,22,30,.9)';q.fillRect(0,0,512,112);q.strokeStyle='#f2c230';q.lineWidth=5;q.strokeRect(3,3,506,106);
+ q.fillStyle='#fff';q.font='700 44px Arial';q.textAlign='center';q.textBaseline='middle';q.fillText('GPS (антенна вверх)',256,58);
+ const sp=new THREE.Sprite(new THREE.SpriteMaterial({map:new THREE.CanvasTexture(c),depthTest:false,transparent:true,sizeAttenuation:false}));sp.position.copy(T);sp.scale.set(0.17,0.17*112/512,1);sp.renderOrder=999;sp.userData.noPick=true;gpsTag.add(sp);
+ const ln=new THREE.Line(new THREE.BufferGeometry().setFromPoints([P,T]),new THREE.LineBasicMaterial({color:0xf2c230,depthTest:false,transparent:true}));ln.renderOrder=998;ln.userData.noPick=true;gpsTag.add(ln);}
 const aBig=new THREE.Object3D(),aSmall=new THREE.Object3D(),aMid=new THREE.Object3D(),aMain=new THREE.Object3D();
 aBig.position.set(CAB_AFT-0.018,BLK.big.y0+0.093,BLK.big.z0+0.060);aSmall.position.set(CAB_AFT-0.022,BLK.small.y0+0.052,BLK.small.z0+0.049);
 aMid.position.set(CAB_AFT-0.03,0.86,(aBig.position.z+aSmall.position.z)/2);aMain.position.set(CAB_AFT+0.043,0.80,0.36);[aBig,aSmall,aMid,aMain].forEach(o=>cpG.add(o));
@@ -2082,7 +2094,7 @@ const VIEWS={
   bigbtn:()=>{const c=worldOf(aBig),t=c.clone().add(V(0.016,0.093,0));return{t,p:t.clone().add(V(-0.26,0.22,0.05)),f:aBig};},   // большой блок сверху: кнопки на верхнем торце
   bigblk:()=>{const c=worldOf(aBig);return{t:c,p:c.clone().add(V(-0.40,0.24,0.10)),f:aBig};},
   smallblk:()=>{const c=worldOf(aSmall);return{t:c,p:c.clone().add(V(-0.34,0.20,-0.08)),f:aSmall};},
-  mainboard:()=>{const c=worldOf(aMain);return{t:c,p:c.clone().add(V(0.55,0.10,-0.12)),f:aMain};},   // изнутри каюты, режим «Внутри»
+  mainboard:()=>{const c=worldOf(aMain);return{t:c,p:c.clone().add(V(0.42,0.30,-0.10)),f:aMain};},   // изнутри каюты, режим «Внутри»
   cable:()=>({t:V(-0.1,1.0,0.25),p:V(-3.4,2.7,3.7),f:null}),
   inside:()=>({t:V(1.5,0.3,0.05),p:V(-1.3,2.6,1.7),f:null}),
   power:()=>{const c=worldOf(switchboardAnchor);return{t:c,p:c.clone().add(V(-0.42,0.16,-0.42)),f:switchboardAnchor};},
@@ -2090,7 +2102,7 @@ const VIEWS={
 };
 let tw=null,follow=null,lastF=V(0,0,0),curView='boat';
 const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
-function go(name){const inside=name==='inside'||name==='power'||name==='bus'||name==='mainboard';setInside(inside);setBus(name==='bus');sprG.visible=name==='inside';const v=VIEWS[name]();curView=name;routeLine.material.depthTest=name!=='cable';routeLine.material.needsUpdate=true;follow=v.f;if(follow)lastF=worldOf(follow);
+function go(name){const inside=name==='inside'||name==='power'||name==='bus'||name==='mainboard';setInside(inside);setBus(name==='bus');sprG.visible=name==='inside';gpsTag.visible=name==='inside'||name==='mainboard';const v=VIEWS[name]();curView=name;routeLine.material.depthTest=name!=='cable';routeLine.material.needsUpdate=true;follow=v.f;if(follow)lastF=worldOf(follow);
   document.querySelectorAll('[data-view]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.view===name)));document.querySelectorAll('[data-lay]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.lay===name)));
   if(reduce){camera.position.copy(v.p);controls.target.copy(v.t);controls.update();tw=null;return;}
   tw={p0:camera.position.clone(),t0:controls.target.clone(),p1:v.p,t1:v.t,start:performance.now(),dur:1200};}

@@ -54,13 +54,15 @@ td.n{text-align:right;white-space:nowrap}
 ul.notes{margin:0;padding-left:18px;display:grid;gap:8px;max-width:80ch}
 .small{font-size:12.5px;color:var(--muted)}
 /* чертёж */
-.case{fill:var(--case);stroke:var(--case-line);stroke-width:.6}
-.endv{fill:var(--case);stroke:var(--case-line);stroke-width:.6}
+/* корпуса блоков — чёрный ASA, надпись белым ASA вторым цветом (владелец 27.11) */
+.case{fill:#141618;stroke:var(--case-line);stroke-width:.6}
+.endv{fill:#141618;stroke:var(--case-line);stroke-width:.6}
+.brand{fill:#ffffff;font-family:"Inter",Arial,sans-serif}
 .win{fill:none;stroke:var(--case-line);stroke-width:.35;stroke-dasharray:2 1.4}
 .mod{fill:#2a6b4e;stroke:#1d4c38;stroke-width:.3;opacity:.55}
 .glass{fill:var(--glass);stroke:var(--glass-line);stroke-width:.3}
 .tb{fill:#141414;font-family:"Inter",Arial,"Helvetica Neue",sans-serif;font-weight:700}.tbl{fill:#141414;font-family:"Inter",Arial,"Helvetica Neue",sans-serif;font-weight:700}
-.knob{fill:var(--btn)}
+.knob{fill:#4f565e}
 .dimL{stroke:var(--dim);stroke-width:.35;fill:none}
 .dimT{fill:var(--dim);font:600 4.6px var(--f-body)}
 .lbl{fill:var(--muted);font:500 4.2px var(--f-body)}
@@ -107,6 +109,7 @@ ul.notes{margin:0;padding-left:18px;display:grid;gap:8px;max-width:80ch}
       <dl class="nums" id="vNums"></dl>
       <p class="small">Кнопки — на верхнем торце (решение владельца 27.11, окончательно: после пробы «снизу» вернул наверх). Нажатие сверху прижимает блок к салазкам. Подписи — гравировкой на верхнем торце; плата кнопок — под верхней стенкой. Назначение кнопок задаётся прошивкой — порядок не важен.</p>
       <p class="small"><b>Блокировка кнопок</b> (решение 27.11): 10 с без нажатий — кнопки блокируются (замок в строке состояния обоих экранов); разблокировать — удержать любую кнопку 3 с.</p>
+      <p class="small"><b>Корпуса чёрные, надпись белая</b> (владелец 27.11). Большой блок — надпись: полоса 11,8 мм над экраном (под экраном только 4 мм), «M5 Race» 5 мм и «Создано для гонок» 3 мм, заподлицо белым ASA вторым цветом; между светодиодом и окном датчика света 68 мм по ширине — обе строки помещаются. Малый блок — полоса 11,3 мм над экраном (под экраном 3 мм), только «M5 Race» 3,5 мм.</p>
     </div>
   </section>
 
@@ -217,8 +220,10 @@ const LED=5,BTN=11;
 // ---- два блока по спецификации 27.11. Лицо: начало — левый нижний угол, x вправо, y вверх.
 // Место: z — от оси рубки к правому борту, y — высота, мм (как на странице «Лодка», только в мм)
 const B={
-  small:{id:'small',key:'Малый блок',side:'левый борт, слева от входа',W:98,H:104,D:22,scr:SCR.s42,role:'small',mx:3,my:3,led:[15,98],bh:null,btn:[49],bl:['МАЛЫЙ'],z0:-466,y0:821},
-  big:{id:'big',key:'Большой блок',side:'правый борт, справа от входа',W:120,H:186,D:18,scr:SCR.s75v,role:'main',mx:4.4,my:4,led:[20,180],bh:[100,180],btn:[15,33,51,69,87,105],bl:['БОЛЬШОЙ','−','+','СТАРТ','ЛИНИЯ','МЕНЮ'],z0:288,y0:759}
+  small:{id:'small',key:'Малый блок',side:'левый борт, слева от входа',W:98,H:104,D:22,scr:SCR.s42,role:'small',mx:3,my:3,led:[15,98],bh:null,btn:[49],bl:['МАЛЫЙ'],z0:-466,y0:821,
+    brand:{x:49,lines:[['M5 Race',3.5,96.25,700]]}},   // полоса над экраном 92,7…104 = 11,3 мм: «M5 Race» 3,5 мм по центру полосы
+  big:{id:'big',key:'Большой блок',side:'правый борт, справа от входа',W:120,H:186,D:18,scr:SCR.s75v,role:'main',mx:4.4,my:4,led:[20,180],bh:[100,180],btn:[15,33,51,69,87,105],bl:['БОЛЬШОЙ','−','+','СТАРТ','ЛИНИЯ','МЕНЮ'],z0:288,y0:759,
+    brand:{x:60,lines:[['M5 Race',5,179.7,700],['Создано для гонок',3,175.5,500]]}}   // полоса над экраном 174,2…186 = 11,8 мм (под экраном только 4): 5 + 1,2 + 3 = 9,2 мм, поля по 1,3
 };
 const BL=[B.small,B.big];
 // крупная цифра: шрифт подбирается так, чтобы самое длинное число влезло в ячейку
@@ -251,6 +256,8 @@ function smallContent(x,y,s){const a=s.act,ax=x+(s.mod[0]-a[0])/2+s.actOff[0],ay
   t+=L(H*0.965,'выгоднее ▶ правый конец, +12 м',H*0.068);
   return t;}
 function ledSvg(cx,cy){const r=LED/2+0.6;let s='';['var(--led-r)','var(--led-g)','#2f6fd6'].forEach((c,i)=>{const a0=-Math.PI/2+i*2*Math.PI/3,a1=a0+2*Math.PI/3;s+='<path d="M'+cx+' '+cy+' L'+(cx+r*Math.cos(a0)).toFixed(2)+' '+(cy+r*Math.sin(a0)).toFixed(2)+' A'+r+' '+r+' 0 0 1 '+(cx+r*Math.cos(a1)).toFixed(2)+' '+(cy+r*Math.sin(a1)).toFixed(2)+' Z" fill="'+c+'"/>';});return s+'<circle cx="'+cx+'" cy="'+cy+'" r="'+r+'" fill="none" stroke="var(--case-line)" stroke-width="0.5"/>';}
+// надпись на лице: [текст, высота заглавной, мм, базовая линия y в координатах лица, жирность]; X, Y — перевод координат лица в SVG
+function brandSvg(b,X,Y){return b.brand.lines.map(l=>'<text class="brand" x="'+X(b.brand.x)+'" y="'+Y(l[2])+'" text-anchor="middle" style="font-weight:'+l[3]+'" font-size="'+(l[1]/TCAP).toFixed(2)+'">'+l[0]+'</text>').join('');}
 // лицо блока: (ox, oy) — левый верхний угол в SVG
 function face(b,ox,oy,opt){const Y=y=>oy+b.H-y,m=b.scr;let s='<rect class="case" x="'+ox+'" y="'+oy+'" width="'+b.W+'" height="'+b.H+'" rx="6"/>';
   const x=ox+b.mx,y=Y(b.my+m.mod[1]);
@@ -261,6 +268,7 @@ function face(b,ox,oy,opt){const Y=y=>oy+b.H-y,m=b.scr;let s='<rect class="case"
   s+='<rect class="win" x="'+(x+.3)+'" y="'+(y+.3)+'" width="'+(m.mod[0]-.6)+'" height="'+(m.mod[1]-.6)+'" rx=".8"/>';
   s+=ledSvg(ox+b.led[0],Y(b.led[1]));
   if(b.bh)s+='<circle cx="'+(ox+b.bh[0])+'" cy="'+Y(b.bh[1])+'" r="3" fill="#bfe3ee" stroke="#5a6570" stroke-width=".5"/>';
+  s+=brandSvg(b,x=>ox+x,Y);
   return s;}
 // торец с кнопками: полоса W × D; faceBelow — лицо у нижнего края полосы (вид сверху на верхний торец)
 function endStrip(b,ox,oy,faceBelow){let s='<rect class="endv" x="'+ox+'" y="'+oy+'" width="'+b.W+'" height="'+b.D+'" rx="2"/>';
@@ -334,8 +342,9 @@ function drawWall(){const k=wv==='both'?3.4:1.35,Y=y=>1000-y,sw=w=>(w*k).toFixed
   s+='<rect x="265" y="'+Y(845)+'" width="190" height="90" rx="4" fill="none" stroke="var(--muted)" stroke-width="'+sw(0.5)+'" stroke-dasharray="'+sw(3)+' '+sw(2)+'"/>';
   // блоки, плиты, отверстия
   BL.forEach(b=>{const F=fit(b),col=F.m<3?'var(--hole)':F.m<15?'#c98a00':'var(--ok)',m=b.scr,R=b.z0>0;
-    s+='<rect x="'+b.z0+'" y="'+Y(b.y0+b.H)+'" width="'+b.W+'" height="'+b.H+'" rx="6" fill="var(--case)" fill-opacity=".85" stroke="'+col+'" stroke-width="'+sw(0.8)+'"/>';
+    s+='<rect x="'+b.z0+'" y="'+Y(b.y0+b.H)+'" width="'+b.W+'" height="'+b.H+'" rx="6" fill="#141618" stroke="'+col+'" stroke-width="'+sw(0.8)+'"/>';
     s+='<rect x="'+(b.z0+b.mx)+'" y="'+Y(b.y0+b.my+m.mod[1])+'" width="'+m.mod[0]+'" height="'+m.mod[1]+'" fill="var(--glass)" stroke="var(--glass-line)" stroke-width=".5"/>';
+    s+=brandSvg(b,x=>b.z0+x,y=>Y(b.y0+y));   // надпись в масштабе
     s+='<rect x="'+(b.z0+4)+'" y="'+Y(b.y0+b.H-4)+'" width="'+(b.W-8)+'" height="'+(b.H-8)+'" rx="4" fill="none" stroke="var(--case-line)" stroke-width="'+sw(0.4)+'" stroke-dasharray="'+sw(2)+' '+sw(1.5)+'"/>';
     const cz=b.z0+b.W/2,cy=b.y0+b.H/2;s+='<circle cx="'+cz+'" cy="'+Y(cy)+'" r="3" fill="var(--ink)"/>';
     if(wv!=='both')s+=T(cz+6,Y(cy)+5,'Ø 6');
@@ -381,7 +390,8 @@ function drawSide(){let s='';const top=40,Y=y=>top+(YT-y);
     // карман спинки: плита салазок 5 мм и дно кармана 2 мм — на высоту плиты (лицо − 8)
     s+='<rect x="'+x0+'" y="'+Y(b.y0+b.H-4)+'" width="'+(PLATE+POCKET_BOTTOM)+'" height="'+(b.H-8)+'" fill="var(--surface)"/>';
     s+='<rect x="'+x0+'" y="'+Y(b.y0+b.H-4)+'" width="'+PLATE+'" height="'+(b.H-8)+'" fill="#3a4048"/><rect x="'+(x0+PLATE)+'" y="'+Y(b.y0+b.H-4)+'" width="'+POCKET_BOTTOM+'" height="'+(b.H-8)+'" fill="var(--case-line)" opacity=".85"/>';
-    s+='<rect x="'+x0+'" y="'+Y(b.y0+b.H)+'" width="'+b.D+'" height="'+b.H+'" rx="2" fill="none" stroke="var(--case-line)" stroke-width=".8"/>';
+    s+='<rect x="'+x0+'" y="'+Y(b.y0+b.H)+'" width="'+b.D+'" height="'+b.H+'" rx="2" fill="none" stroke="#141618" stroke-width="1.6"/><rect x="'+x0+'" y="'+Y(b.y0+b.H)+'" width="'+b.D+'" height="'+b.H+'" rx="2" fill="none" stroke="var(--case-line)" stroke-width=".3"/>';
+    {const by0=Math.min(...b.brand.lines.map(l=>l[2])),by1=Math.max(...b.brand.lines.map(l=>l[2]+l[1]));s+='<rect x="'+(x0+b.D-0.6)+'" y="'+Y(b.y0+by1)+'" width="1.2" height="'+(by1-by0)+'" fill="#ffffff"/><text class="lbl" x="'+(x0+b.D+3)+'" y="'+(Y(b.y0+by1)+(b.id==='big'?19:3))+'">надпись M5 Race</text>';}   // белый ASA заподлицо — в разрезе белая полоска на лице
     const cy=b.y0+b.H/2;s+='<rect x="'+(x0+3)+'" y="'+Y(cy+12)+'" width="'+(PLATE+POCKET_BOTTOM-2)+'" height="8" fill="#c9a64a"/><path d="M'+(x0+1)+' '+Y(cy-8)+' H'+(x0-18)+' V'+Y(cy-46)+'" stroke="#2b2f35" stroke-width="5" fill="none" stroke-linecap="round"/>';
     s+='<text class="lbl" x="'+(x0-20)+'" y="'+(Y(cy-46)+7)+'" text-anchor="middle">кабель</text>';
     s+='<text class="lbl" x="'+(x0+b.D+3)+'" y="'+(Y(cy+8))+'">плита салазок</text><text class="lbl" x="'+(x0+b.D+3)+'" y="'+(Y(cy+8)+5)+'">в кармане спинки,</text><text class="lbl" x="'+(x0+b.D+3)+'" y="'+(Y(cy+8)+10)+'">штыри pogo</text>';
@@ -424,7 +434,7 @@ if(document.fonts&&document.fonts.ready)document.fonts.ready.then(()=>{measure()
   const box=document.getElementById('c3d');if(!box||!window.THREE)return;
   const css=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
   const R=new THREE.WebGLRenderer({antialias:true});R.setPixelRatio(Math.min(2,devicePixelRatio||1));box.appendChild(R.domElement);
-  const S=new THREE.Scene(),C=new THREE.PerspectiveCamera(35,1.6,5,5000);C.position.set(430,140,260);
+  const S=new THREE.Scene(),C=new THREE.PerspectiveCamera(35,1.6,5,5000);C.position.set(300,120,420);
   const O=new THREE.OrbitControls(C,R.domElement);O.target.set(10,10,-10);O.enableDamping=true;O.update();
   S.add(new THREE.HemisphereLight(0xffffff,0x8a9099,0.85));const sun=new THREE.DirectionalLight(0xffffff,0.7);sun.position.set(300,500,600);S.add(sun);
   const M=(c,o)=>new THREE.MeshStandardMaterial(Object.assign({color:c,roughness:0.6},o||{}));
@@ -435,8 +445,8 @@ if(document.fonts&&document.fonts.ready)document.fonts.ready.then(()=>{measure()
   const lbl=(t,p)=>{const c=document.createElement('canvas');c.width=900;c.height=96;const q=c.getContext('2d');q.font='600 40px Onest, Arial, sans-serif';const w=Math.min(890,q.measureText(t).width+28);q.fillStyle='rgba(14,22,30,.86)';q.fillRect(0,0,w,96);q.fillStyle='#fff';q.textBaseline='middle';q.fillText(t,14,50);
     const sp=new THREE.Sprite(new THREE.SpriteMaterial({map:new THREE.CanvasTexture(c),depthTest:false,transparent:true}));sp.center.set(0,0.5);sp.scale.set(0.28,0.03,1);sp.material.sizeAttenuation=false;sp.position.copy(p);sp.renderOrder=9;return sp;};
   const dark=M(0x23272c),dead=M(0x7a8088,{metalness:0.3}),steel=M(0xb7bec5,{metalness:0.7,roughness:0.3}),cab=M(0x2b2f35),plate=M(0x3a4048);
-  const K={big:{W:120,H:186,D:18,mod:[111.2,170.2],mx:4.4,my:4,act:[97.9,163.2],btn:[15,33,51,69,87,105],led:20,pins:8},
-           small:{W:98,H:104,D:24,mod:[92,89.7],mx:3,my:3,act:[84.8,63.6],btn:[49],led:15,pins:8}};
+  const K={big:{W:120,H:186,D:18,mod:[111.2,170.2],mx:4.4,my:4,act:[97.9,163.2],btn:[15,33,51,69,87,105],led:20,pins:8,brand:{x:60,lines:[['M5 Race',5,179.7,700],['Создано для гонок',3,175.5,500]]}},
+           small:{W:98,H:104,D:22,mod:[92,89.7],mx:3,my:3,act:[84.8,63.6],btn:[49],led:15,pins:8,brand:{x:49,lines:[['M5 Race',3.5,96.25,700]]}}};
   const st={v:'big',off:0,goal:0};let G=null,U=null,P=[],offL=null;
   const PZ=5;   // лицо плиты салазок
   function build(){if(G)S.remove(G);G=new THREE.Group();S.add(G);P=[];const k=K[st.v],W=k.W,H=k.H,D=k.D,PY=8,HY=-12;
@@ -452,9 +462,14 @@ if(document.fonts&&document.fonts.ready)document.fonts.ready.then(()=>{measure()
     else G.add(tube([V(0,PY,2),V(0,HY,1),V(0,HY,-14),V(0,40,-30),V(0,140,-36),V(80,160,-36),V(190,160,-36)],2.5,cab));
     // блок
     U=new THREE.Group();G.add(U);const z0=0;   // спинка у стенки: плита салазок уходит в карман спинки (решение 27.11)
-    const body=bx(W,H,D,M(0xd7dde2,{transparent:true,opacity:0.5,depthWrite:false,roughness:0.4}),0,0,z0+D/2);U.add(body);const ed=new THREE.LineSegments(new THREE.EdgesGeometry(body.geometry),new THREE.LineBasicMaterial({color:0x7b8790}));ed.position.copy(body.position);U.add(ed);
-    const sx=-W/2+k.mx+k.mod[0]/2,sy=-H/2+k.my+k.mod[1]/2;U.add(bx(k.mod[0],k.mod[1],1.2,dark,sx,sy,z0+D-4));U.add(bx(k.act[0],k.act[1],.25,M(0xe9ece6),sx,sy,z0+D-3.3));
-    U.add(bx(W-10,H-10,1.5,M(0x9fc4d6,{transparent:true,opacity:0.3}),0,0,z0+D-1));
+    // корпус — чёрный ASA (владелец 27.11); чуть прозрачный, чтобы были видны плита и штыри внутри
+    const body=bx(W,H,D,M(0x141618,{transparent:true,opacity:0.86,depthWrite:false,roughness:0.5}),0,0,z0+D/2);U.add(body);const ed=new THREE.LineSegments(new THREE.EdgesGeometry(body.geometry),new THREE.LineBasicMaterial({color:0x5a6068}));ed.position.copy(body.position);U.add(ed);
+    const sx=-W/2+k.mx+k.mod[0]/2,sy=-H/2+k.my+k.mod[1]/2;U.add(bx(k.mod[0],k.mod[1],0.3,dark,sx,sy,z0+D+0.15));U.add(bx(k.act[0],k.act[1],.2,M(0xe9ece6),sx,sy,z0+D+0.4));
+    U.add(bx(k.mod[0],k.mod[1],0.2,M(0x9fc4d6,{transparent:true,opacity:0.22}),sx,sy,z0+D+0.6));   // окно из поликарбоната — только над экраном
+    // надпись белым на лице, в полосе над экраном: плоскость с CanvasTexture, в масштабе (1 мм = 20 px)
+    {const y0=k.my+k.mod[1],bh=H-y0,PX=20,c=document.createElement('canvas');c.width=Math.round(W*PX);c.height=Math.round(bh*PX);const q=c.getContext('2d');q.fillStyle='#ffffff';q.textAlign='center';
+     k.brand.lines.forEach(l=>{q.font=l[3]+' '+(l[1]/0.716*PX).toFixed(1)+'px Inter, Arial, sans-serif';q.fillText(l[0],k.brand.x*PX,(H-l[2])*PX-(H-y0-bh)*PX);});
+     const tx=new THREE.CanvasTexture(c);tx.anisotropy=4;const pl=new THREE.Mesh(new THREE.PlaneGeometry(W,bh),new THREE.MeshBasicMaterial({map:tx,transparent:true}));pl.position.set(0,-H/2+y0+bh/2,z0+D+0.2);U.add(pl);}
     k.btn.forEach(x=>U.add(cyl(5.5,2,M(0x2f5d6e),-W/2+x,H/2+1,z0+D/2,'y')));   // кнопки на верхнем торце (решение 27.11)
     U.add(cyl(2.5,1.5,M(0x3df06a),-W/2+k.led,H/2-6,z0+D));
     for(let r=0;r<2;r++)for(let c=0;c<5;c++)U.add(cyl(0.55,3,steel,(c-2)*2.54,PY+(r?-1.27:1.27),PZ+2.2));   // штыри pogo — в дне кармана спинки, упираются в площадки
