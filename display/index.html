@@ -7,7 +7,7 @@
 <title>Дисплей прибора М5</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500&family=Onest:wght@400;500;600&family=JetBrains+Mono:wght@400;600&family=Inter:wght@600;700;800&display=swap">
 <style>
-/* Стенд двух блоков (большой — правый борт, малый — левый): оба экрана живые, кнопки на нижних торцах; ниже раскладка экранов и таблицы управления. Стиль — общий для страниц проекта */ /*two2711*/
+/* Стенд двух блоков (большой — правый борт, малый — левый): оба экрана живые, кнопки на верхних торцах, блокировка кнопок; ниже раскладка экранов и таблицы управления. Стиль — общий для страниц проекта */ /*two2711*/
 :root{
   --bg:#edf1f3; --surface:#ffffff; --ink:#14202b; --muted:#536373; --line:#d3dbe1; --accent:#0d6b78; --accent-bg:#e0eff1;
   --abs:#c9cdc9; --abs2:#a9aeab; --abs-ink:#1c2228; --key:#b8bfc5; --key2:#7f878e;
@@ -24,12 +24,12 @@ h2{font:500 18px/1.3 var(--f-display);margin:0 0 4px;text-wrap:balance}
 .lead{margin:0;max-width:72ch;color:var(--muted)}
 .sim{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:20px;align-items:start}
 @media (max-width:980px){.sim{grid-template-columns:minmax(0,1fr)}}
-/* два блока в одном масштабе: лица и нижние торцы с кнопками в развёртке (27.11) */ /*bottom2711*/
+/* два блока в одном масштабе: лица и верхние торцы с кнопками в развёртке (27.11, окончательно) */ /*lock2711*/
 .dev{display:grid;gap:12px;min-width:0;justify-items:center}
 .bench{width:100%;max-width:100%;display:grid;gap:6px;transition:width .2s}
 .pan{position:relative;width:100%;aspect-ratio:290/226;container-type:inline-size}
 .face{position:absolute;background:linear-gradient(160deg,#39424b,#22292f);border-radius:2.07cqw;box-shadow:0 2px 10px rgba(0,0,0,.25)}
-.end{position:absolute;background:linear-gradient(0deg,#2a3138,#434c55);border-radius:.25cqw .25cqw .7cqw .7cqw;border-top:.25cqw dashed #8c969f}
+.end{position:absolute;background:linear-gradient(180deg,#2a3138,#434c55);border-radius:.7cqw .7cqw .25cqw .25cqw;border-bottom:.25cqw dashed #8c969f}
 .gapm{position:absolute;border-left:1px dashed var(--line);border-right:1px dashed var(--line);display:grid;place-items:center;font:600 max(10px,1.2cqw)/1.2 var(--f-body);color:var(--muted);text-align:center}
 .sides{display:grid;grid-template-columns:6fr 98fr 60fr 120fr 6fr;font-size:12.5px;line-height:1.3;color:var(--muted);text-align:center}
 .sides b{display:block;color:var(--ink);font-weight:600;text-transform:uppercase;letter-spacing:.04em;font-size:12px}
@@ -95,11 +95,11 @@ th{font:600 12px var(--f-body);color:var(--muted);text-transform:uppercase;lette
   <div class="stage" id="stage">
     <a class="home" href="../">← Главное меню</a>
     <h1>Дисплей прибора М5</h1>
-    <p class="lead">Тестовый стенд двух блоков в масштабе, вид из кокпита. На левом борту — малый блок с экраном 4,2″, на правом — большой с экраном 7,5″; у каждого свой светодиод заход/отход. Кнопки — на нижних торцах блоков: на рисунке торец показан под лицом, как будто откинут вниз (вид снизу). Кнопки работают как настоящие. Выберите условия, запустите гонку и посмотрите на блоки с того расстояния, с какого будете смотреть в кокпите. Цифры придуманные: прибор ещё не собран и прошивки нет.</p>
+    <p class="lead">Тестовый стенд двух блоков в масштабе, вид из кокпита. На левом борту — малый блок с экраном 4,2″, на правом — большой с экраном 7,5″; у каждого свой светодиод заход/отход. Кнопки — на верхних торцах блоков: на рисунке торец показан над лицом, как будто откинут вверх. 10 секунд без нажатий — кнопки блокируются; снять блокировку — удержать любую кнопку 3 секунды. Кнопки работают как настоящие. Выберите условия, запустите гонку и посмотрите на блоки с того расстояния, с какого будете смотреть в кокпите. Цифры придуманные: прибор ещё не собран и прошивки нет.</p>
     <div class="sim">
       <div class="dev">
         <div class="bench" id="bench">
-          <div class="pan" id="pan" role="group" aria-label="Два блока в масштабе, вид из кокпита: слева малый блок 98 × 104 мм на левом борту, справа большой блок 120 × 186 мм на правом борту; под каждым лицом — его нижний торец с кнопками в развёртке, вид снизу; промежуток между блоками сжат"></div>
+          <div class="pan" id="pan" role="group" aria-label="Два блока в масштабе, вид из кокпита: слева малый блок 98 × 104 мм на левом борту, справа большой блок 120 × 186 мм на правом борту; над каждым лицом — его верхний торец с кнопками в развёртке; промежуток между блоками сжат"></div>
           <div class="sides" aria-hidden="true"><span></span><span><b>левый борт</b>малый блок 98&nbsp;×&nbsp;104</span><span>вход ≈&nbsp;66&nbsp;см, на&nbsp;рисунке сжат</span><span><b>правый борт</b>большой блок 120&nbsp;×&nbsp;186</span><span></span></div>
         </div>
         <div class="keys" aria-label="Кнопки обоих блоков крупно">
@@ -113,7 +113,7 @@ th{font:600 12px var(--f-body);color:var(--muted);text-transform:uppercase;lette
           <button type="button" class="key" data-k="line" aria-label="ЛИНИЯ: отметить конец стартовой линии; удержать 3 с — стереть">ЛИНИЯ<i></i></button>
           <button type="button" class="key" data-k="menu">МЕНЮ<i></i></button>
         </div>
-        <p class="hint" id="kHint">удержать БОЛЬШОЙ или МАЛЫЙ 1 с — вид назад · СТАРТ или ЛИНИЯ 3 с — сброс · МЕНЮ 3 с — включить и выключить</p>
+        <p class="hint" id="kHint">замок — кнопки заблокированы (10 с без нажатий), снять — удержать любую 3 с · удержать БОЛЬШОЙ или МАЛЫЙ 1 с — вид назад · СТАРТ или ЛИНИЯ 3 с — сброс · МЕНЮ 3 с — включить и выключить</p>
       </div>
       <div class="panel">
         <h3>Условия</h3>
@@ -142,16 +142,17 @@ th{font:600 12px var(--f-body);color:var(--muted);text-transform:uppercase;lette
     <tr><td><b>Удобен ли стартовый экран?</b></td><td>Нажмите «Старт 5:00» и смотрите только на малый экран: время, расстояние до линии, выгодный конец</td></tr>
     <tr><td><b>Хватает ли светодиода?</b></td><td>Запустите гонку и смотрите только на светодиоды: зелёный — заход, мигающий красный — отход. Их два, по одному в блоке, горят одинаково</td></tr>
     <tr><td><b>Удобно ли ночью и на солнце?</b></td><td>Меняйте освещение: в режиме «авто» подсветка включается сама по датчику света</td></tr>
+    <tr><td><b>Не мешает ли блокировка кнопок?</b></td><td>Подождите 10 с — в строке состояния обоих экранов появится замок. Нажмите кнопку коротко — будет только подсказка; удержите любую 3 с — блокировка снимется. «Без блокировки» в «Условиях» отключает её на стенде</td></tr>
     <tr><td><b>Чего не хватает и что лишнее?</b></td><td>Напишите, что убрать или укрупнить: экраны легко перестроить</td></tr>
   </table></div></section>
 
-  <section class="grp"><h2>Два блока: лицо и нижний торец</h2><p class="note">Решение 26–27.11: вместо одного блока F1C 212 × 178 с двумя экранами — два тонких блока на кормовой стенке рубки по обе стороны входа. Снаружи только экраны, кнопки, светодиоды и салазки; основная плата — внутри каюты, за большим блоком. Блоки снимаются каждый раз, уходя с лодки. Размеры лица — в мм, начало координат — левый нижний угол лица. Помечено «предложение, не утверждено» — то, что владелец ещё не подтвердил.</p><div class="tbl"><table>
+  <section class="grp"><h2>Два блока: лицо и верхний торец</h2><p class="note">Решение 26–27.11: вместо одного блока F1C 212 × 178 с двумя экранами — два тонких блока на кормовой стенке рубки по обе стороны входа. Снаружи только экраны, кнопки, светодиоды и салазки; основная плата — внутри каюты, за большим блоком. Блоки снимаются каждый раз, уходя с лодки. Размеры лица — в мм, начало координат — левый нижний угол лица. Помечено «предложение, не утверждено» — то, что владелец ещё не подтвердил.</p><div class="tbl"><table>
     <tr><th>Что</th><th>Размер и место</th><th>Зачем</th></tr>
-    <tr><td><b>Большой блок, правый борт</b></td><td>лицо 120 × 186, углы R 6, глубина 32 (с плитой салазок 5 — 37 от стенки). На стенке справа от входа: левый край в 20 мм от направляющей щитов, верх в 40 мм ниже края крыши; под блоком до порога ≈ 104 мм — место для пальца у кнопок</td><td>основной экран и шесть кнопок из семи</td></tr>
+    <tr><td><b>Большой блок, правый борт</b></td><td>лицо 120 × 186, углы R 6, глубина 32 (с плитой салазок 5 — 37 от стенки). На стенке справа от входа: левый край в 20 мм от направляющей щитов, верх в 40 мм ниже края крыши — над кнопками место для пальца, ≈ 38–40 мм до края крыши</td><td>основной экран и шесть кнопок из семи</td></tr>
     <tr><td><b>Основной экран 7,5″</b></td><td>e-paper, чёрно-белый, 480 × 800 точек, стоит вертикально почти во всё лицо большого блока: x 4,4…115,6, y 4…174,2. Модуль 111,2 × 170,2 мм, поле изображения 97,9 × 163,2 мм</td><td>все виды для гонки: «Табло», ветер, тактика, лодка, погода. Частичное обновление ≈ 0,3 с, полное ≈ 3 с</td></tr>
     <tr><td><b>Малый блок, левый борт</b></td><td>лицо 98 × 104, углы R 6, глубина 24 (с плитой салазок 5 — 29 от стенки). На стенке слева от входа: правый край в 20 мм от направляющей, верх в 60 мм ниже края крыши — выше мешает скругление угла рубки</td><td>малый экран и кнопка МАЛЫЙ. Процессора и своей платы нет: готовые модули на макетной плате, покрытой лаком</td></tr>
     <tr><td><b>Малый экран 4,2″</b></td><td>e-paper WeAct, 400 × 300 точек, лёжа: x 3…95, y 3…92,7. Модуль 92 × 89,7 мм, поле 84,8 × 63,6 мм, уже куплен</td><td>старт, пары данных, курс к N, погода — листается кнопкой МАЛЫЙ</td></tr>
-    <tr><td><b>Кнопки — на нижних торцах</b></td><td>не на лице, а на нижнем торце блока (решение владельца 27.11). Большой блок: торец 120 × 32, шесть кнопок Ø11 в ряд по центру глубины, шаг 18 мм, слева направо БОЛЬШОЙ, «−», «+», СТАРТ, ЛИНИЯ, МЕНЮ (назначение кнопок задаётся прошивкой — порядок можно поменять). Малый блок: торец 98 × 24, кнопка МАЛЫЙ Ø11 по центру</td><td>мембраны из TPU, подписи — гравировкой на нижнем торце. Нажатие снизу толкает блок вверх — защёлка новых салазок должна держать блок от подъёма. Верх большого блока свободен под GPS. «−» и «+» — масштаб карты</td></tr>
+    <tr><td><b>Кнопки — на верхних торцах</b></td><td>не на лице, а на верхнем торце блока (решение владельца 27.11, окончательно). Большой блок: торец 120 × 32, шесть кнопок Ø11 в ряд по центру глубины, шаг 18 мм, слева направо БОЛЬШОЙ, «−», «+», СТАРТ, ЛИНИЯ, МЕНЮ (назначение кнопок задаётся прошивкой — порядок можно поменять). Малый блок: торец 98 × 24, кнопка МАЛЫЙ Ø11 по центру</td><td>мембраны из TPU, подписи — гравировкой на верхнем торце. Нажатие сверху прижимает блок к салазкам. Под верхней стенкой большого блока — плата кнопок и антенна GPS: место проверить при конструировании (полоса над экраном ≈ 9 мм; возможно, блок станет выше на 10–15 мм). «−» и «+» — масштаб карты</td></tr>
     <tr><td><b>Светодиоды</b></td><td>два трёхцветных, по одному в блоке, в узкой полосе лица над экраном: в большом — (20; 180), в малом — (15; 98). Полоса над экраном — предложение, не утверждено</td><td>заход и отход ветра видны боковым зрением с обоих бортов, без чтения цифр. Оба показывают одно и то же (решение 27.11)</td></tr>
     <tr><td><b>Окно датчика света</b></td><td>Ø6, в полосе над экраном большого блока, (100; 180), за ним BH1750 (предложение, не утверждено). Можно перенести на верхний торец, чтобы смотрело в небо, — решить при конструировании</td><td>в режиме «авто» прибор сам включает подсветку в сумерках и гасит её днём</td></tr>
     <tr><td><b>Крепление</b></td><td>за каждым блоком на стенке — плита салазок толщиной 5, на 4 мм меньше лица с каждой стороны; в ней площадки пружинных контактов 2 × 5 и отверстие Ø6 под кабель. Конструкция защёлки — в работе</td><td>надел блок — контакт есть; снятый блок прибор замечает и снимает питание с площадок</td></tr>
@@ -195,7 +196,8 @@ th{font:600 12px var(--f-body);color:var(--muted);text-transform:uppercase;lette
     <tr><td><b>СТАРТ</b><br>большой блок</td><td>нет отсчёта — пуск; идёт отсчёт — подгонка к ближайшей целой минуте</td><td>3 с — сброс отсчёта</td><td>выполнить пункт или изменить значение</td></tr>
     <tr><td><b>ЛИНИЯ</b><br>большой блок</td><td>поставить точку стартовой линии там, где стоит лодка: 1-е нажатие — точка 1, 2-е — точка 2, линия задана. Следующее нажатие начинает новую линию</td><td>3 с — стереть линию</td><td>—</td></tr>
     <tr><td><b>МЕНЮ</b><br>большой блок</td><td>открыть меню</td><td>3 с — выключить прибор; у выключенного — включить</td><td>выход из меню; 3 с — выключить</td></tr>
-  </table></div><p class="note">Проект навигации утверждён владельцем 23.11: нажимает кто-то из экипажа по просьбе рулевого, всё нужное в гонке — одним нажатием. Все кнопки — на нижних торцах блоков (решение 27.11): МАЛЫЙ — на малом блоке у левого борта, остальные шесть — на большом у правого, в ряд слева направо БОЛЬШОЙ, «−», «+», СТАРТ, ЛИНИЯ, МЕНЮ (назначение кнопок задаётся прошивкой — порядок можно поменять).</p></section>
+    <tr><td><b>Блокировка</b><br>любая кнопка</td><td>10 с без нажатий — кнопки блокируются, в строке состояния обоих экранов замок. Короткое нажатие на заблокированной кнопке ничего не делает, на экране подсказка «удержите любую 3 с»</td><td>3 с — снять блокировку; это удержание своего действия не выполняет. Потом всё как обычно: короткие нажатия, удержания 1 с и 3 с</td><td>каждое нажатие заново отсчитывает 10 с</td></tr>
+  </table></div><p class="note">Проект навигации утверждён владельцем 23.11: нажимает кто-то из экипажа по просьбе рулевого, всё нужное в гонке — одним нажатием. Все кнопки — на верхних торцах блоков (решение 27.11): МАЛЫЙ — на малом блоке у левого борта, остальные шесть — на большом у правого, в ряд слева направо БОЛЬШОЙ, «−», «+», СТАРТ, ЛИНИЯ, МЕНЮ (назначение кнопок задаётся прошивкой — порядок можно поменять).</p></section>
 
   <section class="grp"><h2>Светодиод и подсветка</h2><div class="tbl"><table>
     <tr><th>Что</th><th>Как выглядит</th><th>Когда</th></tr>
@@ -212,6 +214,7 @@ th{font:600 12px var(--f-body);color:var(--muted);text-transform:uppercase;lette
     <tr><td><b>Основной экран, слева</b></td><td>«М5» и текущий вид</td></tr>
     <tr><td><b>Основной экран, справа</b></td><td>только предупреждения: гроза ближе 20 км, давление падает быстро, НА РЕЗЕРВЕ, РАЗРЯД</td></tr>
     <tr><td><b>Малый экран, справа</b></td><td>значок и проценты источника, Wi-Fi, запись на карту micro-SD</td></tr>
+    <tr><td><b>Замок, справа на обоих экранах</b></td><td>кнопки заблокированы: 10 с без нажатий. Снять — удержать любую кнопку 3 с, на экране виден отсчёт «держите… 2 с»</td></tr>
     <tr><td><b>РАЗРЯД</b></td><td>заряд источника 25 % и меньше</td></tr>
     <tr><td><b>зарядка</b></td><td>напряжение лодки выше 13,2 В</td></tr>
     <tr><td><b>НА РЕЗЕРВЕ</b></td><td>лодка ниже напряжения резерва минус 0,7 В</td></tr>
@@ -277,6 +280,10 @@ const SHORE=[];DEMO.c.forEach(l=>{if(l[0]<=1)for(let i=1;i<l.length-2;i+=2)SHORE
 const segX=(a,b,c,d)=>{const o=(p,q,r)=>Math.sign((q[0]-p[0])*(r[1]-p[1])-(q[1]-p[1])*(r[0]-p[0]));return o(a,b,c)!==o(a,b,d)&&o(c,d,a)!==o(c,d,b);};
 const dSeg=(p,q)=>{const dx=q[2]-q[0],dy=q[3]-q[1],L=dx*dx+dy*dy;let t=L?((p[0]-q[0])*dx+(p[1]-q[1])*dy)/L:0;t=Math.max(0,Math.min(1,t));return Math.hypot(p[0]-q[0]-t*dx,p[1]-q[1]-t*dy);};
 const safeMove=(a,b)=>!SHORE.some(q=>segX(a,b,[q[0],q[1]],[q[2],q[3]])||dSeg(b,q)<25);
+// замок блокировки кнопок: (x; y) — левый верхний угол, h — высота
+function padlock(c,x,y,h){const w=h*0.8,r=w*0.3;c.fillRect(x,y+h*0.45,w,h*0.55);c.lineWidth=h*0.13;c.beginPath();c.moveTo(x+w/2-r,y+h*0.5);c.arc(x+w/2,y+h*0.42,r,Math.PI,0);c.lineTo(x+w/2+r,y+h*0.5);c.stroke();}
+// подсказка блокировки — две строки в рамке посередине экрана
+function lockBox(c,P,l,W,H){const {fit}=P,bw=Math.min(W-20,W*0.92),bh=H<400?H*0.28:H*0.15,y=H<400?(H-bh)/2:H*0.42;c.fillStyle='#17171b';c.fillRect((W-bw)/2,y,bw,bh);c.fillStyle='#dcdad1';fit(l[0],W/2,y+bh*0.45,bh*0.3,800,'center',bw-24);fit(l[1],W/2,y+bh*0.82,bh*0.24,700,'center',bw-24);c.fillStyle='#17171b';}
 // ===== основной экран 7,5″: 480 × 800 точек, стоит вертикально =====
 const NAMES=['ОСНОВНОЙ','ВЕТЕР','ТАКТИКА','КРЕН И ДИФФЕРЕНТ','ПОГОДА','ТАБЛО','КАРТА'];
 const ORDER=[5,0,1,2,3,4,6];   // порядок листания кнопкой БОЛЬШОЙ (перечень владельца 23.11)
@@ -286,7 +293,7 @@ function drawMain(c,v){c.setTransform(2,0,0,2,0,0);const P=pen(c),{T,fit,H,V,wid
   if(v.boot){T('М5',240,300,140,800,'center');T('Open 800 · RUS 4223',240,352,28,700,'center');H(60,380,360);v.boot.forEach((r,i)=>{T(r[0],70,430+i*48,26,800);T(r[1],410,430+i*48,24,600,'right');});c.restore();return;}
   const mode=v.mode||0;
   // строка состояния: слева вид, справа только предупреждения
-  if(v.menu||mode!==5){T('М5',10,29,24,800);T(v.menu?'МЕНЮ':NAMES[mode],62,28,19,700);if(q.alerts.length)fit(q.alerts.join(' · '),470,28,19,800,'right',290);H(0,40,480,2.5);}
+  if(v.menu||mode!==5){T('М5',10,29,24,800);T(v.menu?'МЕНЮ':NAMES[mode],62,28,19,700);if(v.lock)padlock(c,452,8,22);if(q.alerts.length)fit(q.alerts.join(' · '),v.lock?440:470,28,19,800,'right',v.lock?270:290);H(0,40,480,2.5);}
   if(v.menu){const rows=v.menu.rows,sel=v.menu.i,rh=Math.min(58,700/rows.length);rows.forEach((r,i)=>{const y=50+i*rh;if(i===sel){c.fillRect(8,y,464,rh-4);c.fillStyle=PAP;}T(r.t,22,y+rh*0.62,Math.min(24,rh*0.42),800);if(r.v)fit(r.v,458,y+rh*0.62,Math.min(22,rh*0.4),700,'right',230);c.fillStyle=INK;});H(0,758,480);T('− + выбрать · СТАРТ — выполнить · МЕНЮ — выход',240,788,18,700,'center');}
   else if(mode===0){
     T('КУРС',12,66,17,800);T(q.hs,8,184,132,800);if(q.devS){T(q.devS,470,150,66,800,'right');T(q.devS==='…'?'ждём курс':'от базового',470,182,18,700,'right');}
@@ -358,13 +365,14 @@ function drawMain(c,v){c.setTransform(2,0,0,2,0,0);const P=pen(c),{T,fit,H,V,wid
       T('ОТ ГЕНЕРАЛЬНОГО КУРСА',12,y1+132,15,800);{const xr=Math.round(m.xte);T((xr>0?'+':xr<0?'−':'')+Math.abs(xr)+' м',12,y1+196,58,800);}T(Math.abs(m.xte)<1?'на линии':m.xte>0?'правее':'левее',12,y1+216,16,700);
       T('КУРС К N',320,y1+132,15,800);T(q.hs,320,y1+196,58,800);}}
   else{// ТАБЛО: 10 величин, всё место цифрам
-    const hh=42,rh=(800-hh)/5,cw=240;T('M5 ТАБЛО',10,30,22,800);if(q.alerts.length)fit(q.alerts.join(' · '),470,29,18,800,'right',300);
+    const hh=42,rh=(800-hh)/5,cw=240;T('M5 ТАБЛО',10,30,22,800);if(v.lock)padlock(c,452,9,22);if(q.alerts.length)fit(q.alerts.join(' · '),v.lock?440:470,29,18,800,'right',v.lock?280:300);
     H(0,hh,480);V(cw-1,hh,800-hh);
     const C=[[['СКОРОСТЬ, '+q.U,q.GS(v.sog),''],['КУРС К N',q.hs,''],['УГОЛ К ВЕТРУ',q.deg(q.twa,q.tn),q.tn?'':side(q.twa)],['ОТ БАЗ. КУРСА',q.devS||q.NA,q.dr==null?'':v.settling?'ждём курс':q.dr>0?'увал':q.dr<0?'привод':'на курсе'],['КРЕН',q.heelS,q.heelW]],
              [['ВЫМП. ВЕТЕР, '+q.U,q.W(v.aws),''],['ВЫМП. УГОЛ',q.deg(v.awa,q.nw),q.nw?'':side(v.awa)],['ИСТ. ВЕТЕР, '+q.U,q.TW(q.tws),''],['ИСТ. НАПРАВЛЕНИЕ',q.dn?q.NA:q.twd+'°',''],['ДИФФЕРЕНТ',q.pitchS,q.pitchW]]];
     const lab=17;c.font='800 100px '+F;const wmax=Math.max(...C.flat().map(x=>c.measureText(x[1]).width/100),c.measureText('233°').width/100),fs=Math.min((rh-lab*1.6)*0.92/0.727,cw*0.92/wmax);
     C.forEach((col,ci)=>col.forEach((cl,ri)=>{const x0=ci*cw,y0=hh+ri*rh;if(ri)H(x0,y0,cw);T(cl[0],x0+8,y0+lab*1.3,lab,800);if(cl[2])T(cl[2],x0+cw-8,y0+lab*1.3,lab,700,'right');T(cl[1],x0+8,y0+lab*1.6+(rh-lab*1.6+fs*0.727)/2,fs,800);}));}
   if(v.toast){c.font='800 28px '+F;const tw=Math.min(460,c.measureText(v.toast).width+40);c.fillStyle=INK;c.fillRect(240-tw/2,356,tw,76);c.fillStyle=PAP;fit(v.toast,240,405,28,800,'center',tw-24);c.fillStyle=INK;}
+  if(v.ltoast)lockBox(c,P,v.ltoast,480,800);
   c.restore();}
 // ===== малый экран 4,2″: 400 × 300 точек — 4 вида, листаются кнопкой МАЛЫЙ: Старт, Пары данных (5 страниц), Угол к северу, Погода =====
 const SNAMES=['СТАРТ','ПАРЫ','КУРС К N','ПОГОДА'];
@@ -379,7 +387,7 @@ function drawSmall(c,v){c.setTransform(2,0,0,2,0,0);const P=pen(c),{T,fit,H,V}=P
   T(sv===1?'ПАРЫ '+(sp+1)+'/'+PAIRS.length:sv===0?(st?'СТАРТ':race?'ГОНКА '+mmss(v.race):'ГОТОВ'):SNAMES[sv],8,20,17,800);
   if(st&&sv!==0){c.fillRect(150,4,100,20);c.fillStyle=PAP;T('−'+mmss(v.start),200,20,17,800,'center');c.fillStyle=INK;}
   c.lineWidth=1.6;c.strokeRect(316,6,22,11);c.fillRect(338,9,2.6,5);if(v.chg){T('зар',394,19,14,800,'right');}else{c.fillRect(318,8,18*q.bp/100,7);T(q.bp+' %',394,19,14,800,'right');}
-  if(!(st&&sv!==0))fit([v.cfg.wifi==='вкл'?'Wi-Fi':'',v.cfg.sd==='выкл'?'':'SD'].filter(Boolean).join(' · '),308,19,13,700,'right',70);H(0,27,400);
+  if(v.lock)padlock(c,295,4,17);if(!(st&&sv!==0))fit([v.cfg.wifi==='вкл'?'Wi-Fi':'',v.cfg.sd==='выкл'?'':'SD'].filter(Boolean).join(' · '),v.lock?288:308,19,13,700,'right',v.lock?50:70);H(0,27,400);
   const pwrLine=()=>{const big=v.onRes?'НА РЕЗЕРВЕ':q.low?'РАЗРЯД':v.chg?'зарядка':'питание';T(big,8,206,15,800);
     fit('лодка '+f1(v.boat||0)+' В'+(v.cur!=null&&!v.onRes?' · '+f1(v.cur)+' А':''),8,244,30,800,'left',384);
     fit(v.res!=null?'резерв '+f1(v.res)+' В'+(v.onRes?' · от него работает прибор':''):'резерв не подключён',8,272,18,700,'left',384);
@@ -402,30 +410,31 @@ function drawSmall(c,v){c.setTransform(2,0,0,2,0,0);const P=pen(c),{T,fit,H,V}=P
     if(p3!=null){T((p3>0?'+':p3<0?'−':'')+f1(Math.abs(p3))+' за 3 ч',392,96,22,800,'right');T(Math.abs(p3)<1.6?'ровное':p3<0?(p3<=-3.6?'падает быстро':'падает'):'растёт',392,124,18,700,'right');}
     H(0,140,400);V(199,140,90);T('ВОЗДУХ НА ТОПЕ',8,162,13,800);T(v.air==null?q.NA:f1(v.air)+'°',8,214,44,800);T('ВЛАЖНОСТЬ',209,162,13,800);T(v.hum==null?q.NA:Math.round(v.hum)+' %',209,214,44,800);H(0,230,400);
     T('ГРОЗА',8,254,13,800);fit(v.storm?v.storm.km+' км, '+(v.storm.was>v.storm.km?'приближается':'не приближается'):'гроз нет ближе 40 км',8,286,24,800,'left',384);}
+  if(v.ltoast)lockBox(c,P,v.ltoast,400,300);   // подсказка блокировки — и на малом экране
   c.restore();}
 
 // ---------- два блока в одном масштабе (спецификация 27.11): мм рисунка от левого нижнего угла, промежуток (вход) сжат до 60 мм ----------
-// большой блок — лицо 120 × 186 с началом (164; 36), нижний торец 120 × 32 под ним; малый — лицо 98 × 104 с началом (6; 98), нижний торец 98 × 24.
+// большой блок — лицо 120 × 186 с началом (164; 4), верхний торец 120 × 32 над ним; малый — лицо 98 × 104 с началом (6; 66), верхний торец 98 × 24.
 // Верх малого на 20 мм ниже верха большого: на стенке 60 и 40 мм ниже края крыши.
-const PW=290,PH=226,BIG={x:164,y:36,w:120,h:186,d:32},SML={x:6,y:98,w:98,h:104,d:24};
+const PW=290,PH=226,BIG={x:164,y:4,w:120,h:186,d:32},SML={x:6,y:66,w:98,h:104,d:24};
 const PNL={main:{x:BIG.x+4.4,y:BIG.y+4,w:111.2,h:170.2,aw:97.9,ah:163.2},small:{x:SML.x+3,y:SML.y+3,w:92,h:89.7,aw:84.8,ah:63.6},
-  btn:[...['БОЛЬШОЙ','−','+','СТАРТ','ЛИНИЯ','МЕНЮ'].map((t,i)=>[BIG.x+15+18*i,BIG.y-BIG.d/2,t,['big','zout','zin','start','line','menu'][i],BIG.d]),[SML.x+SML.w/2,SML.y-SML.d/2,'МАЛЫЙ','small',SML.d]],
+  btn:[...['БОЛЬШОЙ','−','+','СТАРТ','ЛИНИЯ','МЕНЮ'].map((t,i)=>[BIG.x+15+18*i,BIG.y+BIG.h+BIG.d/2,t,['big','zout','zin','start','line','menu'][i],BIG.d]),[SML.x+SML.w/2,SML.y+SML.h+SML.d/2,'МАЛЫЙ','small',SML.d]],
   led:[[BIG.x+20,BIG.y+180],[SML.x+15,SML.y+98]],bh:[BIG.x+100,BIG.y+180]};   // полоса над экраном — предложение, не утверждено; назначение кнопок — в прошивке
 const pct=(x,y)=>({left:x/PW*100+'%',bottom:y/PH*100+'%'});
 const box=document.getElementById('pan');
 const rect=(cls,x,y,w,h,title)=>{const e=document.createElement('div');e.className=cls;Object.assign(e.style,pct(x,y),{width:w/PW*100+'%',height:h/PH*100+'%'});if(title)e.title=title;box.appendChild(e);return e;};
-rect('face',SML.x,SML.y,SML.w,SML.h,'малый блок, левый борт: лицо 98 × 104 мм');rect('end',SML.x,SML.y-SML.d,SML.w,SML.d,'нижний торец малого блока 98 × 24 мм (развёртка, вид снизу)');
-rect('face',BIG.x,BIG.y,BIG.w,BIG.h,'большой блок, правый борт: лицо 120 × 186 мм');rect('end',BIG.x,BIG.y-BIG.d,BIG.w,BIG.d,'нижний торец большого блока 120 × 32 мм (развёртка, вид снизу)');
-rect('gapm',SML.x+SML.w+8,50,PW-SML.x-SML.w-BIG.w-SML.x-16,150).textContent='вход';
+rect('face',SML.x,SML.y,SML.w,SML.h,'малый блок, левый борт: лицо 98 × 104 мм');rect('end',SML.x,SML.y+SML.h,SML.w,SML.d,'верхний торец малого блока 98 × 24 мм (развёртка)');
+rect('face',BIG.x,BIG.y,BIG.w,BIG.h,'большой блок, правый борт: лицо 120 × 186 мм');rect('end',BIG.x,BIG.y+BIG.h,BIG.w,BIG.d,'верхний торец большого блока 120 × 32 мм (развёртка)');
+rect('gapm',SML.x+SML.w+8,40,PW-SML.x-SML.w-BIG.w-SML.x-16,150).textContent='вход';
 function addScreen(s,cw,ch,label){const m=document.createElement('div');m.className='mod';Object.assign(m.style,pct(s.x,s.y),{width:s.w/PW*100+'%',height:s.h/PH*100+'%'});const g=document.createElement('div');g.className='glass';m.appendChild(g);
   const a=document.createElement('div');a.className='act';Object.assign(a.style,{left:(s.w-s.aw)/2/s.w*100+'%',bottom:(s.h-s.ah)/2/s.h*100+'%',width:s.aw/s.w*100+'%',height:s.ah/s.h*100+'%'});
   const c=document.createElement('canvas');c.width=cw*2;c.height=ch*2;c.setAttribute('role','img');c.setAttribute('aria-label',label);a.appendChild(c);const t=document.createElement('div');t.className='tint';a.appendChild(t);m.appendChild(a);box.appendChild(m);const x=c.getContext('2d');x.scale(2,2);return {c,x,t};}
 const SM=addScreen(PNL.main,480,800,'Основной экран 7,5″ большого блока'),SS=addScreen(PNL.small,400,300,'Малый экран 4,2″ малого блока');
 [SM,SS].forEach(s=>s.c.addEventListener('contextrestored',()=>render()));   // браузер выгрузил canvas в фоне — перерисовать
 const lab=(t,x,y,cls)=>{const l=document.createElement('span');l.className='pl'+(cls?' '+cls:'');l.textContent=t;Object.assign(l.style,pct(x,y));box.appendChild(l);};
-// кнопки Ø11 по центру глубины нижнего торца, подпись гравировкой за кнопкой (ближе к стенке — на развёртке ниже)
+// кнопки Ø11 по центру глубины верхнего торца, подпись гравировкой за кнопкой (ближе к стенке — на развёртке выше)
 const pk={};PNL.btn.forEach(b=>{const e=document.createElement('button');e.type='button';e.className='pk';e.dataset.k=b[3];e.setAttribute('aria-label',b[2]+(b[3]==='small'?' (малый блок)':' (большой блок)'));Object.assign(e.style,pct(b[0],b[1]),{width:11/PW*100+'%',aspectRatio:'1'});box.appendChild(e);pk[b[3]]=e;
-  lab(b[2],b[0],b[1]-(b[4]>30?10.5:8.6),'bl');});
+  lab(b[2],b[0],b[1]+(b[4]>30?10.5:8.6),'bl');});
 const leds=PNL.led.map((p,i)=>{const e=document.createElement('span');e.className='rled';e.title='светодиод заход / отход, '+(i?'малый блок':'большой блок');Object.assign(e.style,pct(p[0],p[1]),{width:5/PW*100+'%',aspectRatio:'1'});box.appendChild(e);lab('заход · отход',p[0]+5,p[1],'lt');return e;});
 const bh=document.createElement('span');bh.className='bh';bh.title='окно датчика света BH1750 (предложение, не утверждено)';Object.assign(bh.style,pct(PNL.bh[0],PNL.bh[1]),{width:6/PW*100+'%',aspectRatio:'1'});box.appendChild(bh);
 lab('свет',PNL.bh[0]-5,PNL.bh[1],'rt');
@@ -442,7 +451,7 @@ const MENU=[{t:'Длина отсчёта',k:'slen',o:['5 мин','3 мин','10
 const MI=k=>MENU.findIndex(m=>m.k===k);
 const pwTxt=(b,r,cur)=>'лодка '+f1(b)+' В'+(cur!=null?' · '+f1(cur)+' А':'')+(r!=null?' · резерв '+f1(r)+' В':'');
 const rows=(b,r,cur)=>MENU.map(m=>({t:m.t,v:m.ro?pwTxt(b,r,cur):m.act?'▶':m.o?m.o[m.v]:''}));
-const S={aws:17.4,awa:28.5,hdg:177,sog:6.1,heel:-14,pitch:1.2,sig:1,d:3,boatV:12.7,resV:12.3,cur:1.8,mode:5,bi:0,sv:0,sp:0,ends:2,leg:2,zoom:2,B:[-560,-1300],menu:null,noWind:false,noGps:false,noHdg:false,toast:null,boot:null,on:true,light:0,
+const S={lockOn:true,lock:false,ltoast:null,aws:17.4,awa:28.5,hdg:177,sog:6.1,heel:-14,pitch:1.2,sig:1,d:3,boatV:12.7,resV:12.3,cur:1.8,mode:5,bi:0,sv:0,sp:0,ends:2,leg:2,zoom:2,B:[-560,-1300],menu:null,noWind:false,noGps:false,noHdg:false,toast:null,boot:null,on:true,light:0,
   base:{'1':183,'-1':183},aim:{'1':183,'-1':183},swing:0,settling:false,start:null,race:null,lineL:true,lineR:true,dist:42,fav:12,skew:8,prev:{dur:252,hdg:181,sog:6.2,vmg:4.8},p:1012.4,p3:-2.1,air:14.2,hum:78,storm:null};
 const tack=()=>S.awa<0?-1:1;
 function wrap(a){return ((a+540)%360)-180;}
@@ -452,7 +461,7 @@ function meanHdg(a){const r=a[0];return (r+a.reduce((s,x)=>s+wrap(x-r),0)/a.leng
 function spreadHdg(a){const r=a[0],d=a.map(x=>wrap(x-r));return Math.max(...d)-Math.min(...d);}
 function settleStart(){sett={t:0,buf:[]};S.settling=true;}
 function settleEnd(){sett=null;S.settling=false;}
-function view(){const m=S.menu;return Object.assign({aws:S.aws,awa:S.awa,hdg:S.hdg,sog:S.sog,heel:S.heel,pitch:S.pitch,sig:S.sig,d:S.d,dev:dev(),settling:S.settling,mode:S.mode,cfg:CFG,noWind:S.noWind,noGps:S.noGps,noHdg:S.noHdg,toast:S.toast,boot:S.boot,off:!S.on,
+function view(){const m=S.menu;return Object.assign({aws:S.aws,awa:S.awa,hdg:S.hdg,sog:S.sog,heel:S.heel,pitch:S.pitch,sig:S.sig,d:S.d,dev:dev(),settling:S.settling,mode:S.mode,cfg:CFG,noWind:S.noWind,noGps:S.noGps,noHdg:S.noHdg,toast:S.toast,ltoast:S.ltoast,lock:S.lockOn&&S.lock&&S.on,boot:S.boot,off:!S.on,
   sv:S.sv,sp:S.sp,ends:S.ends,startLen:[5,3,10][MENU[MI('slen')].v],markR:parseInt(MENU[MI('markR')].o[MENU[MI('markR')].v]),map:{leg:S.leg,B:S.B},shoal:S.noGps||S.noHdg?null:shallowAhead(S.B,S.hdg),zoom:S.zoom,start:S.start,race:S.race,lineL:S.lineL,lineR:S.lineR,dist:S.dist,fav:S.fav,skew:S.skew,prev:S.prev,cur:S.cur,p:S.p,p3:S.p3,air:S.air,hum:S.hum,storm:S.storm,
   menu:m===null?null:{i:m,rows:rows(S.boatV,S.resV,S.cur)}},pw(S.boatV,S.resV));}
 // освещение и подсветка: в режиме «авто» уровень задаёт датчик света
@@ -464,9 +473,17 @@ let render=function(){const v=view();drawMain(SM.x,v);drawSmall(SS.x,v);
   const nw=S.noWind||!S.on;leds.forEach(led=>{led.classList.toggle('g',!nw&&S.sig<0);led.classList.toggle('r',!nw&&S.sig>0);});   // оба светодиода показывают одно и то же (решение 27.11)
   document.querySelectorAll('[data-s]').forEach(b=>b.setAttribute('aria-pressed',String(cur===b.dataset.s)));syncSl();};
 let toastT=0;function toast(s,ms){S.toast=s;clearTimeout(toastT);render();toastT=setTimeout(()=>{S.toast=null;render();},ms||1500);}
+// ---------- блокировка кнопок (решение владельца 27.11): 10 с без нажатий — блок; снять — удержать любую 3 с, это удержание своего действия не выполняет ----------
+const LOCK_MS=10000,UNLOCK_MS=3000;let idleT=0,ltT=0;
+const locked=()=>S.lockOn&&S.lock&&S.on;
+function arm(){clearTimeout(idleT);if(S.lockOn&&S.on&&!S.lock)idleT=setTimeout(()=>{S.lock=true;S.ltoast=null;render();},LOCK_MS);}   // каждое нажатие заново отсчитывает 10 с
+function lmsg(l,ms){S.ltoast=l;clearTimeout(ltT);render();if(ms)ltT=setTimeout(()=>{S.ltoast=null;render();},ms);}
+const lockHint=()=>lmsg(['КНОПКИ ЗАБЛОКИРОВАНЫ','удержите любую кнопку 3 с'],2200);
+const unlockTick=t0=>{const left=Math.max(1,Math.ceil((UNLOCK_MS-(performance.now()-t0))/1000));lmsg(['РАЗБЛОКИРОВКА','держите… '+left+' с']);};
+function unlock(){S.lock=false;lmsg(['КНОПКИ РАЗБЛОКИРОВАНЫ','10 с без нажатий — снова блокировка'],1800);arm();}
 // ---------- кнопки: короткое и долгое нажатие ----------
 const BOOT=[['Мачта','связь есть'],['GPS','поиск спутников'],['Компас','калибровка'],['Датчики','давление, свет, молнии'],['Питание','лодка 12,7 В']];
-let bootT=0;function power(){S.on=!S.on;S.menu=null;clearTimeout(bootT);if(S.on){S.boot=BOOT;render();bootT=setTimeout(()=>{S.boot=null;render();},1800);}else{S.boot=null;render();}}
+let bootT=0;function power(){S.on=!S.on;S.menu=null;S.lock=false;S.ltoast=null;arm();clearTimeout(bootT);if(S.on){S.boot=BOOT;render();bootT=setTimeout(()=>{S.boot=null;render();},1800);}else{S.boot=null;render();}}
 const NSM=1+5+2;   // малый экран: Старт, 5 страниц «Пар», Курс к N, Погода — по кругу
 const smallStep=d=>{let p=S.sv===0?0:S.sv===1?1+S.sp:S.sv===2?6:7;p=(p+d+NSM)%NSM;if(p===0){S.sv=0;}else if(p<=5){S.sv=1;S.sp=p-1;}else{S.sv=p===6?2:3;}};
 const bigStep=d=>{S.bi=(S.bi+d+ORDER.length)%ORDER.length;S.mode=ORDER[S.bi];};
@@ -492,12 +509,15 @@ const LONG={big:[1000,()=>{if(!S.on||S.menu!==null)return false;bigStep(-1);rend
   start:[3000,()=>{if(!S.on||S.menu!==null)return false;S.start=null;toast('Отсчёт сброшен');}],
   line:[3000,()=>{if(!S.on||S.menu!==null)return false;S.ends=0;S.lineL=S.lineR=false;toast('Линия стёрта');}],
   menu:[3000,()=>{power();}]};
-function bind(el,k){let t=0,fired=false,down=false,bar=el.querySelector('i'),t0=0,raf=0;
-  const prog=()=>{if(!down||!bar||!LONG[k])return;bar.style.width=Math.min(100,(performance.now()-t0)/LONG[k][0]*100)+'%';raf=requestAnimationFrame(prog);};
-  el.addEventListener('pointerdown',()=>{down=true;fired=false;if(!LONG[k])return;if(k!=='menu'&&!S.on)return;t0=performance.now();prog();t=setTimeout(()=>{if(LONG[k][1]()!==false)fired=true;},LONG[k][0]);});
-  const up=()=>{if(!down)return;down=false;clearTimeout(t);cancelAnimationFrame(raf);if(bar)bar.style.width='0';};
+function bind(el,k){let t=0,fired=false,down=false,bar=el.querySelector('i'),t0=0,raf=0,ul=false,ut=0;   // ul — нажатие пришлось на заблокированные кнопки
+  const dur=()=>ul?UNLOCK_MS:LONG[k][0];
+  const prog=()=>{if(!down||!bar||!(ul||LONG[k]))return;bar.style.width=Math.min(100,(performance.now()-t0)/dur()*100)+'%';raf=requestAnimationFrame(prog);};
+  el.addEventListener('pointerdown',()=>{down=true;fired=false;ul=locked();
+    if(ul){t0=performance.now();prog();unlockTick(t0);ut=setInterval(()=>unlockTick(t0),200);t=setTimeout(()=>{clearInterval(ut);fired=true;unlock();},UNLOCK_MS);return;}
+    arm();if(!LONG[k])return;if(k!=='menu'&&!S.on)return;t0=performance.now();prog();t=setTimeout(()=>{if(LONG[k][1]()!==false)fired=true;},LONG[k][0]);});
+  const up=()=>{if(!down)return;down=false;clearTimeout(t);clearInterval(ut);cancelAnimationFrame(raf);if(bar)bar.style.width='0';if(ul&&!fired)lockHint();else if(!ul)arm();};
   el.addEventListener('pointerup',up);el.addEventListener('pointerleave',up);el.addEventListener('pointercancel',up);
-  el.addEventListener('click',()=>{if(fired){fired=false;return;}SHORT[k]();});}
+  el.addEventListener('click',()=>{if(fired){fired=false;ul=false;return;}if(ul){ul=false;return;}if(locked()){lockHint();return;}arm();SHORT[k]();});}
 Object.keys(pk).forEach(k=>bind(pk[k],k));document.querySelectorAll('.key').forEach(b=>bind(b,b.dataset.k));
 // ---------- сценарии ----------
 let cur='norm';const SC=[
@@ -542,7 +562,7 @@ fig('g2','Увал','+6° от базового',{dev:6,hdg:177});fig('g2','Пр
 fig('g3','Отход','светодиод мигает красным',{mode:2,sig:1,d:4});fig('g3','Заход','светодиод горит зелёным',{mode:2,sig:-1,d:5});fig('g3','Ветер ровный','светодиод погашен',{mode:2,sig:0,d:0});
 fig('gW','Давление падает','−2,1 гПа за 3 часа',{mode:4});fig('gW','Давление падает быстро','предупреждение в строке состояния',{mode:4,p:1004.6,p3:-4.2});fig('gW','Гроза приближается','18 км, 10 минут назад было 26',{mode:4,storm:{km:18,was:26,n:7}});fig('gW','Гроза на «Табло»','предупреждение видно на любом виде',{mode:5,storm:{km:12,was:18,n:11}});
 fig('g4','Норма','лодка 12,7 В, ток 1,8 А, резерв 12,3 В',pw(12.7,12.3),true);fig('g4','Разряд','лодка 11,9 В',Object.assign(pw(11.9,12.3),{cur:2.1}),true);fig('g4','Зарядка','работает двигатель или зарядное',Object.assign(pw(13.8,12.3),{cur:-6.5}),true);fig('g4','На резерве','лодка 10,7 В',pw(10.7,12.3),true);fig('g4','Резерв не подключён','показывается только лодка',pw(12.7,null),true);
-fig('g5','Меню','«−» и «+» — выбрать пункт, СТАРТ — выполнить или изменить, МЕНЮ — выход',{menu:{i:0,rows:rows(12.7,12.3,1.8)}});fig('g5','Меню, строка «Питание»','только просмотр',{menu:{i:13,rows:rows(12.7,12.3,1.8)}});fig('g5','Загрузка','при включении, несколько секунд',{boot:BOOT});fig('g5','Подсказка','коротко после нажатия кнопки',{toast:'Курс запомнен: 96°'});fig('g5','Выключен','кадр остаётся на e-paper без питания',{off:true});fig('g5','Ночь','подсветка красная',{mode:5},false,true);
+fig('g5','Меню','«−» и «+» — выбрать пункт, СТАРТ — выполнить или изменить, МЕНЮ — выход',{menu:{i:0,rows:rows(12.7,12.3,1.8)}});fig('g5','Меню, строка «Питание»','только просмотр',{menu:{i:13,rows:rows(12.7,12.3,1.8)}});fig('g5','Загрузка','при включении, несколько секунд',{boot:BOOT});fig('g5','Кнопки заблокированы','10 с без нажатий: замок в строке состояния; короткое нажатие — подсказка',{mode:0,lock:true,ltoast:['КНОПКИ ЗАБЛОКИРОВАНЫ','удержите любую кнопку 3 с']});fig('g5','Подсказка','коротко после нажатия кнопки',{toast:'Курс запомнен: 96°'});fig('g5','Выключен','кадр остаётся на e-paper без питания',{off:true});fig('g5','Ночь','подсветка красная',{mode:5},false,true);
 fig('g6','Нет данных с мачты','нет ветра, сдвига и VMG; курс, скорость и крен работают',{noWind:true});fig('g6','Нет GPS','нет скорости, VMG и истинного ветра',{noGps:true});fig('g6','Нет компаса','нет курса, отклонения, направления и сдвига ветра',{noHdg:true});fig('g6','Нет мачты, «Тактика»','вместо графика надпись',{mode:2,noWind:true});fig('g6','Нет GPS, «Табло»','вымпельный ветер и курс работают',{mode:5,noGps:true});}
 // ---------- тестовый стенд: условия, гонка, расстояние, освещение ----------
 const WX=[['calm','Штиль, 5 уз',{aws:5,awa:48,sog:2.8,hl:5,pi:0.4}],['mid','Умеренно, 12 уз',{aws:12,awa:34,sog:5.4,hl:14,pi:1}],['fresh','Свежо, 20 уз',{aws:20,awa:29,sog:6.8,hl:22,pi:1.6}],['squall','Шквал, 30 уз',{aws:30,awa:32,sog:7.4,hl:34,pi:2.6}],['reach','Галфвинд',{aws:15,awa:90,sog:8.2,hl:18,pi:0.6}],['broad','Бакштаг',{aws:13,awa:135,sog:9.6,hl:8,pi:-1.4}],['dw','Фордевинд',{aws:9,awa:172,sog:6.4,hl:3,pi:-1}]];
@@ -554,7 +574,10 @@ const DIST=[['full','Крупно',0],['d06','Рядом, 60 см',600],['d15','
 function setDist(k){dist=k;const D=DIST.find(a=>a[0]===k)[2];$('bench').style.width=D?Math.round(PW*600/D*96/25.4)+'px':'';marks();}
 function setAmb(k){amb=k;marks();render();}
 function marks(){document.querySelectorAll('[data-wx]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.wx===wx)));document.querySelectorAll('[data-di]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.di===dist)));document.querySelectorAll('[data-am]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.am===amb)));}
-chips('wx',WX,setWx,'wx');chips('dist',DIST,setDist,'di');chips('amb',AMB,setAmb,'am');
+chips('wx',WX,setWx,'wx');
+{const b=document.createElement('button');b.type='button';b.className='btn';b.textContent='Без блокировки';b.setAttribute('aria-pressed','false');b.title='на стенде: кнопки не блокируются через 10 с';
+ b.onclick=()=>{S.lockOn=!S.lockOn;b.setAttribute('aria-pressed',String(!S.lockOn));S.lock=false;S.ltoast=null;arm();render();};$('wx').appendChild(b);}
+arm();chips('dist',DIST,setDist,'di');chips('amb',AMB,setAmb,'am');
 let raceT=0,rt=0;
 // демо: лодка идёт по дистанции галсами (±45 м от генерального курса), время ускорено в 40 раз; знак засчитывается по «Точности знака» или на траверзе
 let demoT=0,dph=0;
