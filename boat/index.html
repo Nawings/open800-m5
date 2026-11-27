@@ -91,7 +91,7 @@ code{font-family:var(--f-mono);font-size:12px}
 <div class="app">
   <div class="stage" id="stage">
     <a class="home" href="../">← Главное меню</a>
-    <canvas id="view" aria-label="3D-модель яхты Open 800 с парусным прибором: блок на топе мачты, кабель и блок в кокпите"></canvas>
+    <canvas id="view" aria-label="3D-модель яхты Open 800 с парусным прибором: блок на топе мачты, кабель и два блока в кокпите"></canvas>
     <div class="badge"><h1>Open 800 «М5»</h1><span>RUS 4223 · 8,0 × 2,57 м · мачта 11,2 м над рубкой · прибор: топ + кабель + кокпит</span></div>
     <div class="views" role="group" aria-label="Куда смотреть">
       <button type="button" data-view="boat" aria-pressed="true">Лодка</button>
@@ -116,9 +116,9 @@ code{font-family:var(--f-mono);font-size:12px}
     <h2>Найти деталь</h2>
     <div class="btns" id="finds"></div>
     <p class="note" id="findNote">Нажмите на название — камера подлетит к детали, и она замигает оранжевым.</p>
-    <h2>Компоновка блока</h2>
+    <h2>Внешние блоки и основная плата</h2>
     <div class="btns" id="layBtns"></div>
-    <p class="note" id="layNote">Блок F1C на кормовой стенке рубки. Выберите вариант, чтобы увидеть, как новый корпус встанет на переборку.</p>
+    <p class="note" id="layNote">С 27.11 вместо одного блока F1C — два тонких внешних блока на кормовой стенке рубки: справа от входа большой (экран 7,5″, 120 × 186 × 32 мм), слева малый (экран 4,2″, 98 × 104 × 24 мм). Снаружи только экраны, кнопки на верхнем торце, по одному RGB-светодиоду и плиты салазок; основная плата — внутри каюты, за большим блоком. Блоки снимаются каждый раз, уходя с лодки: контакт — пружинные штыри 2 × 5. Предложение, не утверждено: порядок кнопок, GPS, компас и датчик света в большом блоке. Салазки — конструкция в работе.</p>
     <h2>Сборка по шагам</h2>
     <div class="btns" id="asmStart"><button id="asmGo" type="button">Собрать по шагам</button></div>
     <div class="asm" id="asmBox" hidden>
@@ -220,6 +220,7 @@ code{font-family:var(--f-mono);font-size:12px}
       <li><b>≈ 1,8 мм</b><span>зазор от магнита до AS5600 и MT6701 сквозь окна Ø14 × 0,8. Нужно от 0,5 до 3 мм, подстройка шайбами</span></li>
       <li><b>≈ 1,5 м</b><span>удочка с топа назад: с её конца ахтерштаг идёт на корму и не цепляет прямой топ грота</span></li>
       <li><b>0,7 м</b><span>вынос от устья гнезда на мачте до оси капсулы: нержавеющая труба AISI 316L Ø25 × 1 мм длиной около 0,73 м, на 20° вверх, без подкоса. Масса трубы ≈ 0,44 кг; динамику нужно пересчитать после взвешивания капсулы</span></li>
+      <li><b>2 блока</b><span>на кормовой стенке рубки (с 27.11): большой 120 × 186 × 32 мм справа от входа, малый 98 × 104 × 24 мм слева, за каждым — плита салазок 5 мм. Основная плата — внутри каюты за большим блоком. Кабели к блокам — 0,3 м и ≈ 1,2 м, сквозь стенку — отверстие Ø6 под плитой</span></li>
       <li><b>100 /с</b><span>пакетов с топа вниз по RS-485, 460 800 бод; задержка в кабеле до 10 мс</span></li>
       <li><b>0,2–0,5 с</b><span>от поворота флюгера до светодиода «заход / отход»; до цифр на экране 0,5–1 с. Это расчёт, замера ещё не было</span></li>
       <li><b>≈ 15 суток</b><span>работы от аккумулятора лодки 60 А·ч до половины заряда без Wi-Fi, с Wi-Fi ≈ 11 суток. Резервный блок на 3 элементах 18650 подключён параллельно через диоды, ≈ 23 часа; элементы заряжаются на месте зарядным 12,6 В, к блоку можно подключить и пауэрбанк через USB-C PD. Прибор берёт ≈ 81 мА от 12,5 В: это оценка, ещё не замер</span></li>
@@ -233,10 +234,11 @@ code{font-family:var(--f-mono);font-size:12px}
       <tr><td>4</td><td><span class="legend"><span><i style="background:#1a1a1a;display:inline-block;vertical-align:-1px"></i> чёрный</span></span></td><td>B, данные (витая пара)</td></tr>
       <tr><td>5</td><td>—</td><td>экран кабеля (оплётка): на GNDI, землю мачты, только в кокпите — через J2.3; на топе не подключать</td></tr>
     </tbody></table></div>
-    <p class="note">RVSP, 4 жилы, витая пара в экране, 24AWG, ≈ 15–20 м. Оба разъёма M12 — в приёмной трубе на топе и под подволоком — на 5 контактов (решение 24.11): контакт 5 — экран кабеля. Защита на обоих концах: SM712 на A и B, SMBJ5.0A на +5 В. Трасса: внутри мачты вниз, через пятку мачты в каюту, разъём M12 под подволоком у мачты, затем в резервный блок разъёмом SP13 на 5 контактов. От резервного блока к прибору идёт один кабель с 8 жилами в экране. На палубу кабель не выходит (решение от 05.11). Гермоввод PG7 — на капсуле; проход под мачтой — уплотнить.</p>
+    <p class="note">RVSP, 4 жилы, витая пара в экране, 24AWG, ≈ 15–20 м. Оба разъёма M12 — в приёмной трубе на топе и под подволоком — на 5 контактов (решение 24.11): контакт 5 — экран кабеля. Защита на обоих концах: SM712 на A и B, SMBJ5.0A на +5 В. Трасса: внутри мачты вниз, через пятку мачты в каюту, разъём M12 под подволоком у мачты, затем в резервный блок разъёмом SP13 на 5 контактов. От резервного блока к основной плате внутри каюты (за большим блоком) идёт один кабель с 8 жилами в экране. На палубу кабель не выходит (решение от 05.11). Гермоввод PG7 — на капсуле; проход под мачтой — уплотнить.</p>
 
     <p class="note"><b>Внутри лодки</b> (кнопка «Внутри»): переборки на 0,72 и 2,02 м от форштевня, рама мачты на 3,06–3,35 м, переборка на 4,2 м, низкая стенка на 4,81 м и переборка на 5,99 м сняты с чертежа набора, ± 5 см. Аккумулятор — в носу, между переборками 0,72 и 2,02 м; щиток питания — на переборке 2,02 м у правого борта; вдоль бортов по 4 ящика с каждой стороны (со слов владельца 16.11). Резервный блок и щиток лежат во втором ящике у правого борта, сразу за переборкой 2,02 м: щиток — внизу на передней стенке ящика, шины — под его передней кромкой, блок — на дне. Ящики в носу в модели — чаши с наклонными стенками; на лодке они другой формы, её надо уточнить. По фото 15.11 добавлены: пиллерс под степсом мачты (сварной прямоугольный нержавеющий профиль с фланцами), белая труба бушприта под палубой у правого борта со шлангом слива — бушприт выдвигается из неё и выходит сбоку от форштевня, проёмы в рундуки под кокпитом по бокам от входа и щиток питания лодки — 3 клавишных выключателя (чёрный и 2 синих с подсветкой) и 2 латунные шины, плюс и минус, в синих держателях. Провода бытовые: коричневый — плюс, синий — минус, к потребителям белые кабели. Чёрный выключатель — масса: разрывает минус аккумулятора (на нём 2 толстых синих провода). Синие — передние ходовые огни и кормовой огонь. Предохранителя между аккумулятором и шинами нет. От аккумулятора к щитку идёт один белый кабель, других проводов к аккумулятору нет. Резервный блок прибора лежит в том же ящике и питается от шин: плюс через предохранитель 3 А, минус с шины минуса — после выключателя массы.</p>
-    <p class="note">Как устроен блок в кокпите, питание от аккумулятора лодки, резервный блок и данные по Wi-Fi: <a href="../cockpit/">«Блок в кокпите»</a>.</p>
+    <p class="note"><b>Прибор в кокпите</b> (с 27.11): два внешних блока на кормовой стенке рубки и основная плата внутри каюты. Большой блок 120 × 186 × 32 мм — справа от входа: левый край в 20 мм от направляющей щитов, верх в 40 мм ниже края крыши. Малый 98 × 104 × 24 мм — слева: правый край в 20 мм от направляющей, верх в 60 мм ниже края. За каждым — плита салазок 5 мм с площадками контактов 2 × 5 и отверстием Ø6 под кабель; сквозь стенку — только кабель, без разъёма и гермоввода. Кабели: 10 жил ≈ 0,3 м к большому блоку и 8 жил ≈ 1,2 м к малому — внутри каюты над входом, под крышей рубки. Основная плата в лотке ≈ 190 × 90 × 30 мм на внутренней стороне стенки за большим блоком; к ней приходит кабель от резервного блока: 12 В от щитка и кабель мачты.</p>
+    <p class="note">Питание от аккумулятора лодки, резервный блок и данные по Wi-Fi: <a href="../cockpit/">«Блок в кокпите»</a>.</p>
 
     <h2>Детали и что с ними</h2>
     <div class="tbl"><table class="parts"><tbody>
@@ -254,28 +256,32 @@ code{font-family:var(--f-mono);font-size:12px}
       <tr><td>Разъёмы M12, 5 контактов, обе половинки, 2 пары: контакт 5 — экран (24.11). Купленные 4-контактные не годятся</td><td><span class="st n">купить</span></td></tr>
       <tr><td>SMBJ5.0A, PPTC 0,2 А, PG7; переходники SOT23-SIP3 больше не нужны: SM712 паяются прямо в плату</td><td><span class="st y">куплено</span></td></tr>
       <tr><td>SM712</td><td><span class="st n">в заказах не найден</span></td></tr>
-      <tr class="sub"><td colspan="2">Кокпит</td></tr>
-      <tr><td>ESP32-S3-DevKitC-1 N16R8</td><td><span class="st y">куплено</span></td></tr>
-      <tr><td>BNO085</td><td><span class="st y">куплено</span></td></tr>
-      <tr><td>Экран 4,2″ e-paper WeAct, ч/б — второй экран</td><td><span class="st y">куплено</span></td></tr>
-      <tr><td>Экран e-paper 7,5″ 800 × 480, голая панель (GDEY075T7 / GDEM075T42) — основной</td><td><span class="st n">купить</span></td></tr>
-      <tr><td>GPS QUESCAN AN181 (u-blox M10)</td><td><span class="st y">куплено</span></td></tr>
+      <tr class="sub"><td colspan="2">Кокпит: два внешних блока и основная плата внутри</td></tr>
+      <tr><td>ESP32-S3-DevKitC-1 N16R8 — на основной плате внутри каюты</td><td><span class="st y">куплено</span></td></tr>
+      <tr><td>BNO085 — в большом блоке (предложение, не утверждено)</td><td><span class="st y">куплено</span></td></tr>
+      <tr><td>Экран 4,2″ e-paper WeAct, ч/б — малый блок, левый борт</td><td><span class="st y">куплено</span></td></tr>
+      <tr><td>Экран e-paper 7,5″ 800 × 480, голая панель (GDEY075T7 / GDEM075T42) — большой блок, правый борт</td><td><span class="st n">купить</span></td></tr>
+      <tr><td>GPS QUESCAN AN181 (u-blox M10) — в большом блоке (предложение, не утверждено)</td><td><span class="st y">куплено</span></td></tr>
       <tr><td>TPS63020</td><td><span class="st y">куплено</span></td></tr>
       <tr><td>Аккумулятор Samsung INR18650-30Q, 3000 мА·ч ×3: для резервного блока</td><td><span class="st y">есть</span></td></tr>
       <tr><td>Резервный блок: коробка, плата защиты BMS 3S, контакты, лоток, гнездо зарядки 5,5 × 2,1 мм и зарядное 12,6 В, два INA226 с шунтом 10 А</td><td><span class="st n">сделать</span></td></tr>
-      <tr><td>LM2596, XL6009, триггер USB-C PD 9 В, переходник SOP-8 → DIP-8 × 1 (MAX3485 на топе), SP13 на 5 и 9 контактов</td><td><span class="st n">купить</span></td></tr>
-      <tr><td>Печатные платы v5: блок 180 × 78 мм и топ 62 × 26 мм, по 5 штук, pcbwave.com; цанговые полоски 2,54; разъёмы JST-GH и XH с вилками, FPC 24 контакта</td><td><span class="st n">заказать</span></td></tr>
-      <tr><td>Карточки датчиков BME280, BH1750, AS3935 и клапан выравнивания давления для корпуса</td><td><span class="st n">купить</span></td></tr>
+      <tr><td>LM2596, XL6009, триггер USB-C PD 9 В, переходник SOP-8 → DIP-8 × 1 (MAX3485 на топе). SP13 и колпачок SP13 — не покупаем (27.11)</td><td><span class="st n">купить</span></td></tr>
+      <tr><td>Печатные платы: основная 180 × 78 мм (v6 — будет переделана: экраны, кнопки, GPS, BNO085, BH1750 уходят во внешние блоки), плата большого блока (предложение, не утверждено) и топ 62 × 26 мм, по 5 штук, pcbwave.com; цанговые полоски 2,54; разъёмы JST-GH и XH с вилками, FPC 24 контакта</td><td><span class="st n">заказать</span></td></tr>
+      <tr><td>Карточки датчиков: BME280 и AS3935 — на основной плате внутри каюты, BH1750 — в большом блоке (предложение, не утверждено)</td><td><span class="st n">купить</span></td></tr>
       <tr><td>Резисторы и светодиоды (набор)</td><td><span class="st y">куплено</span></td></tr>
-      <tr><td>Корпус F1C, лицевая рамка, полки, салазки — печать ASA; окно из поликарбоната 3 мм</td><td><span class="st n">нарисовать и напечатать</span></td></tr>
-      <tr><td>Кнопки 12 × 12 поверхностного монтажа × 5 — под мембранами из TPU, светодиод RGB 5 мм</td><td><span class="st n">купить</span></td></tr>
+      <tr><td>Корпуса двух внешних блоков (большой 120 × 186 × 32, малый 98 × 104 × 24 мм), плиты салазок 5 мм (защёлка — в работе), лоток основной платы ≈ 190 × 90 × 30 мм — печать ASA</td><td><span class="st n">нарисовать и напечатать</span></td></tr>
+      <tr><td>Кнопки на верхних торцах: 6 у большого блока и 1 (МАЛЫЙ) у малого, под мембранами из TPU</td><td><span class="st n">купить</span></td></tr>
+      <tr><td>RGB-светодиоды BL-L515RGBC-CA, общий анод × 2 — по одному в каждый блок</td><td><span class="st y">куплено</span></td></tr>
+      <tr><td>Пружинные контакты (pogo pin) 2 × 5, шаг 2,54 × 4; кабель 10 жил 26AWG в экране, 2 м; модуль PCA9555; AMS1117-3.3 × 3 — AliExpress</td><td><span class="st w">в списке закупок 27.11</span></td></tr>
+      <tr><td>Малый блок: макетная плата, провод МГТФ, лак для платы</td><td><span class="st n">купить</span></td></tr>
     </tbody></table></div>
     <p class="note">Статусы взяты из хранилища: «Заказ — что куплено» от 30.10. Из 41 покупки опознаны 24.</p>
 
     <h2>Нужно снять с лодки</h2>
     <ul class="unk">
-      <li>Высота мачты: топ над палубой и над блоком в кокпите. Без неё вычитание качки работает по примерной высоте.</li>
-      <li>Перед печатью корпуса F1C проверить фигурным картонным макетом плоский фасад 212 × 178 мм и клиновидную заднюю часть глубиной примерно 35 мм слева и 50 мм справа. Сначала напечатать контрольную рамку: зазор от модулей до внутренней стенки всего 0,9 мм.</li>
+      <li>Высота мачты: топ над палубой и над блоками в кокпите. Без неё вычитание качки работает по примерной высоте.</li>
+      <li>Перед печатью блоков приложить к стенке рубки картонные макеты лица: большой 120 × 186 мм справа от входа (левый край в 20 мм от направляющей, верх в 40 мм ниже края крыши) и малый 98 × 104 мм слева (правый край в 20 мм от направляющей, верх в 60 мм ниже края). Проверить, хватает ли над верхним торцом места для пальца на кнопках и не мешает ли малому блоку скругление угла рубки.</li>
+      <li>Изнутри каюты: где ляжет лоток основной платы ≈ 190 × 90 × 30 мм за большим блоком и как пройдёт кабель малого блока над входом под крышей рубки, ≈ 1,2 м. Совпадают ли старые отверстия Ø20 с местом под плитами.</li>
       <li>Как провести кабель под палубой от мачты к кокпиту.</li>
       <li>Есть ли в мачте место под кабель от топа до пятки. На фото 15.11 штангенциркулем измерена узкая сторона профиля — 30,75 мм, наружная ширина концевого узла — 79,71 мм. Вторую сторону профиля перед печатью кронштейна проверить кольцом mast_top_test.</li>
       <li>Какой из двух синих выключателей — передние огни, а какой — кормовой. Предохранителя на белом кабеле от аккумулятора нет — советую поставить у клеммы.</li>
@@ -1648,10 +1654,9 @@ const SHT_K=0.62;
 })();
 
 // ---------- блок в кокпите ----------
-const cpG=new THREE.Group();cpG.position.set(CAB_AFT-0.035,CY+0.20,EO+0.42);cpG.rotation.y=-Math.PI/2;boat.add(cpG);
-function cpToBoat(u,v,w){return V(cpG.position.x-w,cpG.position.y+v,cpG.position.z+u);}
+const cpG=new THREE.Group();boat.add(cpG);   // с 27.11: внешние блоки, плиты салазок, основная плата и кабели к блокам — в координатах лодки (строятся ниже, перед камерой)
 const dc=document.createElement('canvas');dc.width=800;dc.height=600;const dctx=dc.getContext('2d');dctx.scale(2,2);const dtex=new THREE.CanvasTexture(dc);
-// старая коробка IP67 убрана 22.11: блок — корпус F1C, его начинка строится в setLayout
+// старая коробка IP67 убрана 22.11, корпус F1C — 27.11: теперь два внешних блока и основная плата внутри (см. «два внешних блока» ниже)
 
 
 // ---------- кабель: топ → мачта → M12 → рубка → кокпит ----------
@@ -1716,7 +1721,7 @@ buildWires(WIRES.top,topG,true);buildWires(WIRES.cp,cpG,false);
   NC[k].forEach(n=>h+='<tr><td colspan="3" class="nc">'+n+'</td></tr>');});
   $('wireTable').innerHTML='<table class="parts"><tbody>'+h+'</tbody></table>';})();
 $('wireLegend').innerHTML=Object.values(WC).map(l=>'<div><i class="w" style="background:'+l[1]+'"></i>'+l[0]+'</div>').join('');
-const CL=[['капсула, флюгер, чашки (как на фото)','#2a2d33'],['карбоновая штанга','#17191c'],['платы датчиков и связи','#1f4f91'],['платы AS5600 и защиты','#1d6a3a'],['магниты на осях','#9b2335'],['коробка в кокпите','#d9dcd6']];
+const CL=[['капсула, флюгер, чашки (как на фото)','#2a2d33'],['карбоновая штанга','#17191c'],['платы датчиков и связи','#1f4f91'],['платы AS5600 и защиты','#1d6a3a'],['магниты на осях','#9b2335'],['корпуса внешних блоков','#2a3138']];
 $('legend').innerHTML=CL.map(l=>'<div><i style="background:'+l[1]+'"></i>'+l[0]+'</div>').join('');
 
 // ---------- вид ----------
@@ -1833,8 +1838,8 @@ const innerHullM=M(0xc9c2b0,{side:THREE.DoubleSide,roughness:0.92});
   const hx=RBX,hz=RBZ;   // резервный блок лежит на дне второго ящика у правого борта, рядом со щитком
   const hub=PCBLIB.reserveBlock();hub.rotation.x=-Math.PI/2;hub.scale.setScalar(0.001);hub.position.set(hx,RBY,hz);intG.add(hub);const HP=p=>[hx+p[0]/1000,RBY+p[2]/1000,hz-p[1]/1000],HB=HP(hub.userData.ports.bat),HO=HP(hub.userData.ports.out);
   const ax=bx0-0.09,fx0=ax-0.13,fx1=ax-0.18,D2=dx(2.02);
-  tb([[HO[0],HO[1],HO[2]],[HO[0]-0.03,0.47,hz-0.06],[HO[0]-0.12,0.47,zin(HO[0]-0.12)-0.03],[HO[0]-0.2,0.14,zin(HO[0]-0.2)-0.06],[0.6,0.14,0.5],[0.2,0.14,0.5],[CAB_AFT+0.1,0.14,0.48],[CAB_AFT+0.04,0.3,0.48],[CAB_AFT+0.035,0.78,0.43],[CAB_AFT+0.03,0.86,0.40]],0.0042,0x2b2f35,'один кабель к прибору: по полу вдоль полки и вверх по кормовой переборке изнутри, к вводу за блоком');
-  {const gl=new THREE.Mesh(new THREE.CylinderGeometry(0.0125,0.0125,0.02,24),M(0x1c1f23,{roughness:0.6}));gl.rotation.z=Math.PI/2;gl.position.set(CAB_AFT+0.02,0.878,0.40);boat.add(lab(gl,'ввод кабеля за блоком (решено 16.11): гнездо SP13 в салазках, кабель от него сквозь отверстие Ø25 в каюту; из спины блока — хвост 12 см с вилкой SP13 в нише. Снять: клавиша защёлки снизу, блок вверх на 3 см, отвести на длину хвоста, открутить SP13'));}
+  tb([[HO[0],HO[1],HO[2]],[HO[0]-0.03,0.47,hz-0.06],[HO[0]-0.12,0.47,zin(HO[0]-0.12)-0.03],[HO[0]-0.2,0.14,zin(HO[0]-0.2)-0.06],[0.6,0.14,0.5],[0.2,0.14,0.5],[CAB_AFT+0.1,0.14,0.48],[CAB_AFT+0.045,0.3,0.40],[CAB_AFT+0.045,0.62,0.30],[CAB_AFT+0.045,0.74,0.285],[CAB_AFT+0.045,0.762,0.285]],0.0042,0x2b2f35,'один кабель от резервного блока к основной плате: 12 В от щитка, пара данных и питание мачты, I²C к INA226 резервного блока. По полу вдоль полки и вверх по кормовой переборке изнутри — в лоток основной платы за большим блоком. Наружу, к блокам, тяжёлые кабели не выходят');
+  // ввод SP13 за блоком (16.11) убран 27.11: блоки снимаются с плит салазок, сквозь стенку идут только кабели блоков
   // щиток лодки (фото 111–115, владелец 16.11): кнопки — на лицевой стенке второго ящика у правого борта, смотрят в каюту;
   // с обратной стороны этой стенки, внутри ящика, — 2 латунные шины в синих держателях у кромки и вся проводка.
   // Стенка ящика в плане идёт вдоль борта под углом, поэтому всё ставится по ней: точка на стенке + отступ по её нормали
@@ -1893,7 +1898,7 @@ const innerHullM=M(0xc9c2b0,{side:THREE.DoubleSide,roughness:0.92});
   intG.children.slice().forEach(o=>{const l=o.userData.label||'';if(o.isMesh&&/^(полка|переборка|кормовая переборка|ящик|ступенька|силовая рама)/.test(l)){const e=new THREE.LineSegments(new THREE.EdgesGeometry(o.geometry,28),edM);e.position.copy(o.position);e.rotation.copy(o.rotation);e.scale.copy(o.scale);e.userData.noPick=true;intG.add(e);}});
   // подписи для режима «Внутри»
   const spr=(s,p,w)=>{const c=document.createElement('canvas');c.width=512;c.height=112;const q=c.getContext('2d');q.fillStyle='rgba(14,22,30,.88)';q.fillRect(0,0,512,112);q.strokeStyle='#39c0cf';q.lineWidth=4;q.strokeRect(2,2,508,108);q.fillStyle='#fff';q.font='700 46px Arial';q.textAlign='center';q.textBaseline='middle';q.fillText(s,256,58);const o=new THREE.Sprite(new THREE.SpriteMaterial({map:new THREE.CanvasTexture(c),depthTest:false,transparent:true,sizeAttenuation:false}));o.position.set(p[0],p[1],p[2]);o.scale.set(0.16,0.16*112/512,1);o.renderOrder=999;sprG.add(o);};
-  spr('аккумулятор 60 А·ч',[bx0,0.62,-0.05],0.62);spr('резервный блок в ящике',[hx,0.62,hz-0.3],0.55);spr('кнопки снаружи, щиток внутри',[XS,0.78,zin(XS)-0.3],0.55);spr('ящики, 4 + 4',[dx(3.8),0.75,-0.95],0.6);spr('пиллерс',[MX+0.05,0.9,-0.25],0.4);spr('труба бушприта',[dx(1.2),1.12,0.25],0.55);spr('переборка 2,02 м',[dx(2.02),1.12,-0.15],0.6);spr('рама мачты 3,06 м',[dx(3.06),1.32,-0.25],0.64);spr('переборка 4,2 м',[dx(4.2),1.06,-0.72],0.58);spr('блок в кокпите',[CAB_AFT-0.1,1.25,0.5],0.58);
+  spr('аккумулятор 60 А·ч',[bx0,0.62,-0.05],0.62);spr('резервный блок в ящике',[hx,0.62,hz-0.3],0.55);spr('кнопки снаружи, щиток внутри',[XS,0.78,zin(XS)-0.3],0.55);spr('ящики, 4 + 4',[dx(3.8),0.75,-0.95],0.6);spr('пиллерс',[MX+0.05,0.9,-0.25],0.4);spr('труба бушприта',[dx(1.2),1.12,0.25],0.55);spr('переборка 2,02 м',[dx(2.02),1.12,-0.15],0.6);spr('рама мачты 3,06 м',[dx(3.06),1.32,-0.25],0.64);spr('переборка 4,2 м',[dx(4.2),1.06,-0.72],0.58);spr('основная плата',[CAB_AFT+0.06,1.12,0.36],0.5);
 })();
 // режим «Внутри»: разрез — палуба и кокпит снимаются, корпус изнутри непрозрачный, рубка — призрак, в каюте свет
 const INS=[],GHO=[],HID=[];let hullOuter=null;
@@ -1907,10 +1912,8 @@ function setBus(on){BUS_HID.forEach(o=>o.visible=true);BUS_HID.length=0;if(on)in
 
 // ---------- камера ----------
 function worldOf(o){const v=new THREE.Vector3();o.getWorldPosition(v);return v;}
-// ---------- компоновка блока на кормовой стенке рубки: варианты со страницы «Компоновка блока» ----------
-// место: справа от входа, от края направляющей щитов (0,31 м от оси) вправо; низ места — уровень палубы у рубки (CY), высота — подбор «как можно выше, где ещё встаёт»
-const LAYV=[{"id":"f1c","key":"F1C","title":"компакт · оба экрана плоско","OW":212,"OH":178,"W":206,"H":172,"wall":3,"mg":6,"y":129,"yt":130,"contour":true,"compact":true,"pos":"top","E":[{"k":"scr","x":0.9,"y":0.9,"w":111.2,"h":170.2,"aw":97.9,"ah":163.2,"role":"main"},{"k":"scr","x":113.1,"y":81.4,"w":92,"h":89.7,"aw":84.8,"ah":63.6,"role":"small"},{"k":"btn","x":128,"y":65},{"k":"btn","x":128,"y":39},{"k":"btn","x":159.5,"y":39},{"k":"btn","x":191,"y":39},{"k":"btn","x":191,"y":13},{"k":"btn","x":159.5,"y":65},{"k":"btn","x":191,"y":65},{"k":"led","x":128,"y":13,"c":"m"}]}];
-const layG=new THREE.Group();boat.add(layG);let layCur='now',layShell=null;
+// ---------- картинки экранов внешних блоков: «Табло» на 7,5″ и «Старт» на 4,2″ (рисует layDraw) ----------
+const LAYTEX=[];
 const LDV0={awa:-34,aws:12,hdg:177,sog:5.4,sig:0,t:0,heel:12,pitch:1.5};if(document.fonts)['700 20px Inter','italic 700 20px Inter'].forEach(f=>document.fonts.load(f).catch(()=>{}));
 const f1c=x=>x.toFixed(1).replace('.',','),mmss=s=>{s=Math.max(0,Math.round(s));return Math.floor(s/60)+':'+String(s%60).padStart(2,'0');};
 function layDraw(c,v,dv){dv=dv||LDV0;const k=4,q=c.getContext('2d');q.clearRect(0,0,c.width,c.height);q.textAlign='left';
@@ -1945,58 +1948,121 @@ function layDraw(c,v,dv){dv=dv||LDV0;const k=4,q=c.getContext('2d');q.clearRect(
     else if(e.k==='btn'){q.fillStyle='#8f99a3';q.beginPath();q.arc(X(e.x),Y(e.y),7*k,0,7);q.fill();}
     else if(e.k==='led'){if(e.c==='m'){const col=dv.sig<0?'#3df06a':dv.sig>0&&Math.floor(dv.t*2)%2===0?'#ff4436':null;q.fillStyle='#11161b';q.beginPath();q.arc(X(e.x),Y(e.y),4*k,0,7);q.fill();if(col){q.save();q.shadowColor=col;q.shadowBlur=6*k;q.fillStyle=col;q.beginPath();q.arc(X(e.x),Y(e.y),3.1*k,0,7);q.fill();q.restore();}else{q.strokeStyle='#59636d';q.lineWidth=0.6*k;q.beginPath();q.arc(X(e.x),Y(e.y),3.1*k,0,7);q.stroke();}}else{q.fillStyle=e.c==='g'?'#2fa84f':'#d62828';q.beginPath();q.arc(X(e.x),Y(e.y),2.5*k,0,7);q.fill();}}});
 }
-function layTex(v){const c=document.createElement('canvas');c.width=Math.round(v.OW*4);c.height=Math.round(v.OH*4);layDraw(c,v);const t=new THREE.CanvasTexture(c);t.anisotropy=8;t.userData={c,v};return t;}
-let layTexCur=null;
-function setLayout(id,noGo){layTexCur=null;layCur=id;while(layG.children.length){const o=layG.children.pop();o.traverse(m=>{if(m.geometry)m.geometry.dispose();});}
-  const v=LAYV.find(q=>q.id===id);cpG.visible=!v;
-  document.querySelectorAll('#layBtns [data-lay]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.lay===id)));
-  if(!v){document.getElementById('layNote').textContent='Блок F1C. Выберите вариант, чтобы увидеть, как новый корпус встанет на переборку.';return;}
-  const side=M(0x2a3138,{roughness:0.55});let m;
-  if(v.contour){const tex=layTex(v);layTexCur=tex;const front=new THREE.MeshStandardMaterial({map:tex,roughness:0.5}),w=v.OW/2,h=v.OH/2,dL=35,dR=50,g=new THREE.Group();
-    const pos=new Float32Array([-w,-h,0, w,-h,0, w,h,0, -w,h,0, -w,-h,-dL, w,-h,-dR, w,h,-dR, -w,h,-dL]);
-    const ix=[0,1,2,0,2,3, 5,4,7,5,7,6, 4,0,3,4,3,7, 1,5,6,1,6,2, 3,2,6,3,6,7, 4,5,1,4,1,0];
-    const bg=new THREE.BufferGeometry();bg.setAttribute('position',new THREE.BufferAttribute(pos,3));bg.setIndex(ix);bg.computeVertexNormals();g.add(new THREE.Mesh(bg,side));
-    const face=new THREE.Mesh(new THREE.PlaneGeometry(v.OW,v.OH),front);face.position.z=.6;g.add(face);
-    const edge=new THREE.LineSegments(new THREE.EdgesGeometry(bg,20),new THREE.LineBasicMaterial({color:0x7e8992}));g.add(edge);
-    // Реальная лицевая сборка: рамки лежат внутри габаритов модулей. При зазоре F1C 1 мм они не пересекаются.
-    const bezel=M(0x15191d,{roughness:.5}),glass=M(0xc7d9df,{transparent:true,opacity:.16,roughness:.08,depthWrite:false}),btn=M(0x2f5d6e,{roughness:.85}),led=M(0x1a2b36,{emissive:0x12384a,roughness:.3});
-    const addBox=(W,H,D,mat,x,y,z)=>{const o=box(W,H,D,mat);o.position.set(x,y,z);g.add(o);return o;};
-    v.E.filter(e=>e.k==='scr').forEach(e=>{const x=-w+v.wall+e.x,y=-h+v.wall+e.y,cx=x+e.w/2,cy=y+e.h/2,t=.6,z=1.25;
-      addBox(e.w,t,.8,bezel,cx,y+t/2,z);addBox(e.w,t,.8,bezel,cx,y+e.h-t/2,z);addBox(t,e.h-2*t,.8,bezel,x+t/2,cy,z);addBox(t,e.h-2*t,.8,bezel,x+e.w-t/2,cy,z);
-      addBox(e.aw,e.ah,.22,glass,cx,cy,z+.52);});
-    v.E.filter(e=>e.k==='btn').forEach(e=>{const o=new THREE.Mesh(new THREE.CylinderGeometry(7,7,2.4,24),btn);o.rotation.x=Math.PI/2;o.position.set(-w+v.wall+e.x,-h+v.wall+e.y,2);g.add(o);});
-    v.E.filter(e=>e.k==='led').forEach(e=>{const o=new THREE.Mesh(new THREE.CylinderGeometry(4,4,1.5,20),led);o.rotation.x=Math.PI/2;o.position.set(-w+v.wall+e.x,-h+v.wall+e.y,1.7);g.add(o);});m=g;
-  }else{const tex=layTex(v);layTexCur=tex;const front=new THREE.MeshStandardMaterial({map:tex,roughness:0.5}),BV=4,RR=10,W0=v.OW-2*BV,H0=v.OH-2*BV,sh=new THREE.Shape();sh.moveTo(-W0/2+RR,-H0/2);sh.lineTo(W0/2-RR,-H0/2);sh.quadraticCurveTo(W0/2,-H0/2,W0/2,-H0/2+RR);sh.lineTo(W0/2,H0/2-RR);sh.quadraticCurveTo(W0/2,H0/2,W0/2-RR,H0/2);sh.lineTo(-W0/2+RR,H0/2);sh.quadraticCurveTo(-W0/2,H0/2,-W0/2,H0/2-RR);sh.lineTo(-W0/2,-H0/2+RR);sh.quadraticCurveTo(-W0/2,-H0/2,-W0/2+RR,-H0/2);
-    const UVG={generateTopUV:(g,vs,a,b,c)=>[a,b,c].map(i=>new THREE.Vector2((vs[i*3]+v.OW/2)/v.OW,(vs[i*3+1]+v.OH/2)/v.OH)),generateSideWallUV:()=>[new THREE.Vector2(0,0),new THREE.Vector2(0,0),new THREE.Vector2(0,0),new THREE.Vector2(0,0)]};
-    const cg=new THREE.ExtrudeGeometry(sh,{depth:35-2*BV,bevelEnabled:true,bevelThickness:BV,bevelSize:BV,bevelSegments:4,curveSegments:10,UVGenerator:UVG});cg.translate(0,0,BV);m=new THREE.Mesh(cg,[front,side]);}
-  m.scale.setScalar(0.001);m.rotation.y=-Math.PI/2;
-  // Лицевая панель выступает в кокпит на полную глубину корпуса. Раньше origin стоял в плоскости рубки,
-  // поэтому клиновидная спина уходила внутрь стенки, а кромка рубки визуально разрезала экран и кнопки.
-  const MG=Math.max(0,Math.min(v.mg,10)),FACE_OUT=0.052;m.position.set(CAB_AFT-FACE_OUT,CY+(v.yt+v.OH/2)/1000,EO+0.31+(MG+v.OW/2)/1000);layG.add(lab(m,'блок '+v.key+': '+v.title+', проекция '+Math.round(v.OW)+' × '+Math.round(v.OH)+' мм'));
-  // Начинка блока: датчики по решению 16.11. Корпус — оболочка: в режиме «насквозь» он прозрачный, и видно, что внутри.
-  // прозрачным делается только корпус-клин: лицевая панель с экранами остаётся читаемой
-  {const sh=v.contour?m.children[0]:m;if(layShell){const i=SHELLS.indexOf(layShell);if(i>=0)SHELLS.splice(i,1);}layShell=sh;sh.userData.shell=true;sh.userData.op=0.18;SHELLS.push(sh);setShells();}
-  if(v.contour){const mi=new THREE.Group();mi.scale.copy(m.scale);mi.rotation.copy(m.rotation);mi.position.copy(m.position);layG.add(mi);
-    const w=v.OW/2,h=v.OH/2,X=x=>-w+v.wall+x,Y=y=>-h+v.wall+y;
-    const card=(W,H,c,x,y,z,l,chip)=>{const o=new THREE.Group();o.add(box(W,H,1.6,M(c,{roughness:.5})));if(chip){const k=box(chip[0],chip[1],chip[2],M(chip[3]||0x1d1e22,{roughness:.4,metalness:chip[3]?.6:0}));k.position.z=.8+chip[2]/2;o.add(k);}o.position.set(x,y,z);mi.add(lab(o,l));return o;};
-    {const bd=PCBLIB.board3d('cockpit',{ppm:7,noStubs:true});/*v6-hide*/bd.traverse(o=>{const l=o.userData&&o.userData.label||'';if(/^(разъём JS |вилка с защёлкой: карта памяти|кнопка 12 × 12|толкатель кнопки|светодиод RGB|П1 —|пайка: (SW\d|LED|P1) )/.test(l))o.visible=false;});const bg=new THREE.Group();bg.add(bd);bg.rotation.y=Math.PI;bg.position.set(102,-85,-9.2);mi.add(bg);}   // плата v5: деталями назад, в 9,2 мм за лицом
-    {const shelfM=M(0x3a4048,{roughness:.6});
-     const sb=box(32,3,24,shelfM);sb.position.set(X(150),Y(158),-28);mi.add(lab(sb,'полка компаса — заодно с лицевой коробкой, висит на двух рёбрах от верхней стенки; BNO085 на 2 стойках М2,5'));[X(150)-14.75,X(150)+14.75].forEach(x=>{const r=box(2.5,Y(172)-(Y(158)+1.5),24,shelfM);r.position.set(x,(Y(172)+(Y(158)+1.5))/2,-28);mi.add(lab(r,'ребро полки компаса: держит полку от верхней стенки'));});
-     const sg=box(28,3,24,shelfM);sg.position.set(X(60),Y(161),-28);mi.add(lab(sg,'полка GPS — заодно с лицевой коробкой, висит на двух рёбрах от верхней стенки; модуль в гнезде, прижат стяжкой'));[X(60)-12.75,X(60)+12.75].forEach(x=>{const r=box(2.5,Y(172)-(Y(161)+1.5),24,shelfM);r.position.set(x,(Y(172)+(Y(161)+1.5))/2,-28);mi.add(lab(r,'ребро полки GPS: держит полку от верхней стенки'));});
-     const bno=box(25.65,1.6,15.55,M(0x5a2a82,{roughness:.5}));bno.position.set(X(150),Y(158)+2.3,-28);mi.add(lab(bno,'компас BNO085 на плате GY-BNO08X: крен, дифферент, курс; на полке у верхней стенки, ось X к носу, больше 100 мм от LM2596 и TPS63020'));
-     const gps=box(18,6.8,18.25,M(0x23252a,{roughness:.5}));gps.position.set(X(60),Y(161)+5,-28);mi.add(lab(gps,'GPS QUESCAN AN181: скорость и курс 10 раз в секунду; на полке у верхней стенки, антенной вверх'));}
-    card(15,12,0x5a2a86,34,-26,-25,'BME280 — барометр. Зачем: падение давления больше 3,5 гПа за 3 часа предупреждает о шквале или циклоне заранее. Через клапан давление в корпусе равно наружному, поэтому давление он мерит верно; температура и влажность у него — воздуха внутри корпуса, по влажности видно, что в корпус попала вода. Карточка на жгуте из П2, у клапана в задней стенке',[2.5,2.5,.9,0xc9ccd1]);
-    {const vt=new THREE.Mesh(new THREE.CylinderGeometry(4.5,4.5,3,20),M(0x2a2d31,{roughness:.6}));vt.rotation.x=Math.PI/2;vt.position.set(0,-12,-41);mi.add(lab(vt,'клапан выравнивания давления в задней стенке, в нише салазок: мембрана пропускает воздух, но не воду. Зачем: без него BME280 мерил бы давление закрытого корпуса, а не погоду'));}
-    card(24,18,0x6a3fa0,-w+22,-h+20,-22,'AS3935 — датчик молний: гроза на 1–40 км и приближается ли она. Зачем: уйти с воды или в укрытие раньше, чем гроза дойдёт. Карточка у края корпуса, подальше от Wi-Fi ESP32-S3 и LM2596 (решено 16.11)',[8,3,2.4,0x30343a]);
-    {const sm=v.E.find(e=>e.k==='scr'&&e.role==='small'),bt=v.E.filter(e=>e.k==='btn'),by=bt.length?bt[0].y:0,
-       wy=13,wx=159.5;   // окно датчика света — проект навигации 23.11
-     card(19,14,0x1d4f9a,X(wx),Y(wy),-4,'BH1750 — датчик света за окном лицевой панели. Зачем: в сумерках сам включает подсветку экранов и подбирает яркость, днём держит её выключенной — экономит ток и не отвлекает рулевого (решено 16.11)',[3,1.6,.8]);
-     const win=new THREE.Mesh(new THREE.CylinderGeometry(4.5,4.5,1,24),M(0xbfe3ee,{transparent:true,opacity:.55,roughness:.1}));win.rotation.x=Math.PI/2;win.position.set(X(wx),Y(wy),1.2);mi.add(lab(win,'окно BH1750 в лицевой панели, Ø9: за ним датчик освещённости'));}
-  }
-  document.getElementById('layNote').textContent=v.key+' — оба экрана находятся в одной плоскости. Плоский фасад '+Math.round(v.OW)+' × '+Math.round(v.OH)+' мм; задняя часть клиновидная, глубиной 35 мм слева и 50 мм справа. '+(v.compact?'Зазор от модуля до внутренней стенки 0,9 мм: обязательна пробная рамка.':'Перед печатью проверить фигурным картонным макетом.');
-  if(!noGo)go('deck');}
-(function(){const b=document.getElementById('layBtns');if(!b)return;b.innerHTML=LAYV.map(v=>'<button type="button" data-lay="'+v.id+'" aria-pressed="false">'+v.key+(v.id==='f1c'?' · компакт':'')+'</button>').join('');setLayout('f1c',true);
-  b.addEventListener('click',e=>{const t=e.target.closest('[data-lay]');if(t)setLayout(t.dataset.lay);});})();
+// ---------- два внешних блока на кормовой стенке рубки и основная плата внутри каюты (спецификация 27.11) ----------
+// Блок строится в мм от левого нижнего угла лица: x — вправо (к правому борту, +z лодки), y — вверх, Z — от стенки в кокпит (−x лодки).
+// Стенка — Z = 0, плита салазок — Z 0…5, корпус — Z 5…5 + глубина, лицо — на Z = 5 + глубина.
+/*twoblocks2711*/
+const BLK={big:{W:120,H:186,D:32,z0:0.288,y0:0.759},small:{W:98,H:104,D:24,z0:-0.466,y0:0.821}},PL=5,RGBL=[];
+const blkG=b=>{const g=new THREE.Group();g.position.set(CAB_AFT,b.y0,b.z0);g.rotation.y=-Math.PI/2;g.scale.setScalar(0.001);return g;};
+const bpt=(b,x,y,Z)=>V(CAB_AFT-Z/1000,b.y0+y/1000,b.z0+x/1000);   // точка блока → координаты лодки
+function rrShape(x0,y0,w,h,r){const s=new THREE.Shape();s.moveTo(x0+r,y0);s.lineTo(x0+w-r,y0);s.absarc(x0+w-r,y0+r,r,-Math.PI/2,0,false);s.lineTo(x0+w,y0+h-r);s.absarc(x0+w-r,y0+h-r,r,0,Math.PI/2,false);s.lineTo(x0+r,y0+h);s.absarc(x0+r,y0+h-r,r,Math.PI/2,Math.PI,false);s.lineTo(x0,y0+r);s.absarc(x0+r,y0+r,r,Math.PI,1.5*Math.PI,false);return s;}
+const putB=(g,o,x,y,z,l)=>{o.position.set(x,y,z);g.add(l?lab(o,l):o);return o;};
+const HOLE_DY=10;   // отверстие Ø6 — над площадками контактов
+// плита салазок: схема, конструкция защёлки в работе
+function slidePlate(b,name,step){const g=blkG(b),cx=b.W/2,cy=b.H/2;
+  const p=new THREE.Mesh(new THREE.ExtrudeGeometry(rrShape(4,4,b.W-8,b.H-8,4),{depth:PL,bevelEnabled:false,curveSegments:6}),M(0x8b949c,{roughness:0.6}));
+  g.add(lab(p,'плита салазок '+name+': '+(b.W-8)+' × '+(b.H-8)+' × 5 мм на стенке рубки, на 4 мм меньше лица блока с каждой стороны. В центре — площадки пружинных контактов 2 × 5 и отверстие Ø6 под кабель. Защёлка — конструкция в работе: здесь только схема'));
+  const gold=M(0xd4af37,{metalness:0.8,roughness:0.3}),pads=new THREE.Group();
+  for(let r=0;r<2;r++)for(let c=0;c<5;c++){const pd=box(1.8,1.8,0.3,gold);pd.position.set(cx+(c-2)*2.54,cy+(r-0.5)*2.54,PL+0.15);pads.add(pd);}
+  g.add(lab(pads,'площадки пружинных контактов 2 × 5, шаг 2,54, в плите салазок '+name+': на них встают штыри блока — надел блок, контакт есть. Когда блок снят, основная плата снимает питание с площадок'));
+  const ho=new THREE.Mesh(new THREE.CircleGeometry(3,20),M(0x111214,{roughness:1}));ho.position.set(cx,cy+HOLE_DY,PL+0.05);
+  g.add(lab(ho,'отверстие Ø6 сквозь стенку рубки под плитой '+name+': только кабель, без разъёма и гермоввода, на герметике. Разъём на основной плате обжимается после протяжки'));
+  return reg(g,cpG,{s:step});}
+// пружинные штыри в задней стенке блока
+function pogo(g,b){const gold=M(0xd4af37,{metalness:0.8,roughness:0.3}),pg=new THREE.Group();
+  for(let r=0;r<2;r++)for(let c=0;c<5;c++){const pin=new THREE.Mesh(new THREE.CylinderGeometry(0.7,0.7,3,10),gold);pin.rotation.x=Math.PI/2;pin.position.set(b.W/2+(c-2)*2.54,b.H/2+(r-0.5)*2.54,PL+1.5);pg.add(pin);}
+  g.add(lab(pg,'пружинные контакты (pogo pin) 2 × 5, шаг 2,54: штыри в задней стенке блока встают на площадки плиты салазок — надел блок, контакт есть'));}
+// корпус, лицо с картинкой экрана, кнопки на верхнем торце, светодиод
+function blockShell(b,o){const g=blkG(b);
+  const body=new THREE.Mesh(new THREE.ExtrudeGeometry(rrShape(0,0,b.W,b.H,6),{depth:b.D,bevelEnabled:false,curveSegments:8}),M(0x2a3138,{roughness:0.55}));body.position.z=PL;
+  lab(body,o.body);body.userData.shell=true;body.userData.op=0.22;SHELLS.push(body);g.add(body);
+  const ed=new THREE.LineSegments(new THREE.EdgesGeometry(body.geometry,30),new THREE.LineBasicMaterial({color:0x7e8992}));ed.position.z=PL;ed.userData.noPick=true;g.add(ed);
+  const c=document.createElement('canvas');c.width=b.W*4;c.height=b.H*4;layDraw(c,o.v);const tex=new THREE.CanvasTexture(c);tex.anisotropy=8;tex.userData={c,v:o.v};LAYTEX.push(tex);
+  const fg=new THREE.ShapeGeometry(rrShape(0,0,b.W,b.H,6),8),uv=fg.attributes.uv;for(let i=0;i<uv.count;i++)uv.setXY(i,uv.getX(i)/b.W,uv.getY(i)/b.H);
+  putB(g,new THREE.Mesh(fg,new THREE.MeshStandardMaterial({map:tex,roughness:0.5})),0,0,PL+b.D+0.3,o.face);
+  const led=new THREE.Mesh(new THREE.CylinderGeometry(2.5,2.5,1.4,20),M(0x1a2b36,{roughness:0.3}));led.rotation.x=Math.PI/2;led.userData.rgb=true;
+  putB(g,led,o.led[0],o.led[1],PL+b.D+0.9,'RGB-светодиод BL-L515RGBC-CA Ø5, общий анод, в полосе над экраном: заход — зелёный ровно, отход — красный мигает. Что оба блока показывают одно и то же — предложение, не утверждено');
+  if(o.win){const w=new THREE.Mesh(new THREE.CylinderGeometry(3,3,1,20),M(0xbfe3ee,{transparent:true,opacity:0.6,roughness:0.1}));w.rotation.x=Math.PI/2;
+    putB(g,w,o.win[0],o.win[1],PL+b.D+0.6,'окно датчика света Ø6 над экраном: за ним BH1750 (место — предложение, не утверждено; окно можно перенести на верхний торец, смотреть в небо)');}
+  const tpu=M(0x2f5d6e,{roughness:0.85});
+  o.btn.forEach((n,i)=>{const k=new THREE.Mesh(new THREE.CylinderGeometry(5.5,5.5,2,24),tpu);putB(g,k,o.bx[i],b.H+1,PL+b.D/2,'кнопка '+n[0]+' на верхнем торце '+o.who+' (Ø11, мембрана TPU): '+n[1]+'. Кнопки на торце, а не на лице — решение 27.11'+(o.btn.length>1?'; порядок — предложение, не утверждено':''));});
+  // подписи кнопок гравировкой на торце, за кнопками (ближе к стенке)
+  {const k=8,cv=document.createElement('canvas');cv.width=b.W*k;cv.height=b.D*k;const q=cv.getContext('2d');q.fillStyle='#c9d0d6';q.textAlign='center';q.textBaseline='middle';q.font='700 '+(3.1*k)+'px Inter, Arial, sans-serif';
+   o.btn.forEach((n,i)=>q.fillText(n[0],o.bx[i]*k,(b.D/2-9)*k));const t=new THREE.CanvasTexture(cv);t.anisotropy=8;
+   const pl=new THREE.Mesh(new THREE.PlaneGeometry(b.W,b.D),new THREE.MeshStandardMaterial({map:t,transparent:true,roughness:0.6,depthWrite:false}));pl.rotation.x=-Math.PI/2;
+   putB(g,pl,b.W/2,b.H+0.08,PL+b.D/2,'подписи кнопок гравировкой на верхнем торце '+o.who+', за кнопками: читаются сверху');}
+  reg(g,cpG,{s:o.s,e:[-0.10,0,0]});g.traverse(m=>{if(m.userData.rgb)RGBL.push(m.material);});return g;}
+// ---- большой блок: правый борт, справа от входа
+slidePlate(BLK.big,'большого блока',8);
+blockShell(BLK.big,{s:11,who:'большого блока',led:[20,180],win:[100,180],bx:[15,33,51,69,87,105],
+  btn:[['БОЛЬШОЙ','листает виды большого экрана'],['−','масштаб карты, уменьшить значение'],['+','масштаб карты, увеличить значение'],['СТАРТ','стартовый отсчёт'],['ЛИНИЯ','отметить концы стартовой линии'],['МЕНЮ','меню; держать 3 с — включить или выключить прибор']],
+  v:{OW:120,OH:186,W:120,H:186,wall:0,E:[{k:'scr',x:4.4,y:4,w:111.2,h:170.2,aw:97.9,ah:163.2,role:'main'},{k:'led',x:20,y:180,c:'m'}]},
+  body:'корпус большого блока: 120 × 186 × 32 мм, углы R 6, печать ASA. Глубину задаёт антенна GPS 25 × 25, лежащая под верхней стенкой. Снимается каждый раз, уходя с лодки',
+  face:'большой блок (правый борт, справа от входа): экран 7,5″ GDEM075T42 стоя, 480 × 800 — «Табло» и остальные виды. Лицо 120 × 186, глубина 32 + плита салазок 5 мм. Левый край — в 20 мм от направляющей щитов, верх — в 40 мм ниже края крыши: над кнопками место для пальца. Закрывает старое отверстие Ø20'});
+{const b=BLK.big,g=blkG(b);pogo(g,b);
+  putB(g,box(111.2,170.2,1.4,M(0x1b1f24,{roughness:0.5})),4.4+55.6,4+85.1,PL+b.D-2.2,'экран 7,5″ GDEM075T42 стоя: модуль 111,2 × 170,2, поле изображения 97,9 × 163,2 мм');
+  putB(g,box(112,165,1.6,M(0xd9b526,{roughness:0.45})),60,4+82.5,PL+5,'плата большого блока (предложение, не утверждено): сюда переезжает с платы v6 питание экрана 7,5″ — гнездо FPC 24 и повышающая схема; на ней PCA9555D, AMS1117-3.3, кнопки, светодиод, BH1750, BNO085, GPS');
+  putB(g,box(10,7.5,1.6,M(0x17181b,{roughness:0.4})),30,140,PL+6.6,'PCA9555D — расширитель выводов, не процессор (решение 27.11): через него кнопки, светодиод, сброс и «занят» экрана. Основная плата опрашивает его по I²C и по нему видит, снят ли блок');
+  putB(g,box(6.5,7,1.8,M(0x17181b,{roughness:0.4})),30,122,PL+6.7,'AMS1117-3.3: 3,3 В для экрана и PCA9555 из 5 В, что приходят по кабелю');
+  putB(g,box(14,4,2,M(0x1b1c20,{roughness:0.5})),60,14,PL+6.8,'гнездо FPC 24 для шлейфа экрана 7,5″ и повышающая схема его питания: переезжают с платы v6 (предложение, не утверждено)');
+  putB(g,box(25.65,15.55,1.6,M(0x5a2a82,{roughness:0.5})),88,140,PL+8.4,'компас BNO085 на плате GY-BNO08X: крен, дифферент, курс. В большом блоке — предложение, не утверждено: здесь он далеко от катушек преобразователей, они теперь на основной плате внутри. Калибровать на месте: два полных круга на ходу');
+  putB(g,box(25,7,25,M(0x23252a,{roughness:0.5})),60,174.5,PL+14,'GPS QUESCAN AN181: скорость и курс 10 раз в секунду; под верхней стенкой большого блока, антенной вверх — предложение, не утверждено');
+  putB(g,box(116,1.6,20,M(0xd9b526,{roughness:0.45})),60,181.8,PL+b.D/2,'плата кнопок под верхним торцом большого блока: 6 кнопок 6 × 6 под мембранами TPU');
+  [15,33,51,69,87,105].forEach(x=>putB(g,box(6,1.8,6,M(0x2a2d33,{roughness:0.55})),x,183.5,PL+b.D/2,'кнопка 6 × 6 под мембраной верхнего торца'));
+  putB(g,box(10,8,1.6,M(0x1d4f9a,{roughness:0.5})),100,180,PL+b.D-4,'BH1750 — датчик света за окном Ø6 над экраном: в сумерках сам включает подсветку и подбирает яркость. На плате большого блока — предложение, не утверждено');
+  reg(g,cpG,{s:11,e:[-0.05,0,0]});}
+// ---- малый блок: левый борт, слева от входа
+slidePlate(BLK.small,'малого блока',8);
+blockShell(BLK.small,{s:12,who:'малого блока',led:[15,98],bx:[49],btn:[['МАЛЫЙ','листает виды только малого экрана']],
+  v:{OW:98,OH:104,W:98,H:104,wall:0,E:[{k:'scr',x:3,y:3,w:92,h:89.7,aw:84.8,ah:63.6,role:'small'},{k:'led',x:15,y:98,c:'m'}]},
+  body:'корпус малого блока: 98 × 104 × 24 мм, углы R 6, печать ASA. Снимается каждый раз, уходя с лодки',
+  face:'малый блок (левый борт, слева от входа): экран 4,2″ WeAct лёжа, 400 × 300 — старт. Лицо 98 × 104, глубина 24 + плита 5 мм. Правый край — в 20 мм от направляющей, верх — в 60 мм ниже края крыши: выше мешает скругление угла рубки. Процессора нет. Закрывает старое отверстие Ø20'});
+{const b=BLK.small,g=blkG(b);pogo(g,b);
+  putB(g,box(92,89.7,1.4,M(0x1b1f24,{roughness:0.5})),3+46,3+44.85,PL+b.D-2.2,'экран 4,2″ WeAct лёжа: модуль 92 × 89,7, стекло 91 × 77, поле 84,8 × 63,6 мм');
+  putB(g,box(88,78,1.6,M(0x2f7d4a,{roughness:0.5})),49,45,PL+5,'макетная плата малого блока (решение 27.11): своей печатной платы нет — готовые модули на макетке, провод МГТФ, плата покрыта лаком');
+  putB(g,box(22,16,1.6,M(0x1d4f9a,{roughness:0.5})),25,62,PL+7.6,'модуль PCA9555 — расширитель выводов, не процессор: кнопка МАЛЫЙ, светодиод, сброс и «занят» экрана. Основная плата по нему видит, снят ли блок');
+  putB(g,box(11,10,1.6,M(0x1d4f9a,{roughness:0.5})),25,38,PL+7.6,'мини-модуль AMS1117-3.3: 3,3 В для экрана и PCA9555 из 5 В кабеля');
+  putB(g,box(6,1.8,6,M(0x2a2d33,{roughness:0.55})),49,b.H-2.9,PL+b.D/2,'кнопка 6 × 6 под мембраной МАЛЫЙ на верхнем торце');
+  reg(g,cpG,{s:12,e:[-0.05,0,0]});}
+// ---- основная плата: внутри каюты, на внутренней стороне стенки справа от входа, за большим блоком.
+// Лоток в мм: x 0…190 — к левому борту (−z), y 0…90 — вверх, Z 0…30 — в каюту (+x). Внутренняя облицовка стенки — до CAB_AFT + 0,028
+const MAINLAB='основная плата внутри каюты, за большим блоком (решение 27.11): пока это плата v6 180 × 78 мм — её переделают, экраны, кнопки, GPS, BNO085 и BH1750 с неё уходят во внешние блоки. На ней ESP32-S3, питание (LM2596 и др.), развязка кабеля мачты ADM2483, AS3935, BME280, карта micro-SD, INA226. Сюда приходят 12 В от щитка через резервный блок и кабель мачты — тяжёлых кабелей снаружи нет';
+const TRAY={x:CAB_AFT+0.028,y:0.755,z:0.455};
+{const g=new THREE.Group();g.position.set(TRAY.x,TRAY.y,TRAY.z);g.rotation.y=Math.PI/2;g.scale.setScalar(0.001);
+  const tm=M(0x3a4048,{roughness:0.6}),tl='печатный лоток основной платы ≈ 190 × 90 × 30 мм на внутренней стороне стенки рубки справа от входа';
+  putB(g,box(190,90,2,tm),95,45,1,tl);putB(g,box(190,2,30,tm),95,1,15,tl);putB(g,box(190,2,30,tm),95,89,15,tl);putB(g,box(2,90,30,tm),1,45,15,tl);putB(g,box(2,90,30,tm),189,45,15,tl);
+  const bd=PCBLIB.board3d('cockpit',{ppm:6,noStubs:true});
+  bd.traverse(o=>{let l=o.userData&&o.userData.label;if(!l)return;
+    if(/^(разъём JS |вилка с защёлкой: карта памяти|кнопка 12 × 12|толкатель кнопки|светодиод RGB|П1 —|пайка: (SW\d|LED|P1) )/.test(l)){o.visible=false;return;}
+    if(/^печатная плата блока в кокпите/.test(l))l=MAINLAB+(/обратная сторона/.test(l)?' — обратная сторона':'');
+    l=l.replace(/ — из хвоста SP13| из хвоста SP13/g,' — из кабеля резервного блока');
+    if(/(JB |JG |JE4 |JE7 |JL |экран|7,5″|подсветк|кнопк)/.test(l)&&l!==MAINLAB)l+=' — так на плате v6; в новой архитектуре это уходит во внешний блок, плату переделают';
+    o.userData.label=l;});
+  bd.position.set(5,6,8);g.add(bd);
+  // карточки датчиков на жгутах из портов основной платы — под лотком, место на модели — схема
+  putB(g,box(24,18,1.6,M(0x6a3fa0,{roughness:0.5})),30,-13,3,'AS3935 — датчик молний: гроза на 1–40 км и приближается ли она. На основной плате внутри каюты (спецификация 27.11), карточкой на жгуте, подальше от Wi-Fi ESP32-S3 и LM2596; место на модели — схема');
+  putB(g,box(15,12,1.6,M(0x5a2a86,{roughness:0.5})),68,-11,3,'BME280 — барометр на основной плате внутри каюты: давление в каюте равно наружному, падение больше 3,5 гПа за 3 часа предупреждает о шквале. Температура и влажность у него — воздуха в каюте. Место на модели — схема');
+  putB(g,box(22,17,1.6,M(0x1d4f9a,{roughness:0.5})),104,-12,3,'INA226 на основной плате — ток и напряжение (спецификация 27.11). Шунт и INA226 аккумулятора лодки — у щитка, INA226 резервного блока — в нём, как раньше. Место на модели — схема');
+  putB(g,box(15,15,2,M(0xb9bec4,{metalness:0.6,roughness:0.3})),140,-11,3,'гнездо карты micro-SD на основной плате: карта теперь внутри каюты, не в пазу снаружи');
+  const mb=reg(g,cpG,{s:9});mb.userData.label=MAINLAB;}
+// ---- кабели к блокам: по 10 жил 26AWG в экране, Ø ≈ 5 мм; сквозь стенку — отверстие Ø6 под плитой
+{const cm=M(0x2b2f35,{roughness:0.6}),A=CAB_AFT;
+  const hb=bpt(BLK.big,BLK.big.W/2,BLK.big.H/2+HOLE_DY,0),hs=bpt(BLK.small,BLK.small.W/2,BLK.small.H/2+HOLE_DY,0);
+  reg(lab(tube([V(A-0.002,hb.y,hb.z),V(A+0.03,hb.y,hb.z),V(A+0.07,hb.y+0.02,hb.z+0.012),V(A+0.088,hb.y+0.004,hb.z+0.035),V(A+0.072,0.85,0.40),V(A+0.045,0.835,0.41)],0.0025,cm),
+    'кабель большого блока, ≈ 0,3 м: 10 жил 26AWG в экране, Ø ≈ 5 мм — +5 В, земля, SCK, MOSI, CS, DC, SDA, SCL, GPS TX, GPS RX; все 10 контактов 2 × 5 заняты. От плиты салазок сквозь отверстие Ø6 в стенке прямо к основной плате, с запасом петлёй'),cpG,{s:11,w:true});
+  reg(lab(tube([V(A-0.002,hs.y,hs.z),V(A+0.035,hs.y,hs.z),V(A+0.05,0.93,hs.z+0.017),V(A+0.06,0.958,-0.34),V(A+0.06,0.962,-0.1),V(A+0.06,0.962,0.15),V(A+0.065,0.95,0.24),V(A+0.07,0.90,0.262),V(A+0.065,0.86,0.27),V(A+0.05,0.835,0.275)],0.0025,cm),
+    'кабель малого блока, ≈ 1,2 м: 8 жил из 10 (26AWG в экране, Ø ≈ 5 мм) — +5 В, земля, SCK, MOSI, CS, DC, SDA, SCL; 2 контакта свободны. Внутри каюты: сквозь стенку слева от входа, вверх и над входом под крышей рубки — к основной плате'),cpG,{s:12,w:true});
+  [-0.25,0,0.18].forEach(z=>{const k=box(0.012,0.008,0.014,M(0x9aa0a6,{roughness:0.6}));k.position.set(A+0.06,0.969,z);reg(lab(k,'клипса кабеля малого блока под крышей рубки, над входом'),cpG,{s:12,w:true});});}
+// точки для камеры
+const aBig=new THREE.Object3D(),aSmall=new THREE.Object3D(),aMid=new THREE.Object3D(),aMain=new THREE.Object3D();
+aBig.position.set(CAB_AFT-0.037,BLK.big.y0+0.093,BLK.big.z0+0.060);aSmall.position.set(CAB_AFT-0.029,BLK.small.y0+0.052,BLK.small.z0+0.049);
+aMid.position.set(CAB_AFT-0.03,0.86,(aBig.position.z+aSmall.position.z)/2);aMain.position.set(CAB_AFT+0.043,0.80,0.36);[aBig,aSmall,aMid,aMain].forEach(o=>cpG.add(o));
+// панель «Внешние блоки и основная плата»
+(function(){const b=document.getElementById('layBtns');if(!b)return;
+  const L=[['cockpit','Оба блока'],['bigblk','Большой блок'],['smallblk','Малый блок'],['mainboard','Основная плата']];
+  b.innerHTML=L.map(q=>'<button type="button" data-lay="'+q[0]+'" aria-pressed="false">'+q[1]+'</button>').join('');
+  b.addEventListener('click',e=>{const t=e.target.closest('[data-lay]');if(!t)return;b.querySelectorAll('[data-lay]').forEach(x=>x.setAttribute('aria-pressed',String(x===t)));go(t.dataset.lay);});})();
+
 const deckAnchor=new THREE.Object3D();deckAnchor.position.set(CAB_AFT+0.55,0.95,0);boat.add(deckAnchor);
 const entranceAnchor=new THREE.Object3D();entranceAnchor.position.set(CAB_AFT-0.03,CY+0.15,EO);boat.add(entranceAnchor);
 const VIEWS={
@@ -2007,7 +2073,10 @@ const VIEWS={
   deck:()=>{const c=worldOf(deckAnchor);return{t:c,p:c.clone().add(V(-2.4,0.75,1.15)),f:null};},
   entrance:()=>{const c=worldOf(entranceAnchor);return{t:c,p:c.clone().add(V(-1.0,0.40,1.05)),f:null};},
   aftwall:()=>{const c=worldOf(entranceAnchor);return{t:c.clone().add(V(0,0.06,0)),p:c.clone().add(V(-2.3,0.75,0.0)),f:null};},   // вид из кокпита прямо на вход — как фото 27.11
-  cockpit:()=>{const o=layG.children[0]||cpG,c=worldOf(o);return{t:c,p:c.clone().add(V(-0.62,0.10,0.18)),f:o};},
+  cockpit:()=>{const c=worldOf(aMid);return{t:c,p:c.clone().add(V(-1.5,0.32,0.12)),f:aMid};},   // оба внешних блока
+  bigblk:()=>{const c=worldOf(aBig);return{t:c,p:c.clone().add(V(-0.40,0.24,0.10)),f:aBig};},
+  smallblk:()=>{const c=worldOf(aSmall);return{t:c,p:c.clone().add(V(-0.34,0.20,-0.08)),f:aSmall};},
+  mainboard:()=>{const c=worldOf(aMain);return{t:c,p:c.clone().add(V(0.55,0.10,-0.12)),f:aMain};},   // изнутри каюты, режим «Внутри»
   cable:()=>({t:V(-0.1,1.0,0.25),p:V(-3.4,2.7,3.7),f:null}),
   inside:()=>({t:V(1.5,0.3,0.05),p:V(-1.3,2.6,1.7),f:null}),
   power:()=>{const c=worldOf(switchboardAnchor);return{t:c,p:c.clone().add(V(-0.42,0.16,-0.42)),f:switchboardAnchor};},
@@ -2015,8 +2084,8 @@ const VIEWS={
 };
 let tw=null,follow=null,lastF=V(0,0,0),curView='boat';
 const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
-function go(name){const inside=name==='inside'||name==='power'||name==='bus';setInside(inside);setBus(name==='bus');sprG.visible=name==='inside';const v=VIEWS[name]();curView=name;routeLine.material.depthTest=name!=='cable';routeLine.material.needsUpdate=true;follow=v.f;if(follow)lastF=worldOf(follow);
-  document.querySelectorAll('[data-view]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.view===name)));
+function go(name){const inside=name==='inside'||name==='power'||name==='bus'||name==='mainboard';setInside(inside);setBus(name==='bus');sprG.visible=name==='inside';const v=VIEWS[name]();curView=name;routeLine.material.depthTest=name!=='cable';routeLine.material.needsUpdate=true;follow=v.f;if(follow)lastF=worldOf(follow);
+  document.querySelectorAll('[data-view]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.view===name)));document.querySelectorAll('[data-lay]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.lay===name)));
   if(reduce){camera.position.copy(v.p);controls.target.copy(v.t);controls.update();tw=null;return;}
   tw={p0:camera.position.clone(),t0:controls.target.clone(),p1:v.p,t1:v.t,start:performance.now(),dur:1200};}
 document.querySelectorAll('[data-view]').forEach(b=>b.addEventListener('click',()=>go(b.dataset.view)));
@@ -2031,11 +2100,11 @@ const STEPS=[
  {n:5,v:'top',t:'AS5600 и крышка — направление ветра',x:'Плата 42 × 42 мм стоит под самой крышкой на 4 коротких стойках, повёрнута на 45°: углы проходят между бобышками. Винты М2,5 × 6 в термовставки. Магнит оси флюгера снаружи, над окном крышки, зазор ≈ 1,8 мм. Шаг 0,09°, без контакта. Крышка на 4 винтах М3, уплотнение — кольцо в канавке.',h:'DIR не должен висеть: проверить мультиметром ножку 8. Если датчик сбоит на 3,3 В — капля припоя между ножками 1 и 2, после этого 5 В не подавать. Под головки винтов крышки — герметик, внутрь пакетик силикагеля.'},
  {n:6,v:'top',t:'Флюгер и чашки',x:'Ступица-колокол накрывает башенку с подшипниками. Перо 60 × 175 мм из гофропластика 2 мм в печатном зажиме на карбоновом плече 280 мм, напротив — носик с дробью. Снизу три конические чашки Ø50 на радиусе 60 мм. Ступицы держатся на осях установочными винтами М3 в лыску.',h:'Подшипники керамические, без смазки. Вес оси идёт только на внутреннее кольцо: упор Ø4,4 на ступице и на стаканчике магнита. Флюгер уравновесить дробью при горизонтальной оси. Чашки взвесить и подобрать одинаковые.'},
  {n:7,v:'top',t:'Вынос и сварной кронштейн мачты',x:'Стандартная съёмная труба AISI 316L Ø25 × 1 входит на 80 мм в стандартную приёмную трубу AISI 316L Ø32 × 2. Между ними разрезная втулка POM-C, проточенная по фактическим диаметрам купленных труб. Приёмная труба приварена к площадке AISI 316L 150 × 60 × 3 мм, которая лежит на одной щеке и прижимает удочку шириной 30,75 мм.',h:'Два винта M5 на 35 и 70 мм от устья фиксируют вынос; распорные гильзы Ø8×1×25 не дают смять стенку, кабель проходит сбоку. Совпадение отверстий задаёт глубину 80 мм. Проход Ø10 сверлить только после примерки — за торцом удочки над свободной полостью мачты.'},
- {n:8,v:'deck',t:'Компактный плоский блок F1C в кокпите',x:'Один герметичный корпус сохраняет оба экрана на общей плоской лицевой панели 212 × 178 мм: экран 7,5″ стоит слева вертикально, экран 4,2″ — справа сверху, пять кнопок — под ним. Никаких наклонных экранов.',h:'Задняя часть корпуса клиновидная: примерно 35 мм слева и 50 мм справа. Зазор от модулей до внутренней стенки всего 0,9 мм, поэтому до печати корпуса нужна контрольная рамка с примеркой настоящих модулей.'},
- {n:9,v:'cockpit',t:'Питание',x:'От аккумулятора лодки 12 В через резервный блок, одним кабелем с хвостом SP13 сзади блока. На плате: защита SMBJ24A, ключ мягкого включения AO3401A, PPTC 1,1 А, LM2596 → 5,3 В, TPS63020 → 3,3 В для цифровой части и экранов, AP2112K → 3,3 В для датчиков, B0505S → изолированные 5 В на мачту. Если аккумулятор лодки сядет, прибор без перерыва переходит на элементы резервного блока, ≈ 23 часа.',h:'Включить и выключить — МЕНЮ, держать 3 секунды. Уходя с лодки, выключать: при выключенной массе прибор работает от резерва.'},
- {n:10,v:'cockpit',t:'Печатная плата блока',x:'Одна заводская плата 180 × 78 мм в нижней части корпуса F1C, в 9,2 мм за лицом. Вторым этажом в гнёздах — ESP32-S3, TPS63020, LM2596, ADM2483; на лицевой стороне — 5 кнопок, светодиод и гнездо BH1750. Мачта развязана: ADM2483 и B0505S, у мачты своя земля. Шлейф экрана 7,5″ — сквозь прорезь прямо в плату. Датчики — карточками в портах П1–П6. Таблица жгутов, дорожки и 3D-модель — на странице «Платы прибора М5».',h:'Включение и выключение — МЕНЮ, держать 3 секунды; прошивать по Wi-Fi или через USB модуля под задней крышкой. Оплётку кабеля мачты — на землю мачты GNDI (J2.3), не на минус прибора; на топе её не подключать.'},
- {n:11,v:'cockpit',t:'Компас и GPS на полках',x:'Корпус стоит на вертикальной стенке, а датчикам нужно лежать горизонтально: у верхней стенки F1C — две печатные полки. BNO085 даёт крен, дифферент и курс; лежит горизонтально, ось X — к носу, больше 100 мм от катушек LM2596 и TPS63020. GPS AN181 — антенной вверх, под верхней стенкой: спутники видны сквозь пластик.',h:'Компас калибровать уже на месте, в собранном блоке: два полных круга на ходу.'},
- {n:12,v:'cockpit',t:'Экраны, кнопки, светодиод',x:'Экран 7,5″ стоя слева — «Табло» и остальные виды; его шлейф проходит сквозь прорезь в плате. Экран 4,2″ справа сверху — старт и питание. Под ним кнопки — БОЛЬШОЙ, МАЛЫЙ, СТАРТ, ЛИНИЯ, МЕНЮ — «−» и «+» (масштаб карты) — 7 кнопок сеткой 3 × 3; мембраны из TPU заодно с лицом. Справа — светодиод: заход зелёный, отход красный мигает; рядом окно датчика света BH1750. Перед экранами — окно из поликарбоната 3 мм.',h:'Все виды экранов и тестовый стенд — на странице «Дисплей».'},
+ {n:8,v:'aftwall',t:'Плиты салазок и отверстия в стенке',x:'На кормовой стенке рубки — две плиты салазок толщиной 5 мм, на 4 мм меньше лица своего блока: справа от входа 112 × 178 мм, слева 90 × 96 мм. В центре плиты — площадки пружинных контактов 2 × 5 с шагом 2,54 и отверстие Ø6 под кабель. Плиты закрывают старые отверстия Ø20 у направляющих.',h:'Сквозь стенку идёт только кабель — без разъёма и гермоввода, на герметике. Конструкция защёлки салазок — в работе: на модели плита — схема.'},
+ {n:9,v:'mainboard',t:'Основная плата внутри каюты',x:'На внутренней стороне стенки справа от входа, за большим блоком, — печатный лоток ≈ 190 × 90 × 30 мм с основной платой. Пока это плата v6 180 × 78 мм; её переделают: экраны, кнопки, GPS, BNO085 и BH1750 с неё уходят во внешние блоки. На ней остаются ESP32-S3, питание, развязка кабеля мачты ADM2483, AS3935, BME280, карта micro-SD, INA226.',h:'12 В от щитка через резервный блок и кабель мачты приходят сюда, внутрь: тяжёлых кабелей снаружи нет. Разъёмы кабелей блоков обжимаются на плате после протяжки сквозь стенку.'},
+ {n:10,v:'mainboard',t:'Питание',x:'От аккумулятора лодки 12 В через резервный блок, одним кабелем к основной плате внутри каюты. На плате: защита SMBJ24A, ключ мягкого включения AO3401A, PPTC 1,1 А, LM2596 → 5,3 В, TPS63020 → 3,3 В, AP2112K → 3,3 В для датчиков, B0505S → изолированные 5 В на мачту. К блокам по кабелю идёт 5 В, а 3,3 В для экрана и PCA9555 делает AMS1117-3.3 в самом блоке. Если аккумулятор лодки сядет, прибор без перерыва переходит на элементы резервного блока, ≈ 23 часа.',h:'Основная плата видит, снят ли блок (его PCA9555 перестал отвечать по I²C), и снимает питание с площадок на стенке. Защита от статики на всех линиях к блокам — на основной плате. Включить и выключить — МЕНЮ на большом блоке, держать 3 секунды.'},
+ {n:11,v:'bigblk',t:'Большой блок — правый борт',x:'Лицо 120 × 186 мм, глубина 32 мм (с плитой — 37 мм от стенки). Экран 7,5″ стоя — «Табло» и остальные виды; над ним в узкой полосе — RGB-светодиод и окно датчика света. Шесть кнопок Ø11 — на верхнем торце, в ряд: БОЛЬШОЙ, «−», «+», СТАРТ, ЛИНИЯ, МЕНЮ. Внутри — расширитель выводов PCA9555 и AMS1117-3.3; кабель 10 жил ≈ 0,3 м к основной плате.',h:'Предложение, не утверждено: порядок кнопок, своя плата блока со схемой питания экрана 7,5″, GPS под верхней стенкой антенной вверх, компас BNO085 и датчик света BH1750 на плате блока. Компас калибровать на месте: два полных круга на ходу.'},
+ {n:12,v:'smallblk',t:'Малый блок — левый борт',x:'Лицо 98 × 104 мм, глубина 24 мм (с плитой — 29 мм). Экран 4,2″ лёжа — старт; кнопка МАЛЫЙ на верхнем торце листает виды только малого экрана; свой RGB-светодиод над экраном. Процессора и своей платы нет: модули WeAct 4,2″, PCA9555 и AMS1117-3.3 на макетной плате, провод МГТФ, плата под лаком. Кабель 8 жил ≈ 1,2 м идёт внутри каюты над входом, под крышей рубки.',h:'Предложение, не утверждено: оба светодиода показывают одно и то же — заход зелёный ровно, отход красный мигает, видно с обоих бортов. Все виды экранов и тестовый стенд — на странице «Дисплей».'},
  {n:13,v:'cable',t:'Кабель с топа до кокпита',x:'RVSP, 4 жилы, витая пара в экране, ≈ 15–20 м. С топа по штанге — внутрь мачты, вниз через пятку мачты прямо в каюту. Разъём M12 — под подволоком у мачты, дальше кабель идёт к резервному блоку у аккумулятора и входит в него разъёмом SP13 на 5 контактов; от резервного блока к прибору идёт один кабель. На палубу кабель не выходит.',h:'Так решено 05.11: кабель снаружи на палубе опасен — за него цепляются. M12 у мачты нужен, чтобы отстегнуть кабель, когда снимают мачту. Оба M12 — на 5 контактов, 5-й — экран (24.11). Покупать последним, когда будут известны высота мачты и трасса по подволоку.'}
 ];
 function showStep(){const s=STEPS[asm];$('asmN').textContent=(asm+1)+' / '+STEPS.length;$('asmT').textContent=s.t;$('asmText').textContent=s.x;$('asmHw').textContent=s.h||'';
@@ -2046,12 +2115,12 @@ $('asmNext').addEventListener('click',()=>{if(asm<STEPS.length-1){asm++;showStep
 $('asmExit').addEventListener('click',()=>{asm=-1;$('asmBox').hidden=true;$('asmStart').hidden=false;applyParts();});
 
 // ---------- найти деталь ----------
-const FIND=[['BNO085','компас BNO085','deck',[-0.10,0.12,0.42]],['GPS','GPS QUESCAN','deck',[-0.10,0.12,0.42]],['Плата блока','печатная плата блока','deck',[-0.10,0.12,0.42]],['Экран','блок F1C','deck'],['Питание','LM2596','deck',[-0.10,0.12,0.42]],['AS5600','AS5600','top'],['MT6701','MT6701','top'],['Гироскоп GY-50','гироскоп','top'],['Плата топа','печатная плата топа','top'],['AS3935 · молнии','AS3935 —','deck',[-0.10,0.12,0.42]],['BH1750 · свет','BH1750 —','deck',[-0.10,0.12,0.42]],['BME280 · давление','BME280 —','deck',[-0.10,0.12,0.42]],['BME280 · воздух на топе','BME280 на топе —','top'],['INA226 · ток','INA226 —','bus']];
+const FIND=[['BNO085','компас BNO085','cockpit',[-0.26,0.06,0.08]],['GPS','GPS QUESCAN','cockpit',[-0.26,0.10,0.08]],['Экран','большой блок','cockpit',[-0.42,0.06,0.08]],['Малый блок','малый блок','cockpit',[-0.36,0.06,-0.06]],['BH1750 · свет','BH1750 —','cockpit',[-0.22,0.06,0.04]],['Основная плата','основная плата внутри','mainboard'],['Питание','LM2596','mainboard'],['AS5600','AS5600','top'],['MT6701','MT6701','top'],['Гироскоп GY-50','гироскоп','top'],['Плата топа','печатная плата топа','top'],['AS3935 · молнии','AS3935 —','mainboard'],['BME280 · давление','BME280 —','mainboard'],['BME280 · воздух на топе','BME280 на топе —','top'],['INA226 · плата','INA226 на основной','mainboard'],['INA226 · аккумулятор','INA226 —','bus']];
 let flash=null,flashUntil=0;
 $('finds').innerHTML=FIND.map((f,i)=>'<button type="button" data-find="'+i+'">'+f[0]+'</button>').join('');
 document.querySelectorAll('[data-find]').forEach(b=>b.addEventListener('click',()=>findPart(+b.dataset.find)));
 function findPart(i){const f=FIND[i];let obj=PARTS.find(p=>p.userData.label&&p.userData.label.indexOf(f[1])===0);if(!obj)boat.traverse(o=>{if(!obj&&o.userData.label&&o.userData.label.indexOf(f[1])===0)obj=o;});if(!obj)return;
-  if(f[2]==='bus'){if(asm>=0)$('asmExit').click();if(flash){flash=null;applyParts();}go('bus');flash=obj;flashUntil=performance.now()+5000;$('findNote').textContent=obj.userData.label+'.';return;}   // деталь в ящике щитка: показать готовым видом «Шины»
+  if(f[2]==='bus'||f[2]==='mainboard'){if(asm>=0)$('asmExit').click();if(flash){flash=null;applyParts();}go(f[2]);flash=obj;flashUntil=performance.now()+5000;$('findNote').textContent=obj.userData.label+'.';return;}   // деталь в ящике щитка: показать готовым видом «Шины»
   if(asm>=0)$('asmExit').click();
   if(!seeThrough){seeThrough=true;$('clear').checked=true;setShells();}
   if(flash){flash=null;applyParts();}
@@ -2126,8 +2195,9 @@ function frame(now){
   sig=Math.abs(awaT)<100&&delta>2.5?1:Math.abs(awaT)<100&&delta<-2.5?-1:0;sigD=Math.abs(delta);
   ledH.color.set(sig<0?0x4be36b:0x1f5a2c);ledH.emissive.set(sig<0?0x22d14a:0x000000);
   ledL.color.set(sig>0?0xff5a4a:0x5c2420);ledL.emissive.set(sig>0?0xff3b2f:0x000000);
+  {const on=sig<0?0x3df06a:sig>0&&Math.floor(ts*2)%2===0?0xff4436:null;RGBL.forEach(m=>{m.color.set(on||0x1a2b36);m.emissive.set(on||0x000000);m.emissiveIntensity=on?1.2:1;});}   // RGB-светодиоды обоих блоков
   if(now-lastDraw>=1000){lastDraw=now;  // e-paper обновляется не чаще раза в секундуdrawDisplay({heel:h,pitch:p,awa:awaT,aws:S.aws,sig,d:sigD});
-    if(layTexCur){const yaw=S.demo?3*Math.sin(2*Math.PI*(ts-S.t0)/4.1):0,sg=5.4+(S.demo?0.25*Math.sin(2*Math.PI*(ts-S.t0)/5.3):0);layDraw(layTexCur.userData.c,layTexCur.userData.v,{awa:awaM,aws:awsM/0.5144,hdg:177+yaw,sog:sg,sig,t:ts,heel:h,pitch:p});layTexCur.needsUpdate=true;}}
+    if(LAYTEX.length){const yaw=S.demo?3*Math.sin(2*Math.PI*(ts-S.t0)/4.1):0,sg=5.4+(S.demo?0.25*Math.sin(2*Math.PI*(ts-S.t0)/5.3):0);LAYTEX.forEach(t=>{layDraw(t.userData.c,t.userData.v,{awa:awaM,aws:awsM/0.5144,hdg:177+yaw,sog:sg,sig,t:ts,heel:h,pitch:p});t.needsUpdate=true;});}}
   if(now-lastRead>200){lastRead=now;
     $('rRaw').textContent=Math.round(Math.abs(awaM))+'°'+side(awaM)+' · '+f1(awsM/0.5144)+' уз';
     $('rFix').textContent=Math.round(Math.abs(awaT))+'°'+side(awaT)+' · '+f1(S.aws)+' уз';
