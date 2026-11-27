@@ -100,6 +100,7 @@ code{font-family:var(--f-mono);font-size:12px}
       <button type="button" data-view="mount" aria-pressed="false">Кронштейн</button>
       <button type="button" data-view="deck" aria-pressed="false">Рубка</button>
       <button type="button" data-view="entrance" aria-pressed="false">Вход</button>
+      <button type="button" data-view="aftwall" aria-pressed="false">Стенка рубки</button>
       <button type="button" data-view="cockpit" aria-pressed="false">Кокпит</button>
       <button type="button" data-view="cable" aria-pressed="false">Кабель</button>
       <button type="button" data-view="inside" aria-pressed="false">Внутри</button>
@@ -1221,7 +1222,7 @@ function cabHalf(x){const xl=x-CAB0;return xl<0.63?1.0:Math.max(0.6,1.0-0.4*(xl-
 // Вход в каюту смещён к левому борту (владелец 16.11: справа и слева от входа места разное количество). По фото 16.11 погоны стоят симметрично
 // относительно лодки (≈ 0,48 м от оси), а от края проёма — справа ≈ 24 см, слева ≈ 16 см: значит, центр входа ≈ на 4 см левее оси. Справа от входа стенки 33,5 см (замер), слева ≈ 25,5 см (расчёт, не мерили).
 const EO=-0.04;
-const CAB_R=0.11,CAB_RW=0.43;
+const CAB_R=0.37,CAB_RW=0.355;   /*photo2711*/ // фото 27.11: углы кормовой стенки — пологая дуга R ≈ 0,37 м (было R 0,11 и скат)
 function roofHalf(x){return CAB_RW*cabHalf(x);}
 // окраска борта — картинкой на развёртке: левая половина холста — правый борт (нос справа), правая — левый борт (нос слева)
 const hullTexC=document.createElement('canvas');hullTexC.width=4096;hullTexC.height=512;const hullTex=new THREE.CanvasTexture(hullTexC);hullTex.anisotropy=8;
@@ -1267,21 +1268,23 @@ const cockMat=M(0xc9d0d5,{side:THREE.DoubleSide,roughness:0.95});
 function roofY(x){return CY+0.03+CABH-0.02*Math.max(0,Math.min(1,(x-CAB0)/1.6));}
 function cabinTop(x){const xl=x-CAB0;return xl<=1.6?roofY(x):CY+0.03+(CABH-0.02)*(1-Math.pow(Math.min(1,(xl-1.6)/0.88),2));}
 // сечение рубки на станции x: точки от левого края палубы через крышу к правому, [z, y]
-function cabSec(x,n){const yt=Math.max(CY+0.031,cabinTop(Math.min(x,CAB0+2.479))),yb=CY,h=yt-yb,R=Math.min(CAB_R,h*0.6),rw=roofHalf(x),bw=cabHalf(x),pts=[];
-  pts.push([-bw,yb]);for(let k=0;k<=n;k++){const a=Math.PI/2*k/n;pts.push([-(rw+R*Math.cos(a)),yt-R+R*Math.sin(a)]);}
-  for(let k=n;k>=0;k--){const a=Math.PI/2*k/n;pts.push([rw+R*Math.cos(a),yt-R+R*Math.sin(a)]);}pts.push([bw,yb]);return pts;}
-// рубка по фото 16.11: высота у кормы 0,33 м над палубой, плечи скруглены R ≈ 0,11 м; план по чертежу (2,05 → 1,2 м по низу)
+function cabSec(x,n){const yt=Math.max(CY+0.031,cabinTop(Math.min(x,CAB0+2.479))),yb=CY,h=yt-yb,rw=roofHalf(x),bw=cabHalf(x),R=Math.min(CAB_R,bw-rw-0.005),pts=[];
+  // дуга от крыши вниз до низа стенки: начинается там, где она пересекает низ (y = yb), если стенка ниже радиуса
+  const a0=Math.asin(Math.max(-1,Math.min(1,1-h/R))),A=k=>a0+(Math.PI/2-a0)*k/n;
+  pts.push([-bw,yb]);for(let k=0;k<=n;k++){const a=A(k);pts.push([-(rw+R*Math.cos(a)),Math.max(yb,yt-R+R*Math.sin(a))]);}
+  for(let k=n;k>=0;k--){const a=A(k);pts.push([rw+R*Math.cos(a),Math.max(yb,yt-R+R*Math.sin(a))]);}pts.push([bw,yb]);return pts;}
+// рубка: высота у кормы 0,33 м над порогом (фото 16.11); углы кормовой стенки — дуга R ≈ 0,37 м (фото и видео 27.11); план по чертежу (2,05 → 1,2 м по низу)
 (function(){
   const NS=40,NA=8,pos=[],idx=[],x0=CAB_AFT,x1=CAB0+2.48;let W=0;
   for(let i=0;i<=NS;i++){const x=x0+(x1-x0)*i/NS,sec=cabSec(x,NA);W=sec.length;sec.forEach(p=>pos.push(x,p[1],p[0]));}
   for(let i=0;i<NS;i++)for(let j=0;j<W-1;j++){const a=i*W+j,b=a+1,c=a+W,d=c+1;idx.push(a,b,c,b,d,c);}
   const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.Float32BufferAttribute(pos,3));g.setIndex(idx);g.computeVertexNormals();
   const cm=M(0xe8ecef,{roughness:0.5,side:THREE.DoubleSide});
-  const m=new THREE.Mesh(g,cm);boat.add(lab(m,'рубка по фото и шаблонам 20.11: у кормы 0,33 м над порогом входа; от правой направляющей до начала скругления около 19 см, плечо R ≈ 11 см. Шаблоны 229 × 188 и 188 × 229 не помещаются'));m.userData.shell=true;m.userData.op=0.4;SHELLS.push(m);
+  const m=new THREE.Mesh(g,cm);boat.add(lab(m,'рубка: у кормы 0,33 м над порогом входа (16.11). Углы кормовой стенки — пологая дуга R ≈ 37 см (фото и видео 27.11): крышка 212 × 178 ложится на правую стенку плоско, верх — в 2–3 см под краем крыши. Точность по фото ± 2 см'));m.userData.shell=true;m.userData.op=0.4;SHELLS.push(m);
   // кормовая стенка рубки с проёмом входа 56 см
   const sec=cabSec(x0,NA),sh0=new THREE.Shape();sec.forEach((p,i)=>i?sh0.lineTo(p[0],p[1]):sh0.moveTo(p[0],p[1]));
   const hole=new THREE.Path();hole.moveTo(EO-0.28,CY-0.001);hole.lineTo(EO+0.28,CY-0.001);hole.lineTo(EO+0.28,roofY(CAB0)+0.001);hole.lineTo(EO-0.28,roofY(CAB0)+0.001);sh0.holes.push(hole);
-  const af=new THREE.Mesh(new THREE.ShapeGeometry(sh0,6),cm);af.rotation.y=Math.PI/2;af.position.x=x0;boat.add(lab(af,'кормовая стенка рубки по реальному шаблону 20.11: плоская часть справа от входа около 19 см, дальше скругление R ≈ 11 см; фасад двух экранов остаётся плоским, подгоняется клиновидная спина корпуса'));
+  const af=new THREE.Mesh(new THREE.ShapeGeometry(sh0,6),cm);af.rotation.y=Math.PI/2;af.position.x=x0;boat.add(lab(af,'кормовая стенка рубки (фото и видео 27.11, масштаб — задняя крышка 212 × 178 и направляющая 342 мм): справа от входа до края ≈ 34 см на 9 см ниже верха (рулетка 16.11), слева ≈ 25–27 см (фото). Верхние углы — пологая дуга R ≈ 37 см. Точность ± 2 см'));
   // Детализированный вход по фото 15.11: два вставных щита, U-направляющие, порог, уплотнение и крепёж.
   const entry=new THREE.Group();boat.add(entry);const boardM=M(0x20272d,{roughness:.72}),edgeM=M(0x606a72,{metalness:.55,roughness:.34}),sealM=M(0x111417,{roughness:.9}),screwM=M(0xb8bec4,{metalness:.8,roughness:.22});
   const put=(o,l)=>{entry.add(lab(o,l));return o;},Xf=CAB_AFT-0.018,BW=.548,BH=.153,gap=.006;
@@ -1298,6 +1301,11 @@ function cabSec(x,n){const yt=Math.max(CY+0.031,cabinTop(Math.min(x,CAB0+2.479))
   [-1,1].forEach(sd=>{const p=new THREE.Group();p.position.set(CAB_AFT-.034,CY-.165,EO+sd*.47);p.rotation.x=sd*rad(7);const alu=M(0xb9c0c5,{metalness:.55,roughness:.38});
     const back=box(.004,.245,.086,alu);back.position.set(0,0,0);p.add(back);const frontP=box(.004,.195,.078,alu);frontP.position.set(-.055,-.022,0);p.add(frontP);[-1,1].forEach(q=>{const side=box(.055,.215,.004,alu);side.position.set(-.0275,-.012,q*.041);p.add(side);});const bottom=box(.055,.004,.086,alu);bottom.position.set(-.0275,-.122,0);p.add(bottom);
     [-1,1].forEach(q=>{const s=new THREE.Mesh(new THREE.CylinderGeometry(.005,.005,.008,16),screwM);s.rotation.z=Math.PI/2;s.position.set(-.008,.096,q*.028);p.add(s);});boat.add(lab(p,'открытый алюминиевый карман для лебёдочной ручки: два винта сверху, наклон по стенке, размеры ≈ 245 × 86 × 55 мм по масштабу фото'));});
+  // Отверстия Ø ≈ 20 мм у направляющих (фото и видео 27.11): слева — 44 мм от направляющей и 72 мм ниже края крыши (по фото с масштабом направляющей 342 мм),
+  // справа — ≈ 3 см от направляющей и ≈ 8 см ниже края (по видео, ± 2 см). Назначение не известно — проверить, можно ли провести через них кабель внешнего блока.
+  [[-1,0.044,0.072,'слева от входа: 44 мм от направляющей, 72 мм ниже края крыши, Ø ≈ 21 мм (фото 27.11)'],[1,0.03,0.08,'справа от входа: ≈ 3 см от направляющей, ≈ 8 см ниже края крыши, Ø ≈ 20 мм (видео 27.11, ± 2 см)']].forEach(([sd,dz,dy,t])=>{
+    const ho=new THREE.Mesh(new THREE.CircleGeometry(0.0105,24),M(0x15181b,{roughness:1,side:THREE.DoubleSide}));ho.rotation.y=-Math.PI/2;ho.position.set(CAB_AFT-0.0015,roofY(CAB0)-dy,EO+sd*(0.295+0.013+dz));
+    boat.add(lab(ho,'отверстие в кормовой стенке рубки '+t+'. Назначение неизвестно — возможно, пригодится под кабель блока'));});
   // Наклейка клуба с QR-кодом. Размер пересчитан по картону 229 × 188 мм в том же кадре: ≈ 140 × 170 мм, вертикально.
   {const c=document.createElement('canvas');c.width=280;c.height=340;const q=c.getContext('2d');q.fillStyle='#f3f4ef';q.fillRect(0,0,280,340);q.fillStyle='#243445';q.font='700 28px Arial';q.fillText('МИСТРАЛЬ',76,38);q.font='700 15px Arial';q.fillText('яхт-клуб',96,62);q.font='700 18px Arial';q.fillText('МЫ РАДЫ',92,105);q.fillText('ВАШЕМУ ОТЗЫВУ',52,130);for(let y=0;y<11;y++)for(let x=0;x<11;x++)if((x*y+x+y)%3!==1)q.fillRect(17+x*9,170+y*9,7,7);const d=new THREE.Mesh(new THREE.PlaneGeometry(.14,.17),new THREE.MeshBasicMaterial({map:new THREE.CanvasTexture(c)}));d.rotation.y=-Math.PI/2;d.position.set(CAB_AFT-.058,CY-.115,EO+.13);boat.add(lab(d,'вертикальная наклейка яхт-клуба «Мистраль» с QR-кодом: ≈ 140 × 170 мм по масштабу картона; на нижней переборке под проёмом входа, верхний край ≈ 30 мм ниже порога'));}
 
@@ -1477,10 +1485,17 @@ boat.add(lab(rod(V(-2.30,0.88,0),V(-1.85,1.02,0.32),0.012,M(0x17191c)),'удли
     boat.add(lab(rod(V(bx,by,sd*bzz),V(bx,by+0.6,sd*bzz),0.012,steel,10),'носовой релинг'));
     boat.add(lab(rod(V(3.68,sh(tt(3.68)),sd*0.26),V(3.68,by+0.6,sd*0.28),0.012,steel,10),'носовой релинг'));
     [[tops,0.6],[mids,0.32]].forEach(a=>{const pts=[V(-3.95,py+a[1],pz)].concat(a[0]);pts.push(V(bx,by+a[1],sd*bzz));boat.add(lab(tube(pts,0.003,wire),'леер'));});
-    const nl=new THREE.Mesh(new THREE.SphereGeometry(0.025,12,8),M(sd>0?0x2fa84f:0xd62828,{emissive:sd>0?0x0b3a1a:0x3a0b0b}));nl.position.set(3.62,by+0.64,sd*0.3);
-    boat.add(lab(nl,sd>0?'ходовой огонь правого борта, зелёный':'ходовой огонь левого борта, красный'));
+    const nl=new THREE.Mesh(new THREE.SphereGeometry(0.012,12,8),M(sd>0?0x2fa84f:0xd62828,{emissive:sd>0?0x0b3a1a:0x3a0b0b}));nl.position.set(3.855,by+0.625,sd*0.022);   // двухцветный огонь на носовом релинге (фото 27.11): линзы по бокам чёрного корпуса
+    boat.add(lab(nl,sd>0?'двухцветный ходовой огонь на носовом релинге: зелёная линза — правый борт (фото 27.11)':'двухцветный ходовой огонь на носовом релинге: красная линза — левый борт (фото 27.11)'));
+    // шнуровка между верхним леером и палубой на баке (фото 27.11, длина примерная): зигзаг от носового релинга до третьей стойки
+    {const zz=[];for(let x=bx,k=0;x>=1.25-1e-6;x-=0.2,k++){const t=tt(x),zb=sd*(hb(t)-0.05);zz.push(V(x,k%2?sh(t)+0.03:sh(t)+0.59,zb));}
+     {const lm=M(0xe7e9ea,{roughness:0.8}),lg=new THREE.Group();for(let i=1;i<zz.length;i++)lg.add(rod(zz[i-1],zz[i],0.0022,lm,6));boat.add(lab(lg,'шнуровка лееров на баке: не даёт стакселю уйти за борт (фото 27.11, длина примерная)'));}}
+    // чехлы верхних лееров у кокпита (фото 27.11, левый борт; правый — по симметрии, не проверял)
+    {const cv=[];[-0.35,-1.15,-1.95,-2.75,-3.55].forEach(x=>{const t=tt(x);cv.push(V(x,sh(t)+0.6,sd*(hb(t)-0.05)));});
+     boat.add(lab(tube(cv,0.011,M(0x5b6167,{roughness:0.9})),'серый мягкий чехол на верхнем леере у кокпита (фото 27.11)'));}
   });
   boat.add(lab(tube([V(bx,by+0.6,-bzz),V(3.68,by+0.6,-0.28),V(3.86,by+0.56,0),V(3.68,by+0.6,0.28),V(bx,by+0.6,bzz)],0.012,steel),'носовой релинг'));
+  {const hs=box(0.035,0.045,0.04,M(0x16181b,{roughness:0.5}));hs.position.set(3.855,by+0.6,0);boat.add(lab(hs,'двухцветный ходовой огонь: чёрный корпус на носовом релинге (фото 27.11)'));}
 })();
 // планширь по борту
 [-1,1].forEach(sd=>{const pts=[];for(let x=-3.98;x<3.9;x+=0.25){const t=tt(x);pts.push(V(x,sh(t)+0.012,sd*(hb(t)-0.01)));}pts.push(V(3.95,sh(1)+0.012,0));
@@ -1991,6 +2006,7 @@ const VIEWS={
   mount:()=>{const c=worldOf(mountAnchor);return{t:c.clone().add(V(-0.01,0.00,-0.02)),p:c.clone().add(V(-0.24,0.20,-0.45)),f:mountAnchor};},
   deck:()=>{const c=worldOf(deckAnchor);return{t:c,p:c.clone().add(V(-2.4,0.75,1.15)),f:null};},
   entrance:()=>{const c=worldOf(entranceAnchor);return{t:c,p:c.clone().add(V(-1.0,0.40,1.05)),f:null};},
+  aftwall:()=>{const c=worldOf(entranceAnchor);return{t:c.clone().add(V(0,0.06,0)),p:c.clone().add(V(-2.3,0.75,0.0)),f:null};},   // вид из кокпита прямо на вход — как фото 27.11
   cockpit:()=>{const o=layG.children[0]||cpG,c=worldOf(o);return{t:c,p:c.clone().add(V(-0.62,0.10,0.18)),f:o};},
   cable:()=>({t:V(-0.1,1.0,0.25),p:V(-3.4,2.7,3.7),f:null}),
   inside:()=>({t:V(1.5,0.3,0.05),p:V(-1.3,2.6,1.7),f:null}),
