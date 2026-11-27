@@ -76,15 +76,15 @@ ul.notes{margin:0;padding-left:18px;display:grid;gap:8px;max-width:80ch}
     <a class="home" href="../">← Главное меню</a>
   <header style="display:grid;gap:12px">
     <h1>Два блока на стенках рубки у входа</h1>
-    <p class="lede">Решение владельца 26–27.11: вместо одного корпуса — два тонких внешних блока на кормовой стенке рубки. Справа от входа — большой блок с экраном 7,5″ (лицо 120 × 186 мм, глубина 32 мм), слева — малый блок с экраном 4,2″ (лицо 98 × 104 мм, глубина 24 мм). Снаружи только экраны, кнопки, светодиоды и салазки; основная плата — внутри каюты, за большим блоком. Кнопки — на нижнем торце блока, не на лице. Блоки снимаются каждый раз, уходя с лодки.</p>
+    <p class="lede">Решение владельца 26–27.11: вместо одного корпуса — два тонких внешних блока на кормовой стенке рубки. Справа от входа — большой блок с экраном 7,5″ (лицо 120 × 186 мм, глубина 32 мм), слева — малый блок с экраном 4,2″ (лицо 98 × 104 мм, глубина 24 мм). Снаружи только экраны, кнопки, светодиоды и салазки; основная плата — внутри каюты, за большим блоком. Кнопки — на верхнем торце блока, не на лице. Блоки снимаются каждый раз, уходя с лодки.</p>
     <div class="facts">
       <span class="fact ok"><b>Решено 26–27.11</b> два блока: 7,5″ справа от входа, 4,2″ слева</span>
-      <span class="fact ok"><b>Решено 27.11</b> кнопки на нижнем торце блока</span>
+      <span class="fact ok"><b>Решено 27.11</b> кнопки на верхнем торце блока</span>
       <span class="fact ok"><b>Решено 27.11</b> соединение — пружинные контакты 2 × 5</span>
       <span class="fact ok"><b>Решено 27.11</b> сквозь стенку — только кабель через Ø 6, без разъёма и гермоввода</span>
       <span class="fact ok"><b>Решено</b> корпуса печатаем из ASA, ниже 0 °C работать не нужно</span>
       <span class="fact ok"><b>Решено</b> GPS, компас и датчик света — в большом блоке; у него своя плата; оба светодиода показывают одно и то же</span>
-      <span class="fact q"><b>В работе</b> салазки — новая конструкция, защёлка не выбрана; она должна держать блок от подъёма — кнопки жмут снизу</span>
+      <span class="fact q"><b>В работе</b> салазки — новая конструкция, защёлка не выбрана</span>
     </div>
     <p class="small">До 26.11 был один корпус F1C 212 × 178 мм с клиновидной спиной 35 → 50 мм справа от входа; его заменили два блока.</p>
   </header>
@@ -105,7 +105,8 @@ ul.notes{margin:0;padding-left:18px;display:grid;gap:8px;max-width:80ch}
     <div class="sheet">
       <h3>Два блока — размеры</h3>
       <dl class="nums" id="vNums"></dl>
-      <p class="small">Кнопки — на нижнем торце (решение владельца 27.11). Нажатие снизу толкает блок вверх, поэтому защёлка салазок должна держать блок от подъёма — это требование к новым салазкам. Подписи — гравировкой на нижнем торце; плата кнопок — под нижней стенкой. Назначение кнопок задаётся прошивкой — порядок не важен.</p>
+      <p class="small">Кнопки — на верхнем торце (решение владельца 27.11, окончательно: после пробы «снизу» вернул наверх). Нажатие сверху прижимает блок к салазкам. Подписи — гравировкой на верхнем торце; плата кнопок — под верхней стенкой. Назначение кнопок задаётся прошивкой — порядок не важен.</p>
+      <p class="small"><b>Блокировка кнопок</b> (решение 27.11): 10 с без нажатий — кнопки блокируются (замок в строке состояния обоих экранов); разблокировать — удержать любую кнопку 3 с.</p>
     </div>
   </section>
 
@@ -135,7 +136,7 @@ ul.notes{margin:0;padding-left:18px;display:grid;gap:8px;max-width:80ch}
       <ul class="notes">
         <li><b>Старые отверстия Ø 20</b> (красный пунктир) — оба под блоками, но с малым запасом: левое кончается в 2 мм под верхним краем малого блока, правое — у самого левого края большого блока (если 3 см мерили до центра отверстия). Плита салазок на 4 мм меньше лица и их целиком не закрывает: отверстия придётся заделать, а кабель пустить через новые Ø 6.</li>
         <li><b>Новые отверстия Ø 6</b> — в центре каждой плиты салазок, под площадками контактов, на герметике. Кабель идёт сквозь стенку без разъёма.</li>
-        <li><b>Место для пальца под нижним торцом</b> (кнопки снизу, решено 27.11): у большого блока под всеми шестью кнопками до уровня порога 104 мм; у малого под кнопкой 166 мм, а наименьшее под блоком — 149 мм у внешнего угла, где поднимается борт кокпита. Ниже порога по модели стенка продолжается плоско до пола кокпита — палец заходит снизу свободно. Ось кнопки — в 21 мм от стенки у большого блока и в 17 мм у малого: палец толщиной 16–20 мм проходит между стенкой и кнопкой. Проверить на месте: нет ли у входа ступеньки или накладки на уровне порога (замер 16.11: низ направляющей ≈ 4 см над полом).</li>
+        <li><b>Место для пальца над верхним торцом</b> (кнопки сверху, решено 27.11): у большого блока до края крыши 40 мм, над крайней правой кнопкой до дуги угла ≈ 38 мм; у малого над кнопкой ≈ 55 мм. Рубка над кокпитом не нависает — выше края крыши свободно, палец заходит сверху. Ось кнопки — в 21 мм от стенки у большого блока и в 17 мм у малого: палец толщиной 16–20 мм проходит между стенкой и кнопкой. Проверить на месте: не мешают ли руке ручка лебёдки и поручень на крыше.</li>
         <li><b>Основная плата</b> (серый пунктир у правого блока) — с другой стороны стенки, в каюте: лоток ≈ 190 × 90 × 30 мм за большим блоком. Положение — примерное.</li>
       </ul>
     </div>
@@ -145,14 +146,13 @@ ul.notes{margin:0;padding-left:18px;display:grid;gap:8px;max-width:80ch}
   <section class="sheet" aria-labelledby="ht">
     <h2 id="ht">Глубина блоков: 32 и 24 мм</h2>
     <div class="two">
-      <div class="draw"><svg id="side" role="img" aria-label="Разрез обоих блоков сбоку: стенка рубки, плита салазок, слои блока, кнопка на нижнем торце и место для пальца"></svg></div>
+      <div class="draw"><svg id="side" role="img" aria-label="Разрез обоих блоков сбоку: стенка рубки, плита салазок, слои блока, кнопка на верхнем торце и место для пальца"></svg></div>
       <div style="display:grid;gap:10px;min-width:0">
         <div class="tbl"><table id="layers"></table></div>
         <ul class="notes">
           <li><b>Большой блок — 32 мм, с плитой 37 мм от стенки.</b> Глубину задаёт антенна GPS 25 × 25, лёжа под верхней стенкой антенной вверх: внутри 26 мм. GPS, компас BNO085 и датчик света BH1750 — в этом блоке, на его своей плате (решение 27.11).</li>
           <li><b>Малый блок — 24 мм, с плитой 29 мм.</b> Своей платы нет: модули на макетной плате, провод МГТФ, лак. Толщины модуля экрана и модулей на макетке — оценка, сверить по деталям.</li>
-          <li><b>Полоса над экраном 7,5″:</b> от верха модуля до верха лица 11,8 мм, без стенки 8,8 мм. Кнопки ушли вниз — наверху остаются светодиод, окно датчика света и антенна GPS 25 × 25 лёжа. Стало свободнее, но высоту модуля GPS с платой сверить с этими 8,8 мм.</li>
-          <li><b>Кнопки внизу:</b> под экраном лица всего 4 мм (из них 3 — нижняя стенка), поэтому плата кнопок стоит не под экраном, а за ним — в зоне деталей у нижней стенки, там ≈ 18 мм по глубине. У малого блока кнопка МАЛЫЙ приходится на зону модулей на макетке — учесть при раскладке.</li>
+          <li><b>Тесно над экраном 7,5″:</b> от верха модуля до верха лица 11,8 мм, без верхней стенки ≈ 9 мм. Туда же приходятся кнопки торца с их платой, антенна GPS, светодиод и окно датчика света. Оценка по высоте: стенка 3 + кнопка с толкателем ≈ 4,5 + плата кнопок 1,6 + модуль GPS ≈ 8 + зазор 1 ≈ 18 мм — не хватает ≈ 6 мм. Светодиод и окно датчика стоят по бокам от GPS (x 20 и 100, GPS — x 47…73) и высоты не добавляют. С запасом на уплотнение и крепёж — блок выше на 10–15 мм, например <b>120 × 200</b> (+14). Его место на стенке — в таблице выше: верх оставляем в 40 мм под краем крыши, блок растёт вниз.</li>
         </ul>
       </div>
     </div>
@@ -167,7 +167,7 @@ ul.notes{margin:0;padding-left:18px;display:grid;gap:8px;max-width:80ch}
     </div>
     <div id="c3d" class="draw" style="padding:0;overflow:hidden;border-radius:6px"></div>
     <p class="read" id="c3txt"></p>
-    <p class="small">Вращать — мышью или пальцем, колесо — ближе. Стенка показана полупрозрачной, чтобы был виден кабель в каюте. Плита салазок — пока схема: пластина 5 мм с площадками, защёлка в работе. Требование к ней: держать блок от подъёма — кнопки на нижнем торце жмут снизу вверх.</p>
+    <p class="small">Вращать — мышью или пальцем, колесо — ближе. Стенка показана полупрозрачной, чтобы был виден кабель в каюте. Плита салазок — пока схема: пластина 5 мм с площадками, защёлка в работе.</p>
     <div class="tbl"><table id="wires"></table></div>
     <ul class="notes">
       <li><b>Контакты — пружинные штыри (pogo pin) 2 × 5, шаг 2,54:</b> штыри — в спинке блока, площадки — в плите салазок на стенке. Надел блок — контакт есть.</li>
@@ -191,12 +191,12 @@ ul.notes{margin:0;padding-left:18px;display:grid;gap:8px;max-width:80ch}
   <section class="sheet" aria-labelledby="hq">
     <h2 id="hq">Что осталось сделать</h2>
     <ul class="notes">
-      <li><b>Салазки — новая конструкция</b> под два блока: плита 5 мм с площадками 2 × 5 и защёлка. Защёлка должна держать блок от подъёма: кнопки на нижнем торце жмут снизу вверх. Варианты А (ползун) и Б (вертушок) были под F1C и больше не годятся.</li>
-      <li><b>Плата большого блока</b> (решено 27.11): гнездо FPC 24 и повышающая схема экрана 7,5″ переезжают с платы v6, на ней же PCA9555D, AMS1117-3.3, кнопки, светодиод, BH1750, BNO085, GPS. Плата кнопок — под нижней стенкой, GPS — под верхней; сверить высоту модуля GPS с полосой над экраном.</li>
+      <li><b>Салазки — новая конструкция</b> под два блока: плита 5 мм с площадками 2 × 5 и защёлка. Варианты А (ползун) и Б (вертушок) были под F1C и больше не годятся.</li>
+      <li><b>Плата большого блока</b> (решено 27.11): гнездо FPC 24 и повышающая схема экрана 7,5″ переезжают с платы v6, на ней же PCA9555D, AMS1117-3.3, кнопки, светодиод, BH1750, BNO085, GPS. Плата кнопок и GPS — под верхней стенкой: сначала решить, на сколько поднять блок (оценка +10–15 мм, см. «Глубина блоков»).</li>
       <li><b>Малый блок на макетке:</b> WeAct 4,2″, модуль PCA9555, мини-модуль AMS1117-3.3, кнопка, RGB-светодиод с тремя резисторами, контакты 2 × 5; провод МГТФ, лак.</li>
       <li><b>Переделка основной платы</b> (бывшая плата v6, теперь внутри каюты): экраны, кнопки, GPS, компас и датчик света с неё уходят; приходят два кабеля к блокам и отключение питания площадок.</li>
       <li><b>Модели двух корпусов для печати</b> и пробная рамка под каждый модуль экрана.</li>
-      <li><b>На лодке:</b> приложить картонные макеты 120 × 186 и 98 × 104 к своим стенкам, проверить место для пальца под нижним торцом; заделать старые отверстия Ø 20, просверлить Ø 6 под плитами.</li>
+      <li><b>На лодке:</b> приложить картонные макеты 120 × 186 и 98 × 104 к своим стенкам, проверить место для пальца над верхним торцом; заделать старые отверстия Ø 20, просверлить Ø 6 под плитами.</li>
       <li><b>Купить экран 7,5″</b> — модуль GDEM075T42 (800 × 480), если ещё не куплен.</li>
     </ul>
   </section>
@@ -225,7 +225,7 @@ let TCAP=0.716,TW={};
 function measure(){MC.font='700 100px Inter, Arial, sans-serif';const m=MC.measureText('8');TCAP=(m.actualBoundingBoxAscent||71.6)/100;['5,4','177°','56°','+6°','12,0','34°','8,1','233°','12°','1,5°'].forEach(t=>{TW[t]=MC.measureText(t).width/100;});}
 function tabloGeo(a){const narrow=a[0]<a[1],hh=a[1]*(narrow?0.05:0.06),rh=(a[1]-hh)/5,cw=a[0]/2,lab=Math.min(rh*0.14,cw*0.068),wmax=Math.max(...Object.values(TW));
   const fs=Math.min((rh-lab*1.45)*0.92/TCAP,(cw*0.94)/wmax);return {hh,rh,cw,lab,fs};}
-const st={top:false,dim:true,mod:false,real:false};   // top:false — кнопки на нижнем торце (решение 27.11)
+const st={top:true,dim:true,mod:false,real:false};   // top:true — кнопки на верхнем торце (решение 27.11, окончательно)
 
 // ---- содержимое экранов: большой — «Табло», малый — старт
 function mainContent(x,y,s){const a=s.act,ax=x+(s.mod[0]-a[0])/2+s.actOff[0],ay=y+(s.mod[1]-a[1])/2+s.actOff[1],T=tabloGeo(a);let t='';const ln=(x1,y1,x2,y2,w)=>'<line x1="'+x1+'" y1="'+y1+'" x2="'+x2+'" y2="'+y2+'" stroke="#141414" stroke-width="'+(w||0.5)+'"/>';
@@ -280,10 +280,10 @@ function drawFront(){const G=6,T=st.top,pad=14;let s='';const xs=[22,22+B.small.
   svg.classList.toggle('real',st.real);if(st.real){svg.style.width=vbW+'mm';svg.style.height=vbH+'mm';}else{svg.style.width='';svg.style.height='';}
   [['tDim',st.dim],['tMod',st.mod],['tReal',st.real]].forEach(([id,v])=>$(id).setAttribute('aria-pressed',String(v)));
   $('readF').textContent=st.real?'Натуральная величина зависит от экрана: браузер считает 1 мм как 3,78 пикселя. Приложите линейку к размеру лица и проверьте.':
-    'Лица обоих блоков в одном масштабе, как их видит рулевой: слева малый, справа большой (на самом деле между ними проём входа, ≈ 70 см). Под каждым лицом — его нижний торец, вид снизу: кнопки Ø 11 в ряд (решение 27.11), подписи — гравировкой за кнопками, ближе к стенке. Трёхцветный круг — светодиод, голубой — окно датчика света.';}
+    'Лица обоих блоков в одном масштабе, как их видит рулевой: слева малый, справа большой (на самом деле между ними проём входа, ≈ 70 см). Над каждым лицом — его верхний торец, вид сверху: кнопки Ø 11 в ряд (решение 27.11), подписи — гравировкой за кнопками, ближе к стенке. Трёхцветный круг — светодиод, голубой — окно датчика света.';}
 function nums(){const rows=[];
   BL.slice().reverse().forEach(b=>{rows.push(['hd',b.key+' — '+b.side]);rows.push(['Лицо × глубина',f(b.W)+' × '+f(b.H)+' × '+f(b.D)+' мм']);rows.push(['От стенки с плитой',f(b.D+5)+' мм']);
-    rows.push(['Экран',b.scr.name+' · '+b.scr.res]);rows.push(['Кнопки на нижнем торце',b.btn.length===1?'1 — МАЛЫЙ':'6 — '+b.bl.join(', ')]);rows.push(['Светодиод',b.bh?'1 RGB + окно датчика света':'1 RGB']);});
+    rows.push(['Экран',b.scr.name+' · '+b.scr.res]);rows.push(['Кнопки на верхнем торце',b.btn.length===1?'1 — МАЛЫЙ':'6 — '+b.bl.join(', ')]);rows.push(['Светодиод',b.bh?'1 RGB + окно датчика света':'1 RGB']);});
   $('vNums').innerHTML=rows.map(r=>r[0]==='hd'?'<dt class="hd">'+r[1]+'</dt>':'<dt>'+r[0]+'</dt><dd>'+r[1]+'</dd>').join('');}
 // ---- что видно рулевому
 function cmp(){const T=tabloGeo(SCR.s75v.act),dBig=T.fs*TCAP,H=SCR.s42.act[1],dT=H*0.42*TCAP,dS=H*0.2*TCAP,R=d=>f(d*140/1000,1)+' м';
@@ -307,11 +307,13 @@ function fit(b){const s=b.z0>0?1:-1,C=contour(s),O=rrect(b.z0,b.y0,b.W,b.H,6);le
   O.forEach(p=>{for(let i=1;i<C.length-1;i++){const r=segD(p,C[i],C[i+1]);if(r[0]<best[0])best=[r[0],p,r[1]];}});   // отрезок 0→1 — направляющая, его не считаем
   const zs=[];for(let i=0;i<=40;i++)zs.push(b.z0+b.W*i/40);
   const up=Math.min(...zs.map(z=>arcY(Math.abs(z))-(b.y0+b.H))),dn=Math.min(...zs.map(z=>b.y0-coamY(Math.abs(z))));
-  const fing=b.btn.map(x=>b.y0-coamY(Math.abs(b.z0+x)));   // место для пальца под кнопками нижнего торца — до порога или борта кокпита
+  const fing=b.btn.map(x=>arcY(Math.abs(b.z0+x))-(b.y0+b.H));   // место для пальца над кнопками верхнего торца — до края крыши или дуги угла
   const guide=s>0?b.z0-GE[0]:-GE[1]-(b.z0+b.W);
   return {m:best[0],p:best[1],q:best[2],up,dn,guide,fing:Math.min(...fing),fingMax:Math.max(...fing)};}
 function verdict(m){return m>=15?'<span class="yes">помещается</span>':m>=3?'<span class="mid">впритык — нужен замер</span>':'<span class="no">не помещается</span>';}
 const HOLES=[{z:GE[0]+30,y:YT-80},{z:-GE[1]-44,y:YT-72}];
+// если полоса над экраном не вместит кнопки и GPS: большой блок 120 × 200, верх на прежнем месте — растёт вниз на 14 мм
+const B2=Object.assign({},B.big,{key:'Большой, если 120 × 200',side:'оценка: +14 мм под кнопки и GPS, верх на месте',H:200,y0:B.big.y0+B.big.H-200});
 let wv=innerWidth<600?'right':'both';   // на телефоне обе стенки слишком мелко — начинаем с правой
 function drawWall(){const k=wv==='both'?3.4:1.35,Y=y=>1000-y,sw=w=>(w*k).toFixed(2);let s='';const sv=$('wall');
   const VB={both:[-760,-40,1520,420],right:[200,-30,560,400],left:[-760,-30,560,400]}[wv];sv.setAttribute('viewBox',VB.join(' '));
@@ -347,6 +349,9 @@ function drawWall(){const k=wv==='both'?3.4:1.35,Y=y=>1000-y,sw=w=>(w*k).toFixed
     const tz=R?b.z0+14:b.z0+b.W-14;s+='<path d="M'+tz+' '+Y(YT)+' V'+Y(b.y0+b.H)+'" stroke="var(--dim)" stroke-width="'+sw(0.5)+'"/>';
     if(wv!=='both')s+=T(tz+(R?3:-3),Y(YT-(YT-b.y0-b.H)/2)+4,f(YT-b.y0-b.H),'var(--dim)',R?'':'text-anchor="end"');
     s+=T(cz,Y(b.y0)+6*k,b.key+' '+f(b.W)+' × '+f(b.H),'var(--ink)','text-anchor="middle"');});
+  // контур большого блока 120 × 200 — пунктиром: верх тот же, низ на 14 мм ниже
+  s+='<rect x="'+B2.z0+'" y="'+Y(B2.y0+B2.H)+'" width="'+B2.W+'" height="'+B2.H+'" rx="6" fill="none" stroke="var(--dim)" stroke-width="'+sw(0.4)+'" stroke-dasharray="'+sw(3)+' '+sw(2)+'"/>';
+  if(wv==='right')s+=T(B2.z0+B2.W+4,Y(B2.y0)+2,'если 120 × 200','var(--dim)');
   HOLES.forEach(h=>{s+='<circle cx="'+h.z+'" cy="'+Y(h.y)+'" r="10" fill="none" stroke="var(--hole)" stroke-width="'+sw(0.6)+'" stroke-dasharray="'+sw(1.6)+' '+sw(1)+'"/>';if(wv!=='both')s+=h.z>0?T(h.z+14,Y(h.y)-10,'старое Ø 20','var(--hole)'):T(h.z,Y(h.y)+22,'старое Ø 20','var(--hole)','text-anchor="middle"');});
   if(wv==='right')s+=T(360,Y(728),'основная плата — за стенкой, в каюте',null,'text-anchor="middle"');
   // высота стенки у направляющей и дуга угла
@@ -355,10 +360,10 @@ function drawWall(){const k=wv==='both'?3.4:1.35,Y=y=>1000-y,sw=w=>(w*k).toFixed
   if(wv!=='left')s+=T(az+8,Y(ay)-4,'дуга R ≈ 370');if(wv!=='right')s+=T(-az-8,Y(ay)-4,'дуга R ≈ 370',null,'text-anchor="end"');
   sv.innerHTML=s;
   document.querySelectorAll('#wSel [data-w]').forEach(bt=>bt.setAttribute('aria-pressed',String(bt.dataset.w===wv)));
-  const Fb=fit(B.big),Fs=fit(B.small),ok=Math.min(Fb.m,Fs.m)>=15;
-  $('readP').textContent=(ok?'Оба блока помещаются с запасом. ':'Проверить замером: запас меньше точности контура. ')+'Большой — '+f(Fb.m)+' мм до контура (ближе всего правый верхний угол к дуге угла рубки), малый — '+f(Fs.m)+' мм (левый верхний угол к дуге). Под нижним торцом для пальца: у большого '+f(Fb.fing)+' мм под кнопками до уровня порога, у малого '+f(Fs.fing)+' мм под кнопкой (наименьшее под блоком — '+f(Fs.dn)+' мм у борта кокпита). Точность контура ± 2 см.';
-  $('fitTab').innerHTML='<tr><th>Блок</th><th>Лицо, мм</th><th>До направляющей</th><th>Вверх до края стенки</th><th>Вниз до порога / борта</th><th>Под кнопками — для пальца</th><th>Запас до контура</th><th>Вердикт</th></tr>'+
-    [[B.big,Fb],[B.small,Fs]].map(([b,F])=>'<tr><td><b>'+b.key+'</b><br><span class="small">'+b.side+'</span></td><td class="n">'+f(b.W)+' × '+f(b.H)+'</td><td class="n">'+f(F.guide)+' мм</td><td class="n">'+f(F.up)+' мм</td><td class="n">'+f(F.dn)+' мм</td><td class="n">'+(Math.round(F.fing)===Math.round(F.fingMax)?f(F.fing):f(F.fing)+'–'+f(F.fingMax))+' мм</td><td class="n"><b>'+f(F.m)+' мм</b></td><td>'+verdict(F.m)+'</td></tr>').join('');}
+  const Fb=fit(B.big),Fs=fit(B.small),F2=fit(B2),ok=Math.min(Fb.m,Fs.m)>=15;
+  $('readP').textContent=(ok?'Оба блока помещаются с запасом. ':'Проверить замером: запас меньше точности контура. ')+'Большой — '+f(Fb.m)+' мм до контура (ближе всего правый верхний угол к дуге угла рубки), малый — '+f(Fs.m)+' мм (левый верхний угол к дуге). Над верхним торцом для пальца: у большого '+f(Fb.fing)+'–'+f(Fb.fingMax)+' мм до края стенки, у малого '+f(Fs.fing)+' мм; выше края рубка не нависает. Если большой блок станет 120 × 200 (верх на прежнем месте) — запас '+f(F2.m)+' мм, вниз до порога '+f(F2.dn)+' мм. Точность контура ± 2 см.';
+  $('fitTab').innerHTML='<tr><th>Блок</th><th>Лицо, мм</th><th>До направляющей</th><th>Вверх до края стенки</th><th>Вниз до порога / борта</th><th>Над кнопками — для пальца</th><th>Запас до контура</th><th>Вердикт</th></tr>'+
+    [[B.big,Fb],[B.small,Fs],[B2,F2]].map(([b,F])=>'<tr><td><b>'+b.key+'</b><br><span class="small">'+b.side+'</span></td><td class="n">'+f(b.W)+' × '+f(b.H)+'</td><td class="n">'+f(F.guide)+' мм</td><td class="n">'+f(F.up)+' мм</td><td class="n">'+f(F.dn)+' мм</td><td class="n">'+(Math.round(F.fing)===Math.round(F.fingMax)?f(F.fing):f(F.fing)+'–'+f(F.fingMax))+' мм</td><td class="n"><b>'+f(F.m)+' мм</b></td><td>'+verdict(F.m)+'</td></tr>').join('');}
 $('wSel').addEventListener('click',e=>{const b=e.target.closest('[data-w]');if(b){wv=b.dataset.w;drawWall();}});
 
 // ---- разрез сбоку: x — от стенки в кокпит, y — высота. Слои от стенки к лицу; full — на всю высоту, иначе только против экрана
@@ -368,23 +373,24 @@ function drawSide(){let s='';const top=40,Y=y=>top+(YT-y);
   const xs={big:58,small:178};
   s+='<text class="dimT" x="2" y="8">разрез сбоку, 1 : 1 · слева — стенка рубки и каюта, справа — кокпит</text>';
   BL.slice().reverse().forEach(b=>{const x0=xs[b.id],L=LAY[b.id],m=b.scr;let x=x0;
-    s+='<rect class="cut" x="'+(x0-10)+'" y="'+Y(YT)+'" width="10" height="'+(YT-b.y0+58)+'"/><rect class="cut" x="'+(x0-46)+'" y="'+(Y(YT)-6)+'" width="46" height="6"/>';
+    s+='<rect class="cut" x="'+(x0-10)+'" y="'+Y(YT)+'" width="10" height="'+(YT-b.y0+16)+'"/><rect class="cut" x="'+(x0-46)+'" y="'+(Y(YT)-6)+'" width="46" height="6"/>';
     s+='<text class="lbl" x="'+(x0-44)+'" y="'+(Y(YT)-9)+'">крыша</text><text class="lbl" x="'+(x0-9)+'" y="'+(Y(b.y0)+14)+'" text-anchor="end">стенка</text>';
     L.forEach(l=>{const full=l[3],yb=l[0].indexOf('плита')===0?b.y0+4:full?b.y0:b.y0+b.my,h=l[0].indexOf('плита')===0?b.H-8:full?b.H:m.mod[1];
       if(l[2]!=='none')s+='<rect x="'+x+'" y="'+Y(yb+h)+'" width="'+l[1]+'" height="'+h+'" fill="'+l[2]+'" opacity=".85"/>';x+=l[1];});
     s+='<rect x="'+(x0+5)+'" y="'+Y(b.y0+b.H)+'" width="'+b.D+'" height="'+b.H+'" rx="2" fill="none" stroke="var(--case-line)" stroke-width=".8"/>';
     const cy=b.y0+b.H/2;s+='<rect x="'+(x0+3.5)+'" y="'+Y(cy+12)+'" width="6" height="8" fill="#c9a64a"/><path d="M'+(x0+2)+' '+Y(cy-8)+' H'+(x0-18)+' V'+Y(cy-46)+'" stroke="#2b2f35" stroke-width="5" fill="none" stroke-linecap="round"/>';
     s+='<text class="lbl" x="'+(x0-20)+'" y="'+(Y(cy-46)+7)+'" text-anchor="middle">кабель</text>';
-    if(b.id==='big')s+='<rect x="'+(x0+8.5)+'" y="'+Y(b.y0+b.H-3)+'" width="25" height="6" fill="#d9a441" opacity=".85"/><text class="lbl" x="'+(x0+5+b.D+3)+'" y="'+(Y(b.y0+b.H-6)+1)+'">GPS 25 × 25</text>';
-    // кнопка на нижнем торце и палец снизу (решение 27.11)
-    const bx=x0+5+b.D/2,by=Y(b.y0);s+='<rect x="'+(bx-5.5)+'" y="'+by+'" width="11" height="1.5" fill="var(--btn)"/>';
-    s+='<path d="M'+(bx-8)+' '+(by+46)+' V'+(by+10)+' Q'+(bx-8)+' '+(by+1.8)+' '+bx+' '+(by+1.8)+' Q'+(bx+8)+' '+(by+1.8)+' '+(bx+8)+' '+(by+10)+' V'+(by+46)+'" fill="none" stroke="var(--accent)" stroke-width=".8" stroke-dasharray="2 1.4"/>';
-    s+='<text class="lbl" x="'+(bx+10)+'" y="'+(by+28)+'">палец</text>';
-    const ry=Y(YT),tp=Y(b.y0+b.H);s+='<path class="dimL" d="M'+(x0+1.5)+' '+ry+' V'+tp+'"/><text class="dimT" x="'+(x0+3)+'" y="'+((ry+tp)/2+1.5)+'">'+f(YT-b.y0-b.H)+'</text>';
-    s+='<path class="dimL" d="M'+x0+' '+(tp-4)+' H'+(x0+5+b.D)+'"/><text class="dimT" x="'+(x0+(5+b.D)/2+4)+'" y="'+(tp-6)+'" text-anchor="middle">5 + '+f(b.D)+'</text>';
-    const F=fit(b);s+='<text class="dimT" x="'+(bx+10)+'" y="'+(by+38)+'">до порога '+f(F.fing)+'</text>';
-    s+='<text class="dimT" x="'+x0+'" y="'+(by+56)+'">'+b.key+'</text>';});
-  $('side').setAttribute('viewBox',[0,0,250,top+(YT-B.big.y0)+62].join(' '));$('side').innerHTML=s;
+    // верхний торец (решение 27.11): кнопка с толкателем ≈ 4,5 и плата кнопок 1,6 под стенкой; у большого под ними — GPS ≈ 8 (заходит на экран: не хватает места)
+    const bx=x0+5+b.D/2,tp=Y(b.y0+b.H);
+    s+='<rect x="'+(bx-6)+'" y="'+(tp+3)+'" width="12" height="4.5" fill="var(--btn)" opacity=".8"/><rect x="'+(x0+8.5)+'" y="'+(tp+7.5)+'" width="'+(b.D-6)+'" height="1.6" fill="#2e7d4f"/>';
+    if(b.id==='big')s+='<rect x="'+(x0+8.5)+'" y="'+(tp+9.1)+'" width="25" height="8" fill="#d9a441" opacity=".85"/><text class="lbl" x="'+(x0+5+b.D+3)+'" y="'+(tp+6)+'">кнопка и плата кнопок</text><text class="lbl" x="'+(x0+5+b.D+3)+'" y="'+(tp+15)+'">GPS ≈ 8 — заходит</text><text class="lbl" x="'+(x0+5+b.D+3)+'" y="'+(tp+20)+'">на экран: тесно</text>';
+    s+='<rect x="'+(bx-5.5)+'" y="'+(tp-1.5)+'" width="11" height="1.5" fill="var(--btn)"/>';
+    s+='<path d="M'+(bx-8)+' '+(tp-46)+' V'+(tp-10)+' Q'+(bx-8)+' '+(tp-1.8)+' '+bx+' '+(tp-1.8)+' Q'+(bx+8)+' '+(tp-1.8)+' '+(bx+8)+' '+(tp-10)+' V'+(tp-46)+'" fill="none" stroke="var(--accent)" stroke-width=".8" stroke-dasharray="2 1.4"/>';
+    s+='<text class="lbl" x="'+(bx+10)+'" y="'+(tp-26)+'">палец</text>';
+    const ry=Y(YT);s+='<path class="dimL" d="M'+(x0+1.5)+' '+ry+' V'+tp+'"/><text class="dimT" x="'+(x0+3)+'" y="'+((ry+tp)/2+1.5)+'">'+f(YT-b.y0-b.H)+'</text>';
+    s+='<path class="dimL" d="M'+x0+' '+(Y(b.y0)+5)+' H'+(x0+5+b.D)+'"/><text class="dimT" x="'+(x0+(5+b.D)/2)+'" y="'+(Y(b.y0)+11)+'" text-anchor="middle">5 + '+f(b.D)+'</text>';
+    s+='<text class="dimT" x="'+x0+'" y="'+(Y(b.y0)+19)+'">'+b.key+'</text>';});
+  $('side').setAttribute('viewBox',[0,0,250,top+(YT-B.big.y0)+24].join(' '));$('side').innerHTML=s;
   // таблица слоёв от лица к стенке
   const names=['лицо с окном из поликарбоната','экран','зазор под шлейф','плата (у малого — макетная)','детали, модули, воздух','спинка, в ней штыри pogo 2 × 5','плита салазок на стенке, площадки'];
   const big=LAY.big.slice().reverse(),sm=LAY.small.slice().reverse(),smMap=[sm[0],sm[1],null,sm[2],sm[3],sm[4],sm[5]];
@@ -413,8 +419,8 @@ if(document.fonts&&document.fonts.ready)document.fonts.ready.then(()=>{measure()
   const box=document.getElementById('c3d');if(!box||!window.THREE)return;
   const css=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
   const R=new THREE.WebGLRenderer({antialias:true});R.setPixelRatio(Math.min(2,devicePixelRatio||1));box.appendChild(R.domElement);
-  const S=new THREE.Scene(),C=new THREE.PerspectiveCamera(35,1.6,5,5000);C.position.set(430,-120,260);
-  const O=new THREE.OrbitControls(C,R.domElement);O.target.set(10,-30,-10);O.enableDamping=true;O.update();
+  const S=new THREE.Scene(),C=new THREE.PerspectiveCamera(35,1.6,5,5000);C.position.set(430,140,260);
+  const O=new THREE.OrbitControls(C,R.domElement);O.target.set(10,10,-10);O.enableDamping=true;O.update();
   S.add(new THREE.HemisphereLight(0xffffff,0x8a9099,0.85));const sun=new THREE.DirectionalLight(0xffffff,0.7);sun.position.set(300,500,600);S.add(sun);
   const M=(c,o)=>new THREE.MeshStandardMaterial(Object.assign({color:c,roughness:0.6},o||{}));
   const V=(x,y,z)=>new THREE.Vector3(x,y,z);
@@ -444,13 +450,13 @@ if(document.fonts&&document.fonts.ready)document.fonts.ready.then(()=>{measure()
     const body=bx(W,H,D,M(0xd7dde2,{transparent:true,opacity:0.5,depthWrite:false,roughness:0.4}),0,0,z0+D/2);U.add(body);const ed=new THREE.LineSegments(new THREE.EdgesGeometry(body.geometry),new THREE.LineBasicMaterial({color:0x7b8790}));ed.position.copy(body.position);U.add(ed);
     const sx=-W/2+k.mx+k.mod[0]/2,sy=-H/2+k.my+k.mod[1]/2;U.add(bx(k.mod[0],k.mod[1],1.2,dark,sx,sy,z0+D-4));U.add(bx(k.act[0],k.act[1],.25,M(0xe9ece6),sx,sy,z0+D-3.3));
     U.add(bx(W-10,H-10,1.5,M(0x9fc4d6,{transparent:true,opacity:0.3}),0,0,z0+D-1));
-    k.btn.forEach(x=>U.add(cyl(5.5,2,M(0x2f5d6e),-W/2+x,-H/2-1,z0+D/2,'y')));   // кнопки на нижнем торце (решение 27.11)
+    k.btn.forEach(x=>U.add(cyl(5.5,2,M(0x2f5d6e),-W/2+x,H/2+1,z0+D/2,'y')));   // кнопки на верхнем торце (решение 27.11)
     U.add(cyl(2.5,1.5,M(0x3df06a),-W/2+k.led,H/2-6,z0+D));
     for(let r=0;r<2;r++)for(let c=0;c<5;c++)U.add(cyl(0.55,3,steel,(c-2)*2.54,PY+(r?-1.27:1.27),z0+0.5));   // штыри pogo в спинке
     if(st.v==='big')U.add(bx(25,6,25,M(0xd9a441),0,H/2-6,z0+D/2));   // GPS под верхней стенкой
     const L=st.v==='big'?
-      [lbl('стенка рубки 10 мм',V(-190,150,-5)),lbl('каюта',V(80,110,-120)),lbl('кокпит',V(60,-150,150)),lbl('плита салазок 5 мм — схема',V(W/2-2,H/2-14,6)),lbl('площадки 2 × 5',V(10,PY+6,8)),lbl('кабель 10 жил сквозь Ø 6',V(6,HY-14,-8)),lbl('основная плата в лотке',V(110,-90,-25)),lbl('кнопки на нижнем торце',V(-W/2-70,-H/2-12,z0+D/2))]:
-      [lbl('стенка рубки 10 мм',V(-190,150,-5)),lbl('каюта',V(80,110,-120)),lbl('кокпит',V(60,-150,150)),lbl('плита салазок 5 мм — схема',V(W/2-2,H/2-12,6)),lbl('площадки: заняты 8 из 10',V(10,PY+6,8)),lbl('кабель 8 жил ≈ 1,2 м — над входом',V(10,120,-36)),lbl('кнопка МАЛЫЙ на нижнем торце',V(-W/2-80,-H/2-12,z0+D/2))];
+      [lbl('стенка рубки 10 мм',V(-190,150,-5)),lbl('каюта',V(80,110,-120)),lbl('кокпит',V(60,-150,150)),lbl('плита салазок 5 мм — схема',V(W/2-2,-H/2+14,6)),lbl('площадки 2 × 5',V(10,PY+6,8)),lbl('кабель 10 жил сквозь Ø 6',V(6,HY-14,-8)),lbl('основная плата в лотке',V(110,-90,-25)),lbl('кнопки на верхнем торце',V(-W/2-70,H/2+12,z0+D/2))]:
+      [lbl('стенка рубки 10 мм',V(-190,150,-5)),lbl('каюта',V(80,110,-120)),lbl('кокпит',V(60,-150,150)),lbl('плита салазок 5 мм — схема',V(W/2-2,-H/2+12,6)),lbl('площадки: заняты 8 из 10',V(10,PY+6,8)),lbl('кабель 8 жил ≈ 1,2 м — над входом',V(10,120,-36)),lbl('кнопка МАЛЫЙ на верхнем торце',V(-W/2-80,H/2+12,z0+D/2))];
     L.forEach(s=>G.add(s));offL=lbl('блок снят — площадки без питания',V(-W/2-10,-H/2-30,10));G.add(offL);update();}
   function update(){const t=st.off;U.position.set(0,0,90*t);const live=t<0.5;P.forEach(m=>{if(m.userData.live)m.material.color.setHex(live?0xc9a64a:0x6f757c);});offL.visible=!live;}
   const TX={big:'Большой блок: штыри pogo 2 × 5 в спинке встают на площадки плиты салазок, заняты все 10 контактов. Кабель 10 жил ≈ 0,3 м уходит сквозь отверстие Ø 6 под плитой прямо к основной плате в каюте, без разъёма.',
