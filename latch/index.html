@@ -24,6 +24,8 @@ body{margin:0;background:var(--bg);color:var(--ink);font:400 16px/1.55 var(--f-b
 .tools{position:absolute;left:16px;right:16px;bottom:12px;display:flex;flex-wrap:wrap;gap:6px}
 .tools button{font:600 14px var(--f-body);padding:8px 12px;border-radius:4px;border:1px solid #2c3840;background:#182026;color:#e8edf0;cursor:pointer;min-height:40px}
 .tools button[aria-pressed="true"]{border-color:#46c2c9;background:#14343a}
+.pvbar button{font:600 14px var(--f-body);padding:8px 12px;border-radius:4px;border:1px solid #2c3840;background:#182026;color:#e8edf0;cursor:pointer;min-height:40px}
+.pvbar button[aria-pressed="true"]{border-color:#46c2c9;background:#14343a}
 .tools .sep{width:12px}
 .tip{position:absolute;pointer-events:none;background:#182026;color:#e8edf0;border:1px solid #46c2c9;border-radius:4px;padding:6px 9px;font:500 13px/1.35 var(--f-body);max-width:300px;display:none;z-index:5}
 .home{position:absolute;top:14px;right:16px;z-index:6;padding:8px 12px;border-radius:4px;border:1px solid #46c2c9;background:#182026;color:#e8edf0;font:600 13px var(--f-body);text-decoration:none}
@@ -74,12 +76,43 @@ li{margin:3px 0}
   <div class="grid">
     <div class="card rec"><span class="tag">выбрано владельцем 27.11 · открывается кнопкой снизу</span><h3>Клин + скрытая защёлка <button type="button" data-go="6">Показать</button></h3>
       <ul>
-        <li><b>Самотормозящий клин:</b> Т-выступы плиты сужаются книзу под углом 3–5°, на скосах — латунные накладки. Блок, вдавленный вниз, держится трением, как конус сверла в патроне: люфта нет, место каждый раз одно и то же — это нужно компасу. Кнопки сверху только дожимают блок.</li>
-        <li><b>Скрытая защёлка:</b> в спинке блока — язычок с пружиной-«змейкой» (как в проекте VAULT), напечатан заодно. В конце хода вниз он щёлкает в выемку плиты — блок не поднять. Снаружи ничего нет: шкот не зацепит.</li>
+        <li><b>Самотормозящий клин:</b> под головками Т-выступов плиты — скос 3–5° (на пробе 4°), сами головки книзу шире на 1 мм; на скосах — латунные накладки. Блок, вдавленный вниз, держится трением, как конус сверла в патроне: люфта нет, место каждый раз одно и то же — это нужно компасу. Кнопки сверху только дожимают блок.</li>
+        <li><b>Скрытая защёлка:</b> в спинке блока — язычок с пружиной-«змейкой» (как в проекте VAULT), напечатан заодно. В конце хода вниз он щёлкает за зуб храповой рейки на плите — блок не поднять; зубья через 2 мм ловят блок, где бы клин его ни остановил. Снаружи ничего нет: шкот не зацепит.</li>
         <li><b>Снять:</b> 1) нажать утопленную кнопку на нижнем торце (выбрано 27.11; вариант со скрепкой отклонён); 2) держа, поднять блок на 18 мм и отвести.</li>
-        <li>Минус: снимать — двумя руками или одной с усилием (клин держит); выемку и язычок проверить на пробной печати.</li>
+        <li>Минус: снимать — двумя руками или одной с усилием (клин держит); зубья и язычок проверить на пробной печати (см. «Пробный кусок» ниже).</li>
       </ul></div>
-    </div><div class="card" style="margin-top:12px"><h3>Скрытая защёлка — разрез сбоку</h3><svg viewBox="0 0 620 370" role="img" aria-label="Разрез сбоку нижней части блока: язычок с пружиной в выемке плиты и он же при нажатой кнопке" style="width:100%;height:auto;max-width:640px"><style>.st{font:600 15px var(--f-body);fill:var(--ink)}.sl{font:12px var(--f-body);fill:var(--muted)}.sw{fill:#9aa3a8}.sb{fill:none;stroke:var(--ink);stroke-width:1.5}.sf{fill:#bfe3ee;opacity:.7}.sp{fill:#5b6670}.st2{fill:#d04a2a}.ss{fill:none;stroke:#d04a2a;stroke-width:2}.sbo{fill:#3b4650}.sk{stroke:#c8a24a;stroke-width:2}.sar{stroke:var(--accent);stroke-width:3;marker-end:none}</style><g transform="translate(0,0)"><text x="60" y="16" class="st">Закрыто</text><rect x="0" y="30" width="28" height="290" class="sw"/><text x="14" y="336" class="sl" text-anchor="middle">стенка</text><rect x="28" y="40" width="74" height="262" rx="4" class="sb"/><rect x="94" y="44" width="8" height="254" class="sf"/><path d="M28 50 H48 V140 H40 V182 H48 V292 H28 Z" class="sp"/><rect x="40" y="144" width="22" height="34" class="st2"/><path d="M62.0 170 L66.3 150 L70.7 170 L75.0 150 L79.3 170 L83.7 150 L88.0 170 " class="ss"/><rect x="86" y="140" width="6" height="40" class="sbo"/><rect x="58" y="302" width="16" height="8" rx="2" class="st2"/><path d="M66 300 L52 180" class="sk"/><text x="112" y="66" class="sl">лицо: окно 2 + экран</text><text x="112" y="126" class="sl">плита в кармане спинки</text><text x="112" y="162" class="sl">язычок в выемке плиты</text><text x="112" y="182" class="sl">пружина-«змейка»</text><text x="112" y="312" class="sl">кнопка на нижнем торце</text></g><g transform="translate(320,0)"><text x="60" y="16" class="st">Открыто</text><rect x="0" y="30" width="28" height="290" class="sw"/><text x="14" y="336" class="sl" text-anchor="middle">стенка</text><rect x="28" y="40" width="74" height="262" rx="4" class="sb"/><rect x="94" y="44" width="8" height="254" class="sf"/><path d="M28 50 H48 V140 H40 V182 H48 V292 H28 Z" class="sp"/><rect x="64" y="144" width="22" height="34" class="st2"/><path d="M86.0 170 L86.3 150 L86.7 170 L87.0 150 L87.3 170 L87.7 150 L88.0 170 " class="ss"/><rect x="86" y="140" width="6" height="40" class="sbo"/><rect x="58" y="298" width="16" height="8" rx="2" class="st2"/><path d="M66 296 L76 180" class="sk"/><text x="112" y="66" class="sl">лицо: окно 2 + экран</text><text x="112" y="126" class="sl">плита в кармане спинки</text><text x="112" y="162" class="sl">язычок вышел из выемки</text><text x="112" y="182" class="sl">пружина-«змейка»</text><text x="112" y="312" class="sl">кнопка нажата</text><path d="M66 352 V322" class="sar"/><text x="76" y="350" class="sl">палец</text></g></svg><p class="small">Нижняя часть блока, вид сбоку; стенка слева, лицо справа; масштаб условный. Клин Т-выступов на разрезе не виден — он по бокам.</p></div><div class="grid" style="margin-top:12px"><div class="card"><h3>Невыпадающий винт снизу <button type="button" data-go="4">Показать</button></h3>
+    </div><div class="card" style="margin-top:12px"><h3>Скрытая защёлка — разрез сбоку</h3><svg viewBox="0 0 620 370" role="img" aria-label="Разрез сбоку нижней части блока: язычок с пружиной в выемке плиты и он же при нажатой кнопке" style="width:100%;height:auto;max-width:640px"><style>.st{font:600 15px var(--f-body);fill:var(--ink)}.sl{font:12px var(--f-body);fill:var(--muted)}.sw{fill:#9aa3a8}.sb{fill:none;stroke:var(--ink);stroke-width:1.5}.sf{fill:#bfe3ee;opacity:.7}.sp{fill:#5b6670}.st2{fill:#d04a2a}.ss{fill:none;stroke:#d04a2a;stroke-width:2}.sbo{fill:#3b4650}.sk{stroke:#c8a24a;stroke-width:2}.sar{stroke:var(--accent);stroke-width:3;marker-end:none}</style><g transform="translate(0,0)"><text x="60" y="16" class="st">Закрыто</text><rect x="0" y="30" width="28" height="290" class="sw"/><text x="14" y="336" class="sl" text-anchor="middle">стенка</text><rect x="28" y="40" width="74" height="262" rx="4" class="sb"/><rect x="94" y="44" width="8" height="254" class="sf"/><path d="M28 50 H48 V140 H40 V182 H48 V292 H28 Z" class="sp"/><rect x="40" y="144" width="22" height="34" class="st2"/><path d="M62.0 170 L66.3 150 L70.7 170 L75.0 150 L79.3 170 L83.7 150 L88.0 170 " class="ss"/><rect x="86" y="140" width="6" height="40" class="sbo"/><rect x="58" y="302" width="16" height="8" rx="2" class="st2"/><path d="M66 300 L52 180" class="sk"/><text x="112" y="66" class="sl">лицо: окно 2 + экран</text><text x="112" y="126" class="sl">плита в кармане спинки</text><text x="112" y="162" class="sl">язычок в выемке плиты</text><text x="112" y="182" class="sl">пружина-«змейка»</text><text x="112" y="312" class="sl">кнопка на нижнем торце</text></g><g transform="translate(320,0)"><text x="60" y="16" class="st">Открыто</text><rect x="0" y="30" width="28" height="290" class="sw"/><text x="14" y="336" class="sl" text-anchor="middle">стенка</text><rect x="28" y="40" width="74" height="262" rx="4" class="sb"/><rect x="94" y="44" width="8" height="254" class="sf"/><path d="M28 50 H48 V140 H40 V182 H48 V292 H28 Z" class="sp"/><rect x="64" y="144" width="22" height="34" class="st2"/><path d="M86.0 170 L86.3 150 L86.7 170 L87.0 150 L87.3 170 L87.7 150 L88.0 170 " class="ss"/><rect x="86" y="140" width="6" height="40" class="sbo"/><rect x="58" y="298" width="16" height="8" rx="2" class="st2"/><path d="M66 296 L76 180" class="sk"/><text x="112" y="66" class="sl">лицо: окно 2 + экран</text><text x="112" y="126" class="sl">плита в кармане спинки</text><text x="112" y="162" class="sl">язычок вышел из выемки</text><text x="112" y="182" class="sl">пружина-«змейка»</text><text x="112" y="312" class="sl">кнопка нажата</text><path d="M66 352 V322" class="sar"/><text x="76" y="350" class="sl">палец</text></g></svg><p class="small">Нижняя часть блока, вид сбоку; стенка слева, лицо справа; масштаб условный. Клин Т-выступов на разрезе не виден — он по бокам. Это схема принципа; в пробном куске язычок ходит вдоль стенки и цепляет зубья храповой рейки — так при толщине блока 18 мм пружине хватает места.</p></div><section id="probe" style="margin-top:28px">
+  <h2>Пробный кусок — печать из PLA</h2>
+  <p>Прежде чем печатать корпуса, проверяем запор руками на маленьком куске: плита 112 × 48 и нижняя часть спинки блока 120 × 78. Все 4 детали — на <b>один стол</b>, один запуск: ≈ <b>2 ч 58 мин</b>, ≈ <b>96 г</b> PLA. Модель прошла 24 проверки посадки в программе.</p>
+  <div class="card" style="padding:0;overflow:hidden">
+    <div style="position:relative;height:min(62vh,520px)"><canvas id="pv" style="width:100%;height:100%;display:block"></canvas>
+      <div id="pvTip" style="position:absolute;left:12px;bottom:10px;right:12px;font:13px var(--f-body);color:var(--muted);pointer-events:none">наведите на деталь — что это</div></div>
+    <div class="pvbar" style="display:flex;flex-wrap:wrap;gap:8px;padding:12px">
+      <button type="button" id="pvAsm" aria-pressed="true">Собрано</button>
+      <button type="button" id="pvExp" aria-pressed="false">Разнести</button>
+      <button type="button" id="pvPress" aria-pressed="false">Нажать кнопку</button>
+      <button type="button" id="pvLift" aria-pressed="false">Поднять и снять</button>
+      <button type="button" id="pvGlass" aria-pressed="true">Спинка прозрачная</button>
+    </div>
+  </div>
+  <div class="grid" style="margin-top:12px">
+    <div class="card"><h3>Детали стола</h3><ul>
+      <li><b>1. Плита</b> — два Т-упора с клином (скос 4°, головка 12 → 11 мм) и храповая рейка; к доске — 2 винта М3 потай из латуни. Печать стоя.</li>
+      <li><b>2. Спинка</b> — карман под плиту длиннее на ход 18, окна и пазы упоров, гнёзда защёлки и кнопки. Печать стоя.</li>
+      <li><b>3. Вставка защёлки</b> — рамка, пружина-«змейка» и язычок одной деталью, плашмя: змейка гнётся вдоль слоёв. Деформация на полном ходу 0,52 % (PLA ломается при 3–4 %).</li>
+      <li><b>4. Кнопка</b> с толкателем: нажатие на 3 мм уводит язычок на 2,7 мм — из зубьев с запасом.</li>
+    </ul></div>
+    <div class="card"><h3>Что проверить руками</h3><ul>
+      <li>Люфт во все стороны — не должно быть.</li>
+      <li>Без кнопки блок не поднять даже рывком.</li>
+      <li>Кнопкой — снимается легко, без задевания.</li>
+      <li>50 раз «надел — снял»: змейка цела, скосы и зубья не стёрлись.</li>
+      <li>Садится каждый раз на одно место.</li>
+    </ul><p class="small">Почему храповик, а не одна выемка: клин останавливает блок там, где он сел, — 0,1 мм лишней толщины пластика сдвигают это место на 1,4 мм по высоте. Зубья через 2 мм ловят его в любом положении.</p></div>
+  </div>
+</section>
+<h2 style="margin-top:28px">Другие варианты (не выбраны)</h2>
+<div class="grid" style="margin-top:12px"><div class="card"><h3>Невыпадающий винт снизу <button type="button" data-go="4">Показать</button></h3>
       <ul>
         <li>Плита выходит под нижний торец блока полкой 44 × 30 мм — блок стоит на ней. В полке — латунный винт М5 с накатанной головкой Ø18, в нижней стенке блока — латунная резьбовая вставка.</li>
         <li><b>Закрыто:</b> винт затянут — тянет блок вниз, на полку и в клин Т-выступов. Это самый жёсткий вариант: натяг любой, люфта нет.</li>
@@ -111,7 +144,7 @@ li{margin:3px 0}
 
   <h2>Общее для всех вариантов</h2>
   <ul>
-    <li><b>Клиновые Т-выступы</b> на плите: головка сужается книзу на 1 мм — блок, опускаясь, выбирает люфт сам.</li>
+    <li><b>Клиновые Т-выступы</b> на плите: головка книзу шире на 1 мм (12 → 11 мм кверху), под ней скос 4° — блок, опускаясь, выбирает люфт сам и вбок, и от стенки.</li>
     <li><b>Ни одной стальной детали:</b> ось, скоба и вставки — латунь, остальное ASA. Компас BNO085 внутри блока; нержавейка A4 слегка магнитится.</li>
     <li><b>TPU 85A</b> — только уплотнение вокруг пружинных контактов и мембраны кнопок; в силовой цепи запора мягкого пластика нет.</li>
     <li><b>Пружинные контакты 2 × 5</b> — на спинке блока, площадки — в центре плиты; садятся на площадки на последних миллиметрах хода вниз.</li>
@@ -122,6 +155,7 @@ li{margin:3px 0}
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/STLLoader.js"></script>
 <script>
 (function(){
 const T=THREE,$=id=>document.getElementById(id);
@@ -251,6 +285,45 @@ window.addEventListener('resize',size);size();
 (function loop(){open+=(tOpen-open)*0.12;lift+=((tOpen>0.5?tLift:0)-lift)*0.08;
   V[v].anim(open,lift);block.position.set(0,lift*18,lift>0.5?(lift-0.5)*2*60:0);
   controls.update();renderer.render(scene,camera);requestAnimationFrame(loop);})();
+})();
+</script>
+<script>
+/*probe*/ (function(){
+const T=THREE,$=id=>document.getElementById(id),cv=$('pv');if(!cv||!T.STLLoader)return;
+let R;try{R=new T.WebGLRenderer({canvas:cv,antialias:true});}catch(e){$('pvTip').textContent='3D не запустилось в этом браузере';return;}
+R.setPixelRatio(Math.min(2,window.devicePixelRatio||1));
+const sc=new T.Scene();sc.background=new T.Color(0x0b0e10);
+const cam=new T.PerspectiveCamera(34,1,1,3000);cam.position.set(150,120,230);
+const ctl=new T.OrbitControls(cam,cv);ctl.enableDamping=true;ctl.target.set(10,42,6);
+sc.add(new T.HemisphereLight(0xffffff,0x334455,0.8));const dl=new T.DirectionalLight(0xffffff,0.7);dl.position.set(150,300,400);sc.add(dl);const d2=new T.DirectionalLight(0xffffff,0.3);d2.position.set(-200,50,-100);sc.add(d2);
+const M=(c,o)=>new T.MeshStandardMaterial(Object.assign({color:c,roughness:0.6},o||{}));
+const board=new T.Mesh(new T.BoxGeometry(180,150,8),M(0xb89a6a,{roughness:0.9}));board.position.set(0,45,-4);board.userData.label='доска (на лодке — кормовая стенка рубки)';sc.add(board);
+const backM=M(0x2f5d8a,{transparent:true,opacity:0.35,depthWrite:false});
+const DEF={plate:[M(0x3f7fbf),'плита: Т-упоры с клином 4° и храповая рейка; к доске — 2 винта М3 из латуни'],back:[backM,'спинка блока (кусок): карман под плиту, окна упоров, гнёзда защёлки и кнопки'],
+ latch:[M(0xd04a2a),'вставка защёлки: рамка + пружина-«змейка» + язычок с зубом — одна деталь, печать плашмя'],button:[M(0xf0a030),'кнопка снизу с толкателем: нажать и держать — язычок выходит из зубьев'],
+ latch_open:[M(0xd04a2a),'вставка: кнопка нажата — язычок отжат на 2,7 мм (змейка показана упрощённо)'],button_open:[M(0xf0a030),'кнопка нажата на 3 мм']};
+const L=new T.STLLoader(),b64=t=>{const x=atob(t.trim()),u=new Uint8Array(x.length);for(let i=0;i<x.length;i++)u[i]=x.charCodeAt(i);return u.buffer;};
+const G={},blk=new T.Group();sc.add(blk);
+Promise.all(Object.keys(DEF).map(k=>fetch('stl/'+k+'.txt').then(r=>{if(!r.ok)throw r.status;return r.text();}).then(t=>{const g=L.parse(b64(t));g.computeVertexNormals();const m=new T.Mesh(g,DEF[k][0]);m.userData.label=DEF[k][1];G[k]=m;(k==='plate'?sc:blk).add(m);})))
+ .then(()=>{upd();}).catch(e=>{$('pvTip').textContent='модели не загрузились ('+e+') — откройте страницу через сайт';});
+let mode='asm',press=false,glass=true,t=0;
+function upd(){if(!G.plate)return;G.latch.visible=!press;G.button.visible=!press;G.latch_open.visible=press;G.button_open.visible=press;backM.opacity=glass?0.35:1;backM.depthWrite=!glass;backM.transparent=glass;backM.needsUpdate=true;}
+const set=(id,v)=>$(id).setAttribute('aria-pressed',v?'true':'false');
+function go(m){mode=m;t=0;set('pvAsm',m==='asm');set('pvExp',m==='exp');set('pvLift',m==='lift');if(m==='lift'){press=true;set('pvPress',true);}upd();}
+$('pvAsm').onclick=()=>{press=false;set('pvPress',false);go('asm');};$('pvExp').onclick=()=>go('exp');$('pvLift').onclick=()=>go('lift');
+$('pvPress').onclick=()=>{press=!press;set('pvPress',press);if(!press&&mode==='lift')go('asm');upd();};
+$('pvGlass').onclick=()=>{glass=!glass;set('pvGlass',glass);upd();};
+const ray=new T.Raycaster(),mp=new T.Vector2();
+cv.addEventListener('pointermove',e=>{const r=cv.getBoundingClientRect();mp.set((e.clientX-r.left)/r.width*2-1,-(e.clientY-r.top)/r.height*2+1);ray.setFromCamera(mp,cam);
+ const h=ray.intersectObjects([board,...Object.values(G)].filter(o=>o.visible),false)[0];$('pvTip').textContent=h?h.object.userData.label:'наведите на деталь — что это';});
+function size(){const w=cv.clientWidth,h=cv.clientHeight;if(cv.width!==Math.round(w*R.getPixelRatio())||cv.height!==Math.round(h*R.getPixelRatio())){R.setSize(w,h,false);cam.aspect=w/h;cam.updateProjectionMatrix();}}
+let last=performance.now();
+(function loop(now){requestAnimationFrame(loop);const dt=Math.min(0.05,(now-last)/1000);last=now;t=Math.min(1,t+dt*0.8);size();
+ const e=t<0.5?2*t*t:1-Math.pow(-2*t+2,2)/2;
+ if(G.plate){if(mode==='exp'){blk.position.set(0,0,0);G.back.position.z=60*e;['latch','latch_open'].forEach(k=>G[k].position.z=32*e);['button','button_open'].forEach(k=>G[k].position.set(0,-28*e,32*e));}
+  else{['back','latch','latch_open','button','button_open'].forEach(k=>G[k].position.set(0,0,0));
+   if(mode==='lift'){const a=Math.min(1,e*1.6),b=Math.max(0,e*1.6-0.6)/1;blk.position.set(0,18*a,40*b);}else blk.position.set(0,0,0);}}
+ ctl.update();R.render(sc,cam);})(last);
 })();
 </script>
 </body>
