@@ -49,11 +49,12 @@ li{margin:3px 0}
 <div class="stage" id="stage">
     <a class="home" href="../">← Главное меню</a>
   <canvas id="view" aria-label="Большой блок на плите салазок и варианты запора эксцентриком"></canvas>
-  <div class="badge"><h1>Запор салазок</h1><span>большой блок 120 × 186 × 32 · плита 5 мм · варианты эксцентрика · мм</span></div>
+  <div class="badge"><h1>Запор салазок</h1><span>большой блок 120 × 186 × 32 · плита 5 мм · варианты запора снизу · мм</span></div>
   <div class="tools" role="group" aria-label="Вариант и действие">
-    <button type="button" data-v="1" aria-pressed="true">1 · Рычаг сбоку</button>
-    <button type="button" data-v="2" aria-pressed="false">2 · Лягушка снизу</button>
-    <button type="button" data-v="3" aria-pressed="false">3 · Скрытый, ручка снизу</button>
+    <button type="button" data-v="4" aria-pressed="true">Винт снизу</button>
+    <button type="button" data-v="5" aria-pressed="false">Четверть оборота</button>
+    <button type="button" data-v="2" aria-pressed="false">Лягушка снизу</button>
+    <button type="button" data-v="3" aria-pressed="false">Скрытый кулачок</button>
     <span class="sep"></span>
     <button type="button" id="aClose" aria-pressed="true">Закрыто</button>
     <button type="button" id="aOpen" aria-pressed="false">1. Открыть</button>
@@ -64,25 +65,32 @@ li{margin:3px 0}
   <div class="tip" id="tip"></div>
 </div>
 <main>
-  <p class="lead">Блок держится на плите салазок двумя клиновыми Т-выступами: опускаясь на последние 15–20 мм, он садится в клин и прижимается к плите и вбок — люфта нет, а место каждый раз одно и то же (это важно для компаса внутри). Эксцентрик — второе действие: он дотягивает блок вниз, в клин, с натягом и не даёт ему подняться. Снять блок: <b>1)</b> открыть эксцентрик, <b>2)</b> поднять блок на 18 мм и отвести от стенки. Кнопки стоят на верхнем торце, а до края крыши всего 40 мм, поэтому рычаг сверху мешал бы пальцам — все три варианта сбоку или снизу.</p>
+  <p class="lead">Блок держится на плите салазок двумя клиновыми Т-выступами: опускаясь на последние 15–20 мм, он садится в клин и прижимается к плите и вбок — люфта нет, а место каждый раз одно и то же (это важно для компаса внутри). Запор — второе действие: он дотягивает блок вниз, в клин, с натягом и не даёт ему подняться. Снять блок: <b>1)</b> открыть запор, <b>2)</b> поднять блок на 18 мм и отвести от стенки. Кнопки стоят на верхнем торце, а до края крыши всего 40 мм — сверху запор мешал бы пальцам; сбоку ничего торчать не должно — заденем (рычаг сбоку отклонён владельцем 27.11). Поэтому все варианты — <b>снизу</b>: под блоком до порога ≈ 100 мм свободно.</p>
 
-  <h2>Три варианта</h2>
+  <h2>Варианты запора</h2>
   <div class="grid">
-    <div class="card rec"><span class="tag">советую</span><h3>1 · Рычаг сбоку <button type="button" data-go="1">Показать</button></h3>
+    <div class="card rec"><span class="tag">советую</span><h3>Невыпадающий винт снизу <button type="button" data-go="4">Показать</button></h3>
       <ul>
-        <li>На плите — ушко у внешнего края блока, на нём ось из латуни Ø4. На оси — кулачок с эксцентриситетом 2 мм и рычаг 70 мм.</li>
-        <li><b>Закрыто:</b> рычаг лежит вдоль боковой стенки блока, кулачок давит на выступ-полочку на боку блока вниз — блок сидит в клине с натягом.</li>
-        <li><b>Открыть:</b> отвести рычаг на 110° наружу — кулачок отходит, блок свободен.</li>
-        <li>Плюс: виден и понятен, легко открыть пальцем, натяг сильный. Минус: торчит сбоку на 14 мм; рычаг надо утопить в паз, чтобы шкот не зацепил.</li>
+        <li>Плита выходит под нижний торец блока полкой 44 × 30 мм — блок стоит на ней. В полке — латунный винт М5 с накатанной головкой Ø18, в нижней стенке блока — латунная резьбовая вставка.</li>
+        <li><b>Закрыто:</b> винт затянут — тянет блок вниз, на полку и в клин Т-выступов. Это самый жёсткий вариант: натяг любой, люфта нет.</li>
+        <li><b>Снять:</b> открутить головку пальцами снизу на 3–4 оборота, поднять блок. Винт остаётся в полке — не потеряется.</li>
+        <li>Минус: дольше остальных (≈ 10 с), под блоком головка выступает на ≈ 13 мм.</li>
       </ul></div>
-    <div class="card"><h3>2 · Лягушка снизу <button type="button" data-go="2">Показать</button></h3>
+    <div class="card"><h3>Четверть оборота <button type="button" data-go="5">Показать</button></h3>
+      <ul>
+        <li>Та же полка. В ней — замок с латунной Т-головкой и барашком снизу; в нижней стенке блока — латунная планка с прорезью и скосами.</li>
+        <li><b>Закрыто:</b> барашек повёрнут поперёк — Т-головка стоит на скосах и тянет блок вниз.</li>
+        <li><b>Снять:</b> повернуть барашек на 90°, поднять блок. Быстро — как замки на крышках приборов.</li>
+        <li>Минус: натяг задают скосы, он меньше, чем у винта; скосы из латуни, не печатные — печатные сотрутся.</li>
+      </ul></div>
+    <div class="card"><h3>Лягушка снизу <button type="button" data-go="2">Показать</button></h3>
       <ul>
         <li>Как замок на ящике для инструмента: на плите под блоком — основание с рычагом, на рычаге — скоба. Скоба цепляет крючок на нижнем торце блока.</li>
         <li><b>Закрыто:</b> рычаг прижат вверх к плите, скоба натянута и тянет блок вниз, в клин. Рычаг «перещёлкивает» через мёртвую точку — сам не откроется.</li>
         <li><b>Открыть:</b> откинуть рычаг вниз — скоба ослабнет, снять её с крючка.</li>
         <li>Плюс: самый сильный натяг, понятный жест. Минус: скоба — отдельная деталь (латунная проволока Ø2), под блоком нужно ≈ 30 мм (там свободно ≈ 100 мм).</li>
       </ul></div>
-    <div class="card"><h3>3 · Скрытый, ручка снизу <button type="button" data-go="3">Показать</button></h3>
+    <div class="card"><h3>Скрытый кулачок, ручка снизу <button type="button" data-go="3">Показать</button></h3>
       <ul>
         <li>Кулачок спрятан между блоком и плитой; снаружи видна только ручка, выходящая из-под нижнего торца.</li>
         <li><b>Закрыто:</b> ручка вертикально вниз, кулачок давит на упор на спинке блока вниз.</li>
@@ -110,8 +118,8 @@ const T=THREE,$=id=>document.getElementById(id);
 const canvas=$('view'),stage=$('stage');
 const renderer=new T.WebGLRenderer({canvas,antialias:true});renderer.setPixelRatio(Math.min(2,window.devicePixelRatio||1));
 const scene=new T.Scene();scene.background=new T.Color(0x0b0e10);
-const camera=new T.PerspectiveCamera(36,1,1,5000);camera.position.set(330,240,420);
-const controls=new T.OrbitControls(camera,canvas);controls.enableDamping=true;controls.target.set(10,85,10);
+const camera=new T.PerspectiveCamera(36,1,1,5000);camera.position.set(300,10,400);
+const controls=new T.OrbitControls(camera,canvas);controls.enableDamping=true;controls.target.set(0,55,10);
 scene.add(new T.HemisphereLight(0xffffff,0x334455,0.75));const dl=new T.DirectionalLight(0xffffff,0.75);dl.position.set(200,400,500);scene.add(dl);const dl2=new T.DirectionalLight(0xffffff,0.3);dl2.position.set(-300,100,-200);scene.add(dl2);
 const M=(c,o)=>new T.MeshStandardMaterial(Object.assign({color:c,roughness:0.6,metalness:0},o||{}));
 const box=(w,h,d,m)=>new T.Mesh(new T.BoxGeometry(w,h,d),m);
@@ -144,17 +152,26 @@ block.add(lab(at(cylZ(3,1,M(0xbfe3ee)),40,180,37.2),'окно датчика с�
 {const g=new T.Group();for(let i=0;i<5;i++)for(let j=0;j<2;j++)g.add(at(cylZ(0.5,3,gold,8),(i-2)*2.54,(j-0.5)*2.54,0));g.position.set(0,95,6.2);block.add(lab(g,'пружинные штыри 2 × 5 на спинке блока: садятся на площадки плиты в конце хода вниз'));}
 // ---------- варианты запора ----------
 const V={};
-// 1: рычаг сбоку
+// полка под блоком: общая для вариантов 4 и 5 — плита выходит под нижний торец блока, блок стоит на ней
+function shelf(g,txt){g.add(lab(at(box(44,34,5,asaPlate),0,-12,2.5),'язык плиты под блоком'));g.add(lab(at(box(44,5,30,asaPlate),0,-2.5,15),txt));}
+const knurl=()=>{const k=new T.Group();const c=new T.Mesh(new T.CylinderGeometry(9,9,9,24),red);k.add(c);for(let i=0;i<12;i++){const r=box(1.6,9,2.2,red);const a=i/12*Math.PI*2;r.position.set(Math.cos(a)*9,0,Math.sin(a)*9);r.rotation.y=-a;k.add(r);}return k;};
+// 4: невыпадающий винт снизу
 {const g=new T.Group();scene.add(g);
- g.add(lab(at(box(20,40,5,asaPlate),68,115,2.5),'ушко плиты у внешнего края блока'));
- const ledge=lab(at(box(6,6,14,asa),63,101,17),'полочка на боковой стенке блока: на неё давит кулачок');block.add(ledge);ledge.visible=false;
- const piv=new T.Group();piv.position.set(70,112,0);g.add(piv);
- piv.add(lab(at(cylZ(2,30,brass,16),0,0,15),'ось из латуни Ø4'));
- const lever=new T.Group();piv.add(lever);
- const cam=at(cylZ(8,14,red),0,2,17);lever.add(lab(cam,'кулачок: эксцентриситет 2 мм — при повороте рычага прижимает полочку блока вниз на 2 мм'));
- const arm=at(box(10,72,6,red),0,-36,27);lever.add(lab(arm,'рычаг 70 мм, ASA: закрыт — лежит вдоль боковой стенки блока'));
- lever.add(lab(at(box(14,10,8,red),0,-72,27),'конец рычага — взяться пальцем'));
- V[1]={g,parts:[ledge],anim:(o)=>{lever.rotation.z=o*rad(110);}};}
+ shelf(g,'полка под блоком, ASA, 44 × 30: блок стоит на ней нижним торцом; снизу — винт');
+ const ins=lab(at(new T.Mesh(new T.CylinderGeometry(3.2,3.2,8,16),brass),0,4,22),'латунная резьбовая вставка М5 в нижней стенке блока: винт тянет блок вниз, на полку и в клин');block.add(ins);ins.visible=false;
+ const sc=new T.Group();sc.position.set(0,-5,22);g.add(sc);
+ sc.add(lab(at(new T.Mesh(new T.CylinderGeometry(2.4,2.4,16,16),brass),0,6,0),'винт М5 из латуни: невыпадающий — остаётся в полке, когда блок снят'));
+ const kn=knurl();kn.position.y=-5;sc.add(lab(kn,'накатанная головка Ø18 под полкой: крутить пальцами снизу, 3–4 оборота'));
+ V[4]={g,parts:[ins],anim:(o)=>{sc.rotation.y=o*Math.PI*7;sc.position.y=-5-o*6;}};}
+// 5: четвертьоборотный замок снизу
+{const g=new T.Group();scene.add(g);
+ shelf(g,'полка под блоком, ASA: блок стоит на ней; в полке — четвертьоборотный замок');
+ const rec=lab(at(box(14,8,6,brass),0,4,22),'латунная планка в нижней стенке блока с прорезью и двумя скосами: Т-головка замка входит в прорезь и при повороте на 90° наезжает на скосы — тянет блок вниз');block.add(rec);rec.visible=false;
+ const qt=new T.Group();qt.position.set(0,-5,22);g.add(qt);
+ qt.add(lab(at(new T.Mesh(new T.CylinderGeometry(2.2,2.2,13,16),brass),0,6,0),'ось замка, латунь'));
+ qt.add(lab(at(box(12,2.5,3.5,brass),0,12.5,0),'Т-головка: проходит в прорезь блока вдоль, поворот на 90° — поперёк, на скосах'));
+ const wing=new T.Group();wing.add(new T.Mesh(new T.CylinderGeometry(8,8,6,24),red));wing.add(at(box(26,10,4,red),0,-6,0));wing.position.y=-5;qt.add(lab(wing,'барашек под полкой: повернуть на четверть оборота'));
+ V[5]={g,parts:[rec],anim:(o)=>{qt.rotation.y=o*Math.PI/2;}};}
 // 2: лягушка снизу
 {const g=new T.Group();scene.add(g);
  g.add(lab(at(box(36,34,5,asaPlate),0,-15,2.5),'язык плиты под блоком: на нём замок-лягушка'));
@@ -188,7 +205,7 @@ document.querySelectorAll('[data-v]').forEach(b=>b.addEventListener('click',()=>
 document.querySelectorAll('[data-go]').forEach(b=>b.addEventListener('click',()=>{setV(+b.dataset.go);stage.scrollIntoView({behavior:'smooth',block:'start'});}));
 $('aClose').onclick=()=>setAct(0);$('aOpen').onclick=()=>setAct(1);$('aLift').onclick=()=>setAct(2);
 $('aGlass').onclick=()=>{glass=!glass;shellM.opacity=glass?0.25:1;shellM.depthWrite=!glass;$('aGlass').setAttribute('aria-pressed',String(glass));};
-setV(1);
+setV(4);
 // подсказки
 const tip=$('tip'),ray=new T.Raycaster(),mp=new T.Vector2();
 canvas.addEventListener('pointermove',e=>{const r=canvas.getBoundingClientRect();mp.set((e.clientX-r.left)/r.width*2-1,-(e.clientY-r.top)/r.height*2+1);ray.setFromCamera(mp,camera);
