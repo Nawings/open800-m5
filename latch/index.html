@@ -49,9 +49,10 @@ li{margin:3px 0}
 <div class="stage" id="stage">
     <a class="home" href="../">← Главное меню</a>
   <canvas id="view" aria-label="Большой блок на плите салазок и варианты запора эксцентриком"></canvas>
-  <div class="badge"><h1>Запор салазок</h1><span>большой блок 120 × 186 × 32 · плита 5 мм · варианты запора снизу · мм</span></div>
+  <div class="badge"><h1>Запор салазок</h1><span>большой блок 120 × 186, 18 мм от стенки · плита в кармане спинки · варианты запора · мм</span></div>
   <div class="tools" role="group" aria-label="Вариант и действие">
-    <button type="button" data-v="4" aria-pressed="true">Винт снизу</button>
+    <button type="button" data-v="6" aria-pressed="true">Клин + скрытая защёлка</button>
+    <button type="button" data-v="4" aria-pressed="false">Винт снизу</button>
     <button type="button" data-v="5" aria-pressed="false">Четверть оборота</button>
     <button type="button" data-v="2" aria-pressed="false">Лягушка снизу</button>
     <button type="button" data-v="3" aria-pressed="false">Скрытый кулачок</button>
@@ -61,6 +62,8 @@ li{margin:3px 0}
     <button type="button" id="aLift" aria-pressed="false">2. Снять блок</button>
     <span class="sep"></span>
     <button type="button" id="aGlass" aria-pressed="false">Корпус прозрачный</button>
+    <button type="button" id="rBtn" aria-pressed="true" hidden>Открывать: кнопкой</button>
+    <button type="button" id="rClip" aria-pressed="false" hidden>Открывать: скрепкой</button>
   </div>
   <div class="tip" id="tip"></div>
 </div>
@@ -69,7 +72,14 @@ li{margin:3px 0}
 
   <h2>Варианты запора</h2>
   <div class="grid">
-    <div class="card rec"><span class="tag">советую</span><h3>Невыпадающий винт снизу <button type="button" data-go="4">Показать</button></h3>
+    <div class="card rec"><span class="tag">советую · без замков снаружи</span><h3>Клин + скрытая защёлка <button type="button" data-go="6">Показать</button></h3>
+      <ul>
+        <li><b>Самотормозящий клин:</b> Т-выступы плиты сужаются книзу под углом 3–5°, на скосах — латунные накладки. Блок, вдавленный вниз, держится трением, как конус сверла в патроне: люфта нет, место каждый раз одно и то же — это нужно компасу. Кнопки сверху только дожимают блок.</li>
+        <li><b>Скрытая защёлка:</b> в спинке блока — язычок с пружиной-«змейкой» (как в проекте VAULT), напечатан заодно. В конце хода вниз он щёлкает в выемку плиты — блок не поднять. Снаружи ничего нет: шкот не зацепит.</li>
+        <li><b>Снять:</b> 1) нажать утопленную кнопку на нижнем торце (или скрепкой — в отверстие, как у лотка SIM-карты: чужой не снимет); 2) держа, поднять блок на 18 мм и отвести.</li>
+        <li>Минус: снимать — двумя руками или одной с усилием (клин держит); выемку и язычок проверить на пробной печати.</li>
+      </ul></div>
+    </div><div class="card" style="margin-top:12px"><h3>Скрытая защёлка — разрез сбоку</h3><svg viewBox="0 0 620 370" role="img" aria-label="Разрез сбоку нижней части блока: язычок с пружиной в выемке плиты и он же при нажатой кнопке" style="width:100%;height:auto;max-width:640px"><style>.st{font:600 15px var(--f-body);fill:var(--ink)}.sl{font:12px var(--f-body);fill:var(--muted)}.sw{fill:#9aa3a8}.sb{fill:none;stroke:var(--ink);stroke-width:1.5}.sf{fill:#bfe3ee;opacity:.7}.sp{fill:#5b6670}.st2{fill:#d04a2a}.ss{fill:none;stroke:#d04a2a;stroke-width:2}.sbo{fill:#3b4650}.sk{stroke:#c8a24a;stroke-width:2}.sar{stroke:var(--accent);stroke-width:3;marker-end:none}</style><g transform="translate(0,0)"><text x="60" y="16" class="st">Закрыто</text><rect x="0" y="30" width="28" height="290" class="sw"/><text x="14" y="336" class="sl" text-anchor="middle">стенка</text><rect x="28" y="40" width="74" height="262" rx="4" class="sb"/><rect x="94" y="44" width="8" height="254" class="sf"/><path d="M28 50 H48 V140 H40 V182 H48 V292 H28 Z" class="sp"/><rect x="40" y="144" width="22" height="34" class="st2"/><path d="M62.0 170 L66.3 150 L70.7 170 L75.0 150 L79.3 170 L83.7 150 L88.0 170 " class="ss"/><rect x="86" y="140" width="6" height="40" class="sbo"/><rect x="58" y="302" width="16" height="8" rx="2" class="st2"/><path d="M66 300 L52 180" class="sk"/><text x="112" y="66" class="sl">лицо: окно 2 + экран</text><text x="112" y="126" class="sl">плита в кармане спинки</text><text x="112" y="162" class="sl">язычок в выемке плиты</text><text x="112" y="182" class="sl">пружина-«змейка»</text><text x="112" y="312" class="sl">кнопка на нижнем торце</text></g><g transform="translate(320,0)"><text x="60" y="16" class="st">Открыто</text><rect x="0" y="30" width="28" height="290" class="sw"/><text x="14" y="336" class="sl" text-anchor="middle">стенка</text><rect x="28" y="40" width="74" height="262" rx="4" class="sb"/><rect x="94" y="44" width="8" height="254" class="sf"/><path d="M28 50 H48 V140 H40 V182 H48 V292 H28 Z" class="sp"/><rect x="64" y="144" width="22" height="34" class="st2"/><path d="M86.0 170 L86.3 150 L86.7 170 L87.0 150 L87.3 170 L87.7 150 L88.0 170 " class="ss"/><rect x="86" y="140" width="6" height="40" class="sbo"/><rect x="58" y="298" width="16" height="8" rx="2" class="st2"/><path d="M66 296 L76 180" class="sk"/><text x="112" y="66" class="sl">лицо: окно 2 + экран</text><text x="112" y="126" class="sl">плита в кармане спинки</text><text x="112" y="162" class="sl">язычок вышел из выемки</text><text x="112" y="182" class="sl">пружина-«змейка»</text><text x="112" y="312" class="sl">кнопка нажата</text><path d="M66 352 V322" class="sar"/><text x="76" y="350" class="sl">палец</text></g></svg><p class="small">Нижняя часть блока, вид сбоку; стенка слева, лицо справа; масштаб условный. Клин Т-выступов на разрезе не виден — он по бокам.</p></div><div class="grid" style="margin-top:12px"><div class="card"><h3>Невыпадающий винт снизу <button type="button" data-go="4">Показать</button></h3>
       <ul>
         <li>Плита выходит под нижний торец блока полкой 44 × 30 мм — блок стоит на ней. В полке — латунный винт М5 с накатанной головкой Ø18, в нижней стенке блока — латунная резьбовая вставка.</li>
         <li><b>Закрыто:</b> винт затянут — тянет блок вниз, на полку и в клин Т-выступов. Это самый жёсткий вариант: натяг любой, люфта нет.</li>
@@ -132,7 +142,7 @@ const asa=M(0x3b4650),asaPlate=M(0x5b6670),brass=M(0xc8a24a,{metalness:0.8,rough
 const wall=lab(at(box(340,360,10,wallM),0,90,-5),'кормовая стенка рубки (здесь — плоская, кусок 340 × 360)');scene.add(wall);
 // плита салазок
 const plate=new T.Group();scene.add(plate);
-lab(plate.add(at(box(112,178,5,asaPlate),0,93,2.5)),'плита салазок, ASA, 112 × 178 × 5: на 4 мм меньше лица блока с каждой стороны — из-за блока её не видно; к стенке — 4 винта из латуни');
+lab(plate.add(at(box(112,178,5,asaPlate),0,93,2.5)),'плита салазок, ASA, 112 × 178 × 5: лежит в кармане спинки блока — блок не становится толще; к стенке — 4 винта из латуни');
 [-38,38].forEach(x=>{const g=new T.Group();g.add(at(box(6,150,3,asaPlate),0,0,1.5));const head=new T.Shape();head.moveTo(-6,75);head.lineTo(6,75);head.lineTo(5.5,-75);head.lineTo(-5.5,-75);head.closePath();
   const hg=new T.ExtrudeGeometry(head,{depth:3,bevelEnabled:false});const hm=new T.Mesh(hg,asaPlate);hm.position.z=3;g.add(hm);g.position.set(x,95,5);plate.add(lab(g,'клиновой Т-выступ: головка 12 мм вверху, 11 мм внизу — опускаясь, блок садится в клин, люфт выбирается. Т-паз держит блок от стенки во все стороны, кроме вверх'));});
 // площадки контактов и уплотнение
@@ -141,33 +151,33 @@ lab(plate.add(at(box(112,178,5,asaPlate),0,93,2.5)),'плита салазок, 
 // ---------- блок ----------
 const block=new T.Group();scene.add(block);
 const shellM=M(0x2a333b,{transparent:true,opacity:1});
-const shell=lab(at(box(120,186,32,shellM),0,93,21),'большой блок, ASA: лицо 120 × 186, глубина 32; спинка с Т-пазами под выступы плиты');block.add(shell);
+const shell=lab(at(box(120,186,18,shellM),0,93,9),'большой блок, ASA: лицо 120 × 186, 18 мм от стенки; плита салазок — в кармане спинки, вместе с ней; окно — поликарбонат 2 мм, спинка — 2 мм ASA');block.add(shell);
 {const c=document.createElement('canvas');c.width=222;c.height=340;const q=c.getContext('2d');q.fillStyle='#e6e4dc';q.fillRect(0,0,222,340);q.fillStyle='#14161a';q.font='700 22px Onest, Arial';q.fillText('М5 ТАБЛО',10,28);q.fillRect(0,36,222,2);
  [['5,4','12,0'],['177°','34°'],['56°','8,1'],['+6°','233°']].forEach((r,i)=>{q.font='700 42px Onest, Arial';q.fillText(r[0],10,90+i*70);q.fillText(r[1],118,90+i*70);q.fillRect(0,100+i*70,222,1);});q.fillRect(110,38,2,302);
- const scr=new T.Mesh(new T.PlaneGeometry(98,163),new T.MeshBasicMaterial({map:new T.CanvasTexture(c)}));scr.position.set(0,86,37.05);block.add(lab(scr,'экран 7,5″ стоя под окном'));}
-block.add(lab(at(cylZ(2.5,1,M(0x3df06a,{emissive:0x1d7a35})),-40,180,37.2),'светодиод RGB: заход / отход'));
-block.add(lab(at(cylZ(3,1,M(0xbfe3ee)),40,180,37.2),'окно датчика света'));
-['БОЛЬШОЙ','−','+','СТАРТ','ЛИНИЯ','МЕНЮ'].forEach((n,i)=>{const b=new T.Mesh(new T.CylinderGeometry(5.5,5.5,1.4,24),tpu);b.position.set(-45+i*18,186.7,21);block.add(lab(b,'кнопка '+n+' на верхнем торце (мембрана TPU 85A)'));});
+ const scr=new T.Mesh(new T.PlaneGeometry(98,163),new T.MeshBasicMaterial({map:new T.CanvasTexture(c)}));scr.position.set(0,86,18.05);block.add(lab(scr,'экран 7,5″ стоя под окном'));}
+block.add(lab(at(cylZ(2.5,1,M(0x3df06a,{emissive:0x1d7a35})),-40,180,18.2),'светодиод RGB: заход / отход'));
+block.add(lab(at(cylZ(3,1,M(0xbfe3ee)),40,180,18.2),'окно датчика света'));
+['БОЛЬШОЙ','−','+','СТАРТ','ЛИНИЯ','МЕНЮ'].forEach((n,i)=>{const b=new T.Mesh(new T.CylinderGeometry(5.5,5.5,1.4,24),tpu);b.position.set(-45+i*18,186.7,9);block.add(lab(b,'кнопка '+n+' на верхнем торце (мембрана TPU 85A)'));});
 // штыри pogo на спинке
 {const g=new T.Group();for(let i=0;i<5;i++)for(let j=0;j<2;j++)g.add(at(cylZ(0.5,3,gold,8),(i-2)*2.54,(j-0.5)*2.54,0));g.position.set(0,95,6.2);block.add(lab(g,'пружинные штыри 2 × 5 на спинке блока: садятся на площадки плиты в конце хода вниз'));}
 // ---------- варианты запора ----------
 const V={};
 // полка под блоком: общая для вариантов 4 и 5 — плита выходит под нижний торец блока, блок стоит на ней
-function shelf(g,txt){g.add(lab(at(box(44,34,5,asaPlate),0,-12,2.5),'язык плиты под блоком'));g.add(lab(at(box(44,5,30,asaPlate),0,-2.5,15),txt));}
+function shelf(g,txt){g.add(lab(at(box(44,34,5,asaPlate),0,-12,2.5),'язык плиты под блоком'));g.add(lab(at(box(44,5,18,asaPlate),0,-2.5,9),txt));}
 const knurl=()=>{const k=new T.Group();const c=new T.Mesh(new T.CylinderGeometry(9,9,9,24),red);k.add(c);for(let i=0;i<12;i++){const r=box(1.6,9,2.2,red);const a=i/12*Math.PI*2;r.position.set(Math.cos(a)*9,0,Math.sin(a)*9);r.rotation.y=-a;k.add(r);}return k;};
 // 4: невыпадающий винт снизу
 {const g=new T.Group();scene.add(g);
  shelf(g,'полка под блоком, ASA, 44 × 30: блок стоит на ней нижним торцом; снизу — винт');
- const ins=lab(at(new T.Mesh(new T.CylinderGeometry(3.2,3.2,8,16),brass),0,4,22),'латунная резьбовая вставка М5 в нижней стенке блока: винт тянет блок вниз, на полку и в клин');block.add(ins);ins.visible=false;
- const sc=new T.Group();sc.position.set(0,-5,22);g.add(sc);
+ const ins=lab(at(new T.Mesh(new T.CylinderGeometry(3.2,3.2,8,16),brass),0,4,10),'латунная резьбовая вставка М5 в нижней стенке блока: винт тянет блок вниз, на полку и в клин');block.add(ins);ins.visible=false;
+ const sc=new T.Group();sc.position.set(0,-5,10);g.add(sc);
  sc.add(lab(at(new T.Mesh(new T.CylinderGeometry(2.4,2.4,16,16),brass),0,6,0),'винт М5 из латуни: невыпадающий — остаётся в полке, когда блок снят'));
  const kn=knurl();kn.position.y=-5;sc.add(lab(kn,'накатанная головка Ø18 под полкой: крутить пальцами снизу, 3–4 оборота'));
  V[4]={g,parts:[ins],anim:(o)=>{sc.rotation.y=o*Math.PI*7;sc.position.y=-5-o*6;}};}
 // 5: четвертьоборотный замок снизу
 {const g=new T.Group();scene.add(g);
  shelf(g,'полка под блоком, ASA: блок стоит на ней; в полке — четвертьоборотный замок');
- const rec=lab(at(box(14,8,6,brass),0,4,22),'латунная планка в нижней стенке блока с прорезью и двумя скосами: Т-головка замка входит в прорезь и при повороте на 90° наезжает на скосы — тянет блок вниз');block.add(rec);rec.visible=false;
- const qt=new T.Group();qt.position.set(0,-5,22);g.add(qt);
+ const rec=lab(at(box(14,8,6,brass),0,4,10),'латунная планка в нижней стенке блока с прорезью и двумя скосами: Т-головка замка входит в прорезь и при повороте на 90° наезжает на скосы — тянет блок вниз');block.add(rec);rec.visible=false;
+ const qt=new T.Group();qt.position.set(0,-5,10);g.add(qt);
  qt.add(lab(at(new T.Mesh(new T.CylinderGeometry(2.2,2.2,13,16),brass),0,6,0),'ось замка, латунь'));
  qt.add(lab(at(box(12,2.5,3.5,brass),0,12.5,0),'Т-головка: проходит в прорезь блока вдоль, поворот на 90° — поперёк, на скосах'));
  const wing=new T.Group();wing.add(new T.Mesh(new T.CylinderGeometry(8,8,6,24),red));wing.add(at(box(26,10,4,red),0,-6,0));wing.position.y=-5;qt.add(lab(wing,'барашек под полкой: повернуть на четверть оборота'));
@@ -176,7 +186,7 @@ const knurl=()=>{const k=new T.Group();const c=new T.Mesh(new T.CylinderGeometry
 {const g=new T.Group();scene.add(g);
  g.add(lab(at(box(36,34,5,asaPlate),0,-15,2.5),'язык плиты под блоком: на нём замок-лягушка'));
  g.add(lab(at(box(26,10,8,asa),0,-24,9),'основание замка-лягушки на плите'));
- const hook=lab(at(box(20,6,8,asa),0,-3,30),'крючок на нижнем торце блока: за него цепляется скоба');block.add(hook);hook.visible=false;
+ const hook=lab(at(box(20,6,8,asa),0,-3,13),'крючок на нижнем торце блока: за него цепляется скоба');block.add(hook);hook.visible=false;
  const piv=new T.Group();piv.position.set(0,-24,14);g.add(piv);piv.add(lab(cylX(1.8,30,brass),'ось рычага, латунь'));
  const lever=new T.Group();piv.add(lever);
  lever.add(lab(at(box(22,26,5,red),0,12,3),'рычаг лягушки: закрыт — прижат вверх, перещёлкнут через мёртвую точку'));
@@ -185,7 +195,7 @@ const knurl=()=>{const k=new T.Group();const c=new T.Mesh(new T.CylinderGeometry
  const setRod=(m,a,b)=>{const d=new T.Vector3().subVectors(b,a),len=d.length();m.scale.set(1,1,len);m.position.copy(a).addScaledVector(d,0.5);m.lookAt(b);};
  V[2]={g,parts:[hook],anim:(o,lift)=>{lever.rotation.x=-o*rad(150);
    const anc=new T.Vector3(0,12,6).applyAxisAngle(new T.Vector3(1,0,0),lever.rotation.x).add(piv.position);
-   const hk=new T.Vector3(0,-3+lift*18,30+lift*0);const top=o<0.6?hk:hk.clone().add(new T.Vector3(0,-14*(o-0.6)/0.4,6*(o-0.6)/0.4));
+   const hk=new T.Vector3(0,-3+lift*18,13);const top=o<0.6?hk:hk.clone().add(new T.Vector3(0,-14*(o-0.6)/0.4,6*(o-0.6)/0.4));
    [-9,9].forEach((x,i)=>setRod(i?r2:r1,anc.clone().add(new T.Vector3(x,0,0)),top.clone().add(new T.Vector3(x,0,0))));r3.position.copy(top);}};}
 // 3: скрытый кулачок, ручка снизу
 {const g=new T.Group();scene.add(g);
@@ -196,16 +206,40 @@ const knurl=()=>{const k=new T.Group();const c=new T.Mesh(new T.CylinderGeometry
  lever.add(lab(at(box(6,46,3,red),0,-21,6.5),'тяга ручки — проходит в пазу плиты под блоком'));
  lever.add(lab(at(box(16,12,12,red),0,-46,10),'ручка: выходит из-под нижнего торца блока, повернуть на 40° вбок'));
  V[3]={g,parts:[stop],anim:(o)=>{lever.rotation.z=o*rad(40);}};}
+/*v6*/ {const g=new T.Group();scene.add(g);
+ const seg=(a,b,r,m)=>{const d=new T.Vector3().subVectors(b,a),len=d.length();const c=new T.Mesh(new T.CylinderGeometry(r,r,len,8),m);c.position.copy(a).addScaledVector(d,0.5);c.quaternion.setFromUnitVectors(new T.Vector3(0,1,0),d.clone().normalize());return c;};
+ // латунные накладки на скосах клиновых выступов
+ [-38,38].forEach(x=>[-1,1].forEach(sd=>g.add(lab(at(box(0.8,150,3,brass),x+sd*6.1,95,9.5),'латунная накладка на скосе клинового выступа: угол 3–5° — клин самотормозящий: блок, вдавленный вниз, держится трением без люфта, латунь не даёт скосу стереться'))));
+ // выемка в плите под язычок
+ g.add(lab(at(box(18,12,1,M(0x0b0e10)),0,40,5.1),'выемка в плите под язычок защёлки'));
+ // язычок, змейка и упор — в спинке блока
+ const tg=new T.Group();block.add(tg);
+ const tongue=lab(at(box(16,10,5,red),0,40,3.5),'язычок защёлки, ASA: в конце хода вниз щёлкает в выемку плиты — поднять блок нельзя');tg.add(tongue);
+ const sp=new T.Group();tg.add(sp);
+ const boss=lab(at(box(20,14,2,asa),0,40,16),'упор пружины на внутренней стороне лица');block.add(boss);
+ function spring(z0,z1){while(sp.children.length)sp.remove(sp.children[0]);const n=7,pts=[];for(let i=0;i<=n;i++){const z=z0+(z1-z0)*i/n;pts.push(new T.Vector3(i%2?6:-6,40,z));}
+   for(let i=1;i<pts.length;i++)sp.add(seg(pts[i-1],pts[i],0.6,red));lab(sp,'пружина-«змейка», напечатана заодно с язычком (ASA): прижимает язычок к плите; изгиб распределён по всей длине — не ломается, как сломался прежний ползун');}
+ // открывание: кнопка снизу или скрепка
+ const btn=lab(at(new T.Mesh(new T.CylinderGeometry(4,4,3,20),red),30,-0.5,9),'утопленная кнопка на нижнем торце: нажать и держать — тяга уводит язычок из выемки');block.add(btn);
+ const link=seg(new T.Vector3(30,1,9),new T.Vector3(8,38,7),0.8,brass);block.add(lab(link,'тяга от кнопки к язычку, латунная проволока: скос на конце уводит язычок от плиты'));
+ const hole=lab(at(new T.Mesh(new T.CircleGeometry(1,16),M(0x050607,{side:T.DoubleSide})),30,-0.05,9),'отверстие Ø2 под скрепку на нижнем торце — как у лотка SIM-карты');hole.rotation.x=Math.PI/2;block.add(hole);
+ const clip=seg(new T.Vector3(30,-40,9),new T.Vector3(30,-2,9),0.5,M(0xcfd4d8,{metalness:0.8,roughness:0.2}));g.add(lab(clip,'скрепка: вставить в отверстие и нажать — язычок уходит из выемки'));
+ V[6]={g,parts:[tg,boss,btn,link,hole],anim:(o,lift)=>{const clipMode=REL==='clip';btn.visible=v===6&&!clipMode;link.visible=v===6;hole.visible=v===6&&clipMode;clip.visible=v===6&&clipMode&&o>0.05;
+   if(clipMode){clip.position.y=-20+o*16+lift*18;}else btn.position.y=-0.5+o*2;
+   tongue.position.z=3.5+o*4.5;spring(6+o*4.5,15);}};}
+let REL='btn';
 function rad(d){return d*Math.PI/180;}
 // ---------- состояние ----------
 let v=1,open=0,lift=0,tOpen=0,tLift=0,glass=false;
-function setV(n){v=n;Object.entries(V).forEach(([k,o])=>{o.g.visible=(+k===n);o.parts.forEach(p=>p.visible=(+k===n));});document.querySelectorAll('[data-v]').forEach(b=>b.setAttribute('aria-pressed',String(+b.dataset.v===n)));setAct(0);}
+function setV(n){v=n;if(n===6){camera.position.set(230,-30,170);controls.target.set(0,45,6);}else{camera.position.set(300,10,400);controls.target.set(0,55,10);}$('rBtn').hidden=$('rClip').hidden=n!==6;if((n===6)!==glass)$('aGlass').onclick();Object.entries(V).forEach(([k,o])=>{o.g.visible=(+k===n);o.parts.forEach(p=>p.visible=(+k===n));});document.querySelectorAll('[data-v]').forEach(b=>b.setAttribute('aria-pressed',String(+b.dataset.v===n)));setAct(0);}
 function setAct(s){tOpen=s>=1?1:0;tLift=s>=2?1:0;$('aClose').setAttribute('aria-pressed',String(s===0));$('aOpen').setAttribute('aria-pressed',String(s===1));$('aLift').setAttribute('aria-pressed',String(s===2));}
 document.querySelectorAll('[data-v]').forEach(b=>b.addEventListener('click',()=>setV(+b.dataset.v)));
 document.querySelectorAll('[data-go]').forEach(b=>b.addEventListener('click',()=>{setV(+b.dataset.go);stage.scrollIntoView({behavior:'smooth',block:'start'});}));
 $('aClose').onclick=()=>setAct(0);$('aOpen').onclick=()=>setAct(1);$('aLift').onclick=()=>setAct(2);
-$('aGlass').onclick=()=>{glass=!glass;shellM.opacity=glass?0.25:1;shellM.depthWrite=!glass;$('aGlass').setAttribute('aria-pressed',String(glass));};
-setV(4);
+$('rBtn').onclick=()=>{REL='btn';$('rBtn').setAttribute('aria-pressed','true');$('rClip').setAttribute('aria-pressed','false');};
+$('rClip').onclick=()=>{REL='clip';$('rBtn').setAttribute('aria-pressed','false');$('rClip').setAttribute('aria-pressed','true');};
+$('aGlass').onclick=()=>{glass=!glass;shellM.opacity=glass?0.25:1;shellM.depthWrite=!glass;block.traverse(o=>{if(o.isMesh&&o.material.map){o.material.transparent=true;o.material.opacity=glass?0.12:1;o.material.needsUpdate=true;}});$('aGlass').setAttribute('aria-pressed',String(glass));};
+setV(6);
 // подсказки
 const tip=$('tip'),ray=new T.Raycaster(),mp=new T.Vector2();
 canvas.addEventListener('pointermove',e=>{const r=canvas.getBoundingClientRect();mp.set((e.clientX-r.left)/r.width*2-1,-(e.clientY-r.top)/r.height*2+1);ray.setFromCamera(mp,camera);
